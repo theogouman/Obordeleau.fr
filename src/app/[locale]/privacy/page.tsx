@@ -7,7 +7,7 @@ import { localeTags, type Locale } from '@/i18n/routing';
 import { buildMetadata } from '@/lib/seo';
 
 /** Kept in one place so all three languages show the same date. */
-const LAST_UPDATED = '2026-08-20';
+const LAST_UPDATED = '2026-08-21';
 
 export async function generateMetadata({
   params,
@@ -42,7 +42,7 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
 
   const sections = [
     'principle',
-    'inquiry',
+    'booking',
     'analytics',
     'map',
     'hosting',

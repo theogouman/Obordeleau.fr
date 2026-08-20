@@ -1,7 +1,7 @@
 import { useLocale, useTranslations } from 'next-intl';
 import { AccentHeading } from '@/components/AccentHeading';
+import { BookingForm } from '@/components/BookingForm';
 import { ChannelLink } from '@/components/ChannelLink';
-import { InquiryForm } from '@/components/InquiryForm';
 import { Reveal } from '@/components/Reveal';
 import { Section } from '@/components/Section';
 import { getPathname } from '@/i18n/navigation';
@@ -9,12 +9,13 @@ import type { Locale } from '@/i18n/routing';
 import { channel, property } from '@/lib/content';
 
 /**
- * FR-013 to FR-015: Direct is visually first and carries the form; Airbnb and
- * Booking are offered as peers but secondary. No payment in Phase 1.
+ * FR-013 to FR-015 and FR-103: Direct is visually first and carries the booking
+ * calendar; Airbnb and Booking are offered as peers but secondary. The dates
+ * chosen here are written and blocked immediately, on the site and, through the
+ * master feed, on both platforms. No payment is taken yet (Phase 3).
  */
 export function Reservation() {
   const t = useTranslations('reservation');
-  const common = useTranslations('common');
   const locale = useLocale() as Locale;
   const privacyHref = getPathname({ href: '/privacy', locale });
 
@@ -41,7 +42,7 @@ export function Reservation() {
               </p>
               <h3 className="mt-3 font-display text-2xl">{t('channels.direct.title')}</h3>
               <p className="mt-2 text-ink-soft">{t('channels.direct.body')}</p>
-              <a href="#inquiry-form" className="btn btn-primary mt-4">
+              <a href="#booking-form" className="btn btn-primary mt-4">
                 {t('channels.direct.cta')}
               </a>
             </div>
@@ -81,43 +82,8 @@ export function Reservation() {
         </Reveal>
 
         <Reveal delay={80}>
-          <div id="inquiry-form" className="scroll-mt-24">
-            <InquiryForm
-              locale={locale}
-              maxGuests={property.capacity.maxGuests}
-              privacyHref={privacyHref}
-              labels={{
-                title: t('form.title'),
-                intro: t('form.intro'),
-                arrival: t('form.arrival'),
-                departure: t('form.departure'),
-                guests: t('form.guests'),
-                name: t('form.name'),
-                email: t('form.email'),
-                phone: t('form.phone'),
-                message: t('form.message'),
-                messagePlaceholder: t('form.messagePlaceholder'),
-                consent: t('form.consent'),
-                consentLink: t('form.consentLink'),
-                submit: t('form.submit'),
-                submitting: t('form.submitting'),
-                successTitle: t('form.successTitle'),
-                successBody: t('form.successBody'),
-                successAgain: t('form.successAgain'),
-                optional: common('optional'),
-                honeypotLabel: t('form.honeypotLabel'),
-                errors: {
-                  required: t('form.errors.required'),
-                  email: t('form.errors.email'),
-                  dateOrder: t('form.errors.dateOrder'),
-                  datePast: t('form.errors.datePast'),
-                  guests: t('form.errors.guests'),
-                  consent: t('form.errors.consent'),
-                  rateLimited: t('form.errors.rateLimited'),
-                  server: t('form.errors.server'),
-                },
-              }}
-            />
+          <div id="booking-form" className="scroll-mt-24">
+            <BookingForm maxGuests={property.capacity.maxGuests} privacyHref={privacyHref} />
           </div>
         </Reveal>
       </div>

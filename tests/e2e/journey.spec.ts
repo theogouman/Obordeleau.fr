@@ -9,7 +9,7 @@ test.describe('P1 booking journey', () => {
     await expect(h1).toBeVisible();
     await expect(h1).toContainText('70');
 
-    await expect(page.getByRole('link', { name: /demander mes dates/i }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /réserver mes dates/i }).first()).toBeVisible();
   });
 
   test('the three channels are present and point at the real listings', async ({ page }) => {
@@ -23,45 +23,99 @@ test.describe('P1 booking journey', () => {
     await expect(airbnb).toHaveAttribute('rel', /noopener/);
   });
 
-  test('an inquiry can be submitted and confirms to the visitor', async ({ page }) => {
-    await page.route('**/api/inquiry', async (route) => {
-      await route.fulfill({ status: 200, json: { ok: true } });
+  test('a direct booking is written and confirmed to the visitor', async ({ page }) => {
+    await page.route('**/api/availability', async (route) => {
+      await route.fulfill({
+        status: 200,
+        json: {
+          from: '2030-07-01',
+          to: '2031-06-30',
+          firstArrival: '2030-07-01',
+          minNights: 1,
+          blocked: ['2030-07-05'],
+        },
+      });
+    });
+
+    let submitted: Record<string, unknown> | null = null;
+    await page.route('**/api/reservations', async (route) => {
+      submitted = route.request().postDataJSON() as Record<string, unknown>;
+      await route.fulfill({
+        status: 200,
+        json: { ok: true, reference: 'AB12CD34', from: '2030-07-01', to: '2030-07-04', nights: 3 },
+      });
     });
 
     await page.goto('/#book');
 
-    await page.getByLabel(/arrivée/i).fill('2030-07-01');
-    await page.getByLabel(/départ/i).fill('2030-07-08');
-    await page.getByLabel(/voyageurs/i).fill('2');
+    await page.locator('[data-date="2030-07-01"]').click();
+    await page.locator('[data-date="2030-07-04"]').click();
     await page.getByLabel(/votre nom/i).fill('Test Voyageur');
     await page.getByLabel(/votre email/i).fill('test@example.com');
-    await page.getByLabel(/ces informations servent/i).check();
+    await page.getByLabel(/gérer ma réservation/i).check();
 
     // The endpoint rejects submissions filled in under 2.5 seconds.
     await page.waitForTimeout(2800);
-    await page.getByRole('button', { name: /envoyer ma demande/i }).click();
+    await page.getByRole('button', { name: /réserver ces dates/i }).click();
 
-    await expect(page.getByText(/demande envoyée/i)).toBeVisible();
+    await expect(page.getByText(/réservation confirmée/i)).toBeVisible();
+    await expect(page.getByText('AB12CD34')).toBeVisible();
+    expect(submitted).toMatchObject({ from: '2030-07-01', to: '2030-07-04' });
   });
 
-  test('an inquiry with reversed dates is refused before any request', async ({ page }) => {
-    let called = false;
-    await page.route('**/api/inquiry', async (route) => {
-      called = true;
-      await route.fulfill({ status: 200, json: { ok: true } });
+  test('a night taken elsewhere cannot be selected', async ({ page }) => {
+    await page.route('**/api/availability', async (route) => {
+      await route.fulfill({
+        status: 200,
+        json: {
+          from: '2030-07-01',
+          to: '2031-06-30',
+          firstArrival: '2030-07-01',
+          minNights: 1,
+          blocked: ['2030-07-05'],
+        },
+      });
     });
 
     await page.goto('/#book');
-    await page.getByLabel(/arrivée/i).fill('2030-07-08');
-    await page.getByLabel(/départ/i).fill('2030-07-01');
+
+    const taken = page.locator('[data-date="2030-07-05"]');
+    await expect(taken).toHaveAttribute('aria-disabled', 'true');
+
+    await taken.click();
+    // Half open ranges: a busy night blocks arrivals, so nothing is selected.
+    await expect(page.getByText(/choisissez une date d'arrivée/i)).toBeVisible();
+  });
+
+  test('a range taken while the visitor typed is refused cleanly', async ({ page }) => {
+    await page.route('**/api/availability', async (route) => {
+      await route.fulfill({
+        status: 200,
+        json: {
+          from: '2030-07-01',
+          to: '2031-06-30',
+          firstArrival: '2030-07-01',
+          minNights: 1,
+          blocked: [],
+        },
+      });
+    });
+
+    await page.route('**/api/reservations', async (route) => {
+      await route.fulfill({ status: 409, json: { error: 'unavailable' } });
+    });
+
+    await page.goto('/#book');
+
+    await page.locator('[data-date="2030-07-01"]').click();
+    await page.locator('[data-date="2030-07-04"]').click();
     await page.getByLabel(/votre nom/i).fill('Test');
     await page.getByLabel(/votre email/i).fill('test@example.com');
-    await page.getByLabel(/ces informations servent/i).check();
+    await page.getByLabel(/gérer ma réservation/i).check();
     await page.waitForTimeout(2800);
-    await page.getByRole('button', { name: /envoyer ma demande/i }).click();
+    await page.getByRole('button', { name: /réserver ces dates/i }).click();
 
-    await expect(page.getByText(/après la date d'arrivée/i)).toBeVisible();
-    expect(called).toBe(false);
+    await expect(page.getByRole('alert')).toContainText(/viennent d'être prises/i);
   });
 });
 

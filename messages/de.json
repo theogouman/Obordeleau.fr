@@ -51,7 +51,7 @@
     "titleAccent": "70 Meter",
     "titleTail": "vom Strand entfernt",
     "subtitle": "Sie stellen das Auto ab und vergessen es. Der Sandstrand von Les Sablettes liegt zwei Gehminuten entfernt durch den Park, die Fähre nach Toulon legt direkt vor der Residenz ab, und Geschäfte und Restaurants sind im Viertel.",
-    "ctaPrimary": "Termine anfragen",
+    "ctaPrimary": "Termine buchen",
     "ctaSecondary": "Das Studio ansehen",
     "imageAlt": "Das Studio Obordeleau und der Strand von Les Sablettes in La Seyne-sur-Mer",
     "badge": "Als 3-Sterne-Ferienwohnung klassifiziert"
@@ -285,8 +285,8 @@
       "direct": {
         "badge": "Empfohlen",
         "title": "Direkt bei Corine",
-        "body": "Sie schicken Ihre Termine und Ihre Nachricht, die Antwort kommt meist innerhalb von 24 Stunden. Keine Provision, und dieselbe Flexibilität bei den Ankunftszeiten.",
-        "cta": "Termine anfragen"
+        "body": "Sie wählen Ihre Termine im Kalender und die Buchung ist sofort bestätigt. Keine Provision, und dieselbe Flexibilität bei den Ankunftszeiten.",
+        "cta": "Termine wählen"
       },
       "airbnb": {
         "title": "Auf Airbnb",
@@ -301,35 +301,56 @@
         "external": "Öffnet die Website von Booking in einem neuen Tab"
       }
     },
-    "form": {
-      "title": "Ihre Anfrage",
-      "intro": "Diese Anfrage ist unverbindlich und es wird keine Zahlung fällig. Corine antwortet mit Verfügbarkeit und Preis.",
-      "arrival": "Anreise",
-      "departure": "Abreise",
+    "booking": {
+      "title": "Ihre Termine",
+      "intro": "Wählen Sie zuerst die Anreise, dann die Abreise. Grau hinterlegte Tage sind bereits vergeben, hier ebenso wie auf Airbnb und Booking. Die Buchung ist sofort bestätigt, ohne Zahlung im Netz.",
+      "datesLegend": "Ihr Aufenthalt",
+      "noDatesYet": "Wählen Sie ein Anreisedatum und danach ein Abreisedatum.",
+      "nights": "{count, plural, one {# Nacht} other {# Nächte}}",
+      "range": "Vom {from} bis {to}",
       "guests": "Gäste",
+      "phone": "Telefon",
       "name": "Ihr Name",
       "email": "Ihre E-Mail",
-      "phone": "Telefon",
       "message": "Ihre Nachricht",
-      "messagePlaceholder": "Zahl der Erwachsenen und Kinder, Reisebett nötig, ungefähre Ankunftszeit...",
-      "consent": "Ich bin damit einverstanden, dass diese Angaben zur Beantwortung meiner Anfrage genutzt werden.",
+      "messagePlaceholder": "Ungefähre Ankunftszeit, Reisebett nötig, Zahl der Erwachsenen und Kinder...",
+      "consent": "Ich bin damit einverstanden, dass diese Angaben zur Abwicklung meiner Buchung genutzt werden.",
       "consentLink": "Datenschutzerklärung",
-      "submit": "Anfrage senden",
-      "submitting": "Wird gesendet",
-      "successTitle": "Anfrage gesendet",
-      "successBody": "Vielen Dank, Ihre Anfrage ist unterwegs. Corine antwortet meist innerhalb von 24 Stunden. Schauen Sie bitte auch in den Spam-Ordner.",
-      "successAgain": "Weitere Anfrage senden",
+      "honeypotLabel": "Dieses Feld bitte leer lassen",
+      "submit": "Diese Termine buchen",
+      "submitting": "Buchung läuft",
+      "noPayment": "Auf dieser Website wird keine Zahlung verlangt.",
+      "successTitle": "Buchung bestätigt",
+      "successBody": "Ihre Termine sind reserviert und eine Bestätigung per E-Mail ist unterwegs. Corine meldet sich wegen Anreise und Bezahlung.",
+      "successReference": "Referenz",
+      "successAgain": "Weitere Termine buchen",
       "errors": {
-        "required": "Diese Angabe brauchen wir, um Ihnen antworten zu können.",
+        "required": "Diese Angabe brauchen wir, um Ihre Buchung zu bestätigen.",
         "email": "Diese E-Mail-Adresse sieht nicht gültig aus.",
-        "dateOrder": "Die Abreise muss nach der Anreise liegen.",
-        "datePast": "Dieses Datum liegt bereits in der Vergangenheit.",
+        "datesMissing": "Wählen Sie ein Anreisedatum und ein Abreisedatum.",
+        "datesRule": "Diese Termine sind nicht buchbar: ein Aufenthalt dauert mindestens eine Nacht, und die früheste Anreise ist morgen.",
         "guests": "Das Studio nimmt höchstens 4 Gäste auf.",
-        "consent": "Bitte setzen Sie das Häkchen, damit wir Ihnen antworten können.",
-        "rateLimited": "Zu viele Anfragen von diesem Gerät. Bitte versuchen Sie es in einigen Minuten erneut.",
-        "server": "Das Senden hat nicht geklappt. Sie können es erneut versuchen oder solange über Airbnb oder Booking gehen."
-      },
-      "honeypotLabel": "Dieses Feld bitte leer lassen"
+        "consent": "Bitte setzen Sie das Häkchen, damit wir Ihre Buchung speichern können.",
+        "unavailable": "Diese Termine wurden gerade vergeben. Der Kalender ist aktualisiert, bitte wählen Sie andere Termine.",
+        "rateLimited": "Zu viele Versuche von diesem Gerät. Bitte versuchen Sie es in einigen Minuten erneut.",
+        "notConfigured": "Die Onlinebuchung ist noch nicht aktiv. Sie können solange über Airbnb oder Booking gehen.",
+        "server": "Die Buchung hat nicht geklappt. Sie können es erneut versuchen oder solange über Airbnb oder Booking gehen."
+      }
+    },
+    "calendar": {
+      "arrival": "Anreise",
+      "departure": "Abreise",
+      "previousMonth": "Vorheriger Monat",
+      "nextMonth": "Nächster Monat",
+      "chooseArrival": "Wählen Sie Ihre Anreise",
+      "chooseDeparture": "Wählen Sie Ihre Abreise",
+      "clear": "Termine löschen",
+      "legendSelected": "Ihr Aufenthalt",
+      "legendBlocked": "Bereits gebucht",
+      "unavailable": "nicht verfügbar",
+      "loading": "Verfügbarkeiten werden geladen",
+      "loadError": "Die Verfügbarkeiten konnten nicht geladen werden. Sie können es erneut versuchen oder über Airbnb oder Booking gehen.",
+      "retry": "Erneut versuchen"
     }
   },
   "footer": {
@@ -392,9 +413,9 @@
         "title": "Der Grundsatz",
         "body": "Diese Website erhebt das Minimum. In den Seitenadressen stehen keine personenbezogenen Daten, es werden keine Werbe-Cookies gesetzt, und kein Dienst Dritter lädt, bevor Sie ausdrücklich zustimmen."
       },
-      "inquiry": {
-        "title": "Ihre Buchungsanfrage",
-        "body": "Wenn Sie das Formular absenden, senden wir der Eigentümerin die von Ihnen eingegebenen Angaben per E-Mail: Name, E-Mail-Adresse, Telefonnummer sofern angegeben, gewünschte Termine, Zahl der Gäste und Nachricht. Sie dienen ausschließlich Ihrer Antwort. Sie werden nicht verkauft, nicht für Werbung genutzt und bleiben für die Dauer des Austauschs im Postfach der Eigentümerin, spätestens drei Jahre nach dem letzten Kontakt werden sie gelöscht. Die Website selbst speichert keine Datenbank."
+      "booking": {
+        "title": "Ihre Buchung",
+        "body": "Wenn Sie buchen, werden Ihre Angaben in unserer Datenbank gespeichert, damit die Termine gesperrt und Ihr Aufenthalt vorbereitet werden können: Name, E-Mail-Adresse, Telefonnummer sofern angegeben, Aufenthaltsdaten, Zahl der Gäste und Nachricht. Sie werden außerdem per E-Mail an Sie und an die Eigentümerin geschickt. Diese Angaben dienen ausschließlich der Abwicklung Ihres Aufenthalts. Sie werden nicht verkauft und nicht für Werbung genutzt. Sie werden für die Dauer des Aufenthalts aufbewahrt, danach höchstens drei Jahre nach dem letzten Kontakt. Der öffentliche Kalender für Airbnb und Booking enthält ausschließlich belegte Termine, niemals Ihren Namen oder andere Angaben zu Ihnen."
       },
       "analytics": {
         "title": "Reichweitenmessung",
@@ -406,7 +427,7 @@
       },
       "hosting": {
         "title": "Hosting und Protokolle",
-        "body": "Die Website wird von Vercel gehostet, das technische Verbindungsprotokolle für Betrieb und Sicherheit vorhält. Die Anfrage-E-Mails werden über Resend versendet, einen Dienst für Transaktions-E-Mails."
+        "body": "Die Website wird von Vercel gehostet, das technische Verbindungsprotokolle für Betrieb und Sicherheit speichert. Die Buchungsdatenbank wird von Supabase in Irland betrieben. Der E-Mail-Versand läuft über Resend, einen Dienst für Transaktionsmails."
       },
       "reviews": {
         "title": "Bewertungen und Profilbilder",
@@ -424,5 +445,36 @@
     "titleTail": "",
     "body": "Der Link ist vielleicht veraltet oder falsch übernommen. Sie können von der Startseite aus neu beginnen.",
     "cta": "Zurück zur Startseite"
+  },
+  "emails": {
+    "booking": {
+      "labels": {
+        "arrival": "Anreise",
+        "departure": "Abreise",
+        "nights": "Nächte",
+        "guests": "Gäste",
+        "name": "Name",
+        "email": "E-Mail",
+        "phone": "Telefon",
+        "message": "Nachricht",
+        "language": "Sprache des Gastes",
+        "reference": "Referenz"
+      },
+      "guest": {
+        "subject": "Ihre Buchung ist bestätigt, {property}",
+        "title": "Ihre Buchung ist bestätigt",
+        "intro": "Guten Tag {name}, Ihre Termine sind gebucht. Hier die Übersicht.",
+        "address": "Die Unterkunft: {address}",
+        "noPayment": "Auf dieser Website wurde keine Zahlung erhoben. Corine meldet sich wegen Anreise und Bezahlung.",
+        "changes": "Für Änderungen oder eine Stornierung antworten Sie einfach auf diese Nachricht.",
+        "signature": "Bis bald, {host}"
+      },
+      "host": {
+        "subject": "Neue Direktbuchung, {from} bis {to}",
+        "title": "Neue Direktbuchung",
+        "intro": "Soeben wurde über die Website eine Buchung erfasst.",
+        "blocked": "Die Termine sind bereits auf der Website und im Kalender für Airbnb und Booking gesperrt."
+      }
+    }
   }
 }

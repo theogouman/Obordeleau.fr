@@ -44,10 +44,12 @@ Useful scripts:
 content/          property.json, host.json, reviews.json, reviews-curation.json
 messages/         fr.json (source of truth), en.json, de.json
 public/images/    hero, gallery, host, area, reviews  (see public/IMAGE-MANIFEST.md)
-src/app/          [locale] pages, api/inquiry, sitemap, robots, icon
+src/app/          [locale] pages, api/{availability,reservations,calendar}, sitemap, robots, icon
 src/components/   presentation, one file per section
 src/i18n/         routing (locales and localized paths), request config, navigation
-src/lib/          content, reviews, seo, structured-data, analytics, assets
+src/lib/          content, reviews, seo, structured-data, analytics, assets,
+                  dates, supabase, availability, ical
+supabase/         migrations/ (schema), functions/sync-ical/ (the iCal importer)
 src/styles/       globals.css (Tailwind theme), tokens.css (brand), _root.css (motion)
 scripts/          no-emdash.mjs, check-reviews.mjs
 tests/e2e/        journey, reviews, accessibility
@@ -78,7 +80,13 @@ All of them are optional for local development. The site degrades on purpose rat
 | `NEXT_PUBLIC_SITE_URL` | Canonical URLs point at `https://www.obordeleau.fr` |
 | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | The map section shows the address and an "open in Maps" link |
 | `NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID` | The map loads without the brand cloud styling |
-| `RESEND_API_KEY`, `INQUIRY_TO_EMAIL`, `INQUIRY_FROM_EMAIL` | In development the inquiry is logged to the console and reports success; in production the endpoint returns 500 |
+| `RESEND_API_KEY`, `INQUIRY_FROM_EMAIL` | In development a booking email is logged to the console; in production the booking is still written, but nobody is notified |
+| `BOOKINGS_TO_EMAIL` (falls back to `INQUIRY_TO_EMAIL`) | The host is not told about a new booking |
+| `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | The calendar cannot load and no booking can be written: the section falls back to its error state and to the Airbnb and Booking links |
+| `ICAL_FEED_TOKEN` | The master `.ics` feed answers 404, so the platforms import nothing |
+
+`SUPABASE_SERVICE_ROLE_KEY` bypasses row level security. It is server side only and must never be
+given a `NEXT_PUBLIC_` prefix.
 
 Restrict the Maps key to the site domain **and** to the Maps JavaScript API, then set a hard daily
 quota of about 300 requests. That keeps the site inside the free tier (SC-007).
@@ -143,12 +151,59 @@ same reason. Add `distanceM` or `walkMinutes` in `content/property.json` when th
   rule cannot fail a deploy. Linting stays a first class gate through `npm run lint` and
   `npm run check`. TypeScript checking and the em dash lint both still block the build.
 
-## Phase 2, parked
+## Phase 2, the booking calendar
 
-Nothing from FR-101 to FR-110 is implemented, by design (constitution VIII). No route, no dependency
-and no environment variable for it exists in this build. The architecture is in `plan.md`, and it
-must not ship until the rate grid, payment terms, Stripe entity, cancellation policy and the Booking
-iCal export are all settled.
+The availability store is a Supabase Postgres database (project `Obordeleau`, region `eu-west-1`).
+Every range is half open, `[start_date, end_date)`, which is what an exclusive iCal `DTEND` means:
+a checkout day is free for the next arrival, everywhere, without conversion.
+
+```text
+Airbnb .ics ─┐
+Booking .ics ─┤ (rows in ical_sources)
+             ▼
+      sync-ical Edge Function ──▶ external_blocks ─┐
+      (pg_cron every 15 min)                       │
+                                manual_blocks ─────┼──▶ busy_ranges()
+                     reservations (confirmed) ─────┘        │
+                                                            ├──▶ GET /api/availability   (calendar)
+                                                            └──▶ GET /api/calendar/<token>.ics
+                                                                     ▲
+                                                        one URL, pasted into both platforms
+```
+
+**The availability rule**, applied in the database and nowhere else: at least one night, arrival no
+earlier than tomorrow in Europe/Paris, and no overlap with a confirmed reservation, a manual block
+or an imported block. `POST /api/reservations` calls `create_direct_reservation`, which re-applies
+the rule and inserts in one statement; an exclusion constraint on `reservations` settles a race, so
+two submissions for the same free nights produce exactly one booking and one clean refusal.
+
+**Fail closed.** `sync-ical` deletes a platform's stale blocks only when every active source of
+that platform was fetched and parsed in this run. A feed that times out, 500s or answers with an
+HTML error page keeps its last good blocks and records `last_error`; it never frees a date.
+
+**Security.** All four tables have RLS on with no policies, so nothing is reachable from a browser;
+the three functions are revoked from `anon` and `authenticated`. `sync-ical` requires an
+`x-sync-secret` header, whose value is generated inside the database and read from `sync_config` by
+both the cron schedule and the function, so it is never copied by hand. The public feed carries a
+token in its path and a generic `SUMMARY:Indisponible`, never a guest name.
+
+**Known residual risk.** Airbnb refreshes an imported calendar every few hours, so a direct booking
+takes a while to appear there. No same day booking and fail closed imports narrow the window; they
+do not close it. A preparation buffer and a configurable minimum stay arrive with the admin step.
+
+### Adding a source
+
+The Airbnb export URL is a row, not an environment variable, so adding Booking later is an insert:
+
+```sql
+insert into ical_sources (platform, url) values ('booking', 'https://...');
+```
+
+### Not yet built
+
+Payment (Phase 3): the write path stays `confirmed`; it becomes a hold converted on payment by
+changing `create_direct_reservation`, not its callers. The admin interface owns manual blocks,
+buffers and minimum stay; the tables are already there.
 
 ## Deploying
 

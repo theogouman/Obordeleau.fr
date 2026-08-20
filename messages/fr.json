@@ -51,7 +51,7 @@
     "titleAccent": "70 mètres",
     "titleTail": "de la plage",
     "subtitle": "Vous posez la voiture et vous l'oubliez. La plage des Sablettes est à deux minutes à pied par le parc, le bateau-bus pour Toulon part au pied de la résidence, les commerces et les restaurants sont dans le quartier.",
-    "ctaPrimary": "Demander mes dates",
+    "ctaPrimary": "Réserver mes dates",
     "ctaSecondary": "Voir le studio",
     "imageAlt": "Le studio Obordeleau et la plage des Sablettes à La Seyne-sur-Mer",
     "badge": "Meublé de tourisme 3 étoiles"
@@ -285,8 +285,8 @@
       "direct": {
         "badge": "Recommandé",
         "title": "En direct avec Corine",
-        "body": "Vous indiquez vos dates et votre message, la réponse arrive en général sous 24 heures. Pas de commission, et la même souplesse sur les horaires.",
-        "cta": "Demander mes dates"
+        "body": "Vous choisissez vos dates sur le calendrier et la réservation est confirmée tout de suite. Pas de commission, et la même souplesse sur les horaires.",
+        "cta": "Choisir mes dates"
       },
       "airbnb": {
         "title": "Sur Airbnb",
@@ -301,35 +301,56 @@
         "external": "Ouvre le site Booking dans un nouvel onglet"
       }
     },
-    "form": {
-      "title": "Votre demande",
-      "intro": "Cette demande n'engage à rien et ne prend aucun paiement. Corine vous répond avec les disponibilités et le tarif.",
-      "arrival": "Arrivée",
-      "departure": "Départ",
+    "booking": {
+      "title": "Vos dates",
+      "intro": "Choisissez votre arrivée puis votre départ. Les dates grisées sont déjà prises, sur ce site comme sur Airbnb et Booking. La réservation est confirmée immédiatement, sans paiement en ligne.",
+      "datesLegend": "Votre séjour",
+      "noDatesYet": "Choisissez une date d'arrivée, puis une date de départ.",
+      "nights": "{count, plural, one {# nuit} other {# nuits}}",
+      "range": "Du {from} au {to}",
       "guests": "Voyageurs",
+      "phone": "Téléphone",
       "name": "Votre nom",
       "email": "Votre email",
-      "phone": "Téléphone",
       "message": "Votre message",
-      "messagePlaceholder": "Nombre d'adultes et d'enfants, besoin d'un lit parapluie, heure d'arrivée approximative...",
-      "consent": "J'accepte que ces informations servent à répondre à ma demande.",
+      "messagePlaceholder": "Heure d'arrivée approximative, besoin d'un lit parapluie, nombre d'adultes et d'enfants...",
+      "consent": "J'accepte que ces informations servent à gérer ma réservation.",
       "consentLink": "Politique de confidentialité",
-      "submit": "Envoyer ma demande",
-      "submitting": "Envoi en cours",
-      "successTitle": "Demande envoyée",
-      "successBody": "Merci, votre demande est partie. Corine répond en général sous 24 heures. Pensez à regarder vos courriers indésirables.",
-      "successAgain": "Envoyer une autre demande",
+      "honeypotLabel": "Laissez ce champ vide",
+      "submit": "Réserver ces dates",
+      "submitting": "Réservation en cours",
+      "noPayment": "Aucun paiement n'est demandé sur ce site.",
+      "successTitle": "Réservation confirmée",
+      "successBody": "Vos dates sont bloquées et un email de confirmation vient de partir. Corine vous écrit pour l'arrivée et le règlement.",
+      "successReference": "Référence",
+      "successAgain": "Réserver d'autres dates",
       "errors": {
-        "required": "Ce champ est nécessaire pour vous répondre.",
+        "required": "Ce champ est nécessaire pour confirmer votre réservation.",
         "email": "Cette adresse email ne semble pas valide.",
-        "dateOrder": "La date de départ doit être après la date d'arrivée.",
-        "datePast": "Cette date est déjà passée.",
+        "datesMissing": "Choisissez une date d'arrivée et une date de départ.",
+        "datesRule": "Ces dates ne sont pas réservables : il faut au moins une nuit, et l'arrivée est possible à partir de demain.",
         "guests": "Le studio accueille 4 voyageurs au maximum.",
-        "consent": "Merci de cocher cette case pour que nous puissions vous répondre.",
-        "rateLimited": "Trop de demandes envoyées depuis cet appareil. Merci de réessayer dans quelques minutes.",
-        "server": "L'envoi a échoué. Vous pouvez réessayer, ou passer par Airbnb ou Booking en attendant."
-      },
-      "honeypotLabel": "Laissez ce champ vide"
+        "consent": "Merci de cocher cette case pour que nous puissions enregistrer votre réservation.",
+        "unavailable": "Ces dates viennent d'être prises. Le calendrier a été mis à jour, choisissez d'autres dates.",
+        "rateLimited": "Trop de tentatives depuis cet appareil. Merci de réessayer dans quelques minutes.",
+        "notConfigured": "La réservation en ligne n'est pas encore active. Vous pouvez passer par Airbnb ou Booking en attendant.",
+        "server": "La réservation a échoué. Vous pouvez réessayer, ou passer par Airbnb ou Booking en attendant."
+      }
+    },
+    "calendar": {
+      "arrival": "arrivée",
+      "departure": "départ",
+      "previousMonth": "Mois précédent",
+      "nextMonth": "Mois suivant",
+      "chooseArrival": "Choisissez votre arrivée",
+      "chooseDeparture": "Choisissez votre départ",
+      "clear": "Effacer les dates",
+      "legendSelected": "Votre séjour",
+      "legendBlocked": "Déjà réservé",
+      "unavailable": "non disponible",
+      "loading": "Chargement des disponibilités",
+      "loadError": "Les disponibilités n'ont pas pu être chargées. Vous pouvez réessayer, ou passer par Airbnb ou Booking.",
+      "retry": "Réessayer"
     }
   },
   "footer": {
@@ -392,9 +413,9 @@
         "title": "Le principe",
         "body": "Ce site collecte le minimum. Aucune donnée personnelle ne circule dans les adresses des pages, aucun cookie publicitaire n'est déposé, et aucun service tiers ne se charge avant votre accord explicite."
       },
-      "inquiry": {
-        "title": "Votre demande de réservation",
-        "body": "Quand vous envoyez le formulaire, nous transmettons par email à la propriétaire les informations que vous avez saisies : nom, adresse email, téléphone si vous le renseignez, dates souhaitées, nombre de voyageurs et message. Ces informations servent uniquement à vous répondre. Elles ne sont pas revendues, ne sont pas utilisées pour de la prospection, et sont conservées dans la boîte mail de la propriétaire le temps des échanges puis supprimées au plus tard trois ans après le dernier contact. Le site ne conserve aucune base de données de son côté."
+      "booking": {
+        "title": "Votre réservation",
+        "body": "Quand vous réservez, vos informations sont enregistrées dans notre base afin de bloquer les dates et de préparer votre séjour : nom, adresse email, téléphone si vous le renseignez, dates de séjour, nombre de voyageurs et message. Elles vous sont également envoyées par email, ainsi qu'à la propriétaire. Ces informations servent uniquement à gérer votre séjour. Elles ne sont pas revendues et ne servent pas à de la prospection. Elles sont conservées le temps du séjour, puis au plus tard trois ans après le dernier contact. Le calendrier public transmis à Airbnb et à Booking ne contient que des dates indisponibles, jamais votre nom ni aucune information vous concernant."
       },
       "analytics": {
         "title": "Mesure d'audience",
@@ -406,7 +427,7 @@
       },
       "hosting": {
         "title": "Hébergement et journaux",
-        "body": "Le site est hébergé par Vercel, qui conserve des journaux techniques de connexion pour assurer le service et la sécurité. L'envoi des emails de demande passe par Resend, un service d'envoi transactionnel."
+        "body": "Le site est hébergé par Vercel, qui conserve des journaux techniques de connexion pour assurer le service et la sécurité. La base de réservation est hébergée par Supabase, en Irlande. L'envoi des emails passe par Resend, un service d'envoi transactionnel."
       },
       "reviews": {
         "title": "Les avis et les photos de profil",
@@ -424,5 +445,36 @@
     "titleTail": "",
     "body": "Le lien est peut-être ancien ou mal recopié. Vous pouvez repartir de l'accueil.",
     "cta": "Retour à l'accueil"
+  },
+  "emails": {
+    "booking": {
+      "labels": {
+        "arrival": "Arrivée",
+        "departure": "Départ",
+        "nights": "Nuits",
+        "guests": "Voyageurs",
+        "name": "Nom",
+        "email": "Email",
+        "phone": "Téléphone",
+        "message": "Message",
+        "language": "Langue du visiteur",
+        "reference": "Référence"
+      },
+      "guest": {
+        "subject": "Votre réservation est confirmée, {property}",
+        "title": "Votre réservation est confirmée",
+        "intro": "Bonjour {name}, vos dates sont réservées. Voici le récapitulatif.",
+        "address": "Le logement : {address}",
+        "noPayment": "Aucun paiement n'a été pris sur ce site. Corine vous écrit pour l'arrivée et le règlement.",
+        "changes": "Pour modifier ou annuler, répondez simplement à ce message.",
+        "signature": "À très bientôt, {host}"
+      },
+      "host": {
+        "subject": "Nouvelle réservation directe, du {from} au {to}",
+        "title": "Nouvelle réservation directe",
+        "intro": "Une réservation vient d'être enregistrée depuis le site.",
+        "blocked": "Les dates sont déjà bloquées sur le site et dans le calendrier envoyé à Airbnb et à Booking."
+      }
+    }
   }
 }
