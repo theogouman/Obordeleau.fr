@@ -20,5 +20,7 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "tests"]
+  // supabase/ holds Deno code with its own globals and runtime, so the Next
+  // build must not type check it.
+  "exclude": ["node_modules", "tests", "supabase"]
 }
