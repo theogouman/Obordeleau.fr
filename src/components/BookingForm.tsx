@@ -1,7 +1,7 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { BookingCalendar } from '@/components/BookingCalendar';
 import { localeTags, type Locale } from '@/i18n/routing';
 import { trackBookingConfirmed } from '@/lib/analytics';
@@ -43,6 +43,10 @@ export function BookingForm({ maxGuests, privacyHref }: Props) {
   const [arrival, setArrival] = useState<string | null>(null);
   const [departure, setDeparture] = useState<string | null>(null);
   const [state, setState] = useState<'editing' | 'sending' | 'booked'>('editing');
+  // Two steps: the dates first, then who is coming. Asking for a name before
+  // knowing the nights are free is asking for nothing.
+  const [step, setStep] = useState<'dates' | 'details'>('dates');
+  const detailsHeading = useRef<HTMLHeadingElement>(null);
   const [reference, setReference] = useState('');
   const [errors, setErrors] = useState<Errors>({});
 
@@ -102,6 +106,20 @@ export function BookingForm({ maxGuests, privacyHref }: Props) {
     setErrors((current) => ({ ...current, dates: undefined, form: undefined }));
   }
 
+  function goToDetails() {
+    if (!arrival || !departure) {
+      setErrors((current) => ({ ...current, dates: t('errors.datesMissing') }));
+      return;
+    }
+    setStep('details');
+  }
+
+  // Moving on is a change of context, so the focus follows it rather than
+  // staying on a button that no longer exists.
+  useEffect(() => {
+    if (step === 'details') detailsHeading.current?.focus();
+  }, [step]);
+
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
@@ -157,6 +175,7 @@ export function BookingForm({ maxGuests, privacyHref }: Props) {
         setErrors({ form: t('errors.unavailable') });
         setArrival(null);
         setDeparture(null);
+        setStep('dates');
         setState('editing');
         void loadAvailability();
         return;
@@ -213,6 +232,7 @@ export function BookingForm({ maxGuests, privacyHref }: Props) {
           type="button"
           onClick={() => {
             setState('editing');
+            setStep('dates');
             setArrival(null);
             setDeparture(null);
             void loadAvailability();
@@ -227,12 +247,26 @@ export function BookingForm({ maxGuests, privacyHref }: Props) {
 
   return (
     <form onSubmit={onSubmit} noValidate className="card p-6">
-      <h3 className="font-display text-2xl">{t('title')}</h3>
-      <p className="mt-2 text-ink-soft">{t('intro')}</p>
+      <p className="text-sm font-medium text-ink-soft">
+        {t('step', { current: step === 'dates' ? 1 : 2, total: 2 })}
+      </p>
 
-      <fieldset className="mt-6">
-        <legend className="text-sm font-medium">{t('datesLegend')}</legend>
-        <div className="mt-1.5">
+      {errors.form ? (
+        <p
+          role="alert"
+          className="mt-3 rounded-[var(--radius-card)] bg-[rgba(206,66,87,0.1)] p-3 text-sm text-raspberry-ink"
+        >
+          {errors.form}
+        </p>
+      ) : null}
+
+      {/* Step one. The inactive step stays in the document, hidden, so going back
+          to change a date does not wipe what has already been typed. */}
+      <div hidden={step !== 'dates'}>
+        <h3 className="mt-1 font-display text-2xl">{t('title')}</h3>
+        <p className="mt-2 text-ink-soft">{t('intro')}</p>
+
+        <div className="mt-6">
           <BookingCalendar
             blocked={blocked}
             firstArrival={firstArrival}
@@ -245,94 +279,117 @@ export function BookingForm({ maxGuests, privacyHref }: Props) {
           />
         </div>
 
-        <p className="mt-2 text-sm text-ink-soft" role="status" aria-live="polite">
+        <p className="mt-3 text-sm text-ink-soft" role="status" aria-live="polite">
           {nights > 0 ? `${readableRange}, ${t('nights', { count: nights })}` : t('noDatesYet')}
         </p>
 
-        {errors.dates ? (
-          <p className="mt-1 text-sm text-raspberry-ink">{errors.dates}</p>
-        ) : null}
-      </fieldset>
+        {errors.dates ? <p className="mt-1 text-sm text-raspberry-ink">{errors.dates}</p> : null}
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <Field
-          label={t('guests')}
-          name="guests"
-          type="number"
-          required
-          min="1"
-          max={String(maxGuests)}
-          defaultValue="2"
-          error={errors.guests}
-        />
-        <Field label={t('phone')} name="phone" type="tel" autoComplete="tel" hint={common('optional')} />
-        <Field label={t('name')} name="name" type="text" required autoComplete="name" error={errors.name} />
-        <Field label={t('email')} name="email" type="email" required autoComplete="email" error={errors.email} />
-      </div>
-
-      <div className="mt-4">
-        <label htmlFor="booking-message" className="block text-sm font-medium">
-          {t('message')}
-          <span className="ms-1 font-normal text-ink-soft">({common('optional')})</span>
-        </label>
-        <textarea
-          id="booking-message"
-          name="message"
-          rows={3}
-          placeholder={t('messagePlaceholder')}
-          className="mt-1.5 w-full rounded-[var(--radius-card)] border border-[rgba(58,42,38,0.22)] bg-cream px-3 py-2"
-        />
-      </div>
-
-      {/* Honeypot: hidden from people, tempting for bots. */}
-      <div aria-hidden="true" className="visually-hidden">
-        <label htmlFor="booking-company">{t('honeypotLabel')}</label>
-        <input id="booking-company" name="company" type="text" tabIndex={-1} autoComplete="off" />
-      </div>
-
-      <div className="mt-4">
-        <label className="flex items-start gap-3 text-sm">
-          <input
-            type="checkbox"
-            name="consent"
-            className="mt-1 size-4 shrink-0 accent-[var(--color-raspberry)]"
-            aria-describedby={errors.consent ? 'booking-consent-error' : undefined}
-          />
-          <span>
-            {t('consent')}{' '}
-            <a className="text-raspberry-ink underline underline-offset-4" href={privacyHref}>
-              {t('consentLink')}
-            </a>
-          </span>
-        </label>
-        {errors.consent ? (
-          <p id="booking-consent-error" className="mt-1 text-sm text-raspberry-ink">
-            {errors.consent}
-          </p>
-        ) : null}
-      </div>
-
-      {errors.form ? (
-        <p
-          role="alert"
-          className="mt-4 rounded-[var(--radius-card)] bg-[rgba(206,66,87,0.1)] p-3 text-sm text-raspberry-ink"
+        <button
+          type="button"
+          onClick={goToDetails}
+          disabled={nights < 1}
+          className="btn btn-primary mt-6 w-full disabled:cursor-not-allowed disabled:opacity-45"
         >
-          {errors.form}
-        </p>
-      ) : null}
+          {t('continue')}
+        </button>
+      </div>
 
-      <button type="submit" disabled={state === 'sending'} className="btn btn-primary mt-6 w-full">
-        {state === 'sending' ? (
-          <>
-            <Spinner />
-            {t('submitting')}
-          </>
-        ) : (
-          t('submit')
-        )}
-      </button>
+      {/* Step two. */}
+      <div hidden={step !== 'details'}>
+        <h3 ref={detailsHeading} tabIndex={-1} className="mt-1 font-display text-2xl">
+          {t('detailsTitle')}
+        </h3>
 
-      <p className="mt-3 text-center text-xs text-ink-soft">{t('noPayment')}</p>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card)] bg-sand px-4 py-3">
+          <p className="text-sm">
+            <span className="font-semibold">{readableRange}</span>
+            {nights > 0 ? (
+              <span className="text-ink-soft">, {t('nights', { count: nights })}</span>
+            ) : null}
+          </p>
+          <button
+            type="button"
+            onClick={() => setStep('dates')}
+            className="text-sm text-raspberry-ink underline underline-offset-4"
+          >
+            {t('changeDates')}
+          </button>
+        </div>
+
+        <p className="mt-3 text-ink-soft">{t('detailsIntro')}</p>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <Field
+            label={t('guests')}
+            name="guests"
+            type="number"
+            required
+            min="1"
+            max={String(maxGuests)}
+            defaultValue="2"
+            error={errors.guests}
+          />
+          <Field label={t('phone')} name="phone" type="tel" autoComplete="tel" hint={common('optional')} />
+          <Field label={t('name')} name="name" type="text" required autoComplete="name" error={errors.name} />
+          <Field label={t('email')} name="email" type="email" required autoComplete="email" error={errors.email} />
+        </div>
+
+        <div className="mt-4">
+          <label htmlFor="booking-message" className="block text-sm font-medium">
+            {t('message')}
+            <span className="ms-1 font-normal text-ink-soft">({common('optional')})</span>
+          </label>
+          <textarea
+            id="booking-message"
+            name="message"
+            rows={3}
+            placeholder={t('messagePlaceholder')}
+            className="mt-1.5 w-full rounded-[var(--radius-card)] border border-[rgba(58,42,38,0.22)] bg-cream px-3 py-2"
+          />
+        </div>
+
+        {/* Honeypot: hidden from people, tempting for bots. */}
+        <div aria-hidden="true" className="visually-hidden">
+          <label htmlFor="booking-company">{t('honeypotLabel')}</label>
+          <input id="booking-company" name="company" type="text" tabIndex={-1} autoComplete="off" />
+        </div>
+
+        <div className="mt-4">
+          <label className="flex items-start gap-3 text-sm">
+            <input
+              type="checkbox"
+              name="consent"
+              className="mt-1 size-4 shrink-0 accent-[var(--color-raspberry)]"
+              aria-describedby={errors.consent ? 'booking-consent-error' : undefined}
+            />
+            <span>
+              {t('consent')}{' '}
+              <a className="text-raspberry-ink underline underline-offset-4" href={privacyHref}>
+                {t('consentLink')}
+              </a>
+            </span>
+          </label>
+          {errors.consent ? (
+            <p id="booking-consent-error" className="mt-1 text-sm text-raspberry-ink">
+              {errors.consent}
+            </p>
+          ) : null}
+        </div>
+
+        <button type="submit" disabled={state === 'sending'} className="btn btn-primary mt-6 w-full">
+          {state === 'sending' ? (
+            <>
+              <Spinner />
+              {t('submitting')}
+            </>
+          ) : (
+            t('submit')
+          )}
+        </button>
+
+        <p className="mt-3 text-center text-xs text-ink-soft">{t('noPayment')}</p>
+      </div>
     </form>
   );
 }

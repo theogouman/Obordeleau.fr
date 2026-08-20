@@ -288,16 +288,20 @@ export function BookingCalendar({
         </button>
       </div>
 
+      {/* Container query, not a viewport one: the calendar sits in a column whose
+          width has nothing to do with the size of the screen. The container is
+          the wrapper, because an element never queries itself. */}
+      <div className="@container/cal mt-4">
       <div
         ref={gridRef}
         onKeyDown={onKeyDown}
-        className="mt-4 grid gap-6 md:grid-cols-2"
+        className="grid gap-6 @[30rem]/cal:grid-cols-2"
         aria-busy={status === 'loading'}
       >
         {months.map((month, index) => (
           <table
             key={month}
-            className={`w-full border-collapse ${index === 1 ? 'hidden md:table' : ''}`}
+            className={`w-full border-collapse ${index === 1 ? 'hidden @[30rem]/cal:table' : ''}`}
           >
             <caption className="mb-2 font-display text-lg capitalize">
               {monthName.format(new Date(`${month}T00:00:00Z`))}
@@ -340,6 +344,7 @@ export function BookingCalendar({
             </tbody>
           </table>
         ))}
+      </div>
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-ink-soft">

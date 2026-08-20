@@ -47,6 +47,7 @@ export function MapSection() {
               openExternal: t('openExternal'),
               openExternalHint: t('openExternalHint'),
               unavailable: t('unavailable'),
+              loadError: t('loadError'),
               markerAlt: t('markerAlt'),
               loading: common('loading'),
               thirdPartyNotice: t('thirdPartyNotice'),

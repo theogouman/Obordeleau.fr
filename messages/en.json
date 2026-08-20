@@ -273,6 +273,7 @@
     "openExternal": "Open in Google Maps",
     "openExternalHint": "Opens a new tab on Google's website.",
     "unavailable": "The map is not configured yet. The full address is shown above.",
+    "loadError": "The map could not load. The full address is shown alongside, and the link below opens the plan in the app of your choice.",
     "markerAlt": "Location of the Obordeleau studio",
     "thirdPartyNotice": "The map is provided by Google Maps.",
     "privacyLinkLabel": "Learn more"
@@ -304,7 +305,11 @@
     "booking": {
       "title": "Your dates",
       "intro": "Pick your arrival, then your departure. Greyed out dates are already taken, here as well as on Airbnb and Booking. The booking is confirmed straight away, with no online payment.",
-      "datesLegend": "Your stay",
+      "step": "Step {current} of {total}",
+      "continue": "Continue",
+      "changeDates": "Change the dates",
+      "detailsTitle": "Your details",
+      "detailsIntro": "Only your details are left. The booking is confirmed as soon as you send it.",
       "noDatesYet": "Pick an arrival date, then a departure date.",
       "nights": "{count, plural, one {# night} other {# nights}}",
       "range": "From {from} to {to}",

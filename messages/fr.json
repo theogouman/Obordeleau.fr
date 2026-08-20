@@ -273,6 +273,7 @@
     "openExternal": "Ouvrir dans Google Maps",
     "openExternalHint": "Ouvre un nouvel onglet sur le site de Google.",
     "unavailable": "La carte n'est pas configurée pour le moment. L'adresse complète reste affichée ci-dessus.",
+    "loadError": "La carte n'a pas pu se charger. L'adresse complète reste affichée à côté, et le lien ci-dessous ouvre le plan dans l'application de votre choix.",
     "markerAlt": "Emplacement du studio Obordeleau",
     "thirdPartyNotice": "La carte est fournie par Google Maps.",
     "privacyLinkLabel": "En savoir plus"
@@ -304,7 +305,11 @@
     "booking": {
       "title": "Vos dates",
       "intro": "Choisissez votre arrivée puis votre départ. Les dates grisées sont déjà prises, sur ce site comme sur Airbnb et Booking. La réservation est confirmée immédiatement, sans paiement en ligne.",
-      "datesLegend": "Votre séjour",
+      "step": "Étape {current} sur {total}",
+      "continue": "Continuer",
+      "changeDates": "Modifier les dates",
+      "detailsTitle": "Vos coordonnées",
+      "detailsIntro": "Il ne reste que vos coordonnées. La réservation est confirmée dès l'envoi.",
       "noDatesYet": "Choisissez une date d'arrivée, puis une date de départ.",
       "nights": "{count, plural, one {# nuit} other {# nuits}}",
       "range": "Du {from} au {to}",

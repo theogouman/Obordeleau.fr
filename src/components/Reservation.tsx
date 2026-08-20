@@ -33,7 +33,7 @@ export function Reservation() {
         />
       </Reveal>
 
-      <div className="mt-10 grid items-start gap-8 lg:grid-cols-[1fr_1fr]">
+      <div className="mt-10 grid items-start gap-8 lg:grid-cols-[0.8fr_1.2fr]">
         <Reveal>
           <div className="space-y-4">
             <div className="card border-2 border-raspberry p-6">

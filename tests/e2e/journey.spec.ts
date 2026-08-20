@@ -50,6 +50,8 @@ test.describe('P1 booking journey', () => {
 
     await page.locator('[data-date="2030-07-01"]').click();
     await page.locator('[data-date="2030-07-04"]').click();
+    // Step two only appears once the dates are settled.
+    await page.getByRole('button', { name: /^continuer$/i }).click();
     await page.getByLabel(/votre nom/i).fill('Test Voyageur');
     await page.getByLabel(/votre email/i).fill('test@example.com');
     await page.getByLabel(/gérer ma réservation/i).check();
@@ -109,6 +111,8 @@ test.describe('P1 booking journey', () => {
 
     await page.locator('[data-date="2030-07-01"]').click();
     await page.locator('[data-date="2030-07-04"]').click();
+    // Step two only appears once the dates are settled.
+    await page.getByRole('button', { name: /^continuer$/i }).click();
     await page.getByLabel(/votre nom/i).fill('Test');
     await page.getByLabel(/votre email/i).fill('test@example.com');
     await page.getByLabel(/gérer ma réservation/i).check();
