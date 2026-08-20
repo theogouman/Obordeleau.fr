@@ -7,8 +7,25 @@ Document de passation. Écrit le 20 août 2026, à la fin de la session de const
 
 La totalité de la Phase 1 est écrite : 89 fichiers, site Next.js multilingue complet, dans
 `/Users/gouman/Library/Mobile Documents/com~apple~CloudDocs/Obordeleau.fr`.
-**Rien n'a jamais été compilé ni exécuté**, parce que la machine n'a aucun runtime Node.
-**Rien n'est commité** et **rien n'est déployé** : tous les fichiers sont non suivis sur `main`.
+Le code est commité et poussé sur `github.com/theogouman/Obordeleau.fr`, branche `main`.
+Le projet Vercel `obordeleau-fr` (équipe `g0uman`) est relié à ce dépôt, branche de production
+`main`, et les domaines `obordeleau.fr` et `www.obordeleau.fr` y sont déjà rattachés.
+Le premier build est passé sans erreur : 21 pages statiques, types validés, lint de copie vert.
+Il reste à publier en production, ce qui se fait par un simple push sur `main`.
+
+## Historique de déploiement
+
+- Premier essai par envoi direct de fichiers : échec, l'appel était tronqué et Vercel n'a reçu
+  qu'une moitié de projet. Méthode abandonnée, le dépôt est trop gros pour cette voie.
+- Bascule sur le dépôt GitHub, qui est désormais la source des déploiements.
+- Build de validation `dpl_8fBWzPayrd3uvocaoQfggrMiTxGK` : vert.
+- Un correctif du matcher de `src/middleware.ts` a suivi ce build : sans l'entrée `'/'` explicite,
+  la racine renvoyait une 404 plateforme, car la page d'accueil française n'est pas préfixée et
+  n'était jamais réécrite vers `/fr`. À vérifier en production.
+
+Note utile : la protection Vercel du projet est réglée sur `all_except_custom_domains`. Toute URL
+en `*.vercel.app` répond donc par une redirection SSO, ce qui rend les tests automatiques peu
+lisibles. Le seul test qui vaut est celui sur `obordeleau.fr`.
 
 ## La prochaine action
 
