@@ -10,8 +10,8 @@ La totalité de la Phase 1 est écrite : 89 fichiers, site Next.js multilingue c
 Le code est commité et poussé sur `github.com/theogouman/Obordeleau.fr`, branche `main`.
 Le projet Vercel `obordeleau-fr` (équipe `g0uman`) est relié à ce dépôt, branche de production
 `main`, et les domaines `obordeleau.fr` et `www.obordeleau.fr` y sont déjà rattachés.
-Le premier build est passé sans erreur : 21 pages statiques, types validés, lint de copie vert.
-Il reste à publier en production, ce qui se fait par un simple push sur `main`.
+**Le site est en production sur https://www.obordeleau.fr**, vérifié route par route.
+Les déploiements suivants sont automatiques : tout push sur `main` publie en production.
 
 ## Historique de déploiement
 
@@ -55,6 +55,25 @@ Inutiles au build : `specs/`, `tests/`, `playwright.config.ts`, `lighthouserc.js
 les `.gitkeep`. Attention, `npm run build` appelle `scripts/no-emdash.mjs` : ce dossier est requis.
 
 **Ne pas déployer sur `Uneo Retail`** (`team_AdDwoPXkX6BGPnEBX9V2vvqH`), c'est une autre entité.
+
+## Vérifié en production le 20 août 2026
+
+Toutes ces routes répondent 200 : `/`, `/en`, `/de`, `/avis`, `/en/reviews`, `/de/bewertungen`,
+`/confidentialite`, `/mentions-legales`, `/robots.txt`, `/sitemap.xml`, `/opengraph-image`.
+
+- Un seul H1 par page, natif dans chaque langue, avec `lang` correct (`fr-FR`, `en-GB`, `de-DE`).
+- `canonical` plus les quatre alternates `fr-FR`, `en-GB`, `de-DE` et `x-default`, dans la page
+  comme dans le sitemap.
+- `/fr` redirige en 307 vers `/`, et `/en/avis` vers `/en/reviews` : les chemins localisés et la
+  canonicalisation fonctionnent.
+- Données structurées `LodgingBusiness` et `VacationRental` présentes, avec les 3 étoiles, le point
+  géographique et les liens Airbnb et Booking en `sameAs`. `aggregateRating` est absent, ce qui est
+  correct tant qu'il n'y a aucun avis.
+- `robots.txt` exclut bien `/api/` et les trois versions des mentions légales.
+- **Zéro script externe dans la page** et zéro requête vers Google, gstatic ou doubleclick. Les
+  quatre occurrences de `google.com/maps` sont les liens « ouvrir dans Maps », pas des chargements.
+  La promesse de la constitution VI tient.
+- `/api/inquiry` répond 405 sur GET et 400 sur une charge invalide.
 
 ## Ce qui a été construit
 
@@ -145,7 +164,11 @@ légales incomplètes. Techniquement complet, visuellement incomplet.
 
 ## Variables d'environnement
 
-Toutes optionnelles, le site se dégrade au lieu de casser. À poser dans Vercel :
+**Aucune n'est encore posée sur le projet Vercel.** Conséquence mesurée en production : un envoi du
+formulaire renvoie `{"error":"not_configured"}`. Le formulaire de demande directe est le coeur de la
+stratégie, c'est donc la première chose à régler.
+
+Toutes optionnelles au sens où le site se dégrade au lieu de casser. À poser dans Vercel :
 
 | Variable | Sans elle |
 | --- | --- |
