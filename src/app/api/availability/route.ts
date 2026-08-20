@@ -59,6 +59,9 @@ export async function GET(request: NextRequest) {
         firstArrival: firstBookableDate(),
         minNights: MIN_NIGHTS,
         blocked: blockedNights(ranges, from, to),
+        // Only so the phone field can open on the right calling code. Read from
+        // the edge header, never stored, and the visitor can change it.
+        country: request.headers.get('x-vercel-ip-country'),
       },
       { headers: { 'Cache-Control': 'no-store' } },
     );

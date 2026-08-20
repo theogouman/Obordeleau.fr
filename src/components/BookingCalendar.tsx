@@ -1,7 +1,7 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { localeTags, type Locale } from '@/i18n/routing';
 import { addDays } from '@/lib/dates';
 
@@ -94,6 +94,7 @@ export function BookingCalendar({
   const [visibleMonth, setVisibleMonth] = useState(() => startOfMonth(arrival ?? firstArrival));
   const [focused, setFocused] = useState(() => arrival ?? firstArrival);
   const [moveFocus, setMoveFocus] = useState(false);
+  const tooltipId = useId();
   const gridRef = useRef<HTMLDivElement>(null);
 
   const monthName = useMemo(
@@ -323,19 +324,29 @@ export function BookingCalendar({
                   {week.map((date, cell) => (
                     <td key={date ?? `empty-${cell}`} className="p-0.5 text-center">
                       {date ? (
-                        <button
-                          type="button"
-                          data-date={date}
-                          tabIndex={date === focused ? 0 : -1}
-                          aria-disabled={!isSelectable(date) || undefined}
-                          aria-current={date === arrival || date === departure ? 'date' : undefined}
-                          aria-label={dayLabel(date)}
-                          onClick={() => select(date)}
-                          onFocus={() => setFocused(date)}
-                          className={dayClasses(date)}
-                        >
-                          <span aria-hidden="true">{Number(date.slice(8, 10))}</span>
-                        </button>
+                        <span className={`t-tt-wrap block ${blocked.has(date) ? '' : 'w-full'}`}>
+                          <button
+                            type="button"
+                            data-date={date}
+                            tabIndex={date === focused ? 0 : -1}
+                            aria-disabled={!isSelectable(date) || undefined}
+                            aria-current={
+                              date === arrival || date === departure ? 'date' : undefined
+                            }
+                            aria-label={dayLabel(date)}
+                            aria-describedby={blocked.has(date) ? `${tooltipId}-${date}` : undefined}
+                            onClick={() => select(date)}
+                            onFocus={() => setFocused(date)}
+                            className={`${dayClasses(date)} ${blocked.has(date) ? 't-tt-trigger' : ''}`}
+                          >
+                            <span aria-hidden="true">{Number(date.slice(8, 10))}</span>
+                          </button>
+                          {blocked.has(date) ? (
+                            <span className="t-tt text-xs font-medium" id={`${tooltipId}-${date}`} role="tooltip">
+                              {t('taken')}
+                            </span>
+                          ) : null}
+                        </span>
                       ) : null}
                     </td>
                   ))}
@@ -348,14 +359,6 @@ export function BookingCalendar({
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-ink-soft">
-        <span className="inline-flex items-center gap-1.5">
-          <span aria-hidden="true" className="size-3 rounded-full bg-raspberry" />
-          {t('legendSelected')}
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <span aria-hidden="true" className="size-3 rounded-full bg-[rgba(58,42,38,0.18)]" />
-          {t('legendBlocked')}
-        </span>
         {status === 'loading' ? <span>{t('loading')}</span> : null}
         {arrival ? (
           <button

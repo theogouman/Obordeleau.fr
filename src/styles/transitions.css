@@ -1,0 +1,209 @@
+/*
+ * transitions.dev snippets, from the transitions-dev skill at commit 3bec612.
+ *
+ * Four are used by the booking flow: card resize (01), page side by side (08),
+ * error state shake (12) and tooltip (17). Two deliberate changes were made.
+ * The em dashes of the original comments are gone, because the copy lint that
+ * guards constitution VII reads source files too. And page side by side, which
+ * ships with exactly two pages keyed by data-page-id, is generalised to the six
+ * steps of the booking wizard: the mechanism, the tokens and the blur are
+ * untouched, only the direction now comes from a data attribute per step.
+ *
+ * Every `prefers-reduced-motion` guard is kept verbatim. They are a hard
+ * requirement of the snippets and of constitution V.
+ */
+
+:root {
+  /* 01 Card resize */
+  --resize-dur: 300ms;
+  --resize-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* 08 Page side by side */
+  --page-slide-dur: 250ms;
+  --page-fade-dur: 250ms;
+  --page-slide-distance: 8px;
+  --page-blur: 3px;
+  --page-stagger: 0ms;
+  --page-exit-enabled: 1;
+  --page-slide-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --page-fade-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* 12 Error state shake */
+  --shake-distance: 6px;
+  --shake-overshoot: 4px;
+  --shake-dur-a: 80ms;
+  --shake-dur-b: 60ms;
+  --shake-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --revert-dur: 280ms;
+
+  /* 17 Tooltip */
+  --tt-in-dur: 150ms;
+  --tt-out-dur: 50ms;
+  --tt-scale: 0.98;
+  --tt-delay: 80ms;
+  --tt-in-ease: ease-out;
+  --tt-out-ease: ease-out;
+  --tt-bg: #ffffff;
+  --tt-fg: #3a2a26;
+}
+
+@layer components {
+  /* 01 Card resize */
+  .t-resize {
+    transition:
+      width var(--resize-dur) var(--resize-ease),
+      height var(--resize-dur) var(--resize-ease);
+    will-change: width, height;
+  }
+
+  /* 08 Page side by side, generalised to N steps */
+  .t-step-slide {
+    position: relative;
+  }
+
+  .t-step-slide .t-step {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(calc(var(--t-step-from-x, 0px) * var(--page-exit-enabled)));
+    filter: blur(calc(var(--page-blur) * var(--page-exit-enabled)));
+    transition:
+      opacity var(--page-fade-dur) var(--page-fade-ease),
+      transform var(--page-slide-dur) var(--page-slide-ease),
+      filter var(--page-slide-dur) var(--page-slide-ease);
+    will-change: opacity, transform, filter;
+  }
+
+  /* A step already answered leaves to the left, one still to come enters from
+     the right, exactly as page 1 and page 2 do in the original snippet. */
+  .t-step-slide .t-step[data-position='before'] {
+    --t-step-from-x: calc(var(--page-slide-distance) * -1);
+  }
+
+  .t-step-slide .t-step[data-position='after'] {
+    --t-step-from-x: var(--page-slide-distance);
+  }
+
+  .t-step-slide .t-step[data-position='active'] {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+    filter: blur(0);
+    transition-delay: var(--page-stagger);
+  }
+
+  /* 12 Error state shake */
+  .t-input {
+    transition: border-color 150ms ease-out;
+    will-change: transform;
+  }
+
+  .t-input.is-error {
+    transition: border-color var(--revert-dur) ease-out;
+  }
+
+  .t-error-msg {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--revert-dur) ease-out,
+      visibility 0s linear var(--revert-dur);
+  }
+
+  .t-input-wrap.is-error .t-error-msg {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity var(--revert-dur) ease-out,
+      visibility 0s linear 0s;
+  }
+
+  .t-input.is-shaking {
+    animation: t-input-shake calc(var(--shake-dur-a) * 2 + var(--shake-dur-b) * 2) linear;
+  }
+
+  /* 17 Tooltip */
+  .t-tt-wrap {
+    position: relative;
+    display: inline-block;
+  }
+
+  .t-tt {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translate(-50%, 0) scale(var(--tt-scale));
+    transform-origin: 50% 100%;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: var(--tt-bg);
+    color: var(--tt-fg);
+    white-space: nowrap;
+    z-index: 20;
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.06),
+      0 2px 6px 0 rgba(0, 0, 0, 0.05),
+      0 4px 42px 0 rgba(0, 0, 0, 0.06);
+    opacity: 0;
+    pointer-events: none;
+    /* The default rule owns the leave state, with no delay, so the tooltip
+       disappears the instant the pointer leaves. */
+    transition:
+      opacity var(--tt-out-dur) var(--tt-out-ease),
+      transform var(--tt-out-dur) var(--tt-out-ease);
+  }
+
+  /* The appear delay belongs only to the hover and focus rule. */
+  .t-tt-wrap:hover .t-tt,
+  .t-tt-trigger:focus-visible + .t-tt {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+    transition-duration: var(--tt-in-dur);
+    transition-timing-function: var(--tt-in-ease);
+    transition-delay: var(--tt-delay);
+  }
+}
+
+@keyframes t-input-shake {
+  0% {
+    transform: translateX(0);
+    animation-timing-function: var(--shake-ease);
+  }
+  28.57% {
+    transform: translateX(var(--shake-distance));
+    animation-timing-function: var(--shake-ease);
+  }
+  57.14% {
+    transform: translateX(calc(var(--shake-distance) * -1));
+    animation-timing-function: var(--shake-ease);
+  }
+  78.57% {
+    transform: translateX(var(--shake-overshoot));
+    animation-timing-function: var(--shake-ease);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-resize {
+    transition: none !important;
+  }
+
+  .t-step-slide .t-step {
+    transition: none !important;
+  }
+
+  .t-input {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .t-tt {
+    transition: none !important;
+  }
+}

@@ -1,56 +1,85 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
-import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type ReactNode,
+} from 'react';
 import { BookingCalendar } from '@/components/BookingCalendar';
 import { localeTags, type Locale } from '@/i18n/routing';
 import { trackBookingConfirmed } from '@/lib/analytics';
 import { addDays, nightsBetween, todayInParis } from '@/lib/dates';
+import { defaultCountry, dialFor, dialOptions, fullPhoneNumber, phoneDigits } from '@/lib/phone';
 
 /**
- * FR-103: the direct booking form.
+ * FR-103: the direct booking flow, one question at a time.
  *
- * The visitor picks a real range on a calendar that greys out what is taken,
- * gives a name and an email, and the nights are held the moment the server
- * accepts. No payment is taken here; that arrives in Phase 3 as a hold turned
- * into a confirmation, which is why this component already talks to a single
- * write endpoint rather than to the table.
+ * The card opens on the calendar and nothing else. Once a stay is picked the
+ * questions arrive one by one, each sliding in from the right while the one
+ * just answered leaves to the left: that is transitions.dev page side by side
+ * (08), generalised to six steps in `src/styles/transitions.css`. The card
+ * follows the height of whichever step is showing, tweened by card resize (01),
+ * a wrong answer shakes its field with error state shake (12), and a night
+ * already taken explains itself through tooltip (17) in the calendar.
+ *
+ * Every step stays mounted, so going back to change an answer never loses one.
  */
 
 type Props = {
   maxGuests: number;
   privacyHref: string;
+  whatsappNumber: string;
 };
 
 type Availability = {
   blocked: ReadonlySet<string>;
   firstArrival: string;
   windowEnd: string;
+  country: string | null;
 };
 
-type Errors = Partial<Record<'dates' | 'guests' | 'name' | 'email' | 'consent' | 'form', string>>;
+type StepId = 'dates' | 'name' | 'email' | 'phone' | 'guests' | 'recap';
+
+const STEPS: readonly StepId[] = ['dates', 'name', 'email', 'phone', 'guests', 'recap'];
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const MIN_PHONE_DIGITS = 6;
+const SHAKE_MS = 280;
 const EMPTY_BLOCKED: ReadonlySet<string> = new Set<string>();
 
-export function BookingForm({ maxGuests, privacyHref }: Props) {
+export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
   const t = useTranslations('reservation.booking');
-  const common = useTranslations('common');
   const locale = useLocale() as Locale;
+  const localeTag = localeTags[locale];
 
   const [availability, setAvailability] = useState<Availability | null>(null);
   const [calendarStatus, setCalendarStatus] = useState<'loading' | 'ready' | 'error'>('loading');
+
+  const [stepIndex, setStepIndex] = useState(0);
   const [arrival, setArrival] = useState<string | null>(null);
   const [departure, setDeparture] = useState<string | null>(null);
-  const [state, setState] = useState<'editing' | 'sending' | 'booked'>('editing');
-  // Two steps: the dates first, then who is coming. Asking for a name before
-  // knowing the nights are free is asking for nothing.
-  const [step, setStep] = useState<'dates' | 'details'>('dates');
-  const detailsHeading = useRef<HTMLHeadingElement>(null);
-  const [reference, setReference] = useState('');
-  const [errors, setErrors] = useState<Errors>({});
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [country, setCountry] = useState(() => defaultCountry(null, locale));
+  const [phone, setPhone] = useState('');
+  const [guests, setGuests] = useState<number | null>(null);
 
+  const [state, setState] = useState<'editing' | 'sending' | 'booked'>('editing');
+  const [booked, setBooked] = useState<{ reference: string; from: string; to: string } | null>(null);
+  const [stepError, setStepError] = useState<string | null>(null);
+  const [shaking, setShaking] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const honeypot = useRef<HTMLInputElement>(null);
   const startedAt = useMemo(() => Date.now(), []);
+  const step = STEPS[stepIndex];
+
+  /* --- availability ------------------------------------------------------ */
 
   const loadAvailability = useCallback(async () => {
     setCalendarStatus('loading');
@@ -63,12 +92,14 @@ export function BookingForm({ maxGuests, privacyHref }: Props) {
         to: string;
         firstArrival: string;
         blocked: string[];
+        country: string | null;
       };
 
       setAvailability({
         blocked: new Set(data.blocked),
         firstArrival: data.firstArrival,
         windowEnd: data.to,
+        country: data.country,
       });
       setCalendarStatus('ready');
     } catch {
@@ -80,75 +111,138 @@ export function BookingForm({ maxGuests, privacyHref }: Props) {
     void loadAvailability();
   }, [loadAvailability]);
 
-  // Until the real window arrives, assume the strictest guess the browser can
-  // make. Nothing is selectable while loading, so this never promises a night.
+  // The phone field opens on the calling code of wherever the visitor is, and
+  // on the language they are reading when the edge did not say.
+  const detectedCountry = availability?.country ?? null;
+  const touchedCountry = useRef(false);
+
+  useEffect(() => {
+    if (touchedCountry.current) return;
+    setCountry(defaultCountry(detectedCountry, locale));
+  }, [detectedCountry, locale]);
+
   const firstArrival = availability?.firstArrival ?? addDays(todayInParis(), 1);
   const windowEnd = availability?.windowEnd ?? addDays(firstArrival, 365);
   const blocked = availability?.blocked ?? EMPTY_BLOCKED;
 
   const nights = arrival && departure ? nightsBetween(arrival, departure) : 0;
 
+  const longDate = useMemo(
+    () => new Intl.DateTimeFormat(localeTag, { dateStyle: 'long', timeZone: 'UTC' }),
+    [localeTag],
+  );
+
   const readableRange = useMemo(() => {
     if (!arrival || !departure) return '';
-    const format = new Intl.DateTimeFormat(localeTags[locale], {
-      dateStyle: 'long',
-      timeZone: 'UTC',
-    });
     return t('range', {
-      from: format.format(new Date(`${arrival}T00:00:00Z`)),
-      to: format.format(new Date(`${departure}T00:00:00Z`)),
+      from: longDate.format(new Date(`${arrival}T00:00:00Z`)),
+      to: longDate.format(new Date(`${departure}T00:00:00Z`)),
     });
-  }, [arrival, departure, locale, t]);
+  }, [arrival, departure, longDate, t]);
+
+  const dials = useMemo(() => dialOptions(localeTag), [localeTag]);
+
+  /* --- the card follows the step that is showing ------------------------- */
+
+  const panelRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const [frameHeight, setFrameHeight] = useState<number>();
+  const [measured, setMeasured] = useState(false);
+
+  useEffect(() => {
+    const panel = panelRefs.current[stepIndex];
+    if (!panel) return;
+
+    const measure = () => setFrameHeight(panel.offsetHeight);
+    measure();
+    setMeasured(true);
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(panel);
+    return () => observer.disconnect();
+  }, [stepIndex, state]);
+
+  /* --- navigation -------------------------------------------------------- */
+
+  const navigated = useRef(false);
+
+  useEffect(() => {
+    if (!navigated.current) return;
+    panelRefs.current[stepIndex]?.querySelector<HTMLElement>('[data-autofocus]')?.focus();
+  }, [stepIndex]);
+
+  function goTo(index: number) {
+    navigated.current = true;
+    setStepError(null);
+    setStepIndex(index);
+  }
+
+  function refuse(message: string) {
+    setStepError(message);
+    setShaking(true);
+    window.setTimeout(() => setShaking(false), SHAKE_MS);
+  }
+
+  function validateStep(): boolean {
+    switch (step) {
+      case 'dates':
+        if (nights < 1) {
+          refuse(t('errors.datesMissing'));
+          return false;
+        }
+        return true;
+      case 'name':
+        if (name.trim().length < 2) {
+          refuse(t('errors.required'));
+          return false;
+        }
+        return true;
+      case 'email':
+        if (!EMAIL_PATTERN.test(email.trim())) {
+          refuse(t(email.trim() === '' ? 'errors.required' : 'errors.email'));
+          return false;
+        }
+        return true;
+      case 'phone':
+        if (phoneDigits(phone).length < MIN_PHONE_DIGITS) {
+          refuse(t(phone.trim() === '' ? 'errors.required' : 'errors.phone'));
+          return false;
+        }
+        return true;
+      case 'guests':
+        if (guests === null) {
+          refuse(t('errors.guests'));
+          return false;
+        }
+        return true;
+      default:
+        return true;
+    }
+  }
+
+  function next() {
+    if (!validateStep()) return;
+    goTo(Math.min(stepIndex + 1, STEPS.length - 1));
+  }
+
+  function chooseGuests(count: number) {
+    setGuests(count);
+    setStepError(null);
+  }
 
   function onRangeChange(nextArrival: string | null, nextDeparture: string | null) {
     setArrival(nextArrival);
     setDeparture(nextDeparture);
-    setErrors((current) => ({ ...current, dates: undefined, form: undefined }));
+    setStepError(null);
+    setFormError(null);
   }
 
-  function goToDetails() {
-    if (!arrival || !departure) {
-      setErrors((current) => ({ ...current, dates: t('errors.datesMissing') }));
-      return;
-    }
-    setStep('details');
-  }
+  /* --- submission -------------------------------------------------------- */
 
-  // Moving on is a change of context, so the focus follows it rather than
-  // staying on a button that no longer exists.
-  useEffect(() => {
-    if (step === 'details') detailsHeading.current?.focus();
-  }, [step]);
-
-  async function onSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const data = new FormData(form);
-
-    const guests = Number(data.get('guests') ?? 0);
-    const name = String(data.get('name') ?? '').trim();
-    const email = String(data.get('email') ?? '').trim();
-    const consent = data.get('consent') === 'on';
-
-    const nextErrors: Errors = {};
-    if (!arrival || !departure) nextErrors.dates = t('errors.datesMissing');
-    if (!name) nextErrors.name = t('errors.required');
-    if (!email) nextErrors.email = t('errors.required');
-    else if (!EMAIL_PATTERN.test(email)) nextErrors.email = t('errors.email');
-    if (!Number.isFinite(guests) || guests < 1 || guests > maxGuests) {
-      nextErrors.guests = t('errors.guests');
-    }
-    if (!consent) nextErrors.consent = t('errors.consent');
-
-    setErrors(nextErrors);
-
-    if (Object.keys(nextErrors).length > 0) {
-      const firstField = Object.keys(nextErrors)[0];
-      form.querySelector<HTMLElement>(`[name="${firstField}"]`)?.focus();
-      return;
-    }
+  async function submit() {
+    if (!arrival || !departure || guests === null) return;
 
     setState('sending');
+    setFormError(null);
 
     try {
       const response = await fetch('/api/reservations', {
@@ -158,296 +252,520 @@ export function BookingForm({ maxGuests, privacyHref }: Props) {
           from: arrival,
           to: departure,
           guests,
-          name,
-          email,
-          phone: String(data.get('phone') ?? '').trim(),
-          message: String(data.get('message') ?? '').trim(),
-          consent,
+          name: name.trim(),
+          email: email.trim(),
+          phone: fullPhoneNumber(country, phone),
+          // Pressing the button is the consent, so there is no box to tick.
+          consent: true,
           locale,
-          company: String(data.get('company') ?? ''),
+          company: honeypot.current?.value ?? '',
           elapsedMs: Date.now() - startedAt,
         }),
       });
 
       if (response.status === 409) {
-        // Someone else committed these nights first. Show what is left rather
-        // than leaving a selection that can no longer be booked.
-        setErrors({ form: t('errors.unavailable') });
+        setFormError(t('errors.unavailable'));
         setArrival(null);
         setDeparture(null);
-        setStep('dates');
         setState('editing');
+        goTo(0);
         void loadAvailability();
         return;
       }
 
       if (response.status === 429) {
-        setErrors({ form: t('errors.rateLimited') });
+        setFormError(t('errors.rateLimited'));
         setState('editing');
         return;
       }
 
       if (response.status === 503) {
-        setErrors({ form: t('errors.notConfigured') });
+        setFormError(t('errors.notConfigured'));
         setState('editing');
         return;
       }
 
       if (!response.ok) {
         const body = (await response.json().catch(() => ({}))) as { error?: string };
-        setErrors({
-          form:
-            body.error === 'too_soon' || body.error === 'min_nights'
-              ? t('errors.datesRule')
-              : t('errors.server'),
-        });
+        setFormError(
+          body.error === 'too_soon' || body.error === 'min_nights'
+            ? t('errors.datesRule')
+            : t('errors.server'),
+        );
         setState('editing');
         return;
       }
 
-      const booked = (await response.json()) as { reference?: string };
+      const confirmed = (await response.json()) as { reference?: string };
 
       trackBookingConfirmed(locale);
-      setReference(booked.reference ?? '');
+      setBooked({ reference: confirmed.reference ?? '', from: arrival, to: departure });
       setState('booked');
-      form.reset();
     } catch {
-      setErrors({ form: t('errors.server') });
+      setFormError(t('errors.server'));
       setState('editing');
     }
   }
 
-  if (state === 'booked') {
+
+  /* --- confirmation ------------------------------------------------------ */
+
+  if (state === 'booked' && booked) {
+    const asDayMonthYear = (isoDate: string) =>
+      `${isoDate.slice(8, 10)}.${isoDate.slice(5, 7)}.${isoDate.slice(0, 4)}`;
+
+    const whatsappHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+      t('whatsappMessage', {
+        from: asDayMonthYear(booked.from),
+        to: asDayMonthYear(booked.to),
+      }),
+    )}`;
+
     return (
-      <div className="card p-6 text-center" role="status" aria-live="polite">
+      <div className="card p-8 text-center" role="status" aria-live="polite">
         <SuccessCheck />
         <h3 className="mt-4 font-display text-2xl">{t('successTitle')}</h3>
         <p className="mt-2 text-ink-soft">{t('successBody')}</p>
-        {reference ? (
+        {booked.reference ? (
           <p className="mt-3 text-sm text-ink-soft">
-            {t('successReference')} <span className="font-semibold text-ink">{reference}</span>
+            {t('successReference')}{' '}
+            <span className="font-semibold text-ink">{booked.reference}</span>
           </p>
         ) : null}
-        <button
-          type="button"
-          onClick={() => {
-            setState('editing');
-            setStep('dates');
-            setArrival(null);
-            setDeparture(null);
-            void loadAvailability();
-          }}
-          className="btn btn-secondary mt-6"
+
+        <a
+          href={whatsappHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn btn-primary mt-6 inline-flex"
         >
-          {t('successAgain')}
-        </button>
+          <WhatsAppMark />
+          {t('whatsappCta')}
+        </a>
       </div>
     );
   }
 
-  return (
-    <form onSubmit={onSubmit} noValidate className="card p-6">
-      <p className="text-sm font-medium text-ink-soft">
-        {t('step', { current: step === 'dates' ? 1 : 2, total: 2 })}
-      </p>
+  /* --- the wizard --------------------------------------------------------- */
 
-      {errors.form ? (
+  const recapIndex = STEPS.indexOf('recap');
+
+  return (
+    <div className="card p-6 sm:p-8">
+      {formError ? (
         <p
           role="alert"
-          className="mt-3 rounded-[var(--radius-card)] bg-[rgba(206,66,87,0.1)] p-3 text-sm text-raspberry-ink"
+          className="mb-5 rounded-[var(--radius-card)] bg-[rgba(206,66,87,0.1)] p-3 text-sm text-raspberry-ink"
         >
-          {errors.form}
+          {formError}
         </p>
       ) : null}
 
-      {/* Step one. The inactive step stays in the document, hidden, so going back
-          to change a date does not wipe what has already been typed. */}
-      <div hidden={step !== 'dates'}>
-        <h3 className="mt-1 font-display text-2xl">{t('title')}</h3>
-        <p className="mt-2 text-ink-soft">{t('intro')}</p>
-
-        <div className="mt-6">
-          <BookingCalendar
-            blocked={blocked}
-            firstArrival={firstArrival}
-            windowEnd={windowEnd}
-            arrival={arrival}
-            departure={departure}
-            onChange={onRangeChange}
-            status={calendarStatus}
-            onRetry={() => void loadAvailability()}
-          />
-        </div>
-
-        <p className="mt-3 text-sm text-ink-soft" role="status" aria-live="polite">
-          {nights > 0 ? `${readableRange}, ${t('nights', { count: nights })}` : t('noDatesYet')}
-        </p>
-
-        {errors.dates ? <p className="mt-1 text-sm text-raspberry-ink">{errors.dates}</p> : null}
-
-        <button
-          type="button"
-          onClick={goToDetails}
-          disabled={nights < 1}
-          className="btn btn-primary mt-6 w-full disabled:cursor-not-allowed disabled:opacity-45"
-        >
-          {t('continue')}
-        </button>
+      {/* Honeypot: hidden from people, tempting for bots. */}
+      <div aria-hidden="true" className="visually-hidden">
+        <label htmlFor="booking-company">{t('honeypotLabel')}</label>
+        <input
+          ref={honeypot}
+          id="booking-company"
+          name="company"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+        />
       </div>
 
-      {/* Step two. */}
-      <div hidden={step !== 'details'}>
-        <h3 ref={detailsHeading} tabIndex={-1} className="mt-1 font-display text-2xl">
-          {t('detailsTitle')}
-        </h3>
+      <div
+        className="t-step-slide t-resize"
+        style={measured && frameHeight ? { height: `${frameHeight}px` } : undefined}
+      >
+        {STEPS.map((id, index) => {
+          const position = index < stepIndex ? 'before' : index > stepIndex ? 'after' : 'active';
+          const active = position === 'active';
 
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card)] bg-sand px-4 py-3">
-          <p className="text-sm">
-            <span className="font-semibold">{readableRange}</span>
-            {nights > 0 ? (
-              <span className="text-ink-soft">, {t('nights', { count: nights })}</span>
-            ) : null}
-          </p>
-          <button
-            type="button"
-            onClick={() => setStep('dates')}
-            className="text-sm text-raspberry-ink underline underline-offset-4"
-          >
-            {t('changeDates')}
-          </button>
-        </div>
+          return (
+            <div
+              key={id}
+              ref={(node) => {
+                panelRefs.current[index] = node;
+              }}
+              data-position={position}
+              inert={active ? undefined : true}
+              // Before the first measurement there is no height to hold the
+              // absolutely placed steps up, so the active one stays in flow.
+              className={`t-step ${measured ? '' : active ? 'static' : 'hidden'}`}
+            >
+              {id === 'dates' ? (
+                <Step
+                  onNext={next}
+                  nextLabel={t('continue')}
+                  nextDisabled={nights < 1}
+                  error={stepError}
+                  shaking={shaking}
+                >
+                  <BookingCalendar
+                    blocked={blocked}
+                    firstArrival={firstArrival}
+                    windowEnd={windowEnd}
+                    arrival={arrival}
+                    departure={departure}
+                    onChange={onRangeChange}
+                    status={calendarStatus}
+                    onRetry={() => void loadAvailability()}
+                  />
+                  <p className="mt-3 text-center text-sm text-ink-soft" role="status" aria-live="polite">
+                    {nights > 0
+                      ? `${readableRange}, ${t('nights', { count: nights })}`
+                      : t('noDatesYet')}
+                  </p>
+                </Step>
+              ) : null}
 
-        <p className="mt-3 text-ink-soft">{t('detailsIntro')}</p>
+              {id === 'name' ? (
+                <Step
+                  onNext={next}
+                  onBack={() => goTo(index - 1)}
+                  backLabel={t('back')}
+                  nextLabel={t('continue')}
+                  error={stepError}
+                  shaking={shaking}
+                >
+                  <Question htmlFor="booking-name" label={t('questions.name')}>
+                    <input
+                      id="booking-name"
+                      data-autofocus
+                      type="text"
+                      autoComplete="name"
+                      placeholder={t('placeholders.name')}
+                      value={name}
+                      onChange={(event) => setName(event.target.value)}
+                      onKeyDown={submitOnEnter(next)}
+                      aria-invalid={stepError ? 'true' : undefined}
+                      className={fieldClass(shaking, Boolean(stepError))}
+                    />
+                  </Question>
+                </Step>
+              ) : null}
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          <Field
-            label={t('guests')}
-            name="guests"
-            type="number"
-            required
-            min="1"
-            max={String(maxGuests)}
-            defaultValue="2"
-            error={errors.guests}
-          />
-          <Field label={t('phone')} name="phone" type="tel" autoComplete="tel" hint={common('optional')} />
-          <Field label={t('name')} name="name" type="text" required autoComplete="name" error={errors.name} />
-          <Field label={t('email')} name="email" type="email" required autoComplete="email" error={errors.email} />
-        </div>
+              {id === 'email' ? (
+                <Step
+                  onNext={next}
+                  onBack={() => goTo(index - 1)}
+                  backLabel={t('back')}
+                  nextLabel={t('continue')}
+                  error={stepError}
+                  shaking={shaking}
+                >
+                  <Question htmlFor="booking-email" label={t('questions.email')}>
+                    <input
+                      id="booking-email"
+                      data-autofocus
+                      type="email"
+                      inputMode="email"
+                      autoComplete="email"
+                      placeholder={t('placeholders.email')}
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
+                      onKeyDown={submitOnEnter(next)}
+                      aria-invalid={stepError ? 'true' : undefined}
+                      className={fieldClass(shaking, Boolean(stepError))}
+                    />
+                  </Question>
+                </Step>
+              ) : null}
 
-        <div className="mt-4">
-          <label htmlFor="booking-message" className="block text-sm font-medium">
-            {t('message')}
-            <span className="ms-1 font-normal text-ink-soft">({common('optional')})</span>
-          </label>
-          <textarea
-            id="booking-message"
-            name="message"
-            rows={3}
-            placeholder={t('messagePlaceholder')}
-            className="mt-1.5 w-full rounded-[var(--radius-card)] border border-[rgba(58,42,38,0.22)] bg-cream px-3 py-2"
-          />
-        </div>
+              {id === 'phone' ? (
+                <Step
+                  onNext={next}
+                  onBack={() => goTo(index - 1)}
+                  backLabel={t('back')}
+                  nextLabel={t('continue')}
+                  error={stepError}
+                  shaking={shaking}
+                >
+                  <Question htmlFor="booking-phone" label={t('questions.phone')}>
+                    <div className="flex gap-2">
+                      <label htmlFor="booking-dial" className="visually-hidden">
+                        {t('questions.dial')}
+                      </label>
+                      <select
+                        id="booking-dial"
+                        value={country}
+                        onChange={(event) => {
+                          touchedCountry.current = true;
+                          setCountry(event.target.value);
+                        }}
+                        className="shrink-0 rounded-[var(--radius-card)] border border-[rgba(58,42,38,0.22)] bg-cream px-2 py-3 text-base"
+                      >
+                        <optgroup label={t('questions.dialCommon')}>
+                          {dials.priority.map((option) => (
+                            <option key={option.country} value={option.country}>
+                              {option.flag} {option.name} +{option.dial}
+                            </option>
+                          ))}
+                        </optgroup>
+                        <optgroup label={t('questions.dialAll')}>
+                          {dials.rest.map((option) => (
+                            <option key={option.country} value={option.country}>
+                              {option.flag} {option.name} +{option.dial}
+                            </option>
+                          ))}
+                        </optgroup>
+                      </select>
+                      <div className="relative flex-1">
+                        <span
+                          aria-hidden="true"
+                          className="pointer-events-none absolute inset-y-0 start-3 flex items-center text-ink-soft"
+                        >
+                          +{dialFor(country)}
+                        </span>
+                        <input
+                          id="booking-phone"
+                          data-autofocus
+                          type="tel"
+                          inputMode="tel"
+                          autoComplete="tel-national"
+                          placeholder={t('placeholders.phone')}
+                          value={phone}
+                          onChange={(event) => setPhone(event.target.value)}
+                          onKeyDown={submitOnEnter(next)}
+                          aria-invalid={stepError ? 'true' : undefined}
+                          className={`${fieldClass(shaking, Boolean(stepError))} ps-14`}
+                        />
+                      </div>
+                    </div>
+                  </Question>
+                </Step>
+              ) : null}
 
-        {/* Honeypot: hidden from people, tempting for bots. */}
-        <div aria-hidden="true" className="visually-hidden">
-          <label htmlFor="booking-company">{t('honeypotLabel')}</label>
-          <input id="booking-company" name="company" type="text" tabIndex={-1} autoComplete="off" />
-        </div>
+              {id === 'guests' ? (
+                <Step
+                  onNext={next}
+                  nextLabel={t('continue')}
+                  onBack={() => goTo(index - 1)}
+                  backLabel={t('back')}
+                  error={stepError}
+                  shaking={shaking}
+                >
+                  <fieldset>
+                    <legend className="font-display text-xl">{t('questions.guests')}</legend>
+                    <div className="mt-4 grid grid-cols-4 gap-3">
+                      {Array.from({ length: maxGuests }, (_, seat) => seat + 1).map((count) => (
+                        <label
+                          key={count}
+                          data-guests={count}
+                          className={`flex cursor-pointer items-center justify-center rounded-[var(--radius-card)] border py-4 text-lg font-semibold transition-colors ${
+                            guests === count
+                              ? 'border-raspberry bg-raspberry text-white'
+                              : 'border-[rgba(58,42,38,0.22)] bg-cream hover:border-ink'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="guests"
+                            value={count}
+                            checked={guests === count}
+                            onChange={() => chooseGuests(count)}
+                            className="visually-hidden peer"
+                            {...(count === 1 ? { 'data-autofocus': true } : {})}
+                          />
+                          <span className="peer-focus-visible:underline peer-focus-visible:underline-offset-4">
+                            {count}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
+                </Step>
+              ) : null}
 
-        <div className="mt-4">
-          <label className="flex items-start gap-3 text-sm">
-            <input
-              type="checkbox"
-              name="consent"
-              className="mt-1 size-4 shrink-0 accent-[var(--color-raspberry)]"
-              aria-describedby={errors.consent ? 'booking-consent-error' : undefined}
-            />
-            <span>
-              {t('consent')}{' '}
-              <a className="text-raspberry-ink underline underline-offset-4" href={privacyHref}>
-                {t('consentLink')}
-              </a>
-            </span>
-          </label>
-          {errors.consent ? (
-            <p id="booking-consent-error" className="mt-1 text-sm text-raspberry-ink">
-              {errors.consent}
-            </p>
-          ) : null}
-        </div>
+              {id === 'recap' ? (
+                <div>
+                  <h3 className="font-display text-xl">{t('recapTitle')}</h3>
 
-        <button type="submit" disabled={state === 'sending'} className="btn btn-primary mt-6 w-full">
-          {state === 'sending' ? (
-            <>
-              <Spinner />
-              {t('submitting')}
-            </>
-          ) : (
-            t('submit')
-          )}
-        </button>
+                  <dl className="mt-4 divide-y divide-[rgba(58,42,38,0.12)]">
+                    <RecapRow
+                      label={t('questions.dates')}
+                      value={`${readableRange}, ${t('nights', { count: nights })}`}
+                      onEdit={() => goTo(STEPS.indexOf('dates'))}
+                      editLabel={t('edit')}
+                    />
+                    <RecapRow
+                      label={t('questions.name')}
+                      value={name.trim()}
+                      onEdit={() => goTo(STEPS.indexOf('name'))}
+                      editLabel={t('edit')}
+                    />
+                    <RecapRow
+                      label={t('questions.email')}
+                      value={email.trim()}
+                      onEdit={() => goTo(STEPS.indexOf('email'))}
+                      editLabel={t('edit')}
+                    />
+                    <RecapRow
+                      label={t('questions.phone')}
+                      value={fullPhoneNumber(country, phone)}
+                      onEdit={() => goTo(STEPS.indexOf('phone'))}
+                      editLabel={t('edit')}
+                    />
+                    <RecapRow
+                      label={t('questions.guests')}
+                      value={String(guests ?? '')}
+                      onEdit={() => goTo(STEPS.indexOf('guests'))}
+                      editLabel={t('edit')}
+                    />
+                  </dl>
 
-        <p className="mt-3 text-center text-xs text-ink-soft">{t('noPayment')}</p>
+                  <button
+                    type="button"
+                    onClick={() => void submit()}
+                    disabled={state === 'sending'}
+                    className="btn btn-primary mt-6 w-full"
+                  >
+                    {state === 'sending' ? (
+                      <>
+                        <Spinner />
+                        {t('submitting')}
+                      </>
+                    ) : (
+                      t('submit')
+                    )}
+                  </button>
+
+                  <p className="mt-3 text-center text-xs text-ink-soft">
+                    {t.rich('consentNotice', {
+                      link: (chunks) => (
+                        <a
+                          className="text-raspberry-ink underline underline-offset-4"
+                          href={privacyHref}
+                        >
+                          {chunks}
+                        </a>
+                      ),
+                    })}
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={() => goTo(recapIndex - 1)}
+                    className="mt-4 block w-full text-center text-sm text-ink-soft underline underline-offset-4"
+                  >
+                    {t('back')}
+                  </button>
+                </div>
+              ) : null}
+            </div>
+          );
+        })}
       </div>
-    </form>
+    </div>
   );
 }
 
-type FieldProps = {
-  label: string;
-  name: string;
-  type: string;
-  required?: boolean;
-  error?: string;
-  hint?: string;
-  min?: string;
-  max?: string;
-  defaultValue?: string;
-  autoComplete?: string;
+/* -------------------------------------------------------------------------- */
+
+function submitOnEnter(action: () => void) {
+  return (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    action();
+  };
+}
+
+function fieldClass(shaking: boolean, invalid: boolean): string {
+  return [
+    't-input mt-4 w-full rounded-[var(--radius-card)] border bg-cream px-3 py-3 text-base',
+    invalid ? 'is-error border-raspberry-ink' : 'border-[rgba(58,42,38,0.22)]',
+    shaking && invalid ? 'is-shaking' : '',
+  ].join(' ');
+}
+
+type StepProps = {
+  children: ReactNode;
+  error: string | null;
+  shaking: boolean;
+  onNext?: () => void;
+  nextLabel?: string;
+  nextDisabled?: boolean;
+  onBack?: () => void;
+  backLabel?: string;
 };
 
-function Field({
-  label,
-  name,
-  type,
-  required = false,
-  error,
-  hint,
-  min,
-  max,
-  defaultValue,
-  autoComplete,
-}: FieldProps) {
-  const id = `booking-${name}`;
-  const errorId = `${id}-error`;
+function Step({ children, error, onNext, nextLabel, nextDisabled, onBack, backLabel }: StepProps) {
+  return (
+    <div className={`t-input-wrap ${error ? 'is-error' : ''}`}>
+      {children}
 
+      <p className="t-error-msg mt-2 text-sm text-raspberry-ink" role="alert">
+        {error ?? ''}
+      </p>
+
+      {onNext && nextLabel ? (
+        <button
+          type="button"
+          onClick={onNext}
+          disabled={nextDisabled}
+          className="btn btn-primary mt-4 w-full disabled:cursor-not-allowed disabled:opacity-45"
+        >
+          {nextLabel}
+        </button>
+      ) : null}
+
+      {onBack && backLabel ? (
+        <button
+          type="button"
+          onClick={onBack}
+          className="mt-4 block w-full text-center text-sm text-ink-soft underline underline-offset-4"
+        >
+          {backLabel}
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
+function Question({
+  htmlFor,
+  label,
+  children,
+}: {
+  htmlFor: string;
+  label: string;
+  children: ReactNode;
+}) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium">
+      <label htmlFor={htmlFor} className="block font-display text-xl">
         {label}
-        {hint ? <span className="ms-1 font-normal text-ink-soft">({hint})</span> : null}
       </label>
-      <input
-        id={id}
-        name={name}
-        type={type}
-        required={required}
-        min={min}
-        max={max}
-        defaultValue={defaultValue}
-        autoComplete={autoComplete}
-        aria-invalid={error ? 'true' : undefined}
-        aria-describedby={error ? errorId : undefined}
-        className={`mt-1.5 w-full rounded-[var(--radius-card)] border bg-cream px-3 py-2 ${
-          error ? 'border-raspberry-ink' : 'border-[rgba(58,42,38,0.22)]'
-        }`}
-      />
-      {error ? (
-        <p id={errorId} className="mt-1 text-sm text-raspberry-ink">
-          {error}
-        </p>
-      ) : null}
+      {children}
+    </div>
+  );
+}
+
+function RecapRow({
+  label,
+  value,
+  onEdit,
+  editLabel,
+}: {
+  label: string;
+  value: string;
+  onEdit: () => void;
+  editLabel: string;
+}) {
+  return (
+    <div className="flex items-baseline justify-between gap-4 py-3">
+      <div className="min-w-0">
+        <dt className="text-xs uppercase tracking-[0.14em] text-ink-soft">{label}</dt>
+        <dd className="truncate font-medium">{value}</dd>
+      </div>
+      <button
+        type="button"
+        onClick={onEdit}
+        className="shrink-0 text-sm text-raspberry-ink underline underline-offset-4"
+      >
+        {editLabel}
+      </button>
     </div>
   );
 }
@@ -466,6 +784,17 @@ function Spinner() {
           repeatCount="indefinite"
         />
       </path>
+    </svg>
+  );
+}
+
+function WhatsAppMark() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+      <path
+        fill="currentColor"
+        d="M12 2a10 10 0 0 0-8.7 15L2 22l5.1-1.3A10 10 0 1 0 12 2zm0 2a8 8 0 1 1-4.2 14.8l-.3-.2-2.6.7.7-2.5-.2-.3A8 8 0 0 1 12 4zm-3.3 4c-.2 0-.5.1-.7.4-.2.3-.8.8-.8 1.9s.8 2.2.9 2.3c.1.2 1.6 2.6 4 3.5 1.9.8 2.3.6 2.7.6.4 0 1.3-.5 1.5-1.1.2-.6.2-1 .1-1.1l-.6-.3-1.4-.7c-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1-.2-.1-.9-.4-1.8-1.1-.7-.6-1.1-1.3-1.2-1.5-.1-.2 0-.4.1-.5l.4-.5.2-.4v-.4L9.4 8.4c-.2-.4-.4-.4-.5-.4z"
+      />
     </svg>
   );
 }
