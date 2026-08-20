@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import './tokens.css';
 @import './_root.css';
+@import './transitions.css';
 
 @theme {
   --color-cream: #faf7f2;

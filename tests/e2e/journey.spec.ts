@@ -9,7 +9,7 @@ test.describe('P1 booking journey', () => {
     await expect(h1).toBeVisible();
     await expect(h1).toContainText('70');
 
-    await expect(page.getByRole('link', { name: /demander mes dates/i }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /réserver mes dates/i }).first()).toBeVisible();
   });
 
   test('the three channels are present and point at the real listings', async ({ page }) => {
@@ -23,45 +23,112 @@ test.describe('P1 booking journey', () => {
     await expect(airbnb).toHaveAttribute('rel', /noopener/);
   });
 
-  test('an inquiry can be submitted and confirms to the visitor', async ({ page }) => {
-    await page.route('**/api/inquiry', async (route) => {
-      await route.fulfill({ status: 200, json: { ok: true } });
+  const AVAILABILITY = {
+    from: '2030-07-01',
+    to: '2031-06-30',
+    firstArrival: '2030-07-01',
+    minNights: 1,
+    blocked: ['2030-07-05'],
+    country: 'FR',
+  };
+
+  /** Only the active step accepts input: the others are inert and pointer free. */
+  const onStep = (page: import('@playwright/test').Page) =>
+    page.locator('[data-position="active"]');
+
+  test('a direct booking is written and confirmed to the visitor', async ({ page }) => {
+    await page.route('**/api/availability', async (route) => {
+      await route.fulfill({ status: 200, json: AVAILABILITY });
+    });
+
+    let submitted: Record<string, unknown> | null = null;
+    await page.route('**/api/reservations', async (route) => {
+      submitted = route.request().postDataJSON() as Record<string, unknown>;
+      await route.fulfill({
+        status: 200,
+        json: { ok: true, reference: 'AB12CD34', from: '2030-07-01', to: '2030-07-04', nights: 3 },
+      });
     });
 
     await page.goto('/#book');
 
-    await page.getByLabel(/arrivée/i).fill('2030-07-01');
-    await page.getByLabel(/départ/i).fill('2030-07-08');
-    await page.getByLabel(/voyageurs/i).fill('2');
-    await page.getByLabel(/votre nom/i).fill('Test Voyageur');
-    await page.getByLabel(/votre email/i).fill('test@example.com');
-    await page.getByLabel(/ces informations servent/i).check();
+    await page.locator('[data-date="2030-07-01"]').click();
+    await page.locator('[data-date="2030-07-04"]').click();
+    await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
 
-    // The endpoint rejects submissions filled in under 2.5 seconds.
-    await page.waitForTimeout(2800);
-    await page.getByRole('button', { name: /envoyer ma demande/i }).click();
+    await onStep(page).getByLabel(/votre nom complet/i).fill('Test Voyageur');
+    await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
 
-    await expect(page.getByText(/demande envoyée/i)).toBeVisible();
+    await onStep(page).getByLabel(/votre mail/i).fill('test@example.com');
+    await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
+
+    await onStep(page).getByLabel(/votre numéro de téléphone/i).fill('06 12 34 56 78');
+    await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
+
+    await onStep(page).locator('label[data-guests="2"]').click();
+    await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
+
+    // The recap is the last thing between the visitor and a real reservation.
+    await expect(onStep(page).getByText(/ces informations sont-elles correctes/i)).toBeVisible();
+    await onStep(page).getByRole('button', { name: /confirmer la réservation/i }).click();
+
+    await expect(page.getByText(/réservation confirmée/i)).toBeVisible();
+    await expect(page.getByText('AB12CD34')).toBeVisible();
+    await expect(page.getByRole('link', { name: /whatsapp/i })).toHaveAttribute(
+      'href',
+      /wa\.me\/33601995558\?text=.*01\.07\.2030.*04\.07\.2030/,
+    );
+    expect(submitted).toMatchObject({
+      from: '2030-07-01',
+      to: '2030-07-04',
+      guests: 2,
+      phone: '+33 612345678',
+      consent: true,
+    });
   });
 
-  test('an inquiry with reversed dates is refused before any request', async ({ page }) => {
-    let called = false;
-    await page.route('**/api/inquiry', async (route) => {
-      called = true;
-      await route.fulfill({ status: 200, json: { ok: true } });
+  test('a night taken elsewhere is refused and says why', async ({ page }) => {
+    await page.route('**/api/availability', async (route) => {
+      await route.fulfill({ status: 200, json: AVAILABILITY });
     });
 
     await page.goto('/#book');
-    await page.getByLabel(/arrivée/i).fill('2030-07-08');
-    await page.getByLabel(/départ/i).fill('2030-07-01');
-    await page.getByLabel(/votre nom/i).fill('Test');
-    await page.getByLabel(/votre email/i).fill('test@example.com');
-    await page.getByLabel(/ces informations servent/i).check();
-    await page.waitForTimeout(2800);
-    await page.getByRole('button', { name: /envoyer ma demande/i }).click();
 
-    await expect(page.getByText(/après la date d'arrivée/i)).toBeVisible();
-    expect(called).toBe(false);
+    const taken = page.locator('[data-date="2030-07-05"]');
+    await expect(taken).toHaveAttribute('aria-disabled', 'true');
+    await expect(page.locator('[role="tooltip"]', { hasText: /déjà réservé/i }).first()).toHaveCount(
+      1,
+    );
+
+    await taken.click();
+    // Half open ranges: a busy night blocks arrivals, so nothing is selected.
+    await expect(page.getByText(/choisissez une date d'arrivée/i)).toBeVisible();
+  });
+
+  test('a range taken while the visitor answered is refused cleanly', async ({ page }) => {
+    await page.route('**/api/availability', async (route) => {
+      await route.fulfill({ status: 200, json: { ...AVAILABILITY, blocked: [] } });
+    });
+    await page.route('**/api/reservations', async (route) => {
+      await route.fulfill({ status: 409, json: { error: 'unavailable' } });
+    });
+
+    await page.goto('/#book');
+
+    await page.locator('[data-date="2030-07-01"]').click();
+    await page.locator('[data-date="2030-07-04"]').click();
+    await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
+    await onStep(page).getByLabel(/votre nom complet/i).fill('Test');
+    await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
+    await onStep(page).getByLabel(/votre mail/i).fill('test@example.com');
+    await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
+    await onStep(page).getByLabel(/votre numéro de téléphone/i).fill('0612345678');
+    await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
+    await onStep(page).locator('label[data-guests="2"]').click();
+    await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
+    await onStep(page).getByRole('button', { name: /confirmer la réservation/i }).click();
+
+    await expect(page.getByRole('alert').first()).toContainText(/viennent d'être prises/i);
   });
 });
 

@@ -11,6 +11,7 @@ export function trackBookingIntent(channel: BookingChannel, locale: string) {
   track('booking_intent', { channel, locale });
 }
 
-export function trackInquirySubmitted(locale: string) {
-  track('inquiry_submitted', { locale });
+/** FR-103: a direct booking the server accepted and wrote. */
+export function trackBookingConfirmed(locale: string) {
+  track('booking_confirmed', { locale });
 }

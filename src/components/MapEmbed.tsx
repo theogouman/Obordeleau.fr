@@ -6,6 +6,7 @@ export type MapLabels = {
   openExternal: string;
   openExternalHint: string;
   unavailable: string;
+  loadError: string;
   markerAlt: string;
   loading: string;
   thirdPartyNotice: string;
@@ -47,6 +48,20 @@ export function MapEmbed({
     if (!apiKey) return;
 
     let cancelled = false;
+
+    // Google refuses a key by calling this, and by printing the precise reason
+    // (RefererNotAllowedMapError, OverQuotaMapError, ApiNotActivatedMapError and
+    // friends) to the console. Without this hook the promise below can stay
+    // pending for ever and the frame keeps saying "loading".
+    const previousAuthFailure = window.gm_authFailure;
+    window.gm_authFailure = () => {
+      console.error(
+        '[map] Google refused the Maps JavaScript key. The exact reason is the ' +
+          '"Google Maps JavaScript API error: ...MapError" line in this console.',
+      );
+      previousAuthFailure?.();
+      if (!cancelled) setStatus('error');
+    };
 
     const load = async () => {
       const existing = document.querySelector<HTMLScriptElement>('script[data-google-maps]');
@@ -113,12 +128,14 @@ export function MapEmbed({
       if (!cancelled) setStatus('ready');
     };
 
-    load().catch(() => {
+    load().catch((error) => {
+      console.error('[map] could not initialise Google Maps', error);
       if (!cancelled) setStatus('error');
     });
 
     return () => {
       cancelled = true;
+      window.gm_authFailure = previousAuthFailure;
     };
   }, [apiKey, mapId, latitude, longitude, locale, labels.markerAlt]);
 
@@ -159,7 +176,7 @@ export function MapEmbed({
         ) : null}
         {status === 'error' ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-sand p-6 text-center">
-            <p className="text-ink-soft">{labels.unavailable}</p>
+            <p className="text-ink-soft">{labels.loadError}</p>
             <a
               className="btn btn-secondary"
               href={externalUrl}

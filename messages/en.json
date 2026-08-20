@@ -51,7 +51,7 @@
     "titleAccent": "70 metres",
     "titleTail": "from the beach",
     "subtitle": "Park the car and forget about it. The sandy beach at Les Sablettes is a two minute walk through the park, the shuttle boat to Toulon leaves from the foot of the building, and the shops and restaurants are all in the neighbourhood.",
-    "ctaPrimary": "Ask about your dates",
+    "ctaPrimary": "Book your dates",
     "ctaSecondary": "See the studio",
     "imageAlt": "The Obordeleau studio and the beach at Les Sablettes, La Seyne-sur-Mer",
     "badge": "3-star classified holiday rental"
@@ -273,6 +273,7 @@
     "openExternal": "Open in Google Maps",
     "openExternalHint": "Opens a new tab on Google's website.",
     "unavailable": "The map is not configured yet. The full address is shown above.",
+    "loadError": "The map could not load. The full address is shown alongside, and the link below opens the plan in the app of your choice.",
     "markerAlt": "Location of the Obordeleau studio",
     "thirdPartyNotice": "The map is provided by Google Maps.",
     "privacyLinkLabel": "Learn more"
@@ -282,12 +283,7 @@
     "titleAccent": "come",
     "titleTail": "?",
     "channels": {
-      "direct": {
-        "badge": "Recommended",
-        "title": "Direct with Corine",
-        "body": "Send your dates and your message, and you usually have an answer within 24 hours. No commission, and the same flexibility on arrival times.",
-        "cta": "Ask about your dates"
-      },
+      "alsoOn": "The studio is also listed on",
       "airbnb": {
         "title": "On Airbnb",
         "body": "The listing and its reviews are there under your usual account.",
@@ -301,35 +297,65 @@
         "external": "Opens the Booking website in a new tab"
       }
     },
-    "form": {
-      "title": "Your inquiry",
-      "intro": "This inquiry commits you to nothing and takes no payment. Corine replies with availability and the rate.",
-      "arrival": "Arrival",
-      "departure": "Departure",
-      "guests": "Guests",
-      "name": "Your name",
-      "email": "Your email",
-      "phone": "Phone",
-      "message": "Your message",
-      "messagePlaceholder": "Number of adults and children, travel cot needed, rough arrival time...",
-      "consent": "I agree that these details are used to answer my inquiry.",
-      "consentLink": "Privacy policy",
-      "submit": "Send my inquiry",
-      "submitting": "Sending",
-      "successTitle": "Inquiry sent",
-      "successBody": "Thank you, your inquiry is on its way. Corine usually replies within 24 hours. Do have a look in your spam folder as well.",
-      "successAgain": "Send another inquiry",
-      "errors": {
-        "required": "We need this to be able to answer you.",
-        "email": "This email address does not look valid.",
-        "dateOrder": "The departure date must be after the arrival date.",
-        "datePast": "That date has already passed.",
-        "guests": "The studio takes 4 guests at most.",
-        "consent": "Please tick this box so that we can reply to you.",
-        "rateLimited": "Too many inquiries sent from this device. Please try again in a few minutes.",
-        "server": "Sending failed. You can try again, or go through Airbnb or Booking in the meantime."
+    "booking": {
+      "noDatesYet": "Pick an arrival date, then a departure date.",
+      "nights": "{count, plural, one {# night} other {# nights}}",
+      "range": "From {from} to {to}",
+      "continue": "Continue",
+      "back": "Back",
+      "edit": "Change",
+      "questions": {
+        "dates": "Your dates",
+        "name": "Your full name",
+        "email": "Your email",
+        "phone": "Your phone number",
+        "guests": "Number of guests",
+        "dial": "Country code",
+        "dialCommon": "Most often",
+        "dialAll": "All countries"
       },
-      "honeypotLabel": "Leave this field empty"
+      "placeholders": {
+        "name": "Ex: Corine PIERRET",
+        "email": "Ex: corinepierret@gmail.com",
+        "phone": "06 00 00 00 00"
+      },
+      "recapTitle": "Is all of this correct?",
+      "submit": "Confirm the booking",
+      "submitting": "Booking",
+      "noPayment": "No payment is taken on this site.",
+      "consentNotice": "By continuing, you accept the <link>privacy policy</link>.",
+      "honeypotLabel": "Leave this field empty",
+      "successTitle": "Booking confirmed",
+      "successBody": "Your dates are held and a confirmation email is on its way. Corine will write to you about arrival and payment.",
+      "successReference": "Reference",
+      "whatsappCta": "Message Corine on WhatsApp",
+      "whatsappMessage": "Hello Corine,\nWe have just booked your studio from {from} to {to} on your website.\n\nWe have a few questions:\n\n",
+      "errors": {
+        "required": "We need this answer to confirm your booking.",
+        "email": "This email address does not look valid.",
+        "phone": "This number does not look valid.",
+        "datesMissing": "Pick an arrival date and a departure date.",
+        "datesRule": "These dates cannot be booked: a stay is at least one night, and the earliest arrival is tomorrow.",
+        "guests": "Choose how many of you are coming.",
+        "unavailable": "Those dates have just been taken. The calendar has been refreshed, please pick other dates.",
+        "rateLimited": "Too many attempts from this device. Please try again in a few minutes.",
+        "notConfigured": "Online booking is not live yet. You can go through Airbnb or Booking in the meantime.",
+        "server": "The booking failed. You can try again, or go through Airbnb or Booking in the meantime."
+      }
+    },
+    "calendar": {
+      "arrival": "arrival",
+      "departure": "departure",
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month",
+      "chooseArrival": "Choose your arrival",
+      "chooseDeparture": "Choose your departure",
+      "clear": "Clear dates",
+      "unavailable": "not available",
+      "loading": "Loading availability",
+      "loadError": "Availability could not be loaded. You can try again, or go through Airbnb or Booking.",
+      "retry": "Try again",
+      "taken": "Already booked"
     }
   },
   "footer": {
@@ -392,9 +418,9 @@
         "title": "The principle",
         "body": "This site collects the minimum. No personal data travels in page addresses, no advertising cookie is set, and no third party service loads before you explicitly agree."
       },
-      "inquiry": {
-        "title": "Your booking inquiry",
-        "body": "When you send the form, we email the owner the details you entered: name, email address, phone number if you give one, requested dates, number of guests and message. They are used only to reply to you. They are never sold, never used for marketing, and they stay in the owner's mailbox for the length of the exchange, then are deleted at the latest three years after the last contact. The site itself keeps no database."
+      "booking": {
+        "title": "Your booking",
+        "body": "When you book, your details are recorded in our database so that the dates can be held and your stay prepared: name, email address, phone if you give one, stay dates, number of guests and message. They are also emailed to you and to the owner. These details are used only to manage your stay. They are never sold and never used for marketing. They are kept for the length of the stay, then for at most three years after the last contact. The public calendar sent to Airbnb and Booking contains unavailable dates only, never your name nor anything else about you."
       },
       "analytics": {
         "title": "Audience measurement",
@@ -406,7 +432,7 @@
       },
       "hosting": {
         "title": "Hosting and logs",
-        "body": "The site is hosted by Vercel, which keeps technical connection logs to run and secure the service. Inquiry emails are sent through Resend, a transactional email service."
+        "body": "The site is hosted by Vercel, which keeps technical connection logs to run and secure the service. The booking database is hosted by Supabase, in Ireland. Emails are sent through Resend, a transactional email service."
       },
       "reviews": {
         "title": "Reviews and profile photos",
@@ -424,5 +450,36 @@
     "titleTail": "",
     "body": "The link may be old or mistyped. You can start again from the home page.",
     "cta": "Back to the home page"
+  },
+  "emails": {
+    "booking": {
+      "labels": {
+        "arrival": "Arrival",
+        "departure": "Departure",
+        "nights": "Nights",
+        "guests": "Guests",
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "message": "Message",
+        "language": "Visitor language",
+        "reference": "Reference"
+      },
+      "guest": {
+        "subject": "Your booking is confirmed, {property}",
+        "title": "Your booking is confirmed",
+        "intro": "Hello {name}, your dates are booked. Here is the summary.",
+        "address": "The studio: {address}",
+        "noPayment": "No payment was taken on this site. Corine will write to you about arrival and payment.",
+        "changes": "To change or cancel, simply reply to this message.",
+        "signature": "See you soon, {host}"
+      },
+      "host": {
+        "subject": "New direct booking, {from} to {to}",
+        "title": "New direct booking",
+        "intro": "A booking has just been recorded from the website.",
+        "blocked": "The dates are already blocked on the site and in the calendar sent to Airbnb and Booking."
+      }
+    }
   }
 }
