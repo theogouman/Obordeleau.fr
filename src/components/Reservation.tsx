@@ -30,7 +30,6 @@ export function Reservation() {
           accent={t('titleAccent')}
           tail={t('titleTail')}
         />
-        <p className="mt-4 text-lg text-ink-soft">{t('intro')}</p>
       </Reveal>
 
       <div className="mt-10 grid items-start gap-8 lg:grid-cols-[1fr_1fr]">

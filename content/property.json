@@ -23,7 +23,7 @@
     "bedrooms": 0,
     "beds": 2,
     "bathrooms": 1,
-    "sizeSqm": 35,
+    "sizeSqm": 33,
     "sleepingArrangement": [
       "real-bed",
       "sofa-bed"
@@ -50,25 +50,25 @@
   "quickFacts": [
     {
       "id": "beach",
-      "value": "70",
-      "unit": "m",
+      "value": "1",
+      "unit": "min",
       "confirmed": true
     },
     {
       "id": "size",
-      "value": "35",
+      "value": "33",
       "unit": "m2",
       "confirmed": true
     },
     {
       "id": "guests",
-      "value": "4",
+      "value": null,
       "unit": null,
       "confirmed": true
     },
     {
-      "id": "stars",
-      "value": "3",
+      "id": "equipped",
+      "value": null,
       "unit": null,
       "confirmed": true
     }
@@ -154,7 +154,7 @@
     {
       "id": "beach",
       "distanceM": 70,
-      "walkMinutes": 2,
+      "walkMinutes": 1,
       "confirmed": true
     },
     {
@@ -186,20 +186,9 @@
       "distanceM": null,
       "walkMinutes": null,
       "confirmed": true
-    },
-    {
-      "id": "toulon",
-      "distanceM": null,
-      "walkMinutes": null,
-      "confirmed": true
     }
   ],
-  "honestNotes": [
-    "compact",
-    "bed-between-walls",
-    "light",
-    "mosquitoes"
-  ],
+  "honestNotes": [],
   "gallery": [
     {
       "file": "gallery-01.jpg",

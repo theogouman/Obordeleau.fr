@@ -14,7 +14,3 @@ export function trackBookingIntent(channel: BookingChannel, locale: string) {
 export function trackInquirySubmitted(locale: string) {
   track('inquiry_submitted', { locale });
 }
-
-export function trackMapConsent(locale: string) {
-  track('map_consent_granted', { locale });
-}

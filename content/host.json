@@ -1,7 +1,7 @@
 {
   "$comment": "The host speaks in the first person on the site (constitution VII). Bio blocks live in messages/*.json under 'about.paragraphs' so they are translatable; this file holds the facts and the routing.",
   "firstName": "Corine",
-  "portrait": "corine.jpg",
+  "portrait": "corine-pierret.png",
   "showPortrait": true,
   "inquiryRouting": {
     "toEnv": "INQUIRY_TO_EMAIL",
@@ -11,5 +11,10 @@
     "flexibleArrivalDeparture": true,
     "welcomeTouches": true,
     "linensAndTowelsProvided": true
-  }
+  },
+  "contact": {
+    "whatsappNumber": "33601995558",
+    "email": "corinepierret@gmail.com"
+  },
+  "classificationLogo": "meuble-de-tourisme.png"
 }

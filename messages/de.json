@@ -54,37 +54,37 @@
     "ctaPrimary": "Termine anfragen",
     "ctaSecondary": "Das Studio ansehen",
     "imageAlt": "Das Studio Obordeleau und der Strand von Les Sablettes in La Seyne-sur-Mer",
-    "badge": "Als 3-Sterne-Ferienwohnung klassifiziert",
-    "quotesLabel": "Das sagen unsere Gäste"
+    "badge": "Als 3-Sterne-Ferienwohnung klassifiziert"
   },
   "quickFacts": {
     "title": "Auf einen Blick",
     "beach": {
       "label": "zum Strand",
-      "detail": "zu Fuß durch den Park"
+      "detail": "zu Fuß"
     },
     "size": {
       "label": "Wohnfläche",
       "detail": "klimatisiert"
     },
     "guests": {
-      "label": "Gäste",
-      "detail": "Doppelbett und Schlafsofa"
-    },
-    "stars": {
-      "label": "Sterne",
-      "detail": "offiziell klassifiziert"
+      "label": "1 bis 4 Gäste",
+      "detail": ""
     },
     "unit": {
       "m": "m",
-      "m2": "m²"
+      "m2": "m²",
+      "min": "Min."
+    },
+    "equipped": {
+      "label": "Voll ausgestattet",
+      "detail": ""
     }
   },
   "gallery": {
-    "titleLead": "Das Studio",
-    "titleAccent": "in Bildern",
+    "titleLead": "Ihr",
+    "titleAccent": "Urlaubsort",
     "titleTail": "",
-    "intro": "Ein heller Raum von 35 m² zum Garten hin, so eingerichtet, dass nichts fehlt: Schlafbereich, Essbereich, viel Stauraum und eine Klimaanlage für die heißen Tage.",
+    "intro": "Ein heller Raum von 33 m² zum Garten hin, so eingerichtet, dass nichts fehlt: Schlafbereich, Essbereich, viel Stauraum und eine Klimaanlage für die heißen Tage.",
     "open": "Foto vergrößern",
     "counter": "Foto {current} von {total}",
     "missing": "Foto folgt",
@@ -106,7 +106,7 @@
     "titleLead": "Alles, was Sie",
     "titleAccent": "brauchen",
     "titleTail": "",
-    "intro": "Das Studio ist für einen unkomplizierten Urlaub ausgestattet: Sie kommen mit Ihrem Koffer an, alles andere ist schon da.",
+    "intro": "Stellen Sie die Koffer ab, alles andere ist schon da.",
     "groups": {
       "comfort": "Komfort",
       "practical": "Praktisch",
@@ -173,23 +173,13 @@
         "label": "Terrasse",
         "note": ""
       }
-    },
-    "honest": {
-      "title": "Gut zu wissen vor der Buchung",
-      "intro": "Damit Sie bei der Ankunft nichts überrascht, sagen wir es lieber vorher.",
-      "notes": {
-        "compact": "Es ist ein Studio von 35 m². Ideal für zwei Personen, und mit dem Schlafsofa funktioniert es gut für eine Familie mit vier Personen.",
-        "bed-between-walls": "Das Hauptbett steht zwischen zwei Wänden. Das ist wichtig, wenn Sie größer als 1,90 m sind.",
-        "light": "Der Raum liegt zum Garten, das Licht ist weich. Ein Gast fand ihn mitten am Tag etwas dunkel.",
-        "mosquitoes": "Der Park nebenan, den alle lieben, bringt im Sommer auch ein paar Mücken mit."
-      }
     }
   },
   "around": {
-    "titleLead": "Ihre",
-    "titleAccent": "Umgebung",
+    "titleLead": "Alles ist",
+    "titleAccent": "in der Nähe",
     "titleTail": "",
-    "intro": "Alles ist zu Fuß erreichbar. Deshalb lassen die meisten Gäste das Auto den ganzen Aufenthalt über stehen.",
+    "intro": "Alles ist zu Fuß erreichbar. Deshalb vergessen die meisten Gäste ihr Auto für den ganzen Aufenthalt.",
     "items": {
       "beach": {
         "label": "Sandstrand Les Sablettes",
@@ -197,11 +187,11 @@
       },
       "seaside-park": {
         "label": "Park am Meer",
-        "detail": "Schildkröten, Frösche und ein Trimm-dich-Pfad, bei Familien sehr beliebt."
+        "detail": "Einer der schönsten Parks im Var, bei Familien beliebt mit seinen Schildkröten, seinen Fröschen und vielem mehr."
       },
       "boat-shuttle": {
         "label": "Fähre nach Toulon",
-        "detail": "Der Anleger liegt direkt vor der Residenz: Toulon, die Bucht und die Inseln."
+        "detail": "Überqueren Sie die Straße und schiffen Sie ein nach Toulon und zu den Inseln."
       },
       "shops": {
         "label": "Geschäfte",
@@ -214,10 +204,6 @@
       "market": {
         "label": "Markt",
         "detail": "Der Markt im Viertel, ebenfalls zu Fuß erreichbar."
-      },
-      "toulon": {
-        "label": "Toulon",
-        "detail": "Mit der Fähre ab dem Anleger, die Überfahrt gehört zum Urlaub dazu."
       }
     },
     "unit": {
@@ -232,11 +218,9 @@
     "titleTail": "",
     "portraitAlt": "Corine, die die Gäste im Studio Obordeleau empfängt",
     "paragraphs": [
-      "Ich empfange seit mehreren Jahren Gäste in diesem Studio, und mir ist wichtig, dass sie sich sofort wie zu Hause fühlen.",
-      "Bei den Ankunfts- und Abfahrtszeiten richte ich mich so weit wie möglich nach Ihnen, gerade wenn Sie eine weite Anreise haben oder erst am Abend abreisen.",
-      "Bettwäsche und Handtücher sind inklusive, das Studio ist bei Ihrer Ankunft sauber und bereit, und ich bin während Ihres Aufenthalts erreichbar, wenn Sie einen Tipp für die Gegend brauchen."
-    ],
-    "signature": "Corine"
+      "Seit 2021 empfange ich Gäste in diesem Studio. Mir ist wichtig, dass Ihr Aufenthalt so angenehm wie möglich wird und Sie sich wie zu Hause fühlen.",
+      "Das Studio ist auf Komfort ausgelegt und wird mit Sorgfalt vorbereitet. Während Ihres Aufenthalts bin ich erreichbar, wenn Sie einen Tipp für die Gegend brauchen."
+    ]
   },
   "reviews": {
     "titleLead": "Das sagen unsere",
@@ -279,25 +263,17 @@
     "titleTail": "",
     "intro": "253 Av. Jean-Baptiste Mattei, in Les Sablettes. Der Strand liegt hinter dem Park, der Fähranleger direkt vor der Residenz.",
     "addressLabel": "Adresse",
-    "consent": {
-      "title": "Karte anzeigen",
-      "body": "Die Karte stammt von Google Maps. Wenn Sie sie anzeigen, erhält Google Ihre IP-Adresse und kann Cookies in Ihrem Browser setzen. Bis Sie zustimmen, wird nichts geladen.",
-      "accept": "Karte anzeigen",
-      "remember": "Auswahl merken",
-      "privacyLink": "Mehr dazu in der Datenschutzerklärung",
-      "reset": "Karte wieder ausblenden"
-    },
     "openExternal": "In Google Maps öffnen",
     "openExternalHint": "Öffnet einen neuen Tab auf der Website von Google.",
     "unavailable": "Die Karte ist noch nicht eingerichtet. Die vollständige Adresse steht oben.",
     "markerAlt": "Standort des Studios Obordeleau",
-    "placeholderAlt": "Vereinfachter Plan des Viertels Les Sablettes mit dem Standort des Studios"
+    "thirdPartyNotice": "Die Karte stammt von Google Maps.",
+    "privacyLinkLabel": "Mehr erfahren"
   },
   "reservation": {
-    "titleLead": "Direkt",
-    "titleAccent": "buchen",
-    "titleTail": "",
-    "intro": "Drei Wege zum selben Studio. Direkt buchen heißt: Sie schreiben Corine, ohne Provision einer Plattform dazwischen.",
+    "titleLead": "Wann möchten Sie",
+    "titleAccent": "kommen",
+    "titleTail": "?",
     "channels": {
       "direct": {
         "badge": "Empfohlen",
@@ -358,7 +334,13 @@
     "privacy": "Datenschutzerklärung",
     "reviews": "Gästebewertungen",
     "copyright": "© {year} Obordeleau. Alle Rechte vorbehalten.",
-    "madeNote": "Keine Werbe-Cookies. Die Karte lädt nur mit Ihrer Zustimmung."
+    "madeNote": "Keine Werbe-Cookies. Die Karte lädt nur mit Ihrer Zustimmung.",
+    "contactTitle": "Kontakt",
+    "whatsapp": "WhatsApp",
+    "whatsappMessage": "Guten Tag Corine,\nwir haben uns Ihre Website für das Studio in Les Sablettes angesehen.\n\nIch hätte ein paar Fragen.",
+    "email": "E-Mail",
+    "emailSubject": "Informationsanfrage⎜Studio in Les Sablettes",
+    "classificationAlt": "Als 3-Sterne-Ferienwohnung klassifiziert"
   },
   "legalPage": {
     "titleLead": "",
@@ -413,7 +395,7 @@
       },
       "map": {
         "title": "Die Karte",
-        "body": "Die Karte von Google Maps wird erst geladen, wenn Sie auf „Karte anzeigen“ klicken. Bis dahin geht keine Anfrage an Google. Wenn Sie zustimmen, erhält Google Ihre IP-Adresse und kann nach eigenen Regeln Cookies setzen. Ihre Auswahl wird in Ihrem Browser gespeichert (lokaler Speicher) und Sie können sie im Kartenbereich jederzeit zurücknehmen."
+        "body": "Die Karte im Abschnitt „Wo das Studio liegt“ stammt von Google Maps und wird schon beim Öffnen der Seite geladen. Google erhält damit Ihre IP-Adresse und kann nach eigenen Regeln Cookies setzen, ohne dass Sie etwas tun. Wenn Sie das vermeiden möchten: Die vollständige Adresse steht im Klartext neben der Karte, und Sie können den Plan in der Anwendung Ihrer Wahl aufrufen."
       },
       "hosting": {
         "title": "Hosting und Protokolle",

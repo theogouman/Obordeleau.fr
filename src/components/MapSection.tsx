@@ -44,18 +44,13 @@ export function MapSection() {
             externalUrl={externalMapUrl}
             privacyHref={getPathname({ href: '/privacy', locale })}
             labels={{
-              consentTitle: t('consent.title'),
-              consentBody: t('consent.body'),
-              accept: t('consent.accept'),
-              remember: t('consent.remember'),
-              privacyLink: t('consent.privacyLink'),
-              reset: t('consent.reset'),
               openExternal: t('openExternal'),
               openExternalHint: t('openExternalHint'),
               unavailable: t('unavailable'),
               markerAlt: t('markerAlt'),
-              placeholderAlt: t('placeholderAlt'),
               loading: common('loading'),
+              thirdPartyNotice: t('thirdPartyNotice'),
+              privacyLink: t('privacyLinkLabel'),
             }}
           />
         </Reveal>

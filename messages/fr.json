@@ -54,37 +54,37 @@
     "ctaPrimary": "Demander mes dates",
     "ctaSecondary": "Voir le studio",
     "imageAlt": "Le studio Obordeleau et la plage des Sablettes à La Seyne-sur-Mer",
-    "badge": "Meublé de tourisme 3 étoiles",
-    "quotesLabel": "Ce qu'en disent les voyageurs"
+    "badge": "Meublé de tourisme 3 étoiles"
   },
   "quickFacts": {
     "title": "En un coup d'œil",
     "beach": {
       "label": "de la plage",
-      "detail": "à pied par le parc"
+      "detail": "à pied"
     },
     "size": {
       "label": "habitables",
       "detail": "climatisés"
     },
     "guests": {
-      "label": "voyageurs",
-      "detail": "lit double et canapé-lit"
-    },
-    "stars": {
-      "label": "étoiles",
-      "detail": "meublé de tourisme classé"
+      "label": "1 à 4 voyageurs",
+      "detail": ""
     },
     "unit": {
       "m": "m",
-      "m2": "m²"
+      "m2": "m²",
+      "min": "min"
+    },
+    "equipped": {
+      "label": "Tout équipé",
+      "detail": ""
     }
   },
   "gallery": {
-    "titleLead": "Le studio",
-    "titleAccent": "en images",
+    "titleLead": "Votre lieu de",
+    "titleAccent": "vacances",
     "titleTail": "",
-    "intro": "Une pièce claire de 35 m² ouverte sur le jardin, pensée pour que rien ne manque : coin nuit, coin repas, rangements, et la climatisation pour les journées chaudes.",
+    "intro": "Une pièce claire de 33 m² ouverte sur le jardin, pensée pour que rien ne manque : coin nuit, coin repas, rangements, et la climatisation pour les journées chaudes.",
     "open": "Agrandir la photo",
     "counter": "Photo {current} sur {total}",
     "missing": "Photo à venir",
@@ -106,7 +106,7 @@
     "titleLead": "Tout ce qu'il",
     "titleAccent": "faut",
     "titleTail": "",
-    "intro": "Le studio est équipé pour des vacances simples : vous arrivez avec vos valises, le reste est déjà là.",
+    "intro": "Posez vos valises, tout est déjà sur place.",
     "groups": {
       "comfort": "Confort",
       "practical": "Pratique",
@@ -173,23 +173,13 @@
         "label": "Terrasse",
         "note": ""
       }
-    },
-    "honest": {
-      "title": "À savoir avant de réserver",
-      "intro": "Pour que vous arriviez sans mauvaise surprise, voici ce que nous préférons dire à l'avance.",
-      "notes": {
-        "compact": "C'est un studio de 35 m². Il est idéal pour deux, et il fonctionne bien pour une famille de quatre grâce au canapé-lit.",
-        "bed-between-walls": "Le lit principal est encastré entre deux murs. À prendre en compte si vous mesurez plus d'1,90 m.",
-        "light": "La pièce donne sur le jardin : la lumière y est douce, un voyageur l'a trouvée un peu sombre en pleine journée.",
-        "mosquitoes": "Le parc voisin, que tout le monde adore, amène aussi quelques moustiques en été."
-      }
     }
   },
   "around": {
-    "titleLead": "Autour de",
-    "titleAccent": "vous",
+    "titleLead": "Tout est",
+    "titleAccent": "à proximité",
     "titleTail": "",
-    "intro": "Tout se fait à pied. C'est la raison pour laquelle la plupart des voyageurs laissent la voiture au parking pendant tout le séjour.",
+    "intro": "Tout se fait à pied. C'est la raison pour laquelle la plupart des voyageurs oublient leur véhicule durant le séjour.",
     "items": {
       "beach": {
         "label": "Plage de sable des Sablettes",
@@ -197,11 +187,11 @@
       },
       "seaside-park": {
         "label": "Parc du bord de mer",
-        "detail": "Tortues, grenouilles, parcours de santé, très apprécié des familles."
+        "detail": "Un des plus beaux parcs du Var, apprécié des familles avec ses tortues, ses grenouilles, et bien plus encore."
       },
       "boat-shuttle": {
         "label": "Bateau-bus pour Toulon",
-        "detail": "L'embarcadère est au pied de la résidence : Toulon, la rade, les îles."
+        "detail": "Traversez la route et embarquez pour Toulon et les îles."
       },
       "shops": {
         "label": "Commerces",
@@ -214,10 +204,6 @@
       "market": {
         "label": "Marché",
         "detail": "Le marché du quartier, à pied également."
-      },
-      "toulon": {
-        "label": "Toulon",
-        "detail": "En bateau depuis l'embarcadère, la traversée fait partie des vacances."
       }
     },
     "unit": {
@@ -232,11 +218,9 @@
     "titleTail": "",
     "portraitAlt": "Corine, qui accueille les voyageurs du studio Obordeleau",
     "paragraphs": [
-      "J'accueille des voyageurs dans ce studio depuis plusieurs années, et j'aime qu'ils s'y sentent tout de suite chez eux.",
-      "Je m'arrange autant que possible avec vos horaires d'arrivée et de départ, surtout quand vous venez de loin ou que vous repartez en fin de journée.",
-      "Les draps et les serviettes sont fournis, le studio est prêt et propre à votre arrivée, et je reste joignable pendant tout le séjour si vous avez besoin d'un conseil sur le quartier."
-    ],
-    "signature": "Corine"
+      "J'accueille des voyageurs dans ce studio depuis 2021. Ma priorité est de rendre votre séjour le plus agréable possible et que vous vous sentiez comme à la maison.",
+      "Le logement a été pensé pour le confort, préparé avec soin. Je reste joignable pendant tout le séjour si vous avez besoin d'un conseil sur le quartier."
+    ]
   },
   "reviews": {
     "titleLead": "Ce qu'en disent les",
@@ -279,25 +263,17 @@
     "titleTail": "le studio",
     "intro": "253 Av. Jean-Baptiste Mattei, aux Sablettes. La plage est derrière le parc, l'embarcadère du bateau-bus est au pied de la résidence.",
     "addressLabel": "Adresse",
-    "consent": {
-      "title": "Afficher la carte",
-      "body": "La carte est fournie par Google Maps. En l'affichant, vous acceptez que Google reçoive votre adresse IP et puisse déposer des cookies sur votre navigateur. Rien n'est chargé tant que vous n'avez pas accepté.",
-      "accept": "Afficher la carte",
-      "remember": "Retenir mon choix",
-      "privacyLink": "En savoir plus dans la politique de confidentialité",
-      "reset": "Masquer la carte à nouveau"
-    },
     "openExternal": "Ouvrir dans Google Maps",
     "openExternalHint": "Ouvre un nouvel onglet sur le site de Google.",
     "unavailable": "La carte n'est pas configurée pour le moment. L'adresse complète reste affichée ci-dessus.",
     "markerAlt": "Emplacement du studio Obordeleau",
-    "placeholderAlt": "Plan simplifié du quartier des Sablettes avec l'emplacement du studio"
+    "thirdPartyNotice": "La carte est fournie par Google Maps.",
+    "privacyLinkLabel": "En savoir plus"
   },
   "reservation": {
-    "titleLead": "Réserver",
-    "titleAccent": "en direct",
-    "titleTail": "",
-    "intro": "Trois façons de réserver le même studio. En direct, vous écrivez à Corine et il n'y a pas de commission d'intermédiaire.",
+    "titleLead": "Quand souhaitez-vous",
+    "titleAccent": "venir",
+    "titleTail": "?",
     "channels": {
       "direct": {
         "badge": "Recommandé",
@@ -358,7 +334,13 @@
     "privacy": "Politique de confidentialité",
     "reviews": "Avis des voyageurs",
     "copyright": "© {year} Obordeleau. Tous droits réservés.",
-    "madeNote": "Site sans cookie publicitaire. La carte ne se charge qu'avec votre accord."
+    "madeNote": "Site sans cookie publicitaire. La carte ne se charge qu'avec votre accord.",
+    "contactTitle": "Contact",
+    "whatsapp": "WhatsApp",
+    "whatsappMessage": "Bonjour Corine,\nNous avons consulté votre site pour le studio aux Sablettes.\n\nJ'ai quelques questions s'il vous plaît.",
+    "email": "Email",
+    "emailSubject": "Demande d'informations⎜Studio aux Sablettes",
+    "classificationAlt": "Meublé de tourisme classé 3 étoiles"
   },
   "legalPage": {
     "titleLead": "Mentions",
@@ -413,7 +395,7 @@
       },
       "map": {
         "title": "La carte",
-        "body": "La carte Google Maps ne se charge pas tant que vous n'avez pas cliqué sur « Afficher la carte ». Tant que vous n'acceptez pas, aucune requête ne part vers Google. Si vous acceptez, Google reçoit votre adresse IP et peut déposer des cookies selon ses propres règles. Votre choix est mémorisé dans votre navigateur (stockage local) et vous pouvez le retirer à tout moment depuis la section carte."
+        "body": "La carte de la section « Où se trouve le studio » est fournie par Google Maps et se charge dès l'ouverture de la page. Google reçoit donc votre adresse IP et peut déposer des cookies selon ses propres règles, sans action de votre part. Si vous préférez l'éviter, l'adresse complète est écrite en clair juste à côté de la carte et vous pouvez consulter le plan depuis l'application de votre choix."
       },
       "hosting": {
         "title": "Hébergement et journaux",

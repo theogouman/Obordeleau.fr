@@ -2,7 +2,7 @@ import { useTranslations } from 'next-intl';
 import { AccentHeading } from '@/components/AccentHeading';
 import { Reveal } from '@/components/Reveal';
 import { Section } from '@/components/Section';
-import { amenitiesByGroup, amenityGroups, honestNotes } from '@/lib/content';
+import { amenitiesByGroup, amenityGroups } from '@/lib/content';
 
 export function Amenities() {
   const t = useTranslations('amenities');
@@ -66,40 +66,6 @@ export function Amenities() {
         })}
       </div>
 
-      {honestNotes.length > 0 ? (
-        <Reveal className="mt-10">
-          <details className="card group overflow-hidden p-0">
-            <summary className="flex cursor-pointer items-center justify-between gap-4 p-6 font-display text-xl">
-              {t('honest.title')}
-              <svg
-                viewBox="0 0 20 20"
-                width="20"
-                height="20"
-                aria-hidden="true"
-                focusable="false"
-                className="shrink-0 transition-transform duration-[var(--duration-base)] group-open:rotate-45"
-              >
-                <path
-                  d="M10 4v12M4 10h12"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </summary>
-            <div className="px-6 pb-6">
-              <p className="text-ink-soft">{t('honest.intro')}</p>
-              <ul className="mt-4 space-y-3">
-                {honestNotes.map((note) => (
-                  <li key={note} className="border-l-2 border-sunset pl-4">
-                    {t(`honest.notes.${note}`)}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </details>
-        </Reveal>
-      ) : null}
     </Section>
   );
 }

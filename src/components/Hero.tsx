@@ -1,9 +1,7 @@
 import { useTranslations } from 'next-intl';
 import { AccentHeading } from '@/components/AccentHeading';
-import { Reveal } from '@/components/Reveal';
 import { SmartImage } from '@/components/SmartImage';
 import { property } from '@/lib/content';
-import { heroQuotes } from '@/lib/reviews';
 
 /**
  * FR-001 / FR-004: arched hero carrying the core promise, with the primary
@@ -12,7 +10,6 @@ import { heroQuotes } from '@/lib/reviews';
 export function Hero() {
   const t = useTranslations('hero');
   const gallery = useTranslations('gallery');
-  const quotes = heroQuotes();
 
   return (
     <section className="relative overflow-hidden pb-4 pt-10 md:pt-16">
@@ -63,37 +60,6 @@ export function Hero() {
           />
         </div>
       </div>
-
-      {quotes.length > 0 ? (
-        <div className="container-page mt-12">
-          <h2 className="text-sm uppercase tracking-[0.2em] text-ink-soft">{t('quotesLabel')}</h2>
-          <ul className="mt-4 grid gap-4 md:grid-cols-3">
-            {quotes.map((quote, index) => (
-              <li key={quote.id}>
-                <Reveal delay={index * 80}>
-                  <figure className="h-full rounded-[var(--radius-card)] border-l-2 border-coral bg-[rgba(255,255,255,0.6)] px-4 py-3">
-                    <blockquote className="font-display text-lg italic leading-snug">
-                      {shortQuote(quote.text)}
-                    </blockquote>
-                    <figcaption className="mt-2 text-sm text-ink-soft">
-                      {quote.firstName}
-                      {quote.dateLabel ? `, ${quote.dateLabel}` : ''}
-                    </figcaption>
-                  </figure>
-                </Reveal>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
     </section>
   );
-}
-
-/** Hero quotes stay short: first sentence, capped, never mid word. */
-function shortQuote(text: string): string {
-  const firstSentence = text.split(/(?<=[.!?])\s/)[0] ?? text;
-  if (firstSentence.length <= 120) return firstSentence;
-  const cut = firstSentence.slice(0, 117);
-  return `${cut.slice(0, cut.lastIndexOf(' '))}...`;
 }

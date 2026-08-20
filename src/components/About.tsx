@@ -22,7 +22,7 @@ export function About() {
             <SmartImage
               src={`/images/host/${host.portrait}`}
               alt={t('portraitAlt')}
-              aspect="4 / 5"
+              aspect="2 / 3"
               sizes="(min-width: 768px) 30vw, 80vw"
               rounded="arch"
               missingLabel={gallery('missing')}
@@ -43,7 +43,6 @@ export function About() {
               <p key={paragraph.slice(0, 24)}>{paragraph}</p>
             ))}
           </div>
-          <p className="mt-6 font-display text-2xl italic">{t('signature')}</p>
         </Reveal>
       </div>
     </Section>

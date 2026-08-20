@@ -54,37 +54,37 @@
     "ctaPrimary": "Ask about your dates",
     "ctaSecondary": "See the studio",
     "imageAlt": "The Obordeleau studio and the beach at Les Sablettes, La Seyne-sur-Mer",
-    "badge": "3-star classified holiday rental",
-    "quotesLabel": "What guests say"
+    "badge": "3-star classified holiday rental"
   },
   "quickFacts": {
     "title": "At a glance",
     "beach": {
       "label": "to the beach",
-      "detail": "on foot through the park"
+      "detail": "on foot"
     },
     "size": {
       "label": "of living space",
       "detail": "air-conditioned"
     },
     "guests": {
-      "label": "guests",
-      "detail": "double bed and sofa bed"
-    },
-    "stars": {
-      "label": "stars",
-      "detail": "officially classified rental"
+      "label": "1 to 4 guests",
+      "detail": ""
     },
     "unit": {
       "m": "m",
-      "m2": "m²"
+      "m2": "m²",
+      "min": "min"
+    },
+    "equipped": {
+      "label": "Fully equipped",
+      "detail": ""
     }
   },
   "gallery": {
-    "titleLead": "The studio",
-    "titleAccent": "in pictures",
+    "titleLead": "Your holiday",
+    "titleAccent": "home",
     "titleTail": "",
-    "intro": "One bright 35 m² room opening onto the garden, arranged so that nothing is missing: sleeping corner, dining corner, plenty of storage, and air conditioning for the hot days.",
+    "intro": "One bright 33 m² room opening onto the garden, arranged so that nothing is missing: sleeping corner, dining corner, plenty of storage, and air conditioning for the hot days.",
     "open": "Enlarge photo",
     "counter": "Photo {current} of {total}",
     "missing": "Photo coming soon",
@@ -106,7 +106,7 @@
     "titleLead": "Everything you",
     "titleAccent": "need",
     "titleTail": "",
-    "intro": "The studio is equipped for a simple holiday: you arrive with your suitcases, the rest is already here.",
+    "intro": "Put down your suitcases, everything else is already here.",
     "groups": {
       "comfort": "Comfort",
       "practical": "Practical",
@@ -173,23 +173,13 @@
         "label": "Terrace",
         "note": ""
       }
-    },
-    "honest": {
-      "title": "Worth knowing before you book",
-      "intro": "So that nothing surprises you on arrival, here is what we would rather say in advance.",
-      "notes": {
-        "compact": "This is a 35 m² studio. It is ideal for two, and it works well for a family of four thanks to the sofa bed.",
-        "bed-between-walls": "The main bed sits between two walls. Worth knowing if you are taller than 1.90 m.",
-        "light": "The room faces the garden, so the light is soft. One guest found it a little dark in the middle of the day.",
-        "mosquitoes": "The park next door, which everyone loves, also brings a few mosquitoes in summer."
-      }
     }
   },
   "around": {
-    "titleLead": "Around",
-    "titleAccent": "you",
+    "titleLead": "Everything is",
+    "titleAccent": "close by",
     "titleTail": "",
-    "intro": "Everything is walkable. That is why most guests leave the car in the parking space for the whole stay.",
+    "intro": "Everything is walkable. That is why most guests forget about their car for the whole stay.",
     "items": {
       "beach": {
         "label": "Les Sablettes sandy beach",
@@ -197,11 +187,11 @@
       },
       "seaside-park": {
         "label": "Seaside park",
-        "detail": "Turtles, frogs and a fitness trail, a favourite with families."
+        "detail": "One of the finest parks in the Var, a favourite with families for its turtles, its frogs and much more."
       },
       "boat-shuttle": {
         "label": "Shuttle boat to Toulon",
-        "detail": "The landing stage is at the foot of the building: Toulon, the bay and the islands."
+        "detail": "Cross the road and step aboard for Toulon and the islands."
       },
       "shops": {
         "label": "Shops",
@@ -214,10 +204,6 @@
       "market": {
         "label": "Market",
         "detail": "The local market, also within walking distance."
-      },
-      "toulon": {
-        "label": "Toulon",
-        "detail": "By boat from the landing stage, and the crossing is part of the holiday."
       }
     },
     "unit": {
@@ -232,11 +218,9 @@
     "titleTail": "",
     "portraitAlt": "Corine, who welcomes guests to the Obordeleau studio",
     "paragraphs": [
-      "I have been welcoming guests to this studio for several years, and what I care about is that they feel at home straight away.",
-      "I do my best to work around your arrival and departure times, especially when you are travelling a long way or leaving at the end of the day.",
-      "Linens and towels are provided, the studio is clean and ready when you arrive, and I stay reachable throughout your stay if you need a tip about the area."
-    ],
-    "signature": "Corine"
+      "I have been welcoming guests to this studio since 2021. My priority is to make your stay as pleasant as it can be, and to have you feel at home.",
+      "The studio was designed for comfort and is prepared with care. I stay reachable throughout your stay if you need a tip about the area."
+    ]
   },
   "reviews": {
     "titleLead": "What guests",
@@ -279,25 +263,17 @@
     "titleTail": "is",
     "intro": "253 Av. Jean-Baptiste Mattei, at Les Sablettes. The beach is behind the park and the shuttle boat landing stage is at the foot of the building.",
     "addressLabel": "Address",
-    "consent": {
-      "title": "Show the map",
-      "body": "The map is provided by Google Maps. By displaying it you accept that Google receives your IP address and may set cookies in your browser. Nothing is loaded until you accept.",
-      "accept": "Show the map",
-      "remember": "Remember my choice",
-      "privacyLink": "More in the privacy policy",
-      "reset": "Hide the map again"
-    },
     "openExternal": "Open in Google Maps",
     "openExternalHint": "Opens a new tab on Google's website.",
     "unavailable": "The map is not configured yet. The full address is shown above.",
     "markerAlt": "Location of the Obordeleau studio",
-    "placeholderAlt": "Simplified plan of the Les Sablettes area showing where the studio is"
+    "thirdPartyNotice": "The map is provided by Google Maps.",
+    "privacyLinkLabel": "Learn more"
   },
   "reservation": {
-    "titleLead": "Book",
-    "titleAccent": "direct",
-    "titleTail": "",
-    "intro": "Three ways to book the same studio. Booking direct means writing to Corine, with no platform commission in between.",
+    "titleLead": "When would you like to",
+    "titleAccent": "come",
+    "titleTail": "?",
     "channels": {
       "direct": {
         "badge": "Recommended",
@@ -358,7 +334,13 @@
     "privacy": "Privacy policy",
     "reviews": "Guest reviews",
     "copyright": "© {year} Obordeleau. All rights reserved.",
-    "madeNote": "No advertising cookies. The map loads only with your agreement."
+    "madeNote": "No advertising cookies. The map loads only with your agreement.",
+    "contactTitle": "Contact",
+    "whatsapp": "WhatsApp",
+    "whatsappMessage": "Hello Corine,\nWe have been looking at your website for the studio at Les Sablettes.\n\nI have a few questions, if I may.",
+    "email": "Email",
+    "emailSubject": "Information request⎜Studio at Les Sablettes",
+    "classificationAlt": "Officially classified 3-star holiday rental"
   },
   "legalPage": {
     "titleLead": "Legal",
@@ -413,7 +395,7 @@
       },
       "map": {
         "title": "The map",
-        "body": "The Google Maps map does not load until you click \"Show the map\". Until you accept, no request goes to Google. If you accept, Google receives your IP address and may set cookies under its own rules. Your choice is stored in your browser (local storage) and you can withdraw it at any time from the map section."
+        "body": "The map in the \"Where the studio is\" section is provided by Google Maps and loads as soon as the page opens. Google therefore receives your IP address and may set cookies under its own rules, without any action from you. If you would rather avoid that, the full address is written out next to the map and you can look it up in the mapping application of your choice."
       },
       "hosting": {
         "title": "Hosting and logs",
