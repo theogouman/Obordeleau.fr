@@ -117,7 +117,7 @@ function byNewestFirst(a: Review, b: Review): number {
 }
 
 /** All reviews, newest first. Empty until the owner drops in the export. */
-export const allReviews: Review[] = (rawReviews as RawReview[])
+export const allReviews: Review[] = (rawReviews.reviews as RawReview[])
   .map(normalize)
   .filter((review): review is Review => review !== null)
   .sort(byNewestFirst);
