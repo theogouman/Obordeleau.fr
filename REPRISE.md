@@ -19,9 +19,15 @@ Il reste à publier en production, ce qui se fait par un simple push sur `main`.
   qu'une moitié de projet. Méthode abandonnée, le dépôt est trop gros pour cette voie.
 - Bascule sur le dépôt GitHub, qui est désormais la source des déploiements.
 - Build de validation `dpl_8fBWzPayrd3uvocaoQfggrMiTxGK` : vert.
-- Un correctif du matcher de `src/middleware.ts` a suivi ce build : sans l'entrée `'/'` explicite,
-  la racine renvoyait une 404 plateforme, car la page d'accueil française n'est pas préfixée et
-  n'était jamais réécrite vers `/fr`. À vérifier en production.
+- Un correctif du matcher de `src/middleware.ts` a suivi ce build : l'entrée `'/'` y est désormais
+  explicite, ce qui est la forme documentée par next-intl pour une locale par défaut non préfixée.
+- Première mise en production : build vert, mais **toutes** les routes en 404, y compris
+  `/robots.txt`. Cause réelle : le projet Vercel `obordeleau-fr` préexistait avec
+  `framework: null`. Vercel exécutait bien `npm run build`, puis collectait `public/` comme sortie
+  statique au lieu de l'application Next. Preuve : `/IMAGE-MANIFEST.md` et `/brand/wordmark.svg`
+  répondaient 200 pendant que toutes les vraies routes répondaient 404. Corrigé par un
+  `vercel.json` qui force `framework: nextjs`, réglage versionné et prioritaire sur le tableau de
+  bord. Si le problème réapparaît, vérifier Settings, Build and Deployment, Framework Preset.
 
 Note utile : la protection Vercel du projet est réglée sur `all_except_custom_domains`. Toute URL
 en `*.vercel.app` répond donc par une redirection SSO, ce qui rend les tests automatiques peu
