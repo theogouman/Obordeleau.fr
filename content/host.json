@@ -1,0 +1,15 @@
+{
+  "$comment": "The host speaks in the first person on the site (constitution VII). Bio blocks live in messages/*.json under 'about.paragraphs' so they are translatable; this file holds the facts and the routing.",
+  "firstName": "Corine",
+  "portrait": "corine.jpg",
+  "showPortrait": true,
+  "inquiryRouting": {
+    "toEnv": "INQUIRY_TO_EMAIL",
+    "replyToGuest": true
+  },
+  "responseHabits": {
+    "flexibleArrivalDeparture": true,
+    "welcomeTouches": true,
+    "linensAndTowelsProvided": true
+  }
+}

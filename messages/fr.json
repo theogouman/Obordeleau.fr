@@ -1,0 +1,439 @@
+{
+  "common": {
+    "locale": "fr",
+    "localeName": "Français",
+    "required": "obligatoire",
+    "optional": "facultatif",
+    "loading": "Chargement",
+    "close": "Fermer",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "skipToContent": "Aller au contenu"
+  },
+  "meta": {
+    "siteName": "Obordeleau",
+    "home": {
+      "title": "Obordeleau, studio climatisé aux Sablettes à 70 m de la plage | La Seyne-sur-Mer",
+      "description": "Studio 3 étoiles aux Sablettes, plage à pied en 2 minutes, bateau-bus pour Toulon au pied de la résidence. Tout se fait sans voiture. Réservez en direct."
+    },
+    "reviews": {
+      "title": "Avis des voyageurs | Obordeleau, Les Sablettes",
+      "description": "Tous les avis laissés par les voyageurs du studio Obordeleau aux Sablettes, La Seyne-sur-Mer. Note moyenne, commentaires complets, sans tri ni filtre."
+    },
+    "legal": {
+      "title": "Mentions légales | Obordeleau",
+      "description": "Mentions légales du site Obordeleau, studio de vacances aux Sablettes, La Seyne-sur-Mer."
+    },
+    "privacy": {
+      "title": "Politique de confidentialité | Obordeleau",
+      "description": "Comment le site Obordeleau traite vos données : mesure d'audience sans cookie, carte affichée seulement après votre accord, demandes de réservation."
+    }
+  },
+  "nav": {
+    "home": "Accueil",
+    "gallery": "Le studio",
+    "amenities": "Équipements",
+    "around": "Autour",
+    "about": "L'hôte",
+    "reviews": "Avis",
+    "location": "Situation",
+    "book": "Réserver",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "language": "Langue",
+    "languageSwitch": "Changer de langue",
+    "primary": "Navigation principale",
+    "mobileMenu": "Menu"
+  },
+  "hero": {
+    "eyebrow": "Les Sablettes, La Seyne-sur-Mer",
+    "titleLead": "Un studio climatisé à",
+    "titleAccent": "70 mètres",
+    "titleTail": "de la plage",
+    "subtitle": "Vous posez la voiture et vous l'oubliez. La plage des Sablettes est à deux minutes à pied par le parc, le bateau-bus pour Toulon part au pied de la résidence, les commerces et les restaurants sont dans le quartier.",
+    "ctaPrimary": "Demander mes dates",
+    "ctaSecondary": "Voir le studio",
+    "imageAlt": "Le studio Obordeleau et la plage des Sablettes à La Seyne-sur-Mer",
+    "badge": "Meublé de tourisme 3 étoiles",
+    "quotesLabel": "Ce qu'en disent les voyageurs"
+  },
+  "quickFacts": {
+    "title": "En un coup d'œil",
+    "beach": {
+      "label": "de la plage",
+      "detail": "à pied par le parc"
+    },
+    "size": {
+      "label": "habitables",
+      "detail": "climatisés"
+    },
+    "guests": {
+      "label": "voyageurs",
+      "detail": "lit double et canapé-lit"
+    },
+    "stars": {
+      "label": "étoiles",
+      "detail": "meublé de tourisme classé"
+    },
+    "unit": {
+      "m": "m",
+      "m2": "m²"
+    }
+  },
+  "gallery": {
+    "titleLead": "Le studio",
+    "titleAccent": "en images",
+    "titleTail": "",
+    "intro": "Une pièce claire de 35 m² ouverte sur le jardin, pensée pour que rien ne manque : coin nuit, coin repas, rangements, et la climatisation pour les journées chaudes.",
+    "open": "Agrandir la photo",
+    "counter": "Photo {current} sur {total}",
+    "missing": "Photo à venir",
+    "viewAll": "Voir toutes les photos",
+    "alt": {
+      "01": "Vue d'ensemble du studio Obordeleau depuis l'entrée",
+      "02": "Le coin nuit du studio avec son lit double",
+      "03": "Le coin cuisine et repas du studio",
+      "04": "La salle d'eau du studio",
+      "05": "Le canapé-lit ouvert pour quatre voyageurs",
+      "06": "La vue sur le jardin privé depuis le studio",
+      "07": "Les rangements du studio",
+      "08": "Le coin repas près de la fenêtre",
+      "09": "L'entrée de la résidence sécurisée",
+      "10": "Le jardin de la résidence"
+    }
+  },
+  "amenities": {
+    "titleLead": "Tout ce qu'il",
+    "titleAccent": "faut",
+    "titleTail": "",
+    "intro": "Le studio est équipé pour des vacances simples : vous arrivez avec vos valises, le reste est déjà là.",
+    "groups": {
+      "comfort": "Confort",
+      "practical": "Pratique",
+      "family": "En famille"
+    },
+    "items": {
+      "air-conditioning": {
+        "label": "Climatisation",
+        "note": "Un vrai plus les jours de forte chaleur."
+      },
+      "private-garden-view": {
+        "label": "Vue sur le jardin privé",
+        "note": "Du vert devant les fenêtres, pas la rue."
+      },
+      "no-facing-neighbours": {
+        "label": "Sans vis-à-vis",
+        "note": "Personne en face, vous vivez fenêtres ouvertes."
+      },
+      "secured-residence": {
+        "label": "Résidence sécurisée",
+        "note": "Accès par badge et vidéosurveillance."
+      },
+      "free-parking": {
+        "label": "Stationnement gratuit",
+        "note": "En face de la résidence, même si la voiture reste garée."
+      },
+      "linens-towels": {
+        "label": "Draps et serviettes fournis",
+        "note": "Lits faits à votre arrivée."
+      },
+      "travel-cot": {
+        "label": "Lit parapluie sur demande",
+        "note": "À signaler dans votre message."
+      },
+      "sofa-bed": {
+        "label": "Canapé-lit",
+        "note": "Pour deux voyageurs supplémentaires."
+      },
+      "storage": {
+        "label": "Beaucoup de rangements",
+        "note": "Les valises se vident et disparaissent."
+      },
+      "ground-floor-access": {
+        "label": "Accès de plain-pied",
+        "note": ""
+      },
+      "wifi": {
+        "label": "Wifi",
+        "note": ""
+      },
+      "kitchen": {
+        "label": "Cuisine équipée",
+        "note": ""
+      },
+      "washing-machine": {
+        "label": "Lave-linge",
+        "note": ""
+      },
+      "tv": {
+        "label": "Télévision",
+        "note": ""
+      },
+      "terrace": {
+        "label": "Terrasse",
+        "note": ""
+      }
+    },
+    "honest": {
+      "title": "À savoir avant de réserver",
+      "intro": "Pour que vous arriviez sans mauvaise surprise, voici ce que nous préférons dire à l'avance.",
+      "notes": {
+        "compact": "C'est un studio de 35 m². Il est idéal pour deux, et il fonctionne bien pour une famille de quatre grâce au canapé-lit.",
+        "bed-between-walls": "Le lit principal est encastré entre deux murs. À prendre en compte si vous mesurez plus d'1,90 m.",
+        "light": "La pièce donne sur le jardin : la lumière y est douce, un voyageur l'a trouvée un peu sombre en pleine journée.",
+        "mosquitoes": "Le parc voisin, que tout le monde adore, amène aussi quelques moustiques en été."
+      }
+    }
+  },
+  "around": {
+    "titleLead": "Autour de",
+    "titleAccent": "vous",
+    "titleTail": "",
+    "intro": "Tout se fait à pied. C'est la raison pour laquelle la plupart des voyageurs laissent la voiture au parking pendant tout le séjour.",
+    "items": {
+      "beach": {
+        "label": "Plage de sable des Sablettes",
+        "detail": "En traversant le parc, sans traverser de route."
+      },
+      "seaside-park": {
+        "label": "Parc du bord de mer",
+        "detail": "Tortues, grenouilles, parcours de santé, très apprécié des familles."
+      },
+      "boat-shuttle": {
+        "label": "Bateau-bus pour Toulon",
+        "detail": "L'embarcadère est au pied de la résidence : Toulon, la rade, les îles."
+      },
+      "shops": {
+        "label": "Commerces",
+        "detail": "Boulangerie, supérette et pharmacie dans le quartier."
+      },
+      "restaurants": {
+        "label": "Restaurants",
+        "detail": "Sur le front de mer, à quelques minutes à pied."
+      },
+      "market": {
+        "label": "Marché",
+        "detail": "Le marché du quartier, à pied également."
+      },
+      "toulon": {
+        "label": "Toulon",
+        "detail": "En bateau depuis l'embarcadère, la traversée fait partie des vacances."
+      }
+    },
+    "unit": {
+      "distance": "{value} m",
+      "walk": "{value} min à pied",
+      "onFoot": "à pied"
+    }
+  },
+  "about": {
+    "titleLead": "Votre hôte,",
+    "titleAccent": "Corine",
+    "titleTail": "",
+    "portraitAlt": "Corine, qui accueille les voyageurs du studio Obordeleau",
+    "paragraphs": [
+      "J'accueille des voyageurs dans ce studio depuis plusieurs années, et j'aime qu'ils s'y sentent tout de suite chez eux.",
+      "Je m'arrange autant que possible avec vos horaires d'arrivée et de départ, surtout quand vous venez de loin ou que vous repartez en fin de journée.",
+      "Les draps et les serviettes sont fournis, le studio est prêt et propre à votre arrivée, et je reste joignable pendant tout le séjour si vous avez besoin d'un conseil sur le quartier."
+    ],
+    "signature": "Corine"
+  },
+  "reviews": {
+    "titleLead": "Ce qu'en disent les",
+    "titleAccent": "voyageurs",
+    "titleTail": "",
+    "intro": "Les avis viennent des séjours passés. Ils sont repris tels quels, dans leur langue d'origine.",
+    "badge": {
+      "ratingLabel": "{rating} sur 5",
+      "countLabel": "{count} avis",
+      "aria": "Note moyenne de {rating} sur 5, sur {count} avis",
+      "about": "environ"
+    },
+    "card": {
+      "ratingAria": "{rating} étoiles sur 5",
+      "readMore": "Lire plus",
+      "readLess": "Réduire",
+      "originalLanguage": "Avis rédigé en {language}"
+    },
+    "languages": {
+      "fr": "français",
+      "en": "anglais",
+      "de": "allemand",
+      "other": "langue d'origine"
+    },
+    "seeAll": "Lire les {count} avis",
+    "seeAllShort": "Lire tous les avis",
+    "empty": "Les avis seront affichés ici dès que l'export sera ajouté au site.",
+    "page": {
+      "titleLead": "Tous les",
+      "titleAccent": "avis",
+      "titleTail": "",
+      "intro": "Voici l'intégralité des avis reçus, du plus récent au plus ancien. Nous n'en retirons aucun : les séjours moyens y sont aussi.",
+      "count": "{count} avis",
+      "backHome": "Retour à l'accueil"
+    }
+  },
+  "map": {
+    "titleLead": "Où se",
+    "titleAccent": "trouve",
+    "titleTail": "le studio",
+    "intro": "253 Av. Jean-Baptiste Mattei, aux Sablettes. La plage est derrière le parc, l'embarcadère du bateau-bus est au pied de la résidence.",
+    "addressLabel": "Adresse",
+    "consent": {
+      "title": "Afficher la carte",
+      "body": "La carte est fournie par Google Maps. En l'affichant, vous acceptez que Google reçoive votre adresse IP et puisse déposer des cookies sur votre navigateur. Rien n'est chargé tant que vous n'avez pas accepté.",
+      "accept": "Afficher la carte",
+      "remember": "Retenir mon choix",
+      "privacyLink": "En savoir plus dans la politique de confidentialité",
+      "reset": "Masquer la carte à nouveau"
+    },
+    "openExternal": "Ouvrir dans Google Maps",
+    "openExternalHint": "Ouvre un nouvel onglet sur le site de Google.",
+    "unavailable": "La carte n'est pas configurée pour le moment. L'adresse complète reste affichée ci-dessus.",
+    "markerAlt": "Emplacement du studio Obordeleau",
+    "placeholderAlt": "Plan simplifié du quartier des Sablettes avec l'emplacement du studio"
+  },
+  "reservation": {
+    "titleLead": "Réserver",
+    "titleAccent": "en direct",
+    "titleTail": "",
+    "intro": "Trois façons de réserver le même studio. En direct, vous écrivez à Corine et il n'y a pas de commission d'intermédiaire.",
+    "channels": {
+      "direct": {
+        "badge": "Recommandé",
+        "title": "En direct avec Corine",
+        "body": "Vous indiquez vos dates et votre message, la réponse arrive en général sous 24 heures. Pas de commission, et la même souplesse sur les horaires.",
+        "cta": "Demander mes dates"
+      },
+      "airbnb": {
+        "title": "Sur Airbnb",
+        "body": "Vous retrouvez l'annonce et ses avis depuis votre compte habituel.",
+        "cta": "Voir l'annonce Airbnb",
+        "external": "Ouvre le site Airbnb dans un nouvel onglet"
+      },
+      "booking": {
+        "title": "Sur Booking",
+        "body": "L'annonce est également disponible sur Booking, avec le classement 3 étoiles.",
+        "cta": "Voir l'annonce Booking",
+        "external": "Ouvre le site Booking dans un nouvel onglet"
+      }
+    },
+    "form": {
+      "title": "Votre demande",
+      "intro": "Cette demande n'engage à rien et ne prend aucun paiement. Corine vous répond avec les disponibilités et le tarif.",
+      "arrival": "Arrivée",
+      "departure": "Départ",
+      "guests": "Voyageurs",
+      "name": "Votre nom",
+      "email": "Votre email",
+      "phone": "Téléphone",
+      "message": "Votre message",
+      "messagePlaceholder": "Nombre d'adultes et d'enfants, besoin d'un lit parapluie, heure d'arrivée approximative...",
+      "consent": "J'accepte que ces informations servent à répondre à ma demande.",
+      "consentLink": "Politique de confidentialité",
+      "submit": "Envoyer ma demande",
+      "submitting": "Envoi en cours",
+      "successTitle": "Demande envoyée",
+      "successBody": "Merci, votre demande est partie. Corine répond en général sous 24 heures. Pensez à regarder vos courriers indésirables.",
+      "successAgain": "Envoyer une autre demande",
+      "errors": {
+        "required": "Ce champ est nécessaire pour vous répondre.",
+        "email": "Cette adresse email ne semble pas valide.",
+        "dateOrder": "La date de départ doit être après la date d'arrivée.",
+        "datePast": "Cette date est déjà passée.",
+        "guests": "Le studio accueille 4 voyageurs au maximum.",
+        "consent": "Merci de cocher cette case pour que nous puissions vous répondre.",
+        "rateLimited": "Trop de demandes envoyées depuis cet appareil. Merci de réessayer dans quelques minutes.",
+        "server": "L'envoi a échoué. Vous pouvez réessayer, ou passer par Airbnb ou Booking en attendant."
+      },
+      "honeypotLabel": "Laissez ce champ vide"
+    }
+  },
+  "footer": {
+    "tagline": "Studio climatisé aux Sablettes, à 70 mètres de la plage.",
+    "addressTitle": "Adresse",
+    "bookTitle": "Réserver",
+    "aboutTitle": "Le site",
+    "legalNotice": "Mentions légales",
+    "privacy": "Politique de confidentialité",
+    "reviews": "Avis des voyageurs",
+    "copyright": "© {year} Obordeleau. Tous droits réservés.",
+    "madeNote": "Site sans cookie publicitaire. La carte ne se charge qu'avec votre accord."
+  },
+  "legalPage": {
+    "titleLead": "Mentions",
+    "titleAccent": "légales",
+    "titleTail": "",
+    "pendingNotice": "Cette page attend les informations légales définitives de la propriétaire. Les champs marqués « à compléter » doivent être renseignés avant la mise en ligne publique.",
+    "placeholder": "à compléter",
+    "sections": {
+      "publisher": {
+        "title": "Éditeur du site",
+        "body": "Le site obordeleau.fr est édité par {name}, {status}, dont l'adresse est {address}. Numéro SIRET : {siret}. Contact : {email}."
+      },
+      "director": {
+        "title": "Directrice de la publication",
+        "body": "{name}."
+      },
+      "hosting": {
+        "title": "Hébergement",
+        "body": "Le site est hébergé par Vercel Inc., 340 S Lemon Ave #4133, Walnut, CA 91789, États-Unis. Le nom de domaine est géré par Hostinger."
+      },
+      "property": {
+        "title": "Le logement",
+        "body": "Obordeleau est un meublé de tourisme classé 3 étoiles situé 253 Av. Jean-Baptiste Mattei, 83500 La Seyne-sur-Mer. Numéro de déclaration en mairie : {declaration}."
+      },
+      "intellectual": {
+        "title": "Propriété intellectuelle",
+        "body": "Les textes et les photographies présents sur ce site sont la propriété de l'éditrice. Toute reproduction sans autorisation est interdite. Les avis des voyageurs restent la propriété de leurs auteurs et sont reproduits sans modification."
+      },
+      "credits": {
+        "title": "Crédits",
+        "body": "Cartographie : Google Maps, chargée uniquement après votre accord. Mesure d'audience : Vercel Web Analytics, sans cookie."
+      }
+    }
+  },
+  "privacyPage": {
+    "titleLead": "Politique de",
+    "titleAccent": "confidentialité",
+    "titleTail": "",
+    "updated": "Dernière mise à jour : {date}",
+    "sections": {
+      "principle": {
+        "title": "Le principe",
+        "body": "Ce site collecte le minimum. Aucune donnée personnelle ne circule dans les adresses des pages, aucun cookie publicitaire n'est déposé, et aucun service tiers ne se charge avant votre accord explicite."
+      },
+      "inquiry": {
+        "title": "Votre demande de réservation",
+        "body": "Quand vous envoyez le formulaire, nous transmettons par email à la propriétaire les informations que vous avez saisies : nom, adresse email, téléphone si vous le renseignez, dates souhaitées, nombre de voyageurs et message. Ces informations servent uniquement à vous répondre. Elles ne sont pas revendues, ne sont pas utilisées pour de la prospection, et sont conservées dans la boîte mail de la propriétaire le temps des échanges puis supprimées au plus tard trois ans après le dernier contact. Le site ne conserve aucune base de données de son côté."
+      },
+      "analytics": {
+        "title": "Mesure d'audience",
+        "body": "Nous utilisons Vercel Web Analytics, qui mesure la fréquentation sans cookie et sans identifiant permettant de vous reconnaître d'une visite à l'autre. Nous savons combien de personnes ont vu une page et quels boutons de réservation ont été cliqués, jamais qui vous êtes."
+      },
+      "map": {
+        "title": "La carte",
+        "body": "La carte Google Maps ne se charge pas tant que vous n'avez pas cliqué sur « Afficher la carte ». Tant que vous n'acceptez pas, aucune requête ne part vers Google. Si vous acceptez, Google reçoit votre adresse IP et peut déposer des cookies selon ses propres règles. Votre choix est mémorisé dans votre navigateur (stockage local) et vous pouvez le retirer à tout moment depuis la section carte."
+      },
+      "hosting": {
+        "title": "Hébergement et journaux",
+        "body": "Le site est hébergé par Vercel, qui conserve des journaux techniques de connexion pour assurer le service et la sécurité. L'envoi des emails de demande passe par Resend, un service d'envoi transactionnel."
+      },
+      "reviews": {
+        "title": "Les avis et les photos de profil",
+        "body": "Les avis sont affichés avec le prénom seulement. Les photos de profil sont hébergées sur ce site et ne sont pas chargées depuis un service tiers."
+      },
+      "rights": {
+        "title": "Vos droits",
+        "body": "Vous pouvez demander l'accès, la rectification ou la suppression des informations vous concernant en écrivant à {email}. Vous pouvez également adresser une réclamation à la CNIL."
+      }
+    }
+  },
+  "notFound": {
+    "titleLead": "Cette page",
+    "titleAccent": "n'existe pas",
+    "titleTail": "",
+    "body": "Le lien est peut-être ancien ou mal recopié. Vous pouvez repartir de l'accueil.",
+    "cta": "Retour à l'accueil"
+  }
+}

@@ -1,0 +1,31 @@
+/*
+ * Brand tokens.
+ *
+ * Palette from spec FR-017. The two "ink" values are derived, not given, and
+ * are the ones validated for WCAG 2.2 AA on the cream background:
+ *   --brand-ink        #3A2A26 on #FAF7F2  = 12.0:1
+ *   --brand-ink-soft   #6B5750 on #FAF7F2  =  6.3:1
+ *   --brand-raspberry-ink #A8253C on #FAF7F2 = 6.6:1  (link and emphasis text)
+ * The raw accents are decorative only:
+ *   #CE4257 on cream = 4.3:1  -> large text, borders and fills, never body copy
+ *   #F25C54 on cream = 3.0:1  -> fills and rules only
+ *   #FF9B54 on cream = 1.9:1  -> fills only
+ * White on #CE4257 = 4.6:1, which is why the primary button uses raspberry.
+ */
+
+:root {
+  --brand-cream: #faf7f2;
+  --brand-sand: #f1eae0;
+  --brand-ink: #3a2a26;
+  --brand-ink-soft: #6b5750;
+  --brand-night: #2a1e1b;
+  --brand-sunset: #ff9b54;
+  --brand-coral: #f25c54;
+  --brand-raspberry: #ce4257;
+  --brand-raspberry-ink: #a8253c;
+
+  --radius-arch: 999px 999px 24px 24px;
+  --shadow-card: 0 1px 2px rgba(58, 42, 38, 0.06), 0 8px 24px rgba(58, 42, 38, 0.07);
+  --shadow-card-hover: 0 2px 4px rgba(58, 42, 38, 0.08), 0 16px 40px rgba(58, 42, 38, 0.12);
+  --shadow-ring: 0 0 0 3px rgba(168, 37, 60, 0.25);
+}

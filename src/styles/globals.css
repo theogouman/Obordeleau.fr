@@ -1,0 +1,250 @@
+@import 'tailwindcss';
+@import './tokens.css';
+@import './_root.css';
+
+@theme {
+  --color-cream: #faf7f2;
+  --color-sand: #f1eae0;
+  --color-shell: #ffffff;
+  --color-ink: #3a2a26;
+  --color-ink-soft: #6b5750;
+  --color-night: #2a1e1b;
+  --color-sunset: #ff9b54;
+  --color-coral: #f25c54;
+  --color-raspberry: #ce4257;
+  --color-raspberry-ink: #a8253c;
+
+  --font-display: var(--font-fraunces), 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --radius-card: 1rem;
+  --radius-pill: 999px;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-raspberry-ink);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Reserve space for every image slot so a missing photo never shifts layout. */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  ::selection {
+    background-color: var(--color-sunset);
+    color: var(--color-night);
+  }
+}
+
+@layer components {
+  .container-page {
+    width: 100%;
+    max-width: 78rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .container-page {
+      padding-inline: 2rem;
+    }
+  }
+
+  .section {
+    padding-block: 4rem;
+  }
+
+  @media (min-width: 768px) {
+    .section {
+      padding-block: 6rem;
+    }
+  }
+
+  .accent-word {
+    font-style: italic;
+    color: var(--color-raspberry-ink);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    transition:
+      transform var(--duration-fast) var(--ease-out-quad),
+      background-color var(--duration-fast) var(--ease-out-quad),
+      border-color var(--duration-fast) var(--ease-out-quad),
+      box-shadow var(--duration-fast) var(--ease-out-quad);
+    will-change: transform;
+  }
+
+  .btn:hover {
+    transform: translateY(calc(-1 * var(--lift-sm)));
+  }
+
+  .btn:active {
+    transform: translateY(0);
+  }
+
+  .btn-primary {
+    background-color: var(--color-raspberry);
+    color: #ffffff;
+    box-shadow: var(--shadow-card);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-raspberry-ink);
+  }
+
+  .btn-secondary {
+    background-color: transparent;
+    color: var(--color-ink);
+    border: 1px solid rgba(58, 42, 38, 0.28);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--color-ink);
+    background-color: rgba(255, 255, 255, 0.6);
+  }
+
+  .card {
+    background-color: var(--color-shell);
+    border: 1px solid rgba(58, 42, 38, 0.08);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* Card hover tilt, cancelled by the reduced-motion tokens above. */
+  .card-tilt {
+    transition:
+      transform var(--duration-base) var(--ease-out-expo),
+      box-shadow var(--duration-base) var(--ease-out-expo);
+    will-change: transform;
+  }
+
+  .card-tilt:hover,
+  .card-tilt:focus-within {
+    transform: translateY(calc(-1 * var(--lift-md))) rotate(-0.35deg);
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  /* Arched hero frame, the reference's signature form. */
+  .arch {
+    border-radius: 50vw 50vw 1.5rem 1.5rem;
+    overflow: hidden;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 100;
+    background-color: var(--color-night);
+    color: var(--color-cream);
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius-pill);
+    transition: top var(--duration-fast) var(--ease-out-quad);
+  }
+
+  .skip-link:focus {
+    top: 1rem;
+  }
+
+  .surface-muted {
+    background-color: var(--color-sand);
+  }
+
+  .rule {
+    border: 0;
+    border-top: 1px solid rgba(58, 42, 38, 0.12);
+  }
+}
+
+@layer utilities {
+  /* Text reveal on scroll. Elements start visible and are only animated when
+     JavaScript adds [data-reveal], so no content is ever hidden without JS. */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(var(--reveal-distance));
+    transition:
+      opacity var(--duration-slow) var(--ease-out-expo),
+      transform var(--duration-slow) var(--ease-out-expo);
+    will-change: opacity, transform;
+  }
+
+  [data-reveal='shown'] {
+    opacity: 1;
+    transform: none;
+  }
+
+  @keyframes draw-check {
+    from {
+      stroke-dashoffset: 40;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .draw-check {
+    stroke-dasharray: 40;
+    animation: draw-check var(--duration-slow) var(--ease-out-expo) both;
+  }
+
+  .clamp-lines {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}

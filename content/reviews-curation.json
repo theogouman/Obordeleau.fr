@@ -1,0 +1,13 @@
+{
+  "$comment": "Curation rules from specs/001-obordeleau-site/reviews-curation.md. Ids refer to the 'id' field of content/reviews.json.",
+  "homepageCandidateIds": [
+    "003", "010", "016", "033", "042", "057",
+    "059", "061", "070", "080", "108", "128", "143", "149"
+  ],
+  "homepageMin": 6,
+  "homepageMax": 9,
+  "internationalPicks": ["070", "108", "143"],
+  "heroQuoteIds": ["115", "010", "057", "033"],
+  "heroQuoteMax": 3,
+  "noCustomPhotoIds": ["029", "081"]
+}

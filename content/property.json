@@ -1,0 +1,272 @@
+{
+  "$comment": "Source of truth for every property fact. Labels and prose live in messages/*.json (constitution II + III). Items with confirmed:false are NOT rendered until the owner validates them.",
+  "name": "Obordeleau",
+  "legalName": "Obordeleau",
+  "classification": {
+    "label": "meuble-de-tourisme",
+    "stars": 3
+  },
+  "address": {
+    "street": "253 Av. Jean-Baptiste Mattei",
+    "postalCode": "83500",
+    "locality": "La Seyne-sur-Mer",
+    "region": "Var",
+    "country": "FR",
+    "neighbourhood": "Les Sablettes"
+  },
+  "geo": {
+    "latitude": 43.08014,
+    "longitude": 5.896633
+  },
+  "capacity": {
+    "maxGuests": 4,
+    "bedrooms": 0,
+    "beds": 2,
+    "bathrooms": 1,
+    "sizeSqm": 35,
+    "sleepingArrangement": [
+      "real-bed",
+      "sofa-bed"
+    ],
+    "travelCotOnRequest": true
+  },
+  "channels": [
+    {
+      "id": "direct",
+      "priority": 1,
+      "url": null
+    },
+    {
+      "id": "airbnb",
+      "priority": 2,
+      "url": "https://www.airbnb.fr/rooms/53950636"
+    },
+    {
+      "id": "booking",
+      "priority": 3,
+      "url": "https://www.booking.com/hotel/fr/3-etoiles-au-bord-de-l-eau.html"
+    }
+  ],
+  "quickFacts": [
+    {
+      "id": "beach",
+      "value": "70",
+      "unit": "m",
+      "confirmed": true
+    },
+    {
+      "id": "size",
+      "value": "35",
+      "unit": "m2",
+      "confirmed": true
+    },
+    {
+      "id": "guests",
+      "value": "4",
+      "unit": null,
+      "confirmed": true
+    },
+    {
+      "id": "stars",
+      "value": "3",
+      "unit": null,
+      "confirmed": true
+    }
+  ],
+  "amenities": [
+    {
+      "id": "air-conditioning",
+      "group": "comfort",
+      "confirmed": true
+    },
+    {
+      "id": "private-garden-view",
+      "group": "comfort",
+      "confirmed": true
+    },
+    {
+      "id": "no-facing-neighbours",
+      "group": "comfort",
+      "confirmed": true
+    },
+    {
+      "id": "secured-residence",
+      "group": "practical",
+      "confirmed": true
+    },
+    {
+      "id": "free-parking",
+      "group": "practical",
+      "confirmed": true
+    },
+    {
+      "id": "linens-towels",
+      "group": "practical",
+      "confirmed": true
+    },
+    {
+      "id": "travel-cot",
+      "group": "family",
+      "confirmed": true
+    },
+    {
+      "id": "sofa-bed",
+      "group": "family",
+      "confirmed": true
+    },
+    {
+      "id": "storage",
+      "group": "comfort",
+      "confirmed": true
+    },
+    {
+      "id": "ground-floor-access",
+      "group": "practical",
+      "confirmed": false
+    },
+    {
+      "id": "wifi",
+      "group": "practical",
+      "confirmed": false
+    },
+    {
+      "id": "kitchen",
+      "group": "practical",
+      "confirmed": false
+    },
+    {
+      "id": "washing-machine",
+      "group": "practical",
+      "confirmed": false
+    },
+    {
+      "id": "tv",
+      "group": "comfort",
+      "confirmed": false
+    },
+    {
+      "id": "terrace",
+      "group": "comfort",
+      "confirmed": false
+    }
+  ],
+  "around": [
+    {
+      "id": "beach",
+      "distanceM": 70,
+      "walkMinutes": 2,
+      "confirmed": true
+    },
+    {
+      "id": "seaside-park",
+      "distanceM": null,
+      "walkMinutes": 1,
+      "confirmed": true
+    },
+    {
+      "id": "boat-shuttle",
+      "distanceM": null,
+      "walkMinutes": 2,
+      "confirmed": true
+    },
+    {
+      "id": "shops",
+      "distanceM": null,
+      "walkMinutes": null,
+      "confirmed": true
+    },
+    {
+      "id": "restaurants",
+      "distanceM": null,
+      "walkMinutes": null,
+      "confirmed": true
+    },
+    {
+      "id": "market",
+      "distanceM": null,
+      "walkMinutes": null,
+      "confirmed": true
+    },
+    {
+      "id": "toulon",
+      "distanceM": null,
+      "walkMinutes": null,
+      "confirmed": true
+    }
+  ],
+  "honestNotes": [
+    "compact",
+    "bed-between-walls",
+    "light",
+    "mosquitoes"
+  ],
+  "gallery": [
+    {
+      "file": "gallery-01.jpg",
+      "altKey": "gallery.alt.01",
+      "featured": true
+    },
+    {
+      "file": "gallery-02.jpg",
+      "altKey": "gallery.alt.02",
+      "featured": true
+    },
+    {
+      "file": "gallery-03.jpg",
+      "altKey": "gallery.alt.03",
+      "featured": true
+    },
+    {
+      "file": "gallery-04.jpg",
+      "altKey": "gallery.alt.04",
+      "featured": false
+    },
+    {
+      "file": "gallery-05.jpg",
+      "altKey": "gallery.alt.05",
+      "featured": false
+    },
+    {
+      "file": "gallery-06.jpg",
+      "altKey": "gallery.alt.06",
+      "featured": false
+    },
+    {
+      "file": "gallery-07.jpg",
+      "altKey": "gallery.alt.07",
+      "featured": false
+    },
+    {
+      "file": "gallery-08.jpg",
+      "altKey": "gallery.alt.08",
+      "featured": false
+    },
+    {
+      "file": "gallery-09.jpg",
+      "altKey": "gallery.alt.09",
+      "featured": false
+    },
+    {
+      "file": "gallery-10.jpg",
+      "altKey": "gallery.alt.10",
+      "featured": false
+    }
+  ],
+  "hero": {
+    "image": "hero-01.jpg"
+  },
+  "area": [
+    {
+      "file": "beach.jpg",
+      "aroundId": "beach"
+    },
+    {
+      "file": "park.jpg",
+      "aroundId": "seaside-park"
+    },
+    {
+      "file": "boat.jpg",
+      "aroundId": "boat-shuttle"
+    }
+  ]
+}

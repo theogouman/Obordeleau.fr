@@ -1,0 +1,439 @@
+{
+  "common": {
+    "locale": "en",
+    "localeName": "English",
+    "required": "required",
+    "optional": "optional",
+    "loading": "Loading",
+    "close": "Close",
+    "previous": "Previous",
+    "next": "Next",
+    "skipToContent": "Skip to content"
+  },
+  "meta": {
+    "siteName": "Obordeleau",
+    "home": {
+      "title": "Obordeleau, air-conditioned studio at Les Sablettes, 70 m from the beach",
+      "description": "A 3-star studio at Les Sablettes near Toulon. Beach on foot in 2 minutes, shuttle boat to Toulon at the door, no car needed. Book direct."
+    },
+    "reviews": {
+      "title": "Guest reviews | Obordeleau, Les Sablettes",
+      "description": "Every review left by guests of the Obordeleau studio at Les Sablettes, La Seyne-sur-Mer. Average rating and full comments, nothing filtered out."
+    },
+    "legal": {
+      "title": "Legal notice | Obordeleau",
+      "description": "Legal notice for the Obordeleau website, a holiday studio at Les Sablettes, La Seyne-sur-Mer."
+    },
+    "privacy": {
+      "title": "Privacy policy | Obordeleau",
+      "description": "How the Obordeleau website handles your data: cookieless analytics, a map that loads only once you agree, and booking inquiries."
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "gallery": "The studio",
+    "amenities": "Amenities",
+    "around": "Around you",
+    "about": "Your host",
+    "reviews": "Reviews",
+    "location": "Location",
+    "book": "Book",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "language": "Language",
+    "languageSwitch": "Change language",
+    "primary": "Main navigation",
+    "mobileMenu": "Menu"
+  },
+  "hero": {
+    "eyebrow": "Les Sablettes, La Seyne-sur-Mer",
+    "titleLead": "An air-conditioned studio",
+    "titleAccent": "70 metres",
+    "titleTail": "from the beach",
+    "subtitle": "Park the car and forget about it. The sandy beach at Les Sablettes is a two minute walk through the park, the shuttle boat to Toulon leaves from the foot of the building, and the shops and restaurants are all in the neighbourhood.",
+    "ctaPrimary": "Ask about your dates",
+    "ctaSecondary": "See the studio",
+    "imageAlt": "The Obordeleau studio and the beach at Les Sablettes, La Seyne-sur-Mer",
+    "badge": "3-star classified holiday rental",
+    "quotesLabel": "What guests say"
+  },
+  "quickFacts": {
+    "title": "At a glance",
+    "beach": {
+      "label": "to the beach",
+      "detail": "on foot through the park"
+    },
+    "size": {
+      "label": "of living space",
+      "detail": "air-conditioned"
+    },
+    "guests": {
+      "label": "guests",
+      "detail": "double bed and sofa bed"
+    },
+    "stars": {
+      "label": "stars",
+      "detail": "officially classified rental"
+    },
+    "unit": {
+      "m": "m",
+      "m2": "m²"
+    }
+  },
+  "gallery": {
+    "titleLead": "The studio",
+    "titleAccent": "in pictures",
+    "titleTail": "",
+    "intro": "One bright 35 m² room opening onto the garden, arranged so that nothing is missing: sleeping corner, dining corner, plenty of storage, and air conditioning for the hot days.",
+    "open": "Enlarge photo",
+    "counter": "Photo {current} of {total}",
+    "missing": "Photo coming soon",
+    "viewAll": "See all photos",
+    "alt": {
+      "01": "Overall view of the Obordeleau studio from the entrance",
+      "02": "The sleeping corner with its double bed",
+      "03": "The kitchen and dining corner",
+      "04": "The shower room",
+      "05": "The sofa bed made up for four guests",
+      "06": "The view over the private garden from the studio",
+      "07": "The storage space in the studio",
+      "08": "The dining corner by the window",
+      "09": "The entrance to the secured residence",
+      "10": "The garden of the residence"
+    }
+  },
+  "amenities": {
+    "titleLead": "Everything you",
+    "titleAccent": "need",
+    "titleTail": "",
+    "intro": "The studio is equipped for a simple holiday: you arrive with your suitcases, the rest is already here.",
+    "groups": {
+      "comfort": "Comfort",
+      "practical": "Practical",
+      "family": "With family"
+    },
+    "items": {
+      "air-conditioning": {
+        "label": "Air conditioning",
+        "note": "A real difference on the hottest days."
+      },
+      "private-garden-view": {
+        "label": "Private garden view",
+        "note": "Greenery outside the windows, not the street."
+      },
+      "no-facing-neighbours": {
+        "label": "No facing neighbours",
+        "note": "Nobody opposite, so you can live with the windows open."
+      },
+      "secured-residence": {
+        "label": "Secured residence",
+        "note": "Badge access and camera surveillance."
+      },
+      "free-parking": {
+        "label": "Free parking",
+        "note": "Across the street, for the days the car does not move."
+      },
+      "linens-towels": {
+        "label": "Linens and towels provided",
+        "note": "Beds made when you arrive."
+      },
+      "travel-cot": {
+        "label": "Travel cot on request",
+        "note": "Just mention it in your message."
+      },
+      "sofa-bed": {
+        "label": "Sofa bed",
+        "note": "For two extra guests."
+      },
+      "storage": {
+        "label": "Plenty of storage",
+        "note": "Suitcases get emptied and put away."
+      },
+      "ground-floor-access": {
+        "label": "Step-free access",
+        "note": ""
+      },
+      "wifi": {
+        "label": "Wifi",
+        "note": ""
+      },
+      "kitchen": {
+        "label": "Equipped kitchen",
+        "note": ""
+      },
+      "washing-machine": {
+        "label": "Washing machine",
+        "note": ""
+      },
+      "tv": {
+        "label": "Television",
+        "note": ""
+      },
+      "terrace": {
+        "label": "Terrace",
+        "note": ""
+      }
+    },
+    "honest": {
+      "title": "Worth knowing before you book",
+      "intro": "So that nothing surprises you on arrival, here is what we would rather say in advance.",
+      "notes": {
+        "compact": "This is a 35 m² studio. It is ideal for two, and it works well for a family of four thanks to the sofa bed.",
+        "bed-between-walls": "The main bed sits between two walls. Worth knowing if you are taller than 1.90 m.",
+        "light": "The room faces the garden, so the light is soft. One guest found it a little dark in the middle of the day.",
+        "mosquitoes": "The park next door, which everyone loves, also brings a few mosquitoes in summer."
+      }
+    }
+  },
+  "around": {
+    "titleLead": "Around",
+    "titleAccent": "you",
+    "titleTail": "",
+    "intro": "Everything is walkable. That is why most guests leave the car in the parking space for the whole stay.",
+    "items": {
+      "beach": {
+        "label": "Les Sablettes sandy beach",
+        "detail": "Straight through the park, without crossing a road."
+      },
+      "seaside-park": {
+        "label": "Seaside park",
+        "detail": "Turtles, frogs and a fitness trail, a favourite with families."
+      },
+      "boat-shuttle": {
+        "label": "Shuttle boat to Toulon",
+        "detail": "The landing stage is at the foot of the building: Toulon, the bay and the islands."
+      },
+      "shops": {
+        "label": "Shops",
+        "detail": "Bakery, small supermarket and pharmacy in the neighbourhood."
+      },
+      "restaurants": {
+        "label": "Restaurants",
+        "detail": "Along the seafront, a few minutes on foot."
+      },
+      "market": {
+        "label": "Market",
+        "detail": "The local market, also within walking distance."
+      },
+      "toulon": {
+        "label": "Toulon",
+        "detail": "By boat from the landing stage, and the crossing is part of the holiday."
+      }
+    },
+    "unit": {
+      "distance": "{value} m",
+      "walk": "{value} min walk",
+      "onFoot": "on foot"
+    }
+  },
+  "about": {
+    "titleLead": "Your host,",
+    "titleAccent": "Corine",
+    "titleTail": "",
+    "portraitAlt": "Corine, who welcomes guests to the Obordeleau studio",
+    "paragraphs": [
+      "I have been welcoming guests to this studio for several years, and what I care about is that they feel at home straight away.",
+      "I do my best to work around your arrival and departure times, especially when you are travelling a long way or leaving at the end of the day.",
+      "Linens and towels are provided, the studio is clean and ready when you arrive, and I stay reachable throughout your stay if you need a tip about the area."
+    ],
+    "signature": "Corine"
+  },
+  "reviews": {
+    "titleLead": "What guests",
+    "titleAccent": "say",
+    "titleTail": "",
+    "intro": "These reviews come from past stays. They appear exactly as written, in their original language.",
+    "badge": {
+      "ratingLabel": "{rating} out of 5",
+      "countLabel": "{count} reviews",
+      "aria": "Average rating of {rating} out of 5, from {count} reviews",
+      "about": "about"
+    },
+    "card": {
+      "ratingAria": "{rating} stars out of 5",
+      "readMore": "Read more",
+      "readLess": "Show less",
+      "originalLanguage": "Review written in {language}"
+    },
+    "languages": {
+      "fr": "French",
+      "en": "English",
+      "de": "German",
+      "other": "its original language"
+    },
+    "seeAll": "Read all {count} reviews",
+    "seeAllShort": "Read all reviews",
+    "empty": "Reviews will appear here as soon as the export is added to the site.",
+    "page": {
+      "titleLead": "All",
+      "titleAccent": "reviews",
+      "titleTail": "",
+      "intro": "Here is every review received, newest first. We remove none of them, so the average stays are here too.",
+      "count": "{count} reviews",
+      "backHome": "Back to the home page"
+    }
+  },
+  "map": {
+    "titleLead": "Where the",
+    "titleAccent": "studio",
+    "titleTail": "is",
+    "intro": "253 Av. Jean-Baptiste Mattei, at Les Sablettes. The beach is behind the park and the shuttle boat landing stage is at the foot of the building.",
+    "addressLabel": "Address",
+    "consent": {
+      "title": "Show the map",
+      "body": "The map is provided by Google Maps. By displaying it you accept that Google receives your IP address and may set cookies in your browser. Nothing is loaded until you accept.",
+      "accept": "Show the map",
+      "remember": "Remember my choice",
+      "privacyLink": "More in the privacy policy",
+      "reset": "Hide the map again"
+    },
+    "openExternal": "Open in Google Maps",
+    "openExternalHint": "Opens a new tab on Google's website.",
+    "unavailable": "The map is not configured yet. The full address is shown above.",
+    "markerAlt": "Location of the Obordeleau studio",
+    "placeholderAlt": "Simplified plan of the Les Sablettes area showing where the studio is"
+  },
+  "reservation": {
+    "titleLead": "Book",
+    "titleAccent": "direct",
+    "titleTail": "",
+    "intro": "Three ways to book the same studio. Booking direct means writing to Corine, with no platform commission in between.",
+    "channels": {
+      "direct": {
+        "badge": "Recommended",
+        "title": "Direct with Corine",
+        "body": "Send your dates and your message, and you usually have an answer within 24 hours. No commission, and the same flexibility on arrival times.",
+        "cta": "Ask about your dates"
+      },
+      "airbnb": {
+        "title": "On Airbnb",
+        "body": "The listing and its reviews are there under your usual account.",
+        "cta": "See the Airbnb listing",
+        "external": "Opens the Airbnb website in a new tab"
+      },
+      "booking": {
+        "title": "On Booking",
+        "body": "The studio is also listed on Booking, with its 3-star classification.",
+        "cta": "See the Booking listing",
+        "external": "Opens the Booking website in a new tab"
+      }
+    },
+    "form": {
+      "title": "Your inquiry",
+      "intro": "This inquiry commits you to nothing and takes no payment. Corine replies with availability and the rate.",
+      "arrival": "Arrival",
+      "departure": "Departure",
+      "guests": "Guests",
+      "name": "Your name",
+      "email": "Your email",
+      "phone": "Phone",
+      "message": "Your message",
+      "messagePlaceholder": "Number of adults and children, travel cot needed, rough arrival time...",
+      "consent": "I agree that these details are used to answer my inquiry.",
+      "consentLink": "Privacy policy",
+      "submit": "Send my inquiry",
+      "submitting": "Sending",
+      "successTitle": "Inquiry sent",
+      "successBody": "Thank you, your inquiry is on its way. Corine usually replies within 24 hours. Do have a look in your spam folder as well.",
+      "successAgain": "Send another inquiry",
+      "errors": {
+        "required": "We need this to be able to answer you.",
+        "email": "This email address does not look valid.",
+        "dateOrder": "The departure date must be after the arrival date.",
+        "datePast": "That date has already passed.",
+        "guests": "The studio takes 4 guests at most.",
+        "consent": "Please tick this box so that we can reply to you.",
+        "rateLimited": "Too many inquiries sent from this device. Please try again in a few minutes.",
+        "server": "Sending failed. You can try again, or go through Airbnb or Booking in the meantime."
+      },
+      "honeypotLabel": "Leave this field empty"
+    }
+  },
+  "footer": {
+    "tagline": "An air-conditioned studio at Les Sablettes, 70 metres from the beach.",
+    "addressTitle": "Address",
+    "bookTitle": "Book",
+    "aboutTitle": "This site",
+    "legalNotice": "Legal notice",
+    "privacy": "Privacy policy",
+    "reviews": "Guest reviews",
+    "copyright": "© {year} Obordeleau. All rights reserved.",
+    "madeNote": "No advertising cookies. The map loads only with your agreement."
+  },
+  "legalPage": {
+    "titleLead": "Legal",
+    "titleAccent": "notice",
+    "titleTail": "",
+    "pendingNotice": "This page is waiting for the owner's final legal details. Every field marked \"to be completed\" must be filled in before the site goes public.",
+    "placeholder": "to be completed",
+    "sections": {
+      "publisher": {
+        "title": "Site publisher",
+        "body": "The obordeleau.fr website is published by {name}, {status}, whose address is {address}. SIRET number: {siret}. Contact: {email}."
+      },
+      "director": {
+        "title": "Publication director",
+        "body": "{name}."
+      },
+      "hosting": {
+        "title": "Hosting",
+        "body": "The site is hosted by Vercel Inc., 340 S Lemon Ave #4133, Walnut, CA 91789, United States. The domain name is managed by Hostinger."
+      },
+      "property": {
+        "title": "The property",
+        "body": "Obordeleau is a 3-star classified furnished holiday rental at 253 Av. Jean-Baptiste Mattei, 83500 La Seyne-sur-Mer, France. Local registration number: {declaration}."
+      },
+      "intellectual": {
+        "title": "Intellectual property",
+        "body": "The texts and photographs on this site belong to the publisher. Reproduction without permission is not allowed. Guest reviews remain the property of their authors and are reproduced unaltered."
+      },
+      "credits": {
+        "title": "Credits",
+        "body": "Mapping: Google Maps, loaded only after your agreement. Audience measurement: Vercel Web Analytics, without cookies."
+      }
+    }
+  },
+  "privacyPage": {
+    "titleLead": "Privacy",
+    "titleAccent": "policy",
+    "titleTail": "",
+    "updated": "Last updated: {date}",
+    "sections": {
+      "principle": {
+        "title": "The principle",
+        "body": "This site collects the minimum. No personal data travels in page addresses, no advertising cookie is set, and no third party service loads before you explicitly agree."
+      },
+      "inquiry": {
+        "title": "Your booking inquiry",
+        "body": "When you send the form, we email the owner the details you entered: name, email address, phone number if you give one, requested dates, number of guests and message. They are used only to reply to you. They are never sold, never used for marketing, and they stay in the owner's mailbox for the length of the exchange, then are deleted at the latest three years after the last contact. The site itself keeps no database."
+      },
+      "analytics": {
+        "title": "Audience measurement",
+        "body": "We use Vercel Web Analytics, which measures traffic without cookies and without an identifier that would recognise you from one visit to the next. We know how many people saw a page and which booking buttons were clicked, never who you are."
+      },
+      "map": {
+        "title": "The map",
+        "body": "The Google Maps map does not load until you click \"Show the map\". Until you accept, no request goes to Google. If you accept, Google receives your IP address and may set cookies under its own rules. Your choice is stored in your browser (local storage) and you can withdraw it at any time from the map section."
+      },
+      "hosting": {
+        "title": "Hosting and logs",
+        "body": "The site is hosted by Vercel, which keeps technical connection logs to run and secure the service. Inquiry emails are sent through Resend, a transactional email service."
+      },
+      "reviews": {
+        "title": "Reviews and profile photos",
+        "body": "Reviews are shown with the first name only. Profile photos are hosted on this site and are not loaded from a third party."
+      },
+      "rights": {
+        "title": "Your rights",
+        "body": "You can ask for access to, correction of, or deletion of your details by writing to {email}. You can also lodge a complaint with the CNIL, the French data protection authority."
+      }
+    }
+  },
+  "notFound": {
+    "titleLead": "This page",
+    "titleAccent": "does not exist",
+    "titleTail": "",
+    "body": "The link may be old or mistyped. You can start again from the home page.",
+    "cta": "Back to the home page"
+  }
+}
