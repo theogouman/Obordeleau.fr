@@ -324,7 +324,7 @@ export function BookingCalendar({
                   {week.map((date, cell) => (
                     <td key={date ?? `empty-${cell}`} className="p-0.5 text-center">
                       {date ? (
-                        <span className={`t-tt-wrap block ${blocked.has(date) ? '' : 'w-full'}`}>
+                        <span className="t-tt-wrap block">
                           <button
                             type="button"
                             data-date={date}
