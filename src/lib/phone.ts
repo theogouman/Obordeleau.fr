@@ -24,6 +24,13 @@ const PRIORITY = dialData.priority as string[];
 const FALLBACK_BY_LOCALE = dialData.fallbackByLocale as Record<string, string>;
 
 /**
+ * Almost every numbering plan drops the national trunk 0 when the number is
+ * dialled from abroad. Italy is the well known exception: an Italian landline
+ * keeps its leading 0, and San Marino and the Vatican follow the same plan.
+ */
+const KEEP_TRUNK_ZERO = new Set(dialData.keepTrunkZero as string[]);
+
+/**
  * Regional indicator symbols: two letters become the flag of that country in
  * every font that carries them, and degrade to the two letters where they do
  * not.
@@ -80,9 +87,25 @@ export function phoneDigits(value: string): string {
   return value.replace(/\D/g, '');
 }
 
-/** What gets sent to the host: a single international number. */
+/**
+ * What gets sent to the host: one international number, whatever shape the
+ * visitor typed. A number pasted in international form keeps its meaning rather
+ * than gaining a second country code.
+ */
 export function fullPhoneNumber(country: string, national: string): string {
-  const digits = phoneDigits(national).replace(/^0+/, '');
-  if (digits === '') return '';
-  return `+${dialFor(country)} ${digits}`;
+  const dial = dialFor(country);
+  let digits = phoneDigits(national);
+  if (digits === '' || dial === '') return '';
+
+  if (digits.startsWith(`00${dial}`)) {
+    digits = digits.slice(2 + dial.length);
+  } else if (national.trim().startsWith('+') && digits.startsWith(dial)) {
+    digits = digits.slice(dial.length);
+  }
+
+  if (!KEEP_TRUNK_ZERO.has(country.toUpperCase())) {
+    digits = digits.replace(/^0+/, '');
+  }
+
+  return digits === '' ? '' : `+${dial} ${digits}`;
 }

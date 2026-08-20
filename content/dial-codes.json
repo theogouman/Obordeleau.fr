@@ -14,6 +14,11 @@
     "en": "GB",
     "de": "DE"
   },
+  "keepTrunkZero": [
+    "IT",
+    "SM",
+    "VA"
+  ],
   "codes": {
     "AD": "376",
     "AE": "971",
