@@ -90,16 +90,22 @@
     "missing": "Photo à venir",
     "viewAll": "Voir toutes les photos",
     "alt": {
-      "01": "Vue d'ensemble du studio Obordeleau depuis l'entrée",
-      "02": "Le coin nuit du studio avec son lit double",
-      "03": "Le coin cuisine et repas du studio",
-      "04": "La salle d'eau du studio",
-      "05": "Le canapé-lit ouvert pour quatre voyageurs",
-      "06": "La vue sur le jardin privé depuis le studio",
-      "07": "Les rangements du studio",
-      "08": "Le coin repas près de la fenêtre",
-      "09": "L'entrée de la résidence sécurisée",
-      "10": "Le jardin de la résidence"
+      "01": "L'entrée du studio, son panneau en lattes de bois clair et son applique en corde",
+      "02": "La salle d'eau, son lavabo, son grand miroir et sa douche",
+      "03": "Le coin lavabo de la salle d'eau et ses étagères en bois",
+      "04": "Le coin nuit et son lit double, sous les étagères de la tête de lit",
+      "05": "Le coin cuisine avec micro-ondes, bouilloire et machine à café, ouvert sur la table",
+      "06": "Le séjour et la cuisine ouverte, avec la grande baie vitrée sur le jardin",
+      "07": "Le canapé du séjour et la banquette installée sous la baie vitrée",
+      "08": "La cuisine équipée : réfrigérateur, plaques, lave-linge et micro-ondes",
+      "09": "Le plan de travail de la cuisine, l'évier et le lave-linge",
+      "10": "La cuisine et le bar avec ses deux tabourets hauts",
+      "11": "Les plaques de cuisson, la hotte et l'évier de la cuisine",
+      "12": "Le studio en enfilade, du bar jusqu'au séjour ouvert sur le jardin",
+      "13": "Le séjour, sa table basse et la banquette devant la baie vitrée",
+      "14": "Le studio dans sa longueur, du séjour vers le coin cuisine et le bar",
+      "15": "Le séjour en plein jour, la baie vitrée ouverte sur la verdure du jardin",
+      "16": "Le canapé-lit du séjour, le grand miroir et le bar en arrière-plan"
     }
   },
   "amenities": {
@@ -183,7 +189,8 @@
     "items": {
       "beach": {
         "label": "Plage de sable des Sablettes",
-        "detail": "En traversant le parc, sans traverser de route."
+        "detail": "En traversant le parc, sans traverser de route.",
+        "photoAlt": "Vue aérienne de la plage des Sablettes, du front de mer et de la rade de Toulon"
       },
       "seaside-park": {
         "label": "Parc du bord de mer",

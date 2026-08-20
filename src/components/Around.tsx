@@ -54,7 +54,7 @@ export function Around() {
               <SmartImage
                 key={image.file}
                 src={`/images/area/${image.file}`}
-                alt={t(`items.${image.aroundId}.detail`)}
+                alt={t(`items.${image.aroundId}.photoAlt`)}
                 aspect="16 / 10"
                 sizes="(min-width: 1024px) 30vw, 100vw"
                 missingLabel={gallery('missing')}

@@ -90,16 +90,22 @@
     "missing": "Foto folgt",
     "viewAll": "Alle Fotos ansehen",
     "alt": {
-      "01": "Gesamtansicht des Studios Obordeleau vom Eingang aus",
-      "02": "Der Schlafbereich mit Doppelbett",
-      "03": "Der Küchen- und Essbereich",
-      "04": "Das Duschbad",
-      "05": "Das ausgeklappte Schlafsofa für vier Gäste",
-      "06": "Der Blick vom Studio in den privaten Garten",
-      "07": "Der Stauraum im Studio",
-      "08": "Der Essbereich am Fenster",
-      "09": "Der Eingang der gesicherten Wohnanlage",
-      "10": "Der Garten der Wohnanlage"
+      "01": "Der Eingang des Studios mit heller Holzlattenwand und Wandleuchte aus Tau",
+      "02": "Das Duschbad mit Waschbecken, großem Spiegel und Dusche",
+      "03": "Die Waschbeckenecke des Duschbads mit ihren Holzablagen",
+      "04": "Der Schlafbereich mit Doppelbett unter den Regalen am Kopfende",
+      "05": "Die Küchenecke mit Mikrowelle, Wasserkocher und Kaffeemaschine, offen zum Tisch",
+      "06": "Der Wohnbereich und die offene Küche mit dem großen Fenster zum Garten",
+      "07": "Das Sofa im Wohnbereich und die Sitzbank unter dem Fenster",
+      "08": "Die ausgestattete Küche: Kühlschrank, Kochfeld, Waschmaschine und Mikrowelle",
+      "09": "Die Arbeitsplatte der Küche, die Spüle und die Waschmaschine",
+      "10": "Die Küche und die Bartheke mit ihren zwei Barhockern",
+      "11": "Kochfeld, Dunstabzugshaube und Spüle der Küche",
+      "12": "Das Studio der Länge nach, von der Bartheke bis zum Wohnbereich am Garten",
+      "13": "Der Wohnbereich mit Couchtisch und der Sitzbank vor dem Fenster",
+      "14": "Das Studio in seiner Länge, vom Wohnbereich zur Küche und zur Bartheke",
+      "15": "Der Wohnbereich bei Tageslicht, das Fenster offen zum Grün des Gartens",
+      "16": "Das Schlafsofa, der große Spiegel und dahinter die Bartheke"
     }
   },
   "amenities": {
@@ -183,7 +189,8 @@
     "items": {
       "beach": {
         "label": "Sandstrand Les Sablettes",
-        "detail": "Einfach durch den Park, ohne eine Straße zu überqueren."
+        "detail": "Einfach durch den Park, ohne eine Straße zu überqueren.",
+        "photoAlt": "Luftaufnahme des Strands von Les Sablettes, der Strandpromenade und der Bucht von Toulon"
       },
       "seaside-park": {
         "label": "Park am Meer",

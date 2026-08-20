@@ -90,16 +90,22 @@
     "missing": "Photo coming soon",
     "viewAll": "See all photos",
     "alt": {
-      "01": "Overall view of the Obordeleau studio from the entrance",
-      "02": "The sleeping corner with its double bed",
-      "03": "The kitchen and dining corner",
-      "04": "The shower room",
-      "05": "The sofa bed made up for four guests",
-      "06": "The view over the private garden from the studio",
-      "07": "The storage space in the studio",
-      "08": "The dining corner by the window",
-      "09": "The entrance to the secured residence",
-      "10": "The garden of the residence"
+      "01": "The studio entrance, its pale wooden slatted panel and rope wall light",
+      "02": "The shower room, its basin, large mirror and shower",
+      "03": "The basin corner of the shower room and its wooden shelves",
+      "04": "The sleeping corner and its double bed, under the headboard shelves",
+      "05": "The kitchen corner with microwave, kettle and coffee machine, opening onto the table",
+      "06": "The living area and open kitchen, with the wide window onto the garden",
+      "07": "The sofa and the bench seat fitted under the window",
+      "08": "The equipped kitchen: fridge, hob, washing machine and microwave",
+      "09": "The kitchen worktop, the sink and the washing machine",
+      "10": "The kitchen and the breakfast bar with its two high stools",
+      "11": "The hob, the extractor hood and the kitchen sink",
+      "12": "The studio seen lengthwise, from the bar through to the living area and the garden",
+      "13": "The living area, its coffee table and the bench in front of the window",
+      "14": "The studio along its length, from the living area towards the kitchen and the bar",
+      "15": "The living area in daylight, the window open onto the greenery of the garden",
+      "16": "The sofa bed, the large mirror and the breakfast bar behind"
     }
   },
   "amenities": {
@@ -183,7 +189,8 @@
     "items": {
       "beach": {
         "label": "Les Sablettes sandy beach",
-        "detail": "Straight through the park, without crossing a road."
+        "detail": "Straight through the park, without crossing a road.",
+        "photoAlt": "Aerial view of Les Sablettes beach, the seafront and the bay of Toulon"
       },
       "seaside-park": {
         "label": "Seaside park",

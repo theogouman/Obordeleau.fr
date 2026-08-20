@@ -132,17 +132,17 @@
     {
       "id": "kitchen",
       "group": "practical",
-      "confirmed": false
+      "confirmed": true
     },
     {
       "id": "washing-machine",
       "group": "practical",
-      "confirmed": false
+      "confirmed": true
     },
     {
       "id": "tv",
       "group": "comfort",
-      "confirmed": false
+      "confirmed": true
     },
     {
       "id": "terrace",
@@ -191,23 +191,48 @@
   "honestNotes": [],
   "gallery": [
     {
-      "file": "gallery-01.jpg",
-      "altKey": "gallery.alt.01",
+      "file": "gallery-15.jpg",
+      "altKey": "gallery.alt.15",
       "featured": true
     },
     {
-      "file": "gallery-02.jpg",
-      "altKey": "gallery.alt.02",
+      "file": "gallery-06.jpg",
+      "altKey": "gallery.alt.06",
       "featured": true
     },
     {
-      "file": "gallery-03.jpg",
-      "altKey": "gallery.alt.03",
+      "file": "gallery-13.jpg",
+      "altKey": "gallery.alt.13",
       "featured": true
+    },
+    {
+      "file": "gallery-12.jpg",
+      "altKey": "gallery.alt.12",
+      "featured": false
+    },
+    {
+      "file": "gallery-07.jpg",
+      "altKey": "gallery.alt.07",
+      "featured": false
+    },
+    {
+      "file": "gallery-16.jpg",
+      "altKey": "gallery.alt.16",
+      "featured": false
     },
     {
       "file": "gallery-04.jpg",
       "altKey": "gallery.alt.04",
+      "featured": false
+    },
+    {
+      "file": "gallery-14.jpg",
+      "altKey": "gallery.alt.14",
+      "featured": false
+    },
+    {
+      "file": "gallery-10.jpg",
+      "altKey": "gallery.alt.10",
       "featured": false
     },
     {
@@ -216,13 +241,8 @@
       "featured": false
     },
     {
-      "file": "gallery-06.jpg",
-      "altKey": "gallery.alt.06",
-      "featured": false
-    },
-    {
-      "file": "gallery-07.jpg",
-      "altKey": "gallery.alt.07",
+      "file": "gallery-11.jpg",
+      "altKey": "gallery.alt.11",
       "featured": false
     },
     {
@@ -236,8 +256,18 @@
       "featured": false
     },
     {
-      "file": "gallery-10.jpg",
-      "altKey": "gallery.alt.10",
+      "file": "gallery-02.jpg",
+      "altKey": "gallery.alt.02",
+      "featured": false
+    },
+    {
+      "file": "gallery-03.jpg",
+      "altKey": "gallery.alt.03",
+      "featured": false
+    },
+    {
+      "file": "gallery-01.jpg",
+      "altKey": "gallery.alt.01",
       "featured": false
     }
   ],
@@ -246,16 +276,8 @@
   },
   "area": [
     {
-      "file": "beach.jpg",
+      "file": "sablettes-plage.jpg",
       "aroundId": "beach"
-    },
-    {
-      "file": "park.jpg",
-      "aroundId": "seaside-park"
-    },
-    {
-      "file": "boat.jpg",
-      "aroundId": "boat-shuttle"
     }
   ]
 }
