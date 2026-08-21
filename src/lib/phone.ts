@@ -86,15 +86,12 @@ export function dialOptions(localeTag: string): { priority: DialOption[]; rest: 
 }
 
 /**
- * Spaces the number as it is typed, following the national grouping of the
- * chosen country and falling back to groups of three. Nothing is added or
- * removed, so the caret keeps its meaning and a paste still works.
+ * Spaces a run of digits along a national pattern, falling back to groups of
+ * three once the pattern runs out. This is the one place a phone number is ever
+ * spaced, so a number reads the same while it is typed, in the recap and in the
+ * email the host receives.
  */
-export function formatNational(country: string, input: string): string {
-  const digits = phoneDigits(input);
-  if (digits === '') return '';
-
-  const groups = GROUPING[country.toUpperCase()] ?? DEFAULT_GROUPING;
+function groupDigits(digits: string, groups: readonly number[]): string {
   const parts: string[] = [];
   let index = 0;
 
@@ -120,15 +117,51 @@ export function formatNational(country: string, input: string): string {
   return parts.join(' ');
 }
 
+/**
+ * The same pattern once the leading digits are gone. Dropping the trunk 0 of an
+ * 06 12 34 56 78 has to shorten the first group rather than shift every one of
+ * them, otherwise the international form comes out as 61 23 45 678 instead of
+ * the 6 12 34 56 78 everyone writes.
+ */
+function shiftGroups(groups: readonly number[], dropped: number): number[] {
+  const shifted = [...groups];
+  let left = dropped;
+
+  while (left > 0 && shifted.length > 0) {
+    const taken = Math.min(shifted[0], left);
+    shifted[0] -= taken;
+    left -= taken;
+    if (shifted[0] === 0) shifted.shift();
+  }
+
+  return shifted;
+}
+
+function groupingFor(country: string): readonly number[] {
+  return GROUPING[country.toUpperCase()] ?? DEFAULT_GROUPING;
+}
+
+/**
+ * Spaces the number as it is typed, following the national grouping of the
+ * chosen country. Nothing is added or removed, so the caret keeps its meaning
+ * and a paste still works.
+ */
+export function formatNational(country: string, input: string): string {
+  const digits = phoneDigits(input);
+  if (digits === '') return '';
+  return groupDigits(digits, groupingFor(country));
+}
+
 /** Digits only, so a number typed with spaces, dots or dashes still counts. */
 export function phoneDigits(value: string): string {
   return value.replace(/\D/g, '');
 }
 
 /**
- * What gets sent to the host: one international number, whatever shape the
- * visitor typed. A number pasted in international form keeps its meaning rather
- * than gaining a second country code.
+ * What gets sent to the host, and what the recap shows: one international
+ * number, spaced by the same rule as the field it was typed into. A number
+ * pasted in international form keeps its meaning rather than gaining a second
+ * country code.
  */
 export function fullPhoneNumber(country: string, national: string): string {
   const dial = dialFor(country);
@@ -141,9 +174,13 @@ export function fullPhoneNumber(country: string, national: string): string {
     digits = digits.slice(dial.length);
   }
 
+  let dropped = 0;
   if (!KEEP_TRUNK_ZERO.has(country.toUpperCase())) {
-    digits = digits.replace(/^0+/, '');
+    const withoutTrunk = digits.replace(/^0+/, '');
+    dropped = digits.length - withoutTrunk.length;
+    digits = withoutTrunk;
   }
 
-  return digits === '' ? '' : `+${dial} ${digits}`;
+  if (digits === '') return '';
+  return `+${dial} ${groupDigits(digits, shiftGroups(groupingFor(country), dropped))}`;
 }

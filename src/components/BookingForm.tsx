@@ -11,7 +11,7 @@ import {
   type ReactNode,
 } from 'react';
 import { BookingCalendar } from '@/components/BookingCalendar';
-import { Icon, type IconName } from '@/components/Icon';
+import { Icon } from '@/components/Icon';
 import { PhoneField } from '@/components/PhoneField';
 import { localeTags, type Locale } from '@/i18n/routing';
 import { trackBookingConfirmed } from '@/lib/analytics';
@@ -30,6 +30,9 @@ import { defaultCountry, formatNational, fullPhoneNumber, phoneDigits } from '@/
  * transitions.dev card resize (01), a wrong answer shakes its field with error
  * state shake (12), a night already taken explains itself through tooltip (17)
  * in the calendar, and the country menu opens with menu dropdown (05).
+ *
+ * Going back is one control in the top corner of the card rather than one per
+ * question, so it stays exactly where it was found while the questions move.
  */
 
 type Props = {
@@ -56,6 +59,14 @@ const STEP_EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
 const STEP_SHIFT = 34;
 const STEP_OUT_MS = 240;
 const STEP_IN_MS = 300;
+/**
+ * The frame that clips the moving question also clipped the focus ring of the
+ * field inside it. It now holds every step away from its own edges, 16px to the
+ * sides and this much above and below, and takes the room back out of the
+ * card's own padding, so the ring is drawn in full and nothing has moved.
+ */
+const FRAME_INSET_Y = 8;
+
 const EMPTY_BLOCKED: ReadonlySet<string> = new Set<string>();
 
 export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
@@ -74,6 +85,7 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
   const [country, setCountry] = useState(() => defaultCountry(null, locale));
   const [phone, setPhone] = useState('');
   const [guests, setGuests] = useState<number | null>(null);
+  const [guestFocus, setGuestFocus] = useState(0);
 
   const [state, setState] = useState<'editing' | 'sending' | 'booked'>('editing');
   const [booked, setBooked] = useState<{ reference: string; from: string; to: string } | null>(null);
@@ -281,10 +293,45 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
     goTo(Math.min(stepIndex + 1, STEPS.length - 1));
   }
 
+  // Choosing is answering: the recap follows on its own, after just long
+  // enough for the chosen box to be seen taking the answer.
   function chooseGuests(count: number) {
     setGuests(count);
+    setGuestFocus(count - 1);
     setStepError(null);
+    window.setTimeout(() => goTo(STEPS.indexOf('recap')), 160);
   }
+
+  // Arrows move the focus without answering, so walking through the four boxes
+  // never skips the question.
+  function onGuestKeys(event: KeyboardEvent<HTMLDivElement>) {
+    const last = maxGuests - 1;
+    const target =
+      event.key === 'ArrowRight' || event.key === 'ArrowDown'
+        ? Math.min(guestFocus + 1, last)
+        : event.key === 'ArrowLeft' || event.key === 'ArrowUp'
+          ? Math.max(guestFocus - 1, 0)
+          : event.key === 'Home'
+            ? 0
+            : event.key === 'End'
+              ? last
+              : null;
+
+    if (target === null) return;
+    event.preventDefault();
+    setGuestFocus(target);
+    const group = event.currentTarget;
+    window.requestAnimationFrame(() =>
+      group.querySelector<HTMLElement>(`[data-guests="${target + 1}"]`)?.focus(),
+    );
+  }
+
+  // The question opens on the answer already given, not back at one.
+  useEffect(() => {
+    if (STEPS[stepIndex] === 'guests') setGuestFocus(guests === null ? 0 : guests - 1);
+    // Moving the focus is not answering, so the answer itself is not a trigger.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stepIndex]);
 
   function onRangeChange(nextArrival: string | null, nextDeparture: string | null) {
     setArrival(nextArrival);
@@ -405,8 +452,6 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
 
   /* --- the wizard --------------------------------------------------------- */
 
-  const recapIndex = STEPS.indexOf('recap');
-
   function stepContent() {
     switch (step) {
       case 'dates':
@@ -433,8 +478,6 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
           <Step
             onNext={next}
             nextLabel={t('continue')}
-            onBack={() => goBack(stepIndex - 1)}
-            backLabel={t('back')}
             error={stepError}
           >
             <Question htmlFor="booking-name" label={t('questions.name')}>
@@ -459,8 +502,6 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
           <Step
             onNext={next}
             nextLabel={t('continue')}
-            onBack={() => goBack(stepIndex - 1)}
-            backLabel={t('back')}
             error={stepError}
           >
             <Question htmlFor="booking-email" label={t('questions.email')}>
@@ -486,8 +527,6 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
           <Step
             onNext={next}
             nextLabel={t('continue')}
-            onBack={() => goBack(stepIndex - 1)}
-            backLabel={t('back')}
             error={stepError}
           >
             <Question htmlFor="booking-phone" label={t('questions.phone')}>
@@ -522,35 +561,31 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
 
       case 'guests':
         return (
-          <Step
-            onNext={next}
-            nextLabel={t('continue')}
-            onBack={() => goBack(stepIndex - 1)}
-            backLabel={t('back')}
-            error={stepError}
-          >
+          <Step error={stepError}>
             <fieldset>
               <legend className="font-display text-xl">{t('questions.guests')}</legend>
-              <div className="mt-4 grid grid-cols-4 gap-2">
+              <div
+                role="radiogroup"
+                aria-label={t('questions.guests')}
+                onKeyDown={onGuestKeys}
+                className="mt-4 grid grid-cols-4 gap-2"
+              >
                 {Array.from({ length: maxGuests }, (_, seat) => seat + 1).map((count) => (
-                  <label
+                  <button
                     key={count}
+                    type="button"
+                    role="radio"
+                    aria-checked={guests === count}
+                    tabIndex={count - 1 === guestFocus ? 0 : -1}
                     data-guests={count}
-                    className={`flex cursor-pointer flex-col items-center justify-center rounded-[var(--radius-card)] border py-3 transition-colors ${
+                    data-autofocus={count - 1 === guestFocus ? true : undefined}
+                    onClick={() => chooseGuests(count)}
+                    className={`flex flex-col items-center justify-center rounded-[var(--radius-card)] border py-3 transition-colors ${
                       guests === count
                         ? 'border-raspberry bg-[rgba(206,66,87,0.07)] text-raspberry-ink'
                         : 'border-[rgba(58,42,38,0.18)] text-ink-soft hover:border-ink'
                     }`}
                   >
-                    <input
-                      type="radio"
-                      name="guests"
-                      value={count}
-                      checked={guests === count}
-                      onChange={() => chooseGuests(count)}
-                      className="visually-hidden peer"
-                      {...(count === 1 ? { 'data-autofocus': true } : {})}
-                    />
                     {/* One silhouette per traveller, so the count is legible
                         before the digit is read. */}
                     <span className="flex h-4 items-end justify-center gap-px" aria-hidden="true">
@@ -558,10 +593,8 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
                         <Icon key={seat} name="person" className="h-3.5 w-auto" />
                       ))}
                     </span>
-                    <span className="mt-1.5 text-sm font-semibold peer-focus-visible:underline peer-focus-visible:underline-offset-4">
-                      {count}
-                    </span>
-                  </label>
+                    <span className="mt-1.5 text-sm font-semibold">{count}</span>
+                  </button>
                 ))}
               </div>
             </fieldset>
@@ -576,37 +609,32 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
 
             <dl className="mt-4 divide-y divide-[rgba(58,42,38,0.12)]">
               <RecapRow
-                icon="calendar"
                 label={t('questions.dates')}
                 value={`${readableRange}, ${t('nights', { count: nights })}`}
                 onEdit={() => goBack(STEPS.indexOf('dates'))}
                 editLabel={t('edit')}
               />
               <RecapRow
-                icon="personCard"
                 label={t('questions.name')}
                 value={name.trim()}
                 onEdit={() => goBack(STEPS.indexOf('name'))}
                 editLabel={t('edit')}
               />
               <RecapRow
-                icon="at"
                 label={t('questions.email')}
                 value={email.trim()}
                 onEdit={() => goBack(STEPS.indexOf('email'))}
                 editLabel={t('edit')}
               />
               <RecapRow
-                icon="phone"
                 label={t('questions.phone')}
                 value={fullPhoneNumber(country, phone)}
                 onEdit={() => goBack(STEPS.indexOf('phone'))}
                 editLabel={t('edit')}
               />
               <RecapRow
-                icon="person"
                 label={t('questions.guests')}
-                value={String(guests ?? '')}
+                value={guests === null ? '' : t('guestsValue', { count: guests })}
                 onEdit={() => goBack(STEPS.indexOf('guests'))}
                 editLabel={t('edit')}
               />
@@ -642,27 +670,17 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
                 ),
               })}
             </p>
-
-            <div className="mt-4 text-center">
-              <button
-                type="button"
-                onClick={() => goBack(recapIndex - 1)}
-                className="text-sm text-ink-soft underline underline-offset-4"
-              >
-                {t('back')}
-              </button>
-            </div>
           </div>
         );
     }
   }
 
   return (
-    <div className="card p-6 sm:p-8">
+    <div className="card px-6 py-8 sm:px-8 sm:py-10">
       {formError ? (
         <p
           role="alert"
-          className="mb-5 rounded-[var(--radius-card)] bg-[rgba(206,66,87,0.1)] p-3 text-sm text-raspberry-ink"
+          className="mb-7 rounded-[var(--radius-card)] bg-[rgba(206,66,87,0.1)] p-3 text-sm text-raspberry-ink"
         >
           {formError}
         </p>
@@ -681,9 +699,24 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
         />
       </div>
 
+      {/* Back belongs to the card, not to the question: it stays put while the
+          questions move underneath it. */}
+      {stepIndex > 0 ? (
+        <div className="mb-6">
+          <button
+            type="button"
+            onClick={() => goBack(stepIndex - 1)}
+            className="inline-flex items-center gap-1.5 text-sm text-ink-soft transition-colors hover:text-ink"
+          >
+            <Icon name="returnArrow" className="h-3 w-auto" />
+            {t('back')}
+          </button>
+        </div>
+      ) : null}
+
       <div
-        className="t-resize overflow-hidden"
-        style={frameHeight ? { height: `${frameHeight}px` } : undefined}
+        className="t-resize -mx-4 -my-2 overflow-hidden px-4 py-2"
+        style={frameHeight ? { height: `${frameHeight + FRAME_INSET_Y * 2}px` } : undefined}
       >
         <div ref={stageRef}>{stepContent()}</div>
       </div>
@@ -715,11 +748,9 @@ type StepProps = {
   onNext?: () => void;
   nextLabel?: string;
   nextDisabled?: boolean;
-  onBack?: () => void;
-  backLabel?: string;
 };
 
-function Step({ children, error, onNext, nextLabel, nextDisabled, onBack, backLabel }: StepProps) {
+function Step({ children, error, onNext, nextLabel, nextDisabled }: StepProps) {
   return (
     <div className={`t-input-wrap ${error ? 'is-error' : ''}`}>
       {children}
@@ -737,20 +768,6 @@ function Step({ children, error, onNext, nextLabel, nextDisabled, onBack, backLa
         >
           {nextLabel}
         </button>
-      ) : null}
-
-      {/* Centred by its wrapper rather than stretched: only the word itself
-          answers to the pointer. */}
-      {onBack && backLabel ? (
-        <div className="mt-4 text-center">
-          <button
-            type="button"
-            onClick={onBack}
-            className="text-sm text-ink-soft underline underline-offset-4"
-          >
-            {backLabel}
-          </button>
-        </div>
       ) : null}
     </div>
   );
@@ -776,33 +793,32 @@ function Question({
 }
 
 function RecapRow({
-  icon,
   label,
   value,
   onEdit,
   editLabel,
 }: {
-  icon: IconName;
   label: string;
   value: string;
   onEdit: () => void;
   editLabel: string;
 }) {
   return (
-    <div className="flex items-baseline justify-between gap-4 py-3">
+    <div className="flex items-center justify-between gap-4 py-3">
       <div className="min-w-0">
-        <dt className="flex items-center gap-1.5 text-xs uppercase tracking-[0.14em] text-ink-soft">
-          <Icon name={icon} className="h-3.5 w-auto shrink-0" />
-          {label}
-        </dt>
+        <dt className="text-xs uppercase tracking-[0.14em] text-ink-soft">{label}</dt>
         <dd className="truncate font-medium">{value}</dd>
       </div>
+      {/* A key rather than a word: five of them down a column read as one set
+          of controls instead of five sentences. */}
       <button
         type="button"
         onClick={onEdit}
-        className="shrink-0 text-sm text-raspberry-ink underline underline-offset-4"
+        aria-label={`${editLabel} : ${label}`}
+        title={editLabel}
+        className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] border border-[rgba(58,42,38,0.18)] bg-cream text-ink-soft shadow-[0_1px_0_rgba(58,42,38,0.12)] transition-colors hover:border-ink hover:text-ink"
       >
-        {editLabel}
+        <Icon name="pencilSquare" className="h-4 w-auto" />
       </button>
     </div>
   );

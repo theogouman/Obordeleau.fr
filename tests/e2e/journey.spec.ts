@@ -64,8 +64,9 @@ test.describe('P1 booking journey', () => {
     await onStep(page).locator('#booking-phone').fill('0612345678');
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
 
-    await onStep(page).locator('label[data-guests="2"]').click();
-    await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
+    // Choosing the party size answers the question, so the recap follows on
+    // its own.
+    await onStep(page).locator('button[data-guests="2"]').click();
 
     // The recap is the last thing between the visitor and a real reservation.
     await expect(onStep(page).getByText(/ces informations sont-elles correctes/i)).toBeVisible();
@@ -81,7 +82,7 @@ test.describe('P1 booking journey', () => {
       from: '2030-07-01',
       to: '2030-07-04',
       guests: 2,
-      phone: '+33 612345678',
+      phone: '+33 6 12 34 56 78',
       consent: true,
     });
   });
@@ -123,8 +124,9 @@ test.describe('P1 booking journey', () => {
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
     await onStep(page).locator('#booking-phone').fill('0612345678');
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
-    await onStep(page).locator('label[data-guests="2"]').click();
-    await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
+    // Choosing the party size answers the question, so the recap follows on
+    // its own.
+    await onStep(page).locator('button[data-guests="2"]').click();
     await onStep(page).getByRole('button', { name: /confirmer la réservation/i }).click();
 
     await expect(page.getByRole('alert').first()).toContainText(/viennent d'être prises/i);

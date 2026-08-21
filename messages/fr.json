@@ -297,6 +297,7 @@
     "booking": {
       "noDatesYet": "Choisissez une date d'arrivée, puis une date de départ.",
       "nights": "{count, plural, one {# nuit} other {# nuits}}",
+      "guestsValue": "{count, plural, one {# personne} other {# personnes}}",
       "range": "Du {from} au {to}",
       "continue": "Continuer",
       "back": "Retour",
@@ -309,7 +310,7 @@
         "guests": "Nombre de voyageurs",
         "dial": "Indicatif du pays",
         "dialSearch": "Rechercher un pays",
-        "dialCommon": "Le plus souvent",
+        "dialCommon": "Les plus habituels",
         "dialAll": "Tous les pays",
         "dialEmpty": "Aucun pays ne correspond."
       },

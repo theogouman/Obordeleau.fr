@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { createPortal } from 'react-dom';
 import { dialFor, dialOptions, type DialOption } from '@/lib/phone';
 
 /**
@@ -12,6 +13,13 @@ import { dialFor, dialOptions, type DialOption } from '@/lib/phone';
  * platforms. This is a listbox instead, so the field is one compound control
  * with a single border and a single height, and the menu can be searched with
  * the keyboard.
+ *
+ * The menu is rendered into <body> and placed at the field's screen position.
+ * Inside the card it was clipped by the frame that tweens the card height, and
+ * focusing the search box then scrolled that clipped frame, which is what made
+ * the question jump upwards. Fixed, in a portal, it belongs to no clipping
+ * context at all. It also mounts closed and opens on the next frame, so the
+ * transition has a state to move from instead of appearing at once.
  */
 
 export type PhoneLabels = {
@@ -36,6 +44,19 @@ type Props = {
   autoFocus?: boolean;
 };
 
+/** Matches --dropdown-close-dur in phone-field.css. */
+const CLOSE_MS = 150;
+/** Enough room for the search box and a few rows before the menu flips up. */
+const MENU_SPACE = 300;
+
+type Anchor = {
+  left: number;
+  width: number;
+  drop: 'down' | 'up';
+  /** Distance from the top of the viewport, or from its bottom when flipped. */
+  offset: number;
+};
+
 export function PhoneField({
   id,
   country,
@@ -51,11 +72,14 @@ export function PhoneField({
 }: Props) {
   const menuId = useId();
   const [open, setOpen] = useState(false);
+  const [shown, setShown] = useState(false);
   const [closing, setClosing] = useState(false);
+  const [anchor, setAnchor] = useState<Anchor | null>(null);
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
 
   const fieldRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const numberRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -83,26 +107,82 @@ export function PhoneField({
 
   useEffect(() => setActiveIndex(0), [query]);
 
-  function close(giveFocusBack: boolean) {
+  /* --- where the menu goes ------------------------------------------------ */
+
+  const place = useCallback(() => {
+    const box = fieldRef.current?.getBoundingClientRect();
+    if (!box) return;
+
+    const below = window.innerHeight - box.bottom;
+    const drop: 'down' | 'up' = below < MENU_SPACE && box.top > below ? 'up' : 'down';
+
+    setAnchor({
+      left: box.left,
+      width: box.width,
+      drop,
+      offset: drop === 'down' ? box.bottom + 6 : window.innerHeight - box.top + 6,
+    });
+  }, []);
+
+  useEffect(() => {
     if (!open) return;
-    setClosing(true);
-    setOpen(false);
-    window.setTimeout(() => setClosing(false), 200);
-    setQuery('');
-    if (giveFocusBack) numberRef.current?.focus();
+
+    // Capture, so a scroll inside any ancestor moves the menu with the field.
+    window.addEventListener('scroll', place, true);
+    window.addEventListener('resize', place);
+    return () => {
+      window.removeEventListener('scroll', place, true);
+      window.removeEventListener('resize', place);
+    };
+  }, [open, place]);
+
+  /* --- opening and closing ------------------------------------------------ */
+
+  function openMenu() {
+    place();
+    setClosing(false);
+    setOpen(true);
   }
+
+  // Mounted first, opened on the frame after, so the transition has somewhere
+  // to come from. Two frames: one for the mount, one for the style to settle.
+  useEffect(() => {
+    if (!open) return;
+    let second = 0;
+    const first = requestAnimationFrame(() => {
+      second = requestAnimationFrame(() => setShown(true));
+    });
+    return () => {
+      cancelAnimationFrame(first);
+      cancelAnimationFrame(second);
+    };
+  }, [open]);
+
+  const close = useCallback((giveFocusBack: boolean) => {
+    setShown(false);
+    setClosing(true);
+    setQuery('');
+    window.setTimeout(() => {
+      setOpen(false);
+      setClosing(false);
+    }, CLOSE_MS);
+    if (giveFocusBack) numberRef.current?.focus({ preventScroll: true });
+  }, []);
 
   function choose(option: DialOption) {
     onCountryChange(option.country);
     close(true);
   }
 
-  // Clicking anywhere else, or pressing Escape, puts the menu away.
+  // Clicking anywhere else, or pressing Escape, puts the menu away. The menu
+  // lives in <body>, so it needs its own containment test.
   useEffect(() => {
     if (!open) return;
 
     const onPointerDown = (event: PointerEvent) => {
-      if (!fieldRef.current?.contains(event.target as Node)) close(false);
+      const target = event.target as Node;
+      if (fieldRef.current?.contains(target) || menuRef.current?.contains(target)) return;
+      close(false);
     };
     const onKey = (event: globalThis.KeyboardEvent) => {
       if (event.key === 'Escape') close(true);
@@ -114,11 +194,11 @@ export function PhoneField({
       document.removeEventListener('pointerdown', onPointerDown);
       document.removeEventListener('keydown', onKey);
     };
-  }, [open]);
+  }, [open, close]);
 
   useEffect(() => {
-    if (open) searchRef.current?.focus();
-  }, [open]);
+    if (shown) searchRef.current?.focus({ preventScroll: true });
+  }, [shown]);
 
   // Keep the highlighted country in view while the arrows move down the list.
   useEffect(() => {
@@ -175,19 +255,72 @@ export function PhoneField({
     [priority, rest, country],
   );
 
+  const menu =
+    open && anchor ? (
+      <div
+        ref={menuRef}
+        id={menuId}
+        role="listbox"
+        aria-label={labels.choose}
+        data-drop={anchor.drop}
+        className={`phone-menu t-dropdown ${shown ? 'is-open' : closing ? 'is-closing' : ''}`}
+        style={{
+          left: `${anchor.left}px`,
+          width: `${anchor.width}px`,
+          ...(anchor.drop === 'down'
+            ? { top: `${anchor.offset}px` }
+            : { bottom: `${anchor.offset}px` }),
+        }}
+      >
+        <div className="phone-search">
+          <svg className="phone-search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" strokeWidth="2" />
+            <path d="M16.5 16.5 21 21" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+          <input
+            ref={searchRef}
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            onKeyDown={onSearchKeyDown}
+            placeholder={labels.search}
+            aria-label={labels.search}
+            className="phone-search-input"
+          />
+        </div>
+
+        <div ref={listRef} className="phone-list">
+          {walkable.length === 0 ? <p className="phone-empty">{labels.empty}</p> : null}
+
+          {filtered.priority.length > 0 ? (
+            <>
+              <p className="phone-group">{labels.common}</p>
+              {filtered.priority.map((option, index) => renderOption(option, index))}
+            </>
+          ) : null}
+
+          {filtered.priority.length > 0 && filtered.rest.length > 0 ? (
+            <div className="phone-separator" aria-hidden="true" />
+          ) : null}
+
+          {filtered.rest.length > 0 ? <p className="phone-group">{labels.all}</p> : null}
+          {filtered.rest.map((option, index) =>
+            renderOption(option, filtered.priority.length + index),
+          )}
+        </div>
+      </div>
+    ) : null;
+
   return (
-    <div
-      ref={fieldRef}
-      className={`phone-field ${open ? 'is-open' : ''} ${invalid ? 'is-error' : ''}`}
-    >
+    <div ref={fieldRef} className={`phone-field ${invalid ? 'is-error' : ''}`}>
       <button
         type="button"
-        className="phone-country"
+        className={`phone-country ${open ? 'is-open' : ''}`}
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-controls={menuId}
+        aria-controls={open ? menuId : undefined}
         aria-label={`${labels.choose}${selected ? `, ${selected.name}` : ''}`}
-        onClick={() => (open ? close(true) : setOpen(true))}
+        onClick={() => (open ? close(true) : openMenu())}
       >
         <span className="phone-flag" aria-hidden="true">
           {selected?.flag ?? country}
@@ -224,51 +357,7 @@ export function PhoneField({
         data-autofocus={autoFocus ? true : undefined}
       />
 
-      {open || closing ? (
-        <div
-          id={menuId}
-          role="listbox"
-          aria-label={labels.choose}
-          className={`phone-menu t-dropdown ${open ? 'is-open' : 'is-closing'}`}
-        >
-          <div className="phone-search">
-            <svg className="phone-search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" strokeWidth="2" />
-              <path d="M16.5 16.5 21 21" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-            <input
-              ref={searchRef}
-              type="search"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              onKeyDown={onSearchKeyDown}
-              placeholder={labels.search}
-              aria-label={labels.search}
-              className="phone-search-input"
-            />
-          </div>
-
-          <div ref={listRef} className="phone-list">
-            {walkable.length === 0 ? <p className="phone-empty">{labels.empty}</p> : null}
-
-            {filtered.priority.length > 0 ? (
-              <>
-                <p className="phone-group">{labels.common}</p>
-                {filtered.priority.map((option, index) => renderOption(option, index))}
-              </>
-            ) : null}
-
-            {filtered.priority.length > 0 && filtered.rest.length > 0 ? (
-              <div className="phone-separator" aria-hidden="true" />
-            ) : null}
-
-            {filtered.rest.length > 0 ? <p className="phone-group">{labels.all}</p> : null}
-            {filtered.rest.map((option, index) =>
-              renderOption(option, filtered.priority.length + index),
-            )}
-          </div>
-        </div>
-      ) : null}
+      {menu ? createPortal(menu, document.body) : null}
     </div>
   );
 }

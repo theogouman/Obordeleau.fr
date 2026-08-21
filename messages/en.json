@@ -297,6 +297,7 @@
     "booking": {
       "noDatesYet": "Pick an arrival date, then a departure date.",
       "nights": "{count, plural, one {# night} other {# nights}}",
+      "guestsValue": "{count, plural, one {# guest} other {# guests}}",
       "range": "From {from} to {to}",
       "continue": "Continue",
       "back": "Back",

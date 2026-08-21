@@ -7,7 +7,9 @@
  * itself to its longest country name and opened an operating system menu that
  * no amount of CSS reaches.
  *
- * The open and close of the menu is transitions.dev menu dropdown (05).
+ * The open and close of the menu is transitions.dev menu dropdown (05). The
+ * menu itself is fixed and rendered into <body>, so no ancestor with
+ * overflow: hidden can clip it and nothing has to fight it for a z-index.
  */
 
 :root {
@@ -22,7 +24,6 @@
 @layer components {
   .phone-field {
     position: relative;
-    z-index: 5;
     display: flex;
     width: 100%;
     align-items: stretch;
@@ -33,11 +34,6 @@
       border-color var(--duration-fast) var(--ease-out-quad),
       box-shadow var(--duration-fast) var(--ease-out-quad),
       background-color var(--duration-fast) var(--ease-out-quad);
-  }
-
-  /* The open menu has to clear every sibling that comes after it in the DOM. */
-  .phone-field.is-open {
-    z-index: 500;
   }
 
   .phone-field:focus-within {
@@ -94,7 +90,7 @@
     transition: transform var(--duration-fast) var(--ease-out-quad);
   }
 
-  .phone-field.is-open .phone-chevron {
+  .phone-country.is-open .phone-chevron {
     transform: rotate(180deg);
   }
 
@@ -120,10 +116,7 @@
 
   /* The menu */
   .phone-menu {
-    position: absolute;
-    top: calc(100% + 6px);
-    left: 0;
-    right: 0;
+    position: fixed;
     z-index: 1000;
     overflow: hidden;
     background-color: var(--color-shell);
@@ -250,7 +243,7 @@
 
   /* 05 Menu dropdown */
   .t-dropdown {
-    transform-origin: top left;
+    transform-origin: top center;
     transform: scale(var(--dropdown-pre-scale));
     opacity: 0;
     pointer-events: none;
@@ -264,6 +257,32 @@
     transform: scale(1);
     opacity: 1;
     pointer-events: auto;
+  }
+
+  /*
+   * The scale of snippet 05 with a short slide added, coming from the edge the
+   * menu is attached to. A menu that has to flip above the field grows from its
+   * own bottom instead, so it still reads as unfolding out of the control.
+   */
+  .phone-menu.t-dropdown {
+    transform: translateY(-6px) scale(var(--dropdown-pre-scale));
+  }
+
+  .phone-menu[data-drop='up'].t-dropdown {
+    transform-origin: bottom center;
+    transform: translateY(6px) scale(var(--dropdown-pre-scale));
+  }
+
+  .phone-menu.t-dropdown.is-open {
+    transform: translateY(0) scale(1);
+  }
+
+  .phone-menu.t-dropdown.is-closing {
+    transform: translateY(-4px) scale(var(--dropdown-closing-scale));
+  }
+
+  .phone-menu[data-drop='up'].t-dropdown.is-closing {
+    transform: translateY(4px) scale(var(--dropdown-closing-scale));
   }
 
   .t-dropdown.is-closing {
