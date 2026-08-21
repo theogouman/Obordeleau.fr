@@ -1,69 +1,130 @@
+import { createHash, timingSafeEqual } from 'node:crypto';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import {
   ADMIN_COOKIE,
   ADMIN_SESSION_SECONDS,
+  ADMIN_SUBJECT,
   adminConfigured,
   signAdminSession,
   verifyAdminSession,
   type AdminSession,
 } from '@/lib/admin-session';
+import { callDatabase } from '@/lib/supabase';
 
 /**
  * Signing in, and the gate every protected surface goes through.
  *
- * The password never reaches this codebase's own logic: it is posted straight
- * to Supabase Auth, which owns the account and the rate limiting. A thin fetch
- * for the same reason the availability store is one (constitution X), and
- * because nothing here can then end up in a browser bundle.
+ * One password, held in `ADMIN_PASSWORD`, and no account, no address, no
+ * identity provider. There is exactly one person who uses this console and she
+ * knows who she is; asking her which of the one accounts she wanted was never
+ * a security measure, only a second thing to lose.
+ *
+ * What that costs is the rate limiting that came free with an identity
+ * provider, so it is written here instead, and it lives in the database rather
+ * than in memory: see supabase/migrations for why.
+ *
+ * The session mechanism underneath is untouched. This file decides whether to
+ * mint one; admin-session.ts still owns the minting.
  */
 
-const SUPABASE_URL = (process.env.SUPABASE_URL ?? '').replace(/\/$/, '');
-const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
+const PASSWORD = process.env.ADMIN_PASSWORD ?? '';
 
-const TIMEOUT_MS = 10_000;
+/** Five wrong answers close together, then a quarter of an hour of silence. */
+const MAX_FAILURES = 5;
+const WINDOW_MINUTES = 15;
+const LOCK_MINUTES = 15;
 
-export const adminReady = adminConfigured && SUPABASE_URL !== '' && SERVICE_ROLE_KEY !== '';
+/**
+ * False until the owner has set both a signing secret and a password. The
+ * console then refuses to sign anyone in rather than falling back to something
+ * weaker: an admin that is open by accident is worse than an admin that is shut.
+ */
+export const adminReady = adminConfigured && PASSWORD !== '';
 
 export type SignInResult =
-  | { ok: true; sub: string; email: string }
-  | { ok: false; reason: 'not_configured' | 'invalid_credentials' | 'unreachable' };
+  | { ok: true }
+  | {
+      ok: false;
+      reason: 'not_configured' | 'empty' | 'invalid_password' | 'rate_limited' | 'unavailable';
+      retryAfterSeconds?: number;
+    };
 
-export async function signInWithPassword(email: string, password: string): Promise<SignInResult> {
-  if (!adminReady) return { ok: false, reason: 'not_configured' };
-
-  let response: Response;
-
-  try {
-    response = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
-      method: 'POST',
-      cache: 'no-store',
-      signal: AbortSignal.timeout(TIMEOUT_MS),
-      headers: {
-        apikey: SERVICE_ROLE_KEY,
-        Authorization: `Bearer ${SERVICE_ROLE_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
-  } catch {
-    return { ok: false, reason: 'unreachable' };
-  }
-
-  // Wrong password and unknown account answer the same way on purpose: the
-  // form must not become a way of testing which addresses exist.
-  if (!response.ok) return { ok: false, reason: 'invalid_credentials' };
-
-  const body = (await response.json()) as { user?: { id?: string; email?: string } };
-  const sub = body.user?.id;
-  if (!sub) return { ok: false, reason: 'invalid_credentials' };
-
-  return { ok: true, sub, email: body.user?.email ?? email };
+/**
+ * Compares two secrets without saying how far it got.
+ *
+ * Both sides are hashed first, so the comparison is always over 32 bytes
+ * whatever was typed: timingSafeEqual throws on unequal lengths, and the length
+ * of the real password is itself something not to give away.
+ */
+function sameSecret(submitted: string, expected: string): boolean {
+  const a = createHash('sha256').update(submitted, 'utf8').digest();
+  const b = createHash('sha256').update(expected, 'utf8').digest();
+  return timingSafeEqual(a, b);
 }
 
-export async function startAdminSession(sub: string, email: string): Promise<void> {
+type GateRow = { locked: boolean; retry_after_seconds: number };
+type FailureRow = { failures: number; locked: boolean; retry_after_seconds: number };
+
+/** A wrong answer costs a little more each time, whatever address it came from. */
+function pause(failures: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, Math.min(failures, 5) * 250));
+}
+
+/**
+ * The whole credential check.
+ *
+ * Order matters: a locked address is turned away before the password is
+ * compared even once, so a lockout cannot be probed for timing.
+ */
+export async function signIn(password: string, ip: string): Promise<SignInResult> {
+  // Fail closed. Without a password set there is nothing to check against, and
+  // an empty submission must never be allowed to match an empty variable.
+  if (!adminReady) return { ok: false, reason: 'not_configured' };
+  if (password === '') return { ok: false, reason: 'empty' };
+
+  let gate: GateRow;
+
+  try {
+    gate = await callDatabase<GateRow>('admin_login_gate', { p_ip: ip });
+  } catch (error) {
+    // The counter is part of the lock. Without it the door is refused rather
+    // than left unguarded, which also costs nothing: the console cannot do
+    // anything useful while the store is away.
+    console.error('[admin] the login gate is unreachable', error);
+    return { ok: false, reason: 'unavailable' };
+  }
+
+  if (gate.locked) {
+    return { ok: false, reason: 'rate_limited', retryAfterSeconds: gate.retry_after_seconds };
+  }
+
+  if (sameSecret(password, PASSWORD)) {
+    await callDatabase<{ ok: boolean }>('admin_login_succeeded', { p_ip: ip }).catch(() => undefined);
+    return { ok: true };
+  }
+
+  const failure = await callDatabase<FailureRow>('admin_login_failed', {
+    p_ip: ip,
+    p_max: MAX_FAILURES,
+    p_window_minutes: WINDOW_MINUTES,
+    p_lock_minutes: LOCK_MINUTES,
+  }).catch(() => null);
+
+  // Slows a guesser down even when they come from a fresh address every time,
+  // and costs the owner nothing on the attempt that works.
+  await pause(failure?.failures ?? 1);
+
+  if (failure?.locked) {
+    return { ok: false, reason: 'rate_limited', retryAfterSeconds: failure.retry_after_seconds };
+  }
+
+  return { ok: false, reason: 'invalid_password' };
+}
+
+export async function startAdminSession(): Promise<void> {
   const store = await cookies();
-  store.set(ADMIN_COOKIE, await signAdminSession(sub, email), {
+  store.set(ADMIN_COOKIE, await signAdminSession(ADMIN_SUBJECT), {
     httpOnly: true,
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',

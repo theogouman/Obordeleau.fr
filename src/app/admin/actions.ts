@@ -1,13 +1,9 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import {
-  endAdminSession,
-  requireAdmin,
-  signInWithPassword,
-  startAdminSession,
-} from '@/lib/admin-auth';
+import { endAdminSession, requireAdmin, signIn, startAdminSession } from '@/lib/admin-auth';
 import {
   clearOverride,
   saveConfig,
@@ -112,20 +108,36 @@ function refresh(): void {
 /* Session                                                                    */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * The address the attempt came from.
+ *
+ * x-real-ip is set by the platform and holds one value; x-forwarded-for is a
+ * list and its first entry is the nearest thing to a client address when the
+ * platform did not set the other. A caller who forges it only moves themselves
+ * into a different bucket, which is why the failure delay is not per address.
+ */
+async function clientAddress(): Promise<string> {
+  const store = await headers();
+  const real = store.get('x-real-ip');
+  if (real) return real.trim();
+
+  const forwarded = store.get('x-forwarded-for');
+  return (forwarded?.split(',')[0] ?? 'unknown').trim() || 'unknown';
+}
+
+/** Whole minutes, rounded up, because "dans 0 minute" is not an instruction. */
+function minutes(seconds: number | undefined): number {
+  return Math.max(1, Math.ceil((seconds ?? 60) / 60));
+}
+
 export async function signInAction(
   _previous: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const email = text(formData.get('email'));
-  const password = typeof formData.get('password') === 'string'
-    ? (formData.get('password') as string)
-    : '';
+  const submitted = formData.get('password');
+  const password = typeof submitted === 'string' ? submitted : '';
 
-  if (email === '' || password === '') {
-    return { status: 'error', message: 'Renseignez votre adresse et votre mot de passe.' };
-  }
-
-  const result = await signInWithPassword(email, password);
+  const result = await signIn(password, await clientAddress());
 
   if (!result.ok) {
     if (result.reason === 'not_configured') {
@@ -134,13 +146,22 @@ export async function signInAction(
         message: "La console n'est pas encore configurée sur ce déploiement.",
       };
     }
-    if (result.reason === 'unreachable') {
+    if (result.reason === 'empty') {
+      return { status: 'error', message: 'Renseignez le mot de passe.' };
+    }
+    if (result.reason === 'rate_limited') {
+      return {
+        status: 'error',
+        message: `Trop de tentatives. Réessayez dans ${minutes(result.retryAfterSeconds)} minutes.`,
+      };
+    }
+    if (result.reason === 'unavailable') {
       return { status: 'error', message: 'Le serveur ne répond pas. Réessayez dans un instant.' };
     }
-    return { status: 'error', message: 'Adresse ou mot de passe incorrect.' };
+    return { status: 'error', message: 'Mot de passe incorrect.' };
   }
 
-  await startAdminSession(result.sub, result.email);
+  await startAdminSession();
   redirect('/admin');
 }
 

@@ -285,10 +285,29 @@ npm run test:sql        # needs SUPABASE_DB_URL and psql
 `/admin`, French only, one account. It is not a visitor surface, so next-intl
 never touches it, it carries `noindex`, and `robots.txt` disallows it.
 
-**Signing in.** The password goes straight to Supabase Auth, which owns the
-account, the hashing and the rate limiting. What comes back is turned into a
-short HMAC signed cookie so later requests are answered without another round
-trip. Three layers, and only the last two are load bearing:
+**Signing in.** One password, held in `ADMIN_PASSWORD`, and no account, no
+address and no identity provider: there is one person who opens this console
+and she knows who she is. The submitted password and the variable are both
+hashed to SHA-256 and compared with `timingSafeEqual`, so the comparison is
+always over 32 bytes and gives away neither the answer nor its length. An empty
+submission is refused before anything is compared, and so is every submission
+when the variable is unset: an admin that is open by accident is worse than an
+admin that is shut.
+
+What an identity provider used to give for free was the rate limiting, so that
+is written here instead, and it lives in `admin_login_attempts` rather than in
+memory. Vercel runs many instances of the same function, so an in memory
+counter is bypassed by retrying until you land on a fresh one. Five wrong
+answers from one address inside a quarter of an hour lock it for the next
+quarter of an hour, and every wrong answer also costs a short delay that grows
+with the count, which slows a guesser who arrives from a different address each
+time. If the store cannot be reached the door is refused rather than left
+unguarded, which costs nothing: the console cannot do anything useful without
+it anyway.
+
+A correct password becomes a short HMAC signed cookie, so later requests are
+answered without repeating the check. Three layers, and only the last two are
+load bearing:
 
 ```text
   middleware      is there a session cookie at all?   fast redirect, no secret
@@ -330,15 +349,23 @@ linked to.
 `prefers-reduced-motion: reduce`, on top of the blanket rule that cancels
 animation and transition durations outright.
 
-### Setting up the account
+### Setting up the password
 
-Create the single admin in the Supabase dashboard, Authentication, Add user,
-with a password and email confirmation ticked. Then set `ADMIN_SESSION_SECRET`
-in Vercel:
+Two variables in Vercel, and nothing to create anywhere:
 
 ```sh
-openssl rand -base64 48
+openssl rand -base64 24   # ADMIN_PASSWORD, or a passphrase you will remember
+openssl rand -base64 48   # ADMIN_SESSION_SECRET, at least 32 characters
 ```
+
+They are different secrets and neither is reused elsewhere. The console is
+French only and is not a visitor surface, so next-intl never touches it: every
+string in it is written where it is used.
+
+Changing the password is one environment variable and a redeploy. It does not
+invalidate sessions already signed, since the cookie says the check passed
+rather than what it passed with; rotating `ADMIN_SESSION_SECRET` is what signs
+everyone out.
 
 ### Tests
 

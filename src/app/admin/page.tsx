@@ -29,7 +29,10 @@ type Props = {
 };
 
 export default async function AdminPage({ searchParams }: Props) {
-  const session = await requireAdmin();
+  // The gate, on this request. Nothing is read from the session beyond the fact
+  // that there is one: there is one console and one person who opens it.
+  await requireAdmin();
+
   const params = await searchParams;
   const requestedMonth = typeof params.m === 'string' ? params.m : undefined;
 
@@ -61,7 +64,6 @@ export default async function AdminPage({ searchParams }: Props) {
           <h1 className="admin-title">Prix et calendrier</h1>
         </div>
         <form action={signOutAction} className="admin-header-session">
-          <span className="admin-header-email">{session.email}</span>
           <button type="submit" className="admin-btn admin-btn-quiet">
             Se déconnecter
           </button>

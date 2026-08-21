@@ -21,8 +21,7 @@ export default async function AdminLoginPage() {
         ) : (
           <p className="admin-note admin-note-warn">
             La console n&rsquo;est pas encore configurée sur ce déploiement. Il manque
-            <code> SUPABASE_URL</code>, <code>SUPABASE_SERVICE_ROLE_KEY</code> ou
-            <code> ADMIN_SESSION_SECRET</code>.
+            <code> ADMIN_PASSWORD</code> ou <code>ADMIN_SESSION_SECRET</code>.
           </p>
         )}
       </div>

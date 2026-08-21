@@ -1,10 +1,9 @@
 /**
  * The admin session cookie.
  *
- * Credentials are checked by Supabase Auth, which owns the account, the hashing
- * and the rate limiting. What this file owns is the small signed note that says
- * "this browser passed that check", so every later request is answered without
- * another round trip.
+ * The credential check happens next door, in admin-auth.ts. What this file owns
+ * is the small signed note that says "this browser passed that check", so every
+ * later request is answered without repeating it.
  *
  * Written on Web Crypto and nothing else, because it has to verify in two
  * places at once: the middleware, which runs on the edge runtime and has no
@@ -19,10 +18,16 @@ export const ADMIN_COOKIE = 'obd_admin';
 /** Long enough for an afternoon of pricing work, short enough to matter. */
 export const ADMIN_SESSION_SECONDS = 12 * 60 * 60;
 
+/**
+ * There is one console and one person who opens it, so the subject is a
+ * constant rather than a user id. It is still carried and still checked, which
+ * is what keeps the verification below exactly as it was.
+ */
+export const ADMIN_SUBJECT = 'owner';
+
 export type AdminSession = {
-  /** The Supabase user id. */
+  /** Always ADMIN_SUBJECT. Kept because verification requires a subject. */
   sub: string;
-  email: string;
   /** Unix seconds. */
   exp: number;
 };
@@ -66,10 +71,9 @@ async function hmacKey(): Promise<CryptoKey> {
   );
 }
 
-export async function signAdminSession(sub: string, email: string): Promise<string> {
+export async function signAdminSession(sub: string = ADMIN_SUBJECT): Promise<string> {
   const payload: AdminSession = {
     sub,
-    email,
     exp: Math.floor(Date.now() / 1000) + ADMIN_SESSION_SECONDS,
   };
   const body = toBase64Url(encoder.encode(JSON.stringify(payload)));
