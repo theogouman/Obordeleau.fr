@@ -1,5 +1,5 @@
 {
-  "$comment": "ISO 3166-1 alpha-2 to E.164 calling code. Country names are never stored here: Intl.DisplayNames renders them in the visitor's language, and the flag is derived from the code itself (constitution III).",
+  "$comment": "ISO 3166-1 alpha-2 to E.164 calling code. Country names are never stored here: Intl.DisplayNames renders them in the visitor's language, and the flag is derived from the code itself (constitution III). `grouping` is about readability while typing, not a national numbering plan: it spaces the digits the way people in that country write them, and anything unlisted falls back to groups of three.",
   "priority": [
     "FR",
     "IT",
@@ -19,6 +19,78 @@
     "SM",
     "VA"
   ],
+  "defaultGrouping": [
+    3,
+    3,
+    3,
+    3
+  ],
+  "grouping": {
+    "FR": [
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "BE": [
+      4,
+      2,
+      2,
+      2
+    ],
+    "CH": [
+      3,
+      3,
+      2,
+      2
+    ],
+    "IT": [
+      3,
+      3,
+      4
+    ],
+    "ES": [
+      3,
+      2,
+      2,
+      2
+    ],
+    "DE": [
+      4,
+      3,
+      4
+    ],
+    "GB": [
+      5,
+      6
+    ],
+    "NL": [
+      2,
+      3,
+      4
+    ],
+    "PT": [
+      3,
+      3,
+      3
+    ],
+    "LU": [
+      3,
+      3,
+      3
+    ],
+    "US": [
+      3,
+      3,
+      4
+    ],
+    "CA": [
+      3,
+      3,
+      4
+    ]
+  },
   "codes": {
     "AD": "376",
     "AE": "971",
