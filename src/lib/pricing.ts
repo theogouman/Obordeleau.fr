@@ -40,6 +40,14 @@ export type Quote = {
   /** A share of the accommodation alone: cleaning and tax ride in the balance. */
   depositAmount: number;
   balanceAmount: number;
+  /** Null while the owner has not said how many days before arrival. */
+  balanceChargeDaysBeforeArrival: number | null;
+  /**
+   * The day the balance is taken from the saved card, check in minus that many
+   * days. Null when it has not been configured, and the balance is then
+   * arranged rather than charged.
+   */
+  balanceChargeOn: string | null;
   currency: 'EUR';
 };
 
@@ -59,6 +67,8 @@ type QuoteRow = {
   deposit_percentage: number;
   deposit_amount: number;
   balance_amount: number;
+  balance_charge_days_before_arrival: number | null;
+  balance_charge_on: string | null;
   currency: 'EUR';
 };
 
@@ -120,6 +130,8 @@ export async function getQuote(
     depositPercentage: row.deposit_percentage,
     depositAmount: row.deposit_amount,
     balanceAmount: row.balance_amount,
+    balanceChargeDaysBeforeArrival: row.balance_charge_days_before_arrival ?? null,
+    balanceChargeOn: row.balance_charge_on ?? null,
     currency: row.currency,
   };
 }

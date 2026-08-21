@@ -379,7 +379,10 @@
         "tooSoon": "The earliest arrival is tomorrow.",
         "minNights": "{count, plural, one {The minimum stay is one night.} other {The minimum stay is # nights.}}",
         "checkinDay": "In this season, arrivals are on a Saturday.",
-        "stayMultiple": "{count, plural, =7 {In this season, stays run Saturday to Saturday, in whole weeks.} other {In this season, the length must be a multiple of # nights.}}"
+        "stayMultiple": "{count, plural, =7 {In this season, stays run Saturday to Saturday, in whole weeks.} other {In this season, the length must be a multiple of # nights.}}",
+        "holdExpired": "Your dates were no longer held. Please choose them again.",
+        "refunded": "Those dates have just been taken. Your deposit has been refunded in full and Corine will write to you.",
+        "paymentPending": "Your payment has been recorded. The confirmation reaches you by email in a few moments."
       },
       "datesTooltip": "No dates are selected yet",
       "changeDates": "Change my dates",
@@ -409,11 +412,31 @@
       },
       "noscript": {
         "title": "Choosing your dates",
-        "body": "The calendar needs JavaScript to show which nights are free and to work out your quote. You can book by message instead, or through a platform.",
+        "body": "The calendar, the quote and the deposit payment need JavaScript. You can book by message, or go through a platform.",
         "whatsapp": "Message your host on WhatsApp",
         "airbnb": "Book on Airbnb",
         "booking": "Book on Booking.com"
-      }
+      },
+      "payment": {
+        "title": "Payment",
+        "summary": "Deposit due now: {amount}.",
+        "holdNotice": "{minutes, plural, one {Your dates are held for # more minute.} other {Your dates are held for # more minutes.}}",
+        "holdExpired": "The time ran out and your dates have been released.",
+        "loading": "Loading the payment form...",
+        "pay": "Pay {amount}",
+        "paying": "Payment in progress...",
+        "back": "Back to the summary",
+        "mandate": "The balance of {amount} will be taken from this card on {date}.",
+        "payDeposit": "Pay the deposit, {amount}",
+        "balanceNotice": "The balance of {amount} is due before arrival.",
+        "saveCard": "I authorise the balance of {amount} to be taken from this card on {date}.",
+        "saveCardTerms": "Your card is kept by Stripe, our payment provider, never by this site. Without this authorisation no card is stored and the balance is requested by email before arrival.",
+        "errors": {
+          "load": "The payment form could not load. Please try again in a moment.",
+          "card": "The payment did not go through. Check your card, or try another one."
+        }
+      },
+      "successBodyPaid": "Your deposit is paid, your dates are held and a confirmation email has just gone out. Corine will write to you about arrival."
     },
     "calendar": {
       "arrival": "arrival",
@@ -551,6 +574,43 @@
         "title": "New direct booking",
         "intro": "A booking has just been recorded from the website.",
         "blocked": "The dates are already blocked on the site and in the calendar sent to Airbnb and Booking."
+      }
+    },
+    "deposit": {
+      "labels": {
+        "arrival": "Arrival",
+        "departure": "Departure",
+        "nights": "Nights",
+        "guests": "Guests",
+        "name": "Name",
+        "email": "Email",
+        "depositPaid": "Deposit paid",
+        "balance": "Balance",
+        "balanceDate": "Balance taken on",
+        "reference": "Reference"
+      },
+      "guest": {
+        "subject": "Your deposit has arrived, {property}",
+        "title": "Your booking is confirmed",
+        "intro": "Hello {name}, your deposit has arrived and your dates are held.",
+        "address": "The studio: {address}",
+        "balanceAuto": "The balance of {amount} will be taken automatically on {date}, from the card you used today.",
+        "balanceManual": "The balance of {amount} is still to be paid before arrival. Corine will write to you to arrange it.",
+        "changes": "To change or cancel, simply reply to this message.",
+        "signature": "See you very soon, {host}"
+      },
+      "host": {
+        "subject": "Deposit received, booking from {from} to {to}",
+        "title": "Deposit received, booking confirmed",
+        "intro": "A deposit has just been paid on the site and the booking is confirmed.",
+        "balanceManual": "To be arranged, no authorisation to charge",
+        "blocked": "The dates are already blocked on the site and in the calendar sent to Airbnb and to Booking."
+      },
+      "refunded": {
+        "subject": "Deposit refunded, from {from} to {to}",
+        "title": "A deposit had to be refunded",
+        "intro": "A payment cleared for dates that had just been taken elsewhere.",
+        "done": "The deposit has been refunded in full, automatically. What is left is to write to the traveller."
       }
     }
   }

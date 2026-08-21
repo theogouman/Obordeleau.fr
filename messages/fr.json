@@ -379,7 +379,10 @@
         "tooSoon": "L'arrivée est possible à partir de demain.",
         "minNights": "{count, plural, one {Le séjour minimum est d'une nuit.} other {Le séjour minimum est de # nuits.}}",
         "checkinDay": "Sur cette période, l'arrivée se fait le samedi.",
-        "stayMultiple": "{count, plural, =7 {Sur cette période, les séjours vont du samedi au samedi, par semaines entières.} other {Sur cette période, la durée doit être un multiple de # nuits.}}"
+        "stayMultiple": "{count, plural, =7 {Sur cette période, les séjours vont du samedi au samedi, par semaines entières.} other {Sur cette période, la durée doit être un multiple de # nuits.}}",
+        "holdExpired": "Vos dates n'étaient plus retenues. Choisissez-les à nouveau.",
+        "refunded": "Ces dates viennent d'être prises. Votre acompte a été intégralement remboursé et Corine vous écrit.",
+        "paymentPending": "Votre paiement a bien été enregistré. La confirmation vous arrive par email dans quelques instants."
       },
       "datesTooltip": "Aucune date n'est sélectionnée",
       "changeDates": "Modifier mes dates",
@@ -409,11 +412,31 @@
       },
       "noscript": {
         "title": "Choisir vos dates",
-        "body": "Le calendrier a besoin de JavaScript pour montrer les nuits libres et calculer votre devis. Vous pouvez réserver par message, ou passer par une plateforme.",
+        "body": "Le calendrier, le devis et le paiement de l'acompte ont besoin de JavaScript. Vous pouvez réserver par message, ou passer par une plateforme.",
         "whatsapp": "Écrire à votre hôte sur WhatsApp",
         "airbnb": "Réserver sur Airbnb",
         "booking": "Réserver sur Booking.com"
-      }
+      },
+      "payment": {
+        "title": "Le paiement",
+        "summary": "Acompte à régler maintenant : {amount}.",
+        "holdNotice": "{minutes, plural, one {Vos dates vous sont réservées encore # minute.} other {Vos dates vous sont réservées encore # minutes.}}",
+        "holdExpired": "Le temps imparti est écoulé et vos dates ont été libérées.",
+        "loading": "Chargement du formulaire de paiement...",
+        "pay": "Payer {amount}",
+        "paying": "Paiement en cours...",
+        "back": "Revenir au récapitulatif",
+        "mandate": "Le solde de {amount} sera prélevé le {date} sur cette carte.",
+        "payDeposit": "Payer l'acompte, {amount}",
+        "balanceNotice": "Le solde de {amount} reste dû avant l'arrivée.",
+        "saveCard": "J'autorise le prélèvement du solde de {amount} sur cette carte le {date}.",
+        "saveCardTerms": "Votre carte est conservée par Stripe, notre prestataire de paiement, jamais par ce site. Sans cette autorisation, aucune carte n'est enregistrée et le solde vous est réclamé par email avant l'arrivée.",
+        "errors": {
+          "load": "Le formulaire de paiement n'a pas pu se charger. Réessayez dans un instant.",
+          "card": "Le paiement n'a pas abouti. Vérifiez votre carte ou essayez-en une autre."
+        }
+      },
+      "successBodyPaid": "Votre acompte est réglé, vos dates sont bloquées et un email de confirmation vient de partir. Corine vous écrit pour l'arrivée."
     },
     "calendar": {
       "arrival": "arrivée",
@@ -551,6 +574,43 @@
         "title": "Nouvelle réservation directe",
         "intro": "Une réservation vient d'être enregistrée depuis le site.",
         "blocked": "Les dates sont déjà bloquées sur le site et dans le calendrier envoyé à Airbnb et à Booking."
+      }
+    },
+    "deposit": {
+      "labels": {
+        "arrival": "Arrivée",
+        "departure": "Départ",
+        "nights": "Nuits",
+        "guests": "Voyageurs",
+        "name": "Nom",
+        "email": "Email",
+        "depositPaid": "Acompte réglé",
+        "balance": "Solde",
+        "balanceDate": "Débit du solde",
+        "reference": "Référence"
+      },
+      "guest": {
+        "subject": "Votre acompte est bien reçu, {property}",
+        "title": "Votre réservation est confirmée",
+        "intro": "Bonjour {name}, votre acompte a bien été reçu et vos dates sont réservées.",
+        "address": "Le logement : {address}",
+        "balanceAuto": "Le solde de {amount} sera prélevé automatiquement le {date} sur la carte utilisée aujourd'hui.",
+        "balanceManual": "Le solde de {amount} reste à régler avant l'arrivée. Corine vous écrit pour convenir du règlement.",
+        "changes": "Pour modifier ou annuler, répondez simplement à ce message.",
+        "signature": "À très bientôt, {host}"
+      },
+      "host": {
+        "subject": "Acompte reçu, réservation du {from} au {to}",
+        "title": "Acompte reçu, réservation confirmée",
+        "intro": "Un acompte vient d'être réglé sur le site et la réservation est confirmée.",
+        "balanceManual": "À convenir, pas d'autorisation de prélèvement",
+        "blocked": "Les dates sont déjà bloquées sur le site et dans le calendrier envoyé à Airbnb et à Booking."
+      },
+      "refunded": {
+        "subject": "Acompte remboursé, du {from} au {to}",
+        "title": "Un acompte a dû être remboursé",
+        "intro": "Un paiement a abouti pour des dates qui venaient d'être prises par ailleurs.",
+        "done": "L'acompte a été intégralement remboursé automatiquement. Il reste à écrire au voyageur."
       }
     }
   }

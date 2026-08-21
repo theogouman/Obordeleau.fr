@@ -404,6 +404,90 @@ what `public_stay_rules` hands the picker and that it carries no price, each
 refusal the write path now makes by name, the minors stored with the stay, and
 the tax falling on the adults alone.
 
+## Phase 3 lot 4, the deposit
+
+The visitor now pays half the accommodation to book, and the card that paid it
+can be kept for the balance. Two things make that safe.
+
+**The nights are taken before Stripe is called.** In instant booking with a
+deposit, two visitors can reach a card form for the same week at the same
+moment. Confirming only on the payment webhook would let both cards clear, and
+the second write would then fail on the exclusion constraint: a deposit taken
+for a week that cannot be honoured. So `create_direct_reservation` gained one
+argument, a hold lifetime, and the exclusion constraint was widened to cover
+holds:
+
+```text
+  status in ('confirmed','hold')   one exclusion constraint, both states
+        │
+        ├── hold      25 minutes, taken at the top of the checkout
+        └── confirmed the deposit cleared, or the enquiry path wrote it outright
+```
+
+The second checkout on the same week is refused by the same mechanism that
+already settled two simultaneous bookings, before a single euro moves. Called
+without a lifetime the function still writes a confirmed booking, which is why
+the Phase 2 enquiry route did not have to be touched.
+
+A hold that is abandoned has to stop blocking, and an index predicate cannot
+expire anything on its own because it has to be immutable and `now()` is not.
+Expiry is a sweep: `expire_stale_holds()` runs at the top of every write and
+every five minutes by cron. Reads count an expired but unswept hold as busy, on
+purpose, because that is the answer the constraint would give, so the picker is
+never kinder than the write path.
+
+**The amount is never sent up from the browser.** `POST /api/checkout`
+revalidates the stay with `validate_stay`, checks the party against the
+capacity, recomputes the quote with `get_quote`, holds the nights, and only then
+opens a payment intent for `deposit_amount`. The browser sends dates and people.
+A total posted up from it would be ignored, because none is read.
+
+**The conversion happens once.** The webhook and the browser both report a
+successful card, and Stripe replays webhooks. Both call
+`confirm_reservation_payment`, which locks the payment row: the first caller
+gets `converted: true` and sends the emails, every later one is told the work
+was already done. One booking, one letter, however many times the news arrives.
+
+**When it goes wrong.** A card refused leaves the hold standing, so another can
+be tried inside its lifetime. A deposit that clears for a week whose hold was
+swept and taken by somebody else is refunded automatically at Stripe, the hold
+is released, and Corine is told so she can write to the guest. That path should
+never run; it is there because the alternative is money with no room behind it.
+
+**The card is kept only if the guest says so.** The opt in is unticked, it names
+the amount and the date in the same sentence, and it is what decides whether
+`setup_future_usage` is set at all. Without it Stripe never stores a reusable
+payment method, `save_card_consent` is false, and the confirmation email says
+the balance will be arranged rather than taken. The balance date is
+`check_in` minus `deposit_charge_days_before_arrival`, which lives in
+`pricing_config`, is seeded to 14 by this lot, and is editable in the console.
+
+`STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` are server side only, the same
+discipline as the service role key. Only `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+reaches the browser, which is what it is for. Without the keys the card step is
+not offered at all: the flow falls back to the enquiry it was before this lot,
+rather than showing a payment form that cannot take a payment.
+
+### Setting up Stripe
+
+1. Copy the secret key and the publishable key from the Stripe dashboard into
+   Vercel.
+2. Add a webhook endpoint at `https://www.obordeleau.fr/api/stripe/webhook`,
+   subscribed to `payment_intent.succeeded` and `payment_intent.payment_failed`,
+   and copy its signing secret into `STRIPE_WEBHOOK_SECRET`.
+3. Redeploy. `NEXT_PUBLIC_` variables are inlined at build time, so a key set
+   after a build does not reach the page that build produced.
+
+### Tests
+
+`supabase/tests/payments.test.sql` covers the twenty nine cases behind it: a
+checkout taking a hold rather than a booking, a second checkout refused before
+Stripe, the reads agreeing with the constraint, a returning visitor finding
+their own hold, the deposit and the balance splitting the way the quote says,
+a refused card leaving the hold alone, the conversion happening exactly once,
+the sweep releasing what was abandoned, the deposit that has to go back, the
+capacity refused at the table, and the enquiry path still confirming outright.
+
 ## Deploying
 
 Import the repository on Vercel, set the environment variables, point the Hostinger DNS at Vercel.

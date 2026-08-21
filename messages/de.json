@@ -379,7 +379,10 @@
         "tooSoon": "Die früheste Anreise ist morgen.",
         "minNights": "{count, plural, one {Der Mindestaufenthalt beträgt eine Nacht.} other {Der Mindestaufenthalt beträgt # Nächte.}}",
         "checkinDay": "In dieser Saison ist die Anreise samstags.",
-        "stayMultiple": "{count, plural, =7 {In dieser Saison geht der Aufenthalt von Samstag zu Samstag, in ganzen Wochen.} other {In dieser Saison muss die Dauer ein Vielfaches von # Nächten sein.}}"
+        "stayMultiple": "{count, plural, =7 {In dieser Saison geht der Aufenthalt von Samstag zu Samstag, in ganzen Wochen.} other {In dieser Saison muss die Dauer ein Vielfaches von # Nächten sein.}}",
+        "holdExpired": "Ihre Daten waren nicht mehr reserviert. Bitte wählen Sie erneut.",
+        "refunded": "Diese Daten wurden soeben vergeben. Ihre Anzahlung wurde vollständig erstattet und Corine meldet sich bei Ihnen.",
+        "paymentPending": "Ihre Zahlung wurde erfasst. Die Bestätigung erreicht Sie in Kürze per E-Mail."
       },
       "datesTooltip": "Es ist noch kein Zeitraum gewählt",
       "changeDates": "Daten ändern",
@@ -409,11 +412,31 @@
       },
       "noscript": {
         "title": "Ihre Daten wählen",
-        "body": "Der Kalender braucht JavaScript, um die freien Nächte zu zeigen und Ihr Angebot zu berechnen. Sie können stattdessen per Nachricht buchen oder über eine Plattform.",
+        "body": "Kalender, Angebot und Anzahlung benötigen JavaScript. Sie können per Nachricht buchen oder über eine Plattform gehen.",
         "whatsapp": "Ihrem Gastgeber auf WhatsApp schreiben",
         "airbnb": "Auf Airbnb buchen",
         "booking": "Auf Booking.com buchen"
-      }
+      },
+      "payment": {
+        "title": "Die Zahlung",
+        "summary": "Jetzt fällige Anzahlung: {amount}.",
+        "holdNotice": "{minutes, plural, one {Ihre Daten sind noch # Minute reserviert.} other {Ihre Daten sind noch # Minuten reserviert.}}",
+        "holdExpired": "Die Zeit ist abgelaufen und Ihre Daten wurden freigegeben.",
+        "loading": "Das Zahlungsformular wird geladen...",
+        "pay": "{amount} zahlen",
+        "paying": "Zahlung läuft...",
+        "back": "Zurück zur Übersicht",
+        "mandate": "Der Restbetrag von {amount} wird am {date} von dieser Karte eingezogen.",
+        "payDeposit": "Anzahlung zahlen, {amount}",
+        "balanceNotice": "Der Restbetrag von {amount} ist vor der Anreise fällig.",
+        "saveCard": "Ich ermächtige den Einzug des Restbetrags von {amount} am {date} von dieser Karte.",
+        "saveCardTerms": "Ihre Karte wird von Stripe, unserem Zahlungsdienstleister, gespeichert, niemals von dieser Website. Ohne diese Einwilligung wird keine Karte gespeichert und der Restbetrag wird vor der Anreise per E-Mail angefordert.",
+        "errors": {
+          "load": "Das Zahlungsformular konnte nicht geladen werden. Bitte versuchen Sie es gleich noch einmal.",
+          "card": "Die Zahlung war nicht erfolgreich. Prüfen Sie Ihre Karte oder nehmen Sie eine andere."
+        }
+      },
+      "successBodyPaid": "Ihre Anzahlung ist bezahlt, Ihre Daten sind reserviert und eine Bestätigungsmail ist unterwegs. Corine meldet sich wegen der Anreise."
     },
     "calendar": {
       "arrival": "Anreise",
@@ -551,6 +574,43 @@
         "title": "Neue Direktbuchung",
         "intro": "Soeben wurde über die Website eine Buchung erfasst.",
         "blocked": "Die Reisedaten sind bereits auf der Website und im Kalender für Airbnb und Booking gesperrt."
+      }
+    },
+    "deposit": {
+      "labels": {
+        "arrival": "Anreise",
+        "departure": "Abreise",
+        "nights": "Nächte",
+        "guests": "Gäste",
+        "name": "Name",
+        "email": "E-Mail",
+        "depositPaid": "Anzahlung bezahlt",
+        "balance": "Restbetrag",
+        "balanceDate": "Einzug des Restbetrags",
+        "reference": "Referenz"
+      },
+      "guest": {
+        "subject": "Ihre Anzahlung ist eingegangen, {property}",
+        "title": "Ihre Buchung ist bestätigt",
+        "intro": "Guten Tag {name}, Ihre Anzahlung ist eingegangen und Ihre Daten sind reserviert.",
+        "address": "Die Unterkunft: {address}",
+        "balanceAuto": "Der Restbetrag von {amount} wird am {date} automatisch von der heute verwendeten Karte eingezogen.",
+        "balanceManual": "Der Restbetrag von {amount} ist vor der Anreise zu zahlen. Corine meldet sich, um das zu vereinbaren.",
+        "changes": "Für Änderungen oder eine Stornierung antworten Sie einfach auf diese Nachricht.",
+        "signature": "Bis ganz bald, {host}"
+      },
+      "host": {
+        "subject": "Anzahlung erhalten, Buchung vom {from} bis {to}",
+        "title": "Anzahlung erhalten, Buchung bestätigt",
+        "intro": "Auf der Website wurde soeben eine Anzahlung gezahlt und die Buchung ist bestätigt.",
+        "balanceManual": "Zu vereinbaren, keine Einzugsermächtigung",
+        "blocked": "Die Daten sind auf der Website und im Kalender für Airbnb und Booking bereits blockiert."
+      },
+      "refunded": {
+        "subject": "Anzahlung erstattet, vom {from} bis {to}",
+        "title": "Eine Anzahlung musste erstattet werden",
+        "intro": "Eine Zahlung ging für Daten ein, die soeben anderweitig vergeben wurden.",
+        "done": "Die Anzahlung wurde automatisch vollständig erstattet. Es bleibt, dem Gast zu schreiben."
       }
     }
   }

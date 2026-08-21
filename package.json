@@ -15,19 +15,22 @@
     "check:reviews": "node scripts/check-reviews.mjs",
     "check": "npm run lint:copy && npm run check:reviews && npm run lint",
     "test:e2e": "playwright test",
-    "test:sql": "npm run test:sql:pricing && npm run test:sql:admin && npm run test:sql:stay",
+    "test:sql": "npm run test:sql:pricing && npm run test:sql:admin && npm run test:sql:stay && npm run test:sql:payments",
     "test:sql:pricing": "psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f supabase/tests/pricing.test.sql",
     "test:sql:admin": "psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f supabase/tests/pricing-admin.test.sql",
     "test:sql:stay": "psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f supabase/tests/stay-rules.test.sql",
-    "test:e2e:install": "playwright install --with-deps chromium"
+    "test:e2e:install": "playwright install --with-deps chromium",
+    "test:sql:payments": "psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f supabase/tests/payments.test.sql"
   },
   "dependencies": {
+    "@stripe/stripe-js": "^7.9.0",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "next": "^15.5.0",
     "next-intl": "^4.3.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "stripe": "^18.5.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.1",

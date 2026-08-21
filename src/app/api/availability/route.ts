@@ -9,6 +9,7 @@ import {
 } from '@/lib/availability';
 import { addDays, isIsoDate, todayInParis } from '@/lib/dates';
 import { stayRules } from '@/lib/pricing';
+import { paymentsConfigured } from '@/lib/stripe';
 import { bookingStoreConfigured } from '@/lib/supabase';
 
 /**
@@ -64,6 +65,11 @@ export async function GET(request: NextRequest) {
         minNights: MIN_NIGHTS,
         blocked: blockedNights(ranges, from, to),
         stayRules: rules,
+        // Whether a deposit can be taken at all. False until the owner sets the
+        // Stripe keys, and the card step is then simply not offered: the flow
+        // records the stay and the amount is confirmed by email, exactly as it
+        // did before lot 4.
+        paymentsEnabled: paymentsConfigured,
         // Only so the phone field can open on the right calling code. Read from
         // the edge header, never stored, and the visitor can change it.
         country: request.headers.get('x-vercel-ip-country'),

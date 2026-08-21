@@ -16,6 +16,9 @@ const BUSY_SUMMARY = 'Indisponible';
 /** Stable across runs, so importers update a stay instead of duplicating it. */
 const UID_PREFIX: Record<BusyKind, string> = {
   reservation: 'resv',
+  // Exported like any other busy range. A checkout in progress is not a night
+  // Airbnb may sell, and the event disappears again if the hold is abandoned.
+  hold: 'hold',
   manual: 'block',
   external: 'ext',
 };

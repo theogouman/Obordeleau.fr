@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from 'react';
 import { BookingCalendar } from '@/components/BookingCalendar';
+import { CheckoutPanel } from '@/components/CheckoutPanel';
 import { ChannelChoice } from '@/components/ChannelChoice';
 import { Icon } from '@/components/Icon';
 import { PhoneField } from '@/components/PhoneField';
@@ -63,10 +64,24 @@ type Availability = {
   country: string | null;
   /** The stay constraints, so the grid can guide before the server refuses. */
   rules: StayRules | null;
+  /**
+   * False until the owner has set the Stripe keys. The card step is then not
+   * offered at all and the flow is the enquiry it was before lot 4, rather than
+   * a payment form that cannot take a payment.
+   */
+  paymentsEnabled: boolean;
 };
 
 /** The quote is additive: the flow works without it, as it did before lot 3. */
 type QuoteState = 'idle' | 'loading' | 'ready' | 'unavailable';
+
+/** What the server hands back once it has held the nights and opened a payment. */
+type Checkout = {
+  clientSecret: string;
+  publishableKey: string;
+  holdExpiresAt: string | null;
+  reference: string;
+};
 
 type StepId = 'dates' | 'name' | 'email' | 'phone' | 'guests' | 'recap';
 
@@ -141,8 +156,17 @@ export function BookingForm({
   // dates chip, so nothing already answered is ever asked twice.
   const [returnTo, setReturnTo] = useState<number | null>(null);
 
-  const [state, setState] = useState<'editing' | 'sending' | 'booked'>('editing');
-  const [booked, setBooked] = useState<{ reference: string; from: string; to: string } | null>(null);
+  const [state, setState] = useState<'editing' | 'sending' | 'paying' | 'booked'>('editing');
+  /**
+   * The opt in that lets the balance be taken from the same card before
+   * arrival. Off by default: a card is kept because the guest said so, never
+   * because a box was already ticked.
+   */
+  const [saveCard, setSaveCard] = useState(false);
+  const [checkout, setCheckout] = useState<Checkout | null>(null);
+  const [booked, setBooked] = useState<
+    { reference: string; from: string; to: string; paid: boolean } | null
+  >(null);
   const [stepError, setStepError] = useState<string | null>(null);
   const [shaking, setShaking] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -166,6 +190,7 @@ export function BookingForm({
         blocked: string[];
         country: string | null;
         stayRules?: StayRules;
+        paymentsEnabled?: boolean;
       };
 
       setAvailability({
@@ -174,6 +199,7 @@ export function BookingForm({
         windowEnd: data.to,
         country: data.country,
         rules: data.stayRules ?? null,
+        paymentsEnabled: data.paymentsEnabled === true,
       });
       setCalendarStatus('ready');
     } catch {
@@ -194,6 +220,23 @@ export function BookingForm({
     if (touchedCountry.current) return;
     setCountry(defaultCountry(detectedCountry, locale));
   }, [detectedCountry, locale]);
+
+  const paymentsEnabled = availability?.paymentsEnabled === true;
+
+  /*
+   * Formats the two figures the payment step shows. Constructed here so it is
+   * built once, and only ever used inside branches that render after a quote
+   * has come back, which is well after hydration.
+   */
+  const money = useMemo(
+    () =>
+      new Intl.NumberFormat(localeTags[locale as Locale], {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 2,
+      }),
+    [locale],
+  );
 
   const firstArrival = availability?.firstArrival ?? addDays(todayInParis(), 1);
   const windowEnd = availability?.windowEnd ?? addDays(firstArrival, 365);
@@ -734,7 +777,7 @@ export function BookingForm({
       const confirmed = (await response.json()) as { reference?: string };
 
       trackBookingConfirmed(locale);
-      setBooked({ reference: confirmed.reference ?? '', from: arrival, to: departure });
+      setBooked({ reference: confirmed.reference ?? '', from: arrival, to: departure, paid: false });
       setState('booked');
     } catch {
       setFormError(t('errors.server'));
@@ -742,6 +785,206 @@ export function BookingForm({
     }
   }
 
+
+  /* --- the deposit -------------------------------------------------------- */
+
+  /*
+   * A card can be asked for only when the database produced a quote and the
+   * owner has set the Stripe keys. Otherwise the button stays what it was and
+   * the stay is recorded without a payment.
+   */
+  const canPay = paymentsEnabled && quoteState === 'ready' && quote !== null;
+
+  /*
+   * And the balance can only be promised as automatic when the config says how
+   * many days before arrival it is taken. Without that date there is nothing to
+   * put in front of the guest, so no card is kept.
+   */
+  const canAutoCharge = canPay && quote !== null && quote.balanceChargeOn !== null;
+
+  /** The day the balance is taken, written the way the visitor's language does. */
+  function balanceChargeLabel(isoDate: string | null): string {
+    if (!isoDate) return '';
+    return new Intl.DateTimeFormat(localeTags[locale as Locale], {
+      dateStyle: 'long',
+      timeZone: 'Europe/Paris',
+    }).format(new Date(`${isoDate}T12:00:00Z`));
+  }
+
+  /**
+   * Turns a paid deposit into the confirmation on screen.
+   *
+   * The webhook is what actually confirms the booking, so this is a courtesy:
+   * it lets the screen catch up while the visitor is still looking at it. If it
+   * cannot get an answer, the payment is not lost and the email still arrives,
+   * which is what the message says.
+   */
+  async function settlePayment(paymentIntentId: string) {
+    try {
+      const response = await fetch('/api/checkout/confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentIntentId }),
+      });
+
+      const body = (await response.json().catch(() => ({}))) as {
+        ok?: boolean;
+        reference?: string;
+        from?: string;
+        to?: string;
+      };
+
+      if (response.ok && body.ok) {
+        trackBookingConfirmed(locale);
+        setCheckout(null);
+        setBooked({
+          reference: body.reference ?? '',
+          from: body.from ?? arrival ?? '',
+          to: body.to ?? departure ?? '',
+          paid: true,
+        });
+        setState('booked');
+        return;
+      }
+
+      // 409 is the one case where the money has gone back: the nights were
+      // taken while the card was being authorised.
+      setFormError(response.status === 409 ? t('errors.refunded') : t('errors.paymentPending'));
+      setState('editing');
+    } catch {
+      setFormError(t('errors.paymentPending'));
+      setState('editing');
+    }
+  }
+
+  /**
+   * Holds the nights and opens a payment for the deposit.
+   *
+   * No amount is sent. The server revalidates the stay, recomputes the quote
+   * and charges what it worked out, which is why what is read here and what is
+   * taken cannot drift apart.
+   */
+  async function startCheckout() {
+    if (!arrival || !departure || guests === null) return;
+
+    setState('sending');
+    setFormError(null);
+
+    try {
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from: arrival,
+          to: departure,
+          guests,
+          minors,
+          name: name.trim(),
+          email: email.trim(),
+          phone: fullPhoneNumber(country, phone),
+          locale,
+          saveCard: canAutoCharge && saveCard,
+          company: honeypot.current?.value ?? '',
+          elapsedMs: Date.now() - startedAt,
+        }),
+      });
+
+      if (response.status === 409) {
+        setFormError(t('errors.unavailable'));
+        setArrival(null);
+        setDeparture(null);
+        setState('editing');
+        setReturnTo(null);
+        goTo(0);
+        void loadAvailability();
+        return;
+      }
+
+      if (response.status === 429) {
+        setFormError(t('errors.rateLimited'));
+        setState('editing');
+        return;
+      }
+
+      const body = (await response.json().catch(() => ({}))) as {
+        ok?: boolean;
+        error?: string;
+        alreadyPaid?: boolean;
+        clientSecret?: string;
+        publishableKey?: string;
+        holdExpiresAt?: string | null;
+        reference?: string;
+      };
+
+      if (response.status === 503) {
+        // No card can be taken after all. Rather than stranding the visitor on
+        // a dead end, the stay is recorded the way it was before this lot and
+        // the amount is settled by email, which is what the success screen says.
+        if (body.error === 'payments_unavailable' || body.error === 'not_priced') {
+          await submit();
+          return;
+        }
+
+        setFormError(t('errors.notConfigured'));
+        setState('editing');
+        return;
+      }
+
+      if (!response.ok) {
+        const ruled = ['too_soon', 'min_nights', 'checkin_day', 'stay_multiple'].includes(
+          body.error ?? '',
+        );
+        setFormError(ruled ? stayMessage(body.error) : t('errors.server'));
+        setState('editing');
+        return;
+      }
+
+      if (body.alreadyPaid) {
+        // The deposit went through on an earlier attempt at this same checkout.
+        trackBookingConfirmed(locale);
+        setBooked({ reference: body.reference ?? '', from: arrival, to: departure, paid: true });
+        setState('booked');
+        return;
+      }
+
+      if (!body.clientSecret || !body.publishableKey) {
+        setFormError(t('errors.server'));
+        setState('editing');
+        return;
+      }
+
+      setCheckout({
+        clientSecret: body.clientSecret,
+        publishableKey: body.publishableKey,
+        holdExpiresAt: body.holdExpiresAt ?? null,
+        reference: body.reference ?? '',
+      });
+      setState('paying');
+    } catch {
+      setFormError(t('errors.server'));
+      setState('editing');
+    }
+  }
+
+  /**
+   * Coming back from a full page 3D Secure redirect.
+   *
+   * Stripe returns the visitor to this page with its own parameters on the URL.
+   * They are read once, then wiped, so a refresh does not try to settle the
+   * same payment twice.
+   */
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const intentId = params.get('payment_intent');
+
+    if (!intentId || params.get('redirect_status') !== 'succeeded') return;
+
+    window.history.replaceState(null, '', window.location.pathname);
+    setState('sending');
+    void settlePayment(intentId);
+    // Once, on the way back into the page.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /* --- confirmation ------------------------------------------------------ */
 
@@ -760,7 +1003,7 @@ export function BookingForm({
       <div className="card p-8 text-center" role="status" aria-live="polite">
         <SuccessCheck />
         <h3 className="mt-4 font-display text-2xl">{t('successTitle')}</h3>
-        <p className="mt-2 text-ink-soft">{t('successBody')}</p>
+        <p className="mt-2 text-ink-soft">{t(booked.paid ? 'successBodyPaid' : 'successBody')}</p>
         {booked.reference ? (
           <p className="mt-3 text-sm text-ink-soft">
             {t('successReference')}{' '}
@@ -777,6 +1020,58 @@ export function BookingForm({
           <WhatsAppMark />
           {t('whatsappCta')}
         </a>
+      </div>
+    );
+  }
+
+  /* --- the card ----------------------------------------------------------- */
+
+  if (state === 'paying' && checkout && quote) {
+    const chargeDate = quote.balanceChargeOn
+      ? new Intl.DateTimeFormat(localeTags[locale as Locale], {
+          dateStyle: 'long',
+          timeZone: 'Europe/Paris',
+        }).format(new Date(`${quote.balanceChargeOn}T12:00:00Z`))
+      : null;
+
+    return (
+      <div className="card p-6 sm:p-8">
+        <CheckoutPanel
+          clientSecret={checkout.clientSecret}
+          publishableKey={checkout.publishableKey}
+          amountLabel={money.format(quote.depositAmount)}
+          mandate={
+            saveCard && chargeDate
+              ? t('payment.mandate', {
+                  amount: money.format(quote.balanceAmount),
+                  date: chargeDate,
+                })
+              : null
+          }
+          holdExpiresAt={checkout.holdExpiresAt}
+          onPaid={(intentId) => {
+            setState('sending');
+            void settlePayment(intentId);
+          }}
+          onExpired={() => {
+            // The nights have gone back to the calendar, so the flow goes back
+            // to the calendar too rather than pretending they are still held.
+            setCheckout(null);
+            setState('editing');
+            setFormError(t('errors.holdExpired'));
+            setArrival(null);
+            setDeparture(null);
+            setReturnTo(null);
+            goTo(0);
+            void loadAvailability();
+          }}
+          onBack={() => {
+            // The hold is left standing: coming back to this checkout picks it
+            // up again rather than colliding with it.
+            setCheckout(null);
+            setState('editing');
+          }}
+        />
       </div>
     );
   }
@@ -1064,9 +1359,32 @@ export function BookingForm({
               </p>
             ) : null}
 
+            {/* The opt in, unticked. Without it no card is kept and nothing
+                is charged again: the balance is arranged instead. Shown only
+                when there is a date to put in front of the guest. */}
+            {canAutoCharge && quote ? (
+              <div className="mt-6 rounded-[var(--radius-card)] bg-sand p-4">
+                <label className="flex cursor-pointer items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={saveCard}
+                    onChange={(event) => setSaveCard(event.target.checked)}
+                    className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-raspberry)]"
+                  />
+                  <span className="text-sm">
+                    {t('payment.saveCard', {
+                      amount: money.format(quote.balanceAmount),
+                      date: balanceChargeLabel(quote.balanceChargeOn),
+                    })}
+                  </span>
+                </label>
+                <p className="mt-2 ps-7 text-xs text-ink-soft">{t('payment.saveCardTerms')}</p>
+              </div>
+            ) : null}
+
             <button
               type="button"
-              onClick={() => void submit()}
+              onClick={() => void (canPay ? startCheckout() : submit())}
               disabled={state === 'sending'}
               className="btn btn-primary mt-6 w-full"
             >
@@ -1077,13 +1395,19 @@ export function BookingForm({
                 </>
               ) : (
                 <>
-                  {t('submit')}
+                  {canPay && quote
+                    ? t('payment.payDeposit', { amount: money.format(quote.depositAmount) })
+                    : t('submit')}
                   <Icon name="checkCircle" className="h-[1.05em] w-auto" />
                 </>
               )}
             </button>
 
-            <p className="mt-3 text-center text-xs text-ink-soft">{t('noPayment')}</p>
+            <p className="mt-3 text-center text-xs text-ink-soft">
+              {canPay && quote
+                ? t('payment.balanceNotice', { amount: money.format(quote.balanceAmount) })
+                : t('noPayment')}
+            </p>
 
             <p className="mt-1 text-center text-xs text-ink-soft">
               {t.rich('consentNotice', {

@@ -25,7 +25,13 @@ export function firstBookableDate(): string {
 export const DEFAULT_WINDOW_DAYS = 365;
 export const MAX_WINDOW_DAYS = 400;
 
-export type BusyKind = 'reservation' | 'manual' | 'external';
+/**
+ * A `hold` is a checkout in progress: the nights are taken while a card is
+ * being authorised, and they block exactly as a booking does. It is a kind of
+ * its own because the console says who is holding a night, and "reserved" and
+ * "somebody is paying for it right now" do not mean the same thing.
+ */
+export type BusyKind = 'reservation' | 'hold' | 'manual' | 'external';
 
 export type BusyRange = {
   kind: BusyKind;
@@ -92,10 +98,24 @@ export type ReservationRequest = {
   minors: number;
   notes: string | null;
   locale: string | null;
+  /**
+   * Minutes to hold the nights for instead of confirming them outright. Null,
+   * the default, writes a confirmed booking, which is what the enquiry flow
+   * does when no payment is taken. The checkout passes a lifetime so the nights
+   * are taken before Stripe is called and given back if the card never clears.
+   */
+  holdMinutes?: number | null;
 };
 
 export type ReservationOutcome =
-  | { ok: true; id: string; startDate: string; endDate: string }
+  | {
+      ok: true;
+      id: string;
+      startDate: string;
+      endDate: string;
+      status: 'confirmed' | 'hold';
+      holdExpiresAt: string | null;
+    }
   | {
       ok: false;
       /**
@@ -111,7 +131,8 @@ export type ReservationOutcome =
         | 'invalid_range'
         | 'checkin_day'
         | 'stay_multiple'
-        | 'minors';
+        | 'minors'
+        | 'invalid_hold';
       minArrival?: string;
       minNights?: number;
       requiredCheckinDay?: string;
@@ -119,8 +140,11 @@ export type ReservationOutcome =
     };
 
 /**
- * The one write path. Phase 3 turns this into a hold converted on payment by
- * changing the database function, not its callers.
+ * The one write path, for a booking and for a hold alike.
+ *
+ * Lot 4 gave the database function a hold lifetime and changed nothing else:
+ * called without one it still writes a confirmed booking, which is why the
+ * enquiry route above did not have to be touched.
  */
 export async function reserve(request: ReservationRequest): Promise<ReservationOutcome> {
   const result = await callDatabase<{
@@ -129,6 +153,8 @@ export async function reserve(request: ReservationRequest): Promise<ReservationO
     id?: string;
     start_date?: string;
     end_date?: string;
+    status?: string;
+    hold_expires_at?: string | null;
     min_arrival?: string;
     min_nights?: number;
     required_checkin_day?: string;
@@ -142,6 +168,7 @@ export async function reserve(request: ReservationRequest): Promise<ReservationO
     p_notes: request.notes,
     p_locale: request.locale,
     p_minors: request.minors,
+    p_hold_minutes: request.holdMinutes ?? null,
   });
 
   if (result.ok && result.id) {
@@ -150,6 +177,8 @@ export async function reserve(request: ReservationRequest): Promise<ReservationO
       id: result.id,
       startDate: result.start_date ?? request.startDate,
       endDate: result.end_date ?? request.endDate,
+      status: result.status === 'hold' ? 'hold' : 'confirmed',
+      holdExpiresAt: result.hold_expires_at ?? null,
     };
   }
 
@@ -160,6 +189,7 @@ export async function reserve(request: ReservationRequest): Promise<ReservationO
     'checkin_day',
     'stay_multiple',
     'minors',
+    'invalid_hold',
   ] as const;
 
   const reason = result.reason ?? 'unavailable';

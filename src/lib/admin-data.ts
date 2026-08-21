@@ -50,7 +50,7 @@ export type AdminSettings = {
   tiers: TierRow[];
 };
 
-export type BusyKind = 'reservation' | 'manual' | 'external';
+export type BusyKind = 'reservation' | 'hold' | 'manual' | 'external';
 
 export type CalendarNight = {
   date: string;

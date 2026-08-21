@@ -35,6 +35,9 @@ import { bareAmount } from '@/lib/money';
 
 const BUSY_LABELS: Record<string, string> = {
   reservation: 'Réservé',
+  // A checkout in progress. It blocks the night like a booking, and gives it
+  // back on its own within the half hour if the card never clears.
+  hold: 'En cours de paiement',
   manual: 'Bloqué',
   external: 'Importé',
 };

@@ -1,9 +1,16 @@
 import { getTranslations } from 'next-intl/server';
 import { NextResponse, type NextRequest } from 'next/server';
-import { localeTags, routing, type Locale } from '@/i18n/routing';
+import { routing, type Locale } from '@/i18n/routing';
 import { MIN_NIGHTS, firstBookableDate, reserve } from '@/lib/availability';
 import { isIsoDate, nightsBetween } from '@/lib/dates';
 import { formattedAddress, host, property } from '@/lib/content';
+import {
+  formatEmailDate,
+  hostInbox as resolveHostInbox,
+  renderEmail,
+  sendEmail,
+  type Detail,
+} from '@/lib/email';
 import { bookingStoreConfigured } from '@/lib/supabase';
 
 /**
@@ -70,90 +77,11 @@ function clean(value: unknown): string {
   return value.replace(/\s+/g, ' ').trim().slice(0, MAX_FIELD);
 }
 
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
 function asLocale(value: unknown): Locale {
   const candidate = String(value);
   return (routing.locales as readonly string[]).includes(candidate)
     ? (candidate as Locale)
     : routing.defaultLocale;
-}
-
-function formatDate(isoDate: string, locale: Locale): string {
-  return new Intl.DateTimeFormat(localeTags[locale], {
-    dateStyle: 'full',
-    timeZone: 'Europe/Paris',
-  }).format(new Date(`${isoDate}T12:00:00Z`));
-}
-
-type Detail = { label: string; value: string };
-
-function renderEmail(title: string, intro: string, details: Detail[], footer: string[]) {
-  const rows = details
-    .map(
-      (detail) =>
-        `<tr><td style="padding:4px 16px 4px 0;color:#6b5750">${escapeHtml(detail.label)}</td>` +
-        `<td style="padding:4px 0;font-weight:600">${escapeHtml(detail.value)}</td></tr>`,
-    )
-    .join('');
-
-  const html =
-    `<div style="font-family:system-ui,sans-serif;line-height:1.6;color:#3a2a26">` +
-    `<h1 style="font-size:20px;margin:0 0 12px">${escapeHtml(title)}</h1>` +
-    `<p style="margin:0 0 16px">${escapeHtml(intro)}</p>` +
-    `<table style="border-collapse:collapse;margin:0 0 16px">${rows}</table>` +
-    footer.map((line) => `<p style="margin:0 0 8px">${escapeHtml(line)}</p>`).join('') +
-    `</div>`;
-
-  const text = [
-    title,
-    '',
-    intro,
-    '',
-    ...details.map((detail) => `${detail.label}: ${detail.value}`),
-    '',
-    ...footer,
-  ].join('\n');
-
-  return { html, text };
-}
-
-async function sendEmail(payload: Record<string, unknown>): Promise<boolean> {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.INQUIRY_FROM_EMAIL;
-
-  if (!apiKey || !from) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.info('[reservations] email not configured, payload below\n', payload.text);
-      return false;
-    }
-    console.error('[reservations] missing RESEND_API_KEY or INQUIRY_FROM_EMAIL');
-    return false;
-  }
-
-  try {
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from, ...payload }),
-    });
-
-    if (!response.ok) {
-      console.error('[reservations] provider rejected the message', response.status);
-      return false;
-    }
-  } catch (error) {
-    console.error('[reservations] provider unreachable', error);
-    return false;
-  }
-
-  return true;
 }
 
 export async function POST(request: NextRequest) {
@@ -263,8 +191,8 @@ export async function POST(request: NextRequest) {
   });
 
   const guestDetails: Detail[] = [
-    { label: labels('arrival'), value: formatDate(from, locale) },
-    { label: labels('departure'), value: formatDate(to, locale) },
+    { label: labels('arrival'), value: formatEmailDate(from, locale) },
+    { label: labels('departure'), value: formatEmailDate(to, locale) },
     { label: labels('nights'), value: String(nights) },
     { label: labels('guests'), value: String(guests) },
     { label: labels('reference'), value: reference },
@@ -283,8 +211,8 @@ export async function POST(request: NextRequest) {
   );
 
   const hostDetails: Detail[] = [
-    { label: hostLabels('arrival'), value: formatDate(from, routing.defaultLocale) },
-    { label: hostLabels('departure'), value: formatDate(to, routing.defaultLocale) },
+    { label: hostLabels('arrival'), value: formatEmailDate(from, routing.defaultLocale) },
+    { label: hostLabels('departure'), value: formatEmailDate(to, routing.defaultLocale) },
     { label: hostLabels('nights'), value: String(nights) },
     {
       label: hostLabels('guests'),
@@ -303,10 +231,7 @@ export async function POST(request: NextRequest) {
     hostCopy('blocked'),
   ]);
 
-  const hostInbox =
-    process.env.BOOKINGS_TO_EMAIL ??
-    process.env[host.inquiryRouting.toEnv] ??
-    process.env.INQUIRY_TO_EMAIL;
+  const hostInbox = resolveHostInbox();
 
   // The nights are already taken at this point. A mail that fails to leave is
   // worth logging, never worth telling the visitor their booking did not happen.
@@ -317,14 +242,14 @@ export async function POST(request: NextRequest) {
           subject: hostCopy('subject', { from, to }),
           reply_to: email,
           ...hostEmail,
-        })
+        }, 'reservations')
       : Promise.resolve(false),
     sendEmail({
       to: [email],
       subject: guestCopy('subject', { property: property.name }),
       ...(hostInbox ? { reply_to: hostInbox } : {}),
       ...guestEmail,
-    }),
+    }, 'reservations'),
   ]);
 
   if (!hostInbox) {
