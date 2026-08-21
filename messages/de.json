@@ -189,35 +189,22 @@
     "intro": "Alles ist zu Fuß erreichbar. Deshalb bleibt das Auto bei den meisten Gästen den ganzen Aufenthalt über stehen.",
     "items": {
       "beach": {
-        "label": "Sandstrand Les Sablettes",
-        "detail": "Einfach durch den Park, ohne eine Straße zu überqueren.",
+        "label": "Der Strand von Les Sablettes liegt eine Gehminute entfernt",
+        "detail": "Kein Auto nötig: Sie gehen durch den Park und stehen an einem der schönsten Sandstrände des Var.",
         "photoAlt": "Luftaufnahme des Strands von Les Sablettes, der Strandpromenade und der Bucht von Toulon"
       },
       "seaside-park": {
         "label": "Park am Meer",
-        "detail": "Einer der schönsten Parks im Var: Schildkröten, Frösche und viel Platz für Familien."
+        "detail": "Familien spazieren hier besonders gern, denn im Park leben Schildkröten und viele Vögel."
       },
       "boat-shuttle": {
         "label": "Fähre nach Toulon",
-        "detail": "Einmal über die Straße, und das Boot bringt Sie nach Toulon und zu den Inseln."
+        "detail": "Direkt gegenüber der Residenz legen die Pendelboote nach Toulon und zu den Inseln ab."
       },
       "shops": {
-        "label": "Geschäfte",
-        "detail": "Bäckerei, kleiner Supermarkt und Apotheke im Viertel."
-      },
-      "restaurants": {
-        "label": "Restaurants",
-        "detail": "An der Strandpromenade, wenige Gehminuten entfernt."
-      },
-      "market": {
-        "label": "Markt",
-        "detail": "Der Markt im Viertel, ebenfalls zu Fuß erreichbar."
+        "label": "Geschäfte & Restaurants",
+        "detail": "Alles liegt in der Nähe: Bäckerei, Geschäfte und Restaurants sind wenige Schritte von der Residenz entfernt."
       }
-    },
-    "unit": {
-      "distance": "{value} m",
-      "walk": "{value} Min. zu Fuß",
-      "onFoot": "zu Fuß"
     }
   },
   "about": {

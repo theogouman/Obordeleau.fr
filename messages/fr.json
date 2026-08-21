@@ -189,35 +189,22 @@
     "intro": "Tout se fait à pied. C'est la raison pour laquelle la plupart des voyageurs oublient leur véhicule durant le séjour.",
     "items": {
       "beach": {
-        "label": "Plage de sable des Sablettes",
-        "detail": "En traversant le parc, sans traverser de route.",
+        "label": "La plage des Sablettes est à 1 min à pied",
+        "detail": "Pas besoin de prendre la route, traversez le parc et vous accéderez à une des plus belles plages de sable fin du Var.",
         "photoAlt": "Vue aérienne de la plage des Sablettes, du front de mer et de la rade de Toulon"
       },
       "seaside-park": {
         "label": "Parc du bord de mer",
-        "detail": "Un des plus beaux parcs du Var, apprécié des familles avec ses tortues, ses grenouilles, et bien plus encore."
+        "detail": "Les familles adorent se balader dans ce parc dans lequel on peut observer des tortues et des oiseaux."
       },
       "boat-shuttle": {
         "label": "Bateau-bus pour Toulon",
-        "detail": "Traversez la route et embarquez pour Toulon et les îles."
+        "detail": "Embarquez pour Toulon et les îles avec les bateaux navettes situés en face de la résidence."
       },
       "shops": {
-        "label": "Commerces",
-        "detail": "Boulangerie, supérette et pharmacie dans le quartier."
-      },
-      "restaurants": {
-        "label": "Restaurants",
-        "detail": "Sur le front de mer, à quelques minutes à pied."
-      },
-      "market": {
-        "label": "Marché",
-        "detail": "Le marché du quartier, à pied également."
+        "label": "Commerces & Restaurants",
+        "detail": "Vous avez tout à proximité : boulangerie, commerces et restaurants sont à quelques pas de la résidence."
       }
-    },
-    "unit": {
-      "distance": "{value} m",
-      "walk": "{value} min à pied",
-      "onFoot": "à pied"
     }
   },
   "about": {

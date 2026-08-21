@@ -3,7 +3,7 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 
 /**
- * The six places nearby, stacking as the section is scrolled through.
+ * The places nearby, stacking as the section is scrolled through.
  *
  * The mechanism is the one in theogouman/Consultant-Notion (ProcessStack): a
  * container as tall as one viewport per card creates the distance, a frame

@@ -9,11 +9,15 @@ import { assetExists } from '@/lib/assets';
 import { aroundItems, property } from '@/lib/content';
 
 /**
- * FR-004: the "around you" distances block, as a pile of cards that builds up
- * while the section is scrolled through. The movement lives in AroundStack;
- * everything here stays on the server, so the six cards and their text are in
- * the document before a single line of script runs, and the presence of a
- * photograph is still resolved at build time by assetExists.
+ * FR-004: the "around you" block, as a pile of cards that builds up while the
+ * section is scrolled through. The movement lives in AroundStack; everything
+ * here stays on the server, so the cards and their text are in the document
+ * before a single line of script runs, and the presence of a photograph is
+ * still resolved at build time by assetExists.
+ *
+ * No distance or walking time on the cards. A place a minute away says so in
+ * its own sentence, and a badge repeating it in figures was one measurement
+ * too many for a block whose point is that nothing here needs measuring.
  *
  * Only the beach has a photograph today. A card without one is not a hole: it
  * is laid out for its words, on the sunset ground, with the place mark the
@@ -41,15 +45,6 @@ export function Around() {
       <div className="mt-10">
         <AroundStack>
           {aroundItems.map((item, index) => {
-            const measures: string[] = [];
-            if (item.distanceM !== null) {
-              measures.push(t('unit.distance', { value: item.distanceM }));
-            }
-            if (item.walkMinutes !== null) {
-              measures.push(t('unit.walk', { value: item.walkMinutes }));
-            }
-            if (measures.length === 0) measures.push(t('unit.onFoot'));
-
             const file = photos.get(item.id);
             const source = file ? `/images/area/${file}` : null;
             const photo = source && assetExists(source) ? source : null;
@@ -68,7 +63,6 @@ export function Around() {
                     </span>
                     <h3 className="around-card__title">{t(`items.${item.id}.label`)}</h3>
                     <p className="around-card__detail">{t(`items.${item.id}.detail`)}</p>
-                    <p className="around-card__pill">{measures.join(', ')}</p>
                   </div>
 
                   {photo ? (

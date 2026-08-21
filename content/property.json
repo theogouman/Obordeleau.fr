@@ -174,18 +174,6 @@
       "distanceM": null,
       "walkMinutes": null,
       "confirmed": true
-    },
-    {
-      "id": "restaurants",
-      "distanceM": null,
-      "walkMinutes": null,
-      "confirmed": true
-    },
-    {
-      "id": "market",
-      "distanceM": null,
-      "walkMinutes": null,
-      "confirmed": true
     }
   ],
   "honestNotes": [],

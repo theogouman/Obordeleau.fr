@@ -55,7 +55,7 @@ export function About() {
             width={500}
             height={500}
             unoptimized
-            className="mt-6 h-16 w-auto"
+            className="mt-6 h-24 w-auto md:h-28"
           />
         </Reveal>
       </div>

@@ -189,35 +189,22 @@
     "intro": "Everything is walkable. That is why most guests forget about their car for the whole stay.",
     "items": {
       "beach": {
-        "label": "Les Sablettes sandy beach",
-        "detail": "Straight through the park, without crossing a road.",
+        "label": "Les Sablettes beach is a minute away on foot",
+        "detail": "No need to take the car: cross the park and you are on one of the finest sandy beaches in the Var.",
         "photoAlt": "Aerial view of Les Sablettes beach, the seafront and the bay of Toulon"
       },
       "seaside-park": {
         "label": "Seaside park",
-        "detail": "One of the finest parks in the Var, a favourite with families for its turtles, its frogs and much more."
+        "detail": "Families love wandering through this park, where turtles and birds are part of the walk."
       },
       "boat-shuttle": {
         "label": "Shuttle boat to Toulon",
-        "detail": "Cross the road and step aboard for Toulon and the islands."
+        "detail": "Step aboard the shuttle boats right across from the residence and sail to Toulon and the islands."
       },
       "shops": {
-        "label": "Shops",
-        "detail": "Bakery, small supermarket and pharmacy in the neighbourhood."
-      },
-      "restaurants": {
-        "label": "Restaurants",
-        "detail": "Along the seafront, a few minutes on foot."
-      },
-      "market": {
-        "label": "Market",
-        "detail": "The local market, also within walking distance."
+        "label": "Shops & restaurants",
+        "detail": "Everything is close by: the bakery, the shops and the restaurants are a few steps from the residence."
       }
-    },
-    "unit": {
-      "distance": "{value} m",
-      "walk": "{value} min walk",
-      "onFoot": "on foot"
     }
   },
   "about": {

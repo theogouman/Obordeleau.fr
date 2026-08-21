@@ -152,22 +152,6 @@
     line-height: 1.55;
   }
 
-  .around-card__pill {
-    position: relative;
-    align-self: start;
-    margin-top: 0.25rem;
-    white-space: nowrap;
-    border-radius: var(--radius-pill);
-    background-color: var(--color-sand);
-    padding: 0.25rem 0.75rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-  }
-
-  .around-card--plain .around-card__pill {
-    background-color: var(--color-shell);
-  }
-
   .around-card__visual {
     position: relative;
     min-height: 0;
