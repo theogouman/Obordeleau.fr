@@ -4,6 +4,12 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { localeTags, type Locale } from '@/i18n/routing';
 import { addDays } from '@/lib/dates';
+import {
+  isValidArrival,
+  lastCheckout,
+  satisfiesStayRules,
+  type StayRules,
+} from '@/lib/stay';
 
 /**
  * Range picker over real availability.
@@ -37,6 +43,11 @@ function reducedMotion(): boolean {
 
 type Props = {
   blocked: ReadonlySet<string>;
+  /**
+   * The stay constraints, so the grid can refuse a Tuesday in July before the
+   * server has to. Null until they load, and the server confirms either way.
+   */
+  rules: StayRules | null;
   firstArrival: string;
   /** Exclusive: the first date the window no longer covers. */
   windowEnd: string;
@@ -99,6 +110,7 @@ function weeksOf(monthStart: string): (string | null)[][] {
 
 export function BookingCalendar({
   blocked,
+  rules,
   firstArrival,
   windowEnd,
   arrival,
@@ -142,12 +154,10 @@ export function BookingCalendar({
    * With an arrival chosen, the stay may run up to the first taken night and
    * no further: that night's date is still a valid checkout.
    */
-  const maxCheckout = useMemo(() => {
-    if (!arrival) return null;
-    let cursor = addDays(arrival, 1);
-    while (cursor < windowEnd && !blocked.has(cursor)) cursor = addDays(cursor, 1);
-    return cursor;
-  }, [arrival, blocked, windowEnd]);
+  const maxCheckout = useMemo(
+    () => (arrival ? lastCheckout(blocked, arrival, windowEnd) : null),
+    [arrival, blocked, windowEnd],
+  );
 
   const pickingDeparture = arrival !== null && departure === null;
 
@@ -156,10 +166,19 @@ export function BookingCalendar({
     // blocked nights is "not known yet", never "everything is free".
     if (status !== 'ready') return false;
     if (date < firstArrival || date >= windowEnd) return false;
+
     if (pickingDeparture && arrival) {
-      return date > arrival && (maxCheckout === null || date <= maxCheckout);
+      if (date <= arrival) return false;
+      // The stay may run up to the first taken night and no further.
+      if (maxCheckout !== null && date > maxCheckout) return false;
+      // And it has to be a length the seasons it crosses will take: in July and
+      // August that is whole weeks, so only the Saturdays survive this.
+      return satisfiesStayRules(rules, arrival, date);
     }
-    return !blocked.has(date);
+
+    // An arrival is judged on the season it falls in. A range that later runs
+    // into a stricter one is caught above, where both ends are known.
+    return !blocked.has(date) && isValidArrival(rules, date);
   }
 
   function select(date: string) {

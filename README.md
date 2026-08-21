@@ -44,14 +44,15 @@ Useful scripts:
 content/          property.json, host.json, reviews.json, reviews-curation.json
 messages/         fr.json (source of truth), en.json, de.json
 public/images/    hero, gallery, host, area, reviews  (see public/IMAGE-MANIFEST.md)
-src/app/          [locale] pages, api/{availability,reservations,calendar}, sitemap, robots, icon
+src/app/          [locale] pages, api/{availability,stay,quote,reservations,calendar},
+                  sitemap, robots, icon
 src/app/admin/    the owner's console: page, login, server actions
 src/components/   presentation, one file per section
 src/components/admin/  the console, French only, not a visitor surface
 src/i18n/         routing (locales and localized paths), request config, navigation
 src/lib/          content, reviews, seo, structured-data, analytics, assets,
-                  dates, calendar, money, supabase, availability, pricing, ical,
-                  admin-session, admin-auth, admin-data, admin-forms
+                  dates, calendar, money, stay, supabase, availability, pricing,
+                  ical, admin-session, admin-auth, admin-data, admin-forms
 supabase/         migrations/ (schema), tests/ (SQL suites),
                   functions/sync-ical/ (the iCal importer)
 src/styles/       globals.css (Tailwind theme), tokens.css (brand), _root.css (motion)
@@ -349,6 +350,59 @@ each refusal by name, and an override still winning inside an exempt season.
 ```sh
 npm run test:sql        # both suites; needs SUPABASE_DB_URL and psql
 ```
+
+## Phase 3 lot 3, the visitor's quote
+
+The booking card already asked one question at a time. This lot taught it the
+stay rules, asked who is under 18, and put a price on the recap.
+
+**The picker guides, the server rules.** `src/lib/stay.ts` is a deliberate
+mirror of `validate_stay`, and it exists for one reason: a grid cannot ask the
+server about every square. It greys out a Tuesday in July and every checkout
+that is not a whole number of weeks. Then the answer that counts:
+
+```text
+  the grid        mirror of the rule      greys out what would be refused
+  /api/stay       validate_stay           confirms before the flow moves on
+  the write path  validate_stay again     settles it, under the exclusion constraint
+```
+
+`create_direct_reservation` used to check "at least one night" and "not before
+tomorrow" itself, which was the whole rule when it was written and is a fragment
+of it now. It calls `validate_stay` instead, so **two nights in February and a
+Tuesday arrival in July are refused by the write path too**, and the refusal
+comes back named rather than as a blanket "unavailable".
+
+**Who is under 18.** The tourist tax is charged per adult, so the split is part
+of the stay. The question only appears from two travellers up, because with one
+there is nobody for it to be about, and minors are capped at one below the party
+size: a stay with no adult in it cannot be quoted and cannot be let. The number
+is stored on the reservation, since a booking taken before the payment lot would
+otherwise lose the one figure needed to work out what it owes.
+
+**The quote.** `POST /api/quote` validates the stay, then returns `get_quote`'s
+own fields. Not one figure is added up in the browser, and the request carries
+dates and people, never money: the amount charged in lot 4 comes from the same
+function, server side, so the two cannot drift. Cleaning at zero is not a zero
+on a line, it reads **Offert**, because a nought next to "ménage" looks like a
+missing price rather than a gift.
+
+The panel is additive. When no price can be produced, because the owner has not
+set a rate yet, it stays away and the flow is exactly what it was before this
+lot: the stay is recorded and the amount is confirmed by email.
+
+**Without JavaScript** the card is a calendar that cannot be paged and a button
+that cannot be pressed, so `Reservation.tsx` takes it out of the page and puts a
+plain one in its place: why, and three ways to reach the host. It sits in the
+server component on purpose, because React reconciling `noscript` children on
+the client is a known way to produce a hydration mismatch.
+
+### Tests
+
+`supabase/tests/stay-rules.test.sql` covers the thirteen cases underneath:
+what `public_stay_rules` hands the picker and that it carries no price, each
+refusal the write path now makes by name, the minors stored with the stay, and
+the tax falling on the adults alone.
 
 ## Deploying
 

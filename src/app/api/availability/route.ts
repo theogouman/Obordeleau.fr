@@ -8,6 +8,7 @@ import {
   firstBookableDate,
 } from '@/lib/availability';
 import { addDays, isIsoDate, todayInParis } from '@/lib/dates';
+import { stayRules } from '@/lib/pricing';
 import { bookingStoreConfigured } from '@/lib/supabase';
 
 /**
@@ -50,7 +51,10 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const ranges = await busyRanges(from, to);
+    // One round trip for both: the picker cannot guide on the taken nights
+    // alone, it also needs to know which days a season will take as an
+    // arrival and how long a stay there has to be.
+    const [ranges, rules] = await Promise.all([busyRanges(from, to), stayRules()]);
 
     return NextResponse.json(
       {
@@ -59,6 +63,7 @@ export async function GET(request: NextRequest) {
         firstArrival: firstBookableDate(),
         minNights: MIN_NIGHTS,
         blocked: blockedNights(ranges, from, to),
+        stayRules: rules,
         // Only so the phone field can open on the right calling code. Read from
         // the edge header, never stored, and the visitor can change it.
         country: request.headers.get('x-vercel-ip-country'),

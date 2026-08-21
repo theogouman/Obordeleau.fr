@@ -25,6 +25,7 @@ type BookingPayload = {
   from?: string;
   to?: string;
   guests?: number;
+  minors?: number;
   name?: string;
   email?: string;
   phone?: string;
@@ -184,6 +185,7 @@ export async function POST(request: NextRequest) {
   const from = clean(payload.from);
   const to = clean(payload.to);
   const guests = Number(payload.guests);
+  const minors = Number.isFinite(Number(payload.minors)) ? Number(payload.minors) : 0;
   const locale = asLocale(payload.locale);
 
   const problems: string[] = [];
@@ -196,6 +198,11 @@ export async function POST(request: NextRequest) {
   }
   if (!Number.isFinite(guests) || guests < 1 || guests > property.capacity.maxGuests) {
     problems.push('guests');
+  }
+  // Strictly fewer than the party: a stay with no adult in it cannot be quoted
+  // and cannot be let. The database refuses it too.
+  if (!Number.isInteger(minors) || minors < 0 || (Number.isFinite(guests) && minors >= guests)) {
+    problems.push('minors');
   }
   if (payload.consent !== true) problems.push('consent');
 
@@ -217,6 +224,7 @@ export async function POST(request: NextRequest) {
       startDate: from,
       endDate: to,
       partySize: guests,
+      minors,
       notes: [phone ? `Tel: ${phone}` : null, message || null].filter(Boolean).join(' | ') || null,
       locale,
     });
@@ -278,7 +286,11 @@ export async function POST(request: NextRequest) {
     { label: hostLabels('arrival'), value: formatDate(from, routing.defaultLocale) },
     { label: hostLabels('departure'), value: formatDate(to, routing.defaultLocale) },
     { label: hostLabels('nights'), value: String(nights) },
-    { label: hostLabels('guests'), value: String(guests) },
+    {
+      label: hostLabels('guests'),
+      // The split matters: the tourist tax is charged per adult.
+      value: minors > 0 ? `${guests} (${guests - minors} + ${minors} < 18)` : String(guests),
+    },
     { label: hostLabels('name'), value: name },
     { label: hostLabels('email'), value: email },
     ...(phone ? [{ label: hostLabels('phone'), value: phone }] : []),

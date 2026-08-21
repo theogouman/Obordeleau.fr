@@ -345,7 +345,9 @@
         "dialSearch": "Land suchen",
         "dialCommon": "Am häufigsten",
         "dialAll": "Alle Länder",
-        "dialEmpty": "Kein Land gefunden."
+        "dialEmpty": "Kein Land gefunden.",
+        "minors": "Kinder unter 18 Jahren?",
+        "minorsCount": "Wie viele?"
       },
       "placeholders": {
         "name": "z. B. Corine PIERRET",
@@ -373,10 +375,45 @@
         "unavailable": "Dieser Zeitraum wurde gerade vergeben. Der Kalender ist aktualisiert, bitte wählen Sie andere Reisedaten.",
         "rateLimited": "Zu viele Versuche von diesem Gerät. Bitte versuchen Sie es in einigen Minuten erneut.",
         "notConfigured": "Die Onlinebuchung ist noch nicht aktiv. Sie können solange über Airbnb oder Booking gehen.",
-        "server": "Die Buchung hat nicht geklappt. Sie können es erneut versuchen oder solange über Airbnb oder Booking gehen."
+        "server": "Die Buchung hat nicht geklappt. Sie können es erneut versuchen oder solange über Airbnb oder Booking gehen.",
+        "tooSoon": "Die früheste Anreise ist morgen.",
+        "minNights": "{count, plural, one {Der Mindestaufenthalt beträgt eine Nacht.} other {Der Mindestaufenthalt beträgt # Nächte.}}",
+        "checkinDay": "In dieser Saison ist die Anreise samstags.",
+        "stayMultiple": "{count, plural, =7 {In dieser Saison geht der Aufenthalt von Samstag zu Samstag, in ganzen Wochen.} other {In dieser Saison muss die Dauer ein Vielfaches von # Nächten sein.}}"
       },
       "datesTooltip": "Es ist noch kein Zeitraum gewählt",
-      "changeDates": "Daten ändern"
+      "changeDates": "Daten ändern",
+      "checking": "Wird geprüft...",
+      "minorsNote": "Sie zahlen keine Kurtaxe.",
+      "minorsFewer": "Ein Kind weniger",
+      "minorsMore": "Ein Kind mehr",
+      "adultsValue": "{count, plural, one {# Erwachsener} other {# Erwachsene}}",
+      "partyValue": "{adults, plural, one {# Erwachsener} other {# Erwachsene}} und {minors, plural, one {# Kind} other {# Kinder}}",
+      "rules": {
+        "minNights": "{count, plural, one {Ab einer Nacht.} other {Ab # Nächten.}}",
+        "weeks": "{count, plural, =7 {Von Samstag zu Samstag, in ganzen Wochen: 7, 14 oder 21 Nächte.} other {In Vielfachen von # Nächten.}}",
+        "stranded": "Von diesem Datum aus ist keine Abreise möglich. Bitte wählen Sie eine andere Anreise."
+      },
+      "quote": {
+        "title": "Ihr Angebot",
+        "accommodation": "{count, plural, one {Unterkunft, # Nacht} other {Unterkunft, # Nächte}}",
+        "cleaning": "Endreinigung",
+        "cleaningFree": "Inklusive",
+        "touristTax": "{adults, plural, one {Kurtaxe, # Erwachsener} other {Kurtaxe, # Erwachsene}} für {nights, plural, one {# Nacht} other {# Nächte}}",
+        "touristTaxNote": "Pro Erwachsenem und Nacht, wird an die Gemeinde abgeführt. Unter 18 Jahren entfällt sie.",
+        "total": "Gesamt",
+        "depositNow": "Jetzt zu zahlen ({percent} %)",
+        "balanceLater": "Restbetrag, wird vor der Anreise abgebucht",
+        "loading": "Betrag wird berechnet...",
+        "unavailable": "Der Betrag wird Ihnen per E-Mail bestätigt. Ihre Anfrage bleibt gespeichert."
+      },
+      "noscript": {
+        "title": "Ihre Daten wählen",
+        "body": "Der Kalender braucht JavaScript, um die freien Nächte zu zeigen und Ihr Angebot zu berechnen. Sie können stattdessen per Nachricht buchen oder über eine Plattform.",
+        "whatsapp": "Ihrem Gastgeber auf WhatsApp schreiben",
+        "airbnb": "Auf Airbnb buchen",
+        "booking": "Auf Booking.com buchen"
+      }
     },
     "calendar": {
       "arrival": "Anreise",

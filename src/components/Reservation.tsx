@@ -33,6 +33,58 @@ export function Reservation() {
         />
       </Reveal>
 
+      {/*
+       * Without JavaScript the card below is a calendar that cannot be paged
+       * and a button that cannot be pressed, so it is taken out of the page and
+       * this stands in its place: why, and three ways to reach the host that
+       * need no script at all.
+       *
+       * It sits here rather than inside BookingForm because this component is
+       * rendered on the server and never hydrates. React reconciling noscript
+       * children on the client is a known way to produce a mismatch, and the
+       * style tag only exists for a visitor who will never run the script that
+       * would trip over it.
+       */}
+      <noscript>
+        <style>{'.booking-card{display:none}'}</style>
+        <div className="card mx-auto mt-10 w-full max-w-2xl px-6 py-8 sm:px-8 sm:py-10">
+          <h3 className="font-display text-xl">{t('booking.noscript.title')}</h3>
+          <p className="mt-3 text-sm text-ink-soft">{t('booking.noscript.body')}</p>
+          <ul className="mt-5 space-y-2 text-sm">
+            <li>
+              <a
+                className="text-raspberry-ink underline underline-offset-4"
+                href={`https://wa.me/${host.contact.whatsappNumber}`}
+              >
+                {t('booking.noscript.whatsapp')}
+              </a>
+            </li>
+            {airbnb?.url ? (
+              <li>
+                <a
+                  className="text-raspberry-ink underline underline-offset-4"
+                  href={airbnb.url}
+                  rel="noopener"
+                >
+                  {t('booking.noscript.airbnb')}
+                </a>
+              </li>
+            ) : null}
+            {booking?.url ? (
+              <li>
+                <a
+                  className="text-raspberry-ink underline underline-offset-4"
+                  href={booking.url}
+                  rel="noopener"
+                >
+                  {t('booking.noscript.booking')}
+                </a>
+              </li>
+            ) : null}
+          </ul>
+        </div>
+      </noscript>
+
       <Reveal delay={80}>
         <div id="booking-form" className="mx-auto mt-10 w-full max-w-2xl scroll-mt-24">
           <BookingForm

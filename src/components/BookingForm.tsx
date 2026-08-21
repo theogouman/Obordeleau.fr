@@ -14,10 +14,22 @@ import { BookingCalendar } from '@/components/BookingCalendar';
 import { ChannelChoice } from '@/components/ChannelChoice';
 import { Icon } from '@/components/Icon';
 import { PhoneField } from '@/components/PhoneField';
+import { QuotePanel } from '@/components/QuotePanel';
 import { localeTags, type Locale } from '@/i18n/routing';
 import { trackBookingConfirmed } from '@/lib/analytics';
 import { addDays, nightsBetween, todayInParis } from '@/lib/dates';
 import { defaultCountry, formatNational, fullPhoneNumber, phoneDigits } from '@/lib/phone';
+import type { Quote } from '@/lib/pricing';
+import {
+  constraintsFor,
+  firstValidDeparture,
+  lastCheckout,
+  refusalFor,
+  satisfiesStayRules,
+  seasonOf,
+  type StayRefusal,
+  type StayRules,
+} from '@/lib/stay';
 
 /**
  * FR-103: the direct booking flow, one question at a time.
@@ -49,7 +61,12 @@ type Availability = {
   firstArrival: string;
   windowEnd: string;
   country: string | null;
+  /** The stay constraints, so the grid can guide before the server refuses. */
+  rules: StayRules | null;
 };
+
+/** The quote is additive: the flow works without it, as it did before lot 3. */
+type QuoteState = 'idle' | 'loading' | 'ready' | 'unavailable';
 
 type StepId = 'dates' | 'name' | 'email' | 'phone' | 'guests' | 'recap';
 
@@ -111,6 +128,14 @@ export function BookingForm({
   const [phone, setPhone] = useState('');
   const [guests, setGuests] = useState<number | null>(null);
   const [guestFocus, setGuestFocus] = useState(0);
+  // Under 18s are exempt from the tourist tax, so the split is part of the
+  // stay, not a detail. adults = guests - minors, and there is always one.
+  const [hasMinors, setHasMinors] = useState(false);
+  const [minors, setMinors] = useState(0);
+
+  const [checkingStay, setCheckingStay] = useState(false);
+  const [quote, setQuote] = useState<Quote | null>(null);
+  const [quoteState, setQuoteState] = useState<QuoteState>('idle');
   // The step to come back to once the question now on screen has been dealt
   // with. Set when a single answer is reopened, from the recap or from the
   // dates chip, so nothing already answered is ever asked twice.
@@ -140,6 +165,7 @@ export function BookingForm({
         firstArrival: string;
         blocked: string[];
         country: string | null;
+        stayRules?: StayRules;
       };
 
       setAvailability({
@@ -147,6 +173,7 @@ export function BookingForm({
         firstArrival: data.firstArrival,
         windowEnd: data.to,
         country: data.country,
+        rules: data.stayRules ?? null,
       });
       setCalendarStatus('ready');
     } catch {
@@ -171,8 +198,37 @@ export function BookingForm({
   const firstArrival = availability?.firstArrival ?? addDays(todayInParis(), 1);
   const windowEnd = availability?.windowEnd ?? addDays(firstArrival, 365);
   const blocked = availability?.blocked ?? EMPTY_BLOCKED;
+  const rules = availability?.rules ?? null;
 
   const nights = arrival && departure ? nightsBetween(arrival, departure) : 0;
+
+  /**
+   * A range the rule would take. The grid already refuses to offer anything
+   * else, and /api/stay confirms before the flow moves on, so this only decides
+   * whether the button is live.
+   */
+  const rangeReady = Boolean(
+    arrival && departure && satisfiesStayRules(rules, arrival, departure),
+  );
+
+  /** With an arrival picked, is there any checkout at all ahead of it? */
+  const strandedArrival = useMemo(() => {
+    if (!arrival || departure || !rules) return false;
+    return firstValidDeparture(rules, arrival, lastCheckout(blocked, arrival, windowEnd)) === null;
+  }, [arrival, departure, rules, blocked, windowEnd]);
+
+  /** The rule in words, once an arrival says which season is being asked for. */
+  const datesHint = useMemo(() => {
+    if (!rules || !arrival || departure) return null;
+    if (strandedArrival) return t('rules.stranded');
+
+    const season = seasonOf(rules, arrival);
+    if (season?.stayMultiple) return t('rules.weeks', { count: season.stayMultiple });
+
+    return t('rules.minNights', {
+      count: constraintsFor(rules, arrival, addDays(arrival, 1)).minNights,
+    });
+  }, [rules, arrival, departure, strandedArrival, t]);
 
   const longDate = useMemo(
     () => new Intl.DateTimeFormat(localeTag, { dateStyle: 'long', timeZone: 'UTC' }),
@@ -338,6 +394,78 @@ export function BookingForm({
     window.setTimeout(() => setShaking(false), SHAKE_MS);
   }
 
+  /**
+   * One phrasing per reason, in the vocabulary validate_stay answers in, so the
+   * picker's guess and the server's ruling never say different things.
+   */
+  function stayMessage(reason: StayRefusal | string | null | undefined): string {
+    switch (reason) {
+      case 'too_soon':
+        return t('errors.tooSoon');
+      case 'min_nights':
+        return t('errors.minNights', {
+          count: arrival && departure ? constraintsFor(rules, arrival, departure).minNights : 2,
+        });
+      case 'checkin_day':
+        return t('errors.checkinDay');
+      case 'stay_multiple': {
+        const multiple =
+          arrival && departure ? constraintsFor(rules, arrival, departure).stayMultiple : null;
+        return multiple === null
+          ? t('errors.datesRule')
+          : t('errors.stayMultiple', { count: multiple });
+      }
+      case 'unavailable':
+        return t('errors.unavailable');
+      default:
+        return t('errors.datesRule');
+    }
+  }
+
+  /**
+   * The dates step is the one answer the server has to agree with before the
+   * flow moves on. The grid works from a mirror of the rule; this is the rule
+   * itself, and the write path asks it once more at the end.
+   */
+  async function confirmDates() {
+    if (!arrival || !departure) {
+      refuse(t('errors.datesMissing'));
+      return;
+    }
+
+    const local = refusalFor(rules, arrival, departure);
+    if (local) {
+      refuse(stayMessage(local));
+      return;
+    }
+
+    setCheckingStay(true);
+
+    try {
+      const response = await fetch('/api/stay', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from: arrival, to: departure }),
+      });
+
+      if (response.ok) {
+        const verdict = (await response.json()) as { valid?: boolean; reason?: string | null };
+        if (verdict.valid === false) {
+          refuse(stayMessage(verdict.reason));
+          return;
+        }
+      }
+      // A store that cannot be reached is not a refusal. The write path checks
+      // again and settles it there rather than stopping the visitor here.
+    } catch {
+      // Same: carry on and let the submission be the one that decides.
+    } finally {
+      setCheckingStay(false);
+    }
+
+    next();
+  }
+
   function validateStep(): boolean {
     switch (step) {
       case 'dates':
@@ -403,14 +531,38 @@ export function BookingForm({
     goBack(index);
   }
 
-  // Choosing is answering: the recap follows on its own, after just long
-  // enough for the chosen box to be seen taking the answer.
+  /**
+   * Choosing is answering, and for one traveller it still is: there is nobody
+   * for the second question to be about, so the recap follows on its own after
+   * just long enough for the chosen box to be seen taking the answer.
+   *
+   * From two travellers up, the under 18 question opens underneath instead and
+   * the step waits for its own button. The card is already tweening to the
+   * height of whatever the step is showing, so the question unfolds into place.
+   */
   function chooseGuests(count: number) {
     setGuests(count);
     setGuestFocus(count - 1);
     setStepError(null);
-    setReturnTo(null);
-    window.setTimeout(() => goTo(RECAP), 160);
+
+    // Never more minors than there are seats for adults to sit beside.
+    if (minors > count - 1) setMinors(Math.max(count - 1, 0));
+    if (count === 1) {
+      setHasMinors(false);
+      setMinors(0);
+    }
+
+    if (count === 1) {
+      setReturnTo(null);
+      window.setTimeout(() => goTo(RECAP), 160);
+    }
+  }
+
+  const maxMinors = guests === null ? 0 : guests - 1;
+
+  function toggleMinors(on: boolean) {
+    setHasMinors(on);
+    setMinors(on ? Math.min(Math.max(minors, 1), maxMinors) : 0);
   }
 
   // Arrows move the focus without answering, so walking through the four boxes
@@ -451,6 +603,64 @@ export function BookingForm({
     setFormError(null);
   }
 
+  /* --- the quote ---------------------------------------------------------- */
+
+  /*
+   * Asked for once the recap is reached and every figure it needs is known.
+   *
+   * Nothing is added up here. The endpoint validates the stay and then returns
+   * get_quote's own fields, which is where the amount charged will come from
+   * too, so what is read and what is taken cannot drift apart.
+   *
+   * A quote that cannot be produced, because the owner has not set a rate yet,
+   * is not a failure of the flow: the panel stays away and the booking works
+   * exactly as it did before this lot.
+   */
+  useEffect(() => {
+    if (step !== 'recap' || !arrival || !departure || guests === null) return;
+
+    let cancelled = false;
+    setQuoteState('loading');
+
+    const load = async () => {
+      try {
+        const response = await fetch('/api/quote', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ from: arrival, to: departure, guests, minors }),
+        });
+
+        if (cancelled) return;
+
+        if (!response.ok) {
+          setQuote(null);
+          setQuoteState('unavailable');
+          return;
+        }
+
+        const data = (await response.json()) as { valid?: boolean; quote?: Quote };
+        if (cancelled) return;
+
+        if (data.valid && data.quote) {
+          setQuote(data.quote);
+          setQuoteState('ready');
+        } else {
+          setQuote(null);
+          setQuoteState('unavailable');
+        }
+      } catch {
+        if (cancelled) return;
+        setQuote(null);
+        setQuoteState('unavailable');
+      }
+    };
+
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, [step, arrival, departure, guests, minors]);
+
   /* --- submission -------------------------------------------------------- */
 
   async function submit() {
@@ -467,6 +677,10 @@ export function BookingForm({
           from: arrival,
           to: departure,
           guests,
+          // The party, not a price. Lot 4 recomputes the amount server side
+          // from these dates and these people; a total sent up from a browser
+          // is never what gets charged.
+          minors,
           name: name.trim(),
           email: email.trim(),
           phone: fullPhoneNumber(country, phone),
@@ -503,11 +717,16 @@ export function BookingForm({
 
       if (!response.ok) {
         const body = (await response.json().catch(() => ({}))) as { error?: string };
-        setFormError(
-          body.error === 'too_soon' || body.error === 'min_nights'
-            ? t('errors.datesRule')
-            : t('errors.server'),
-        );
+        // A stay rule the form should have caught is phrased by the same map
+        // the picker uses, so the visitor is told the same thing either way.
+        const ruled = [
+          'too_soon',
+          'min_nights',
+          'checkin_day',
+          'stay_multiple',
+        ].includes(body.error ?? '');
+
+        setFormError(ruled ? stayMessage(body.error) : t('errors.server'));
         setState('editing');
         return;
       }
@@ -569,14 +788,15 @@ export function BookingForm({
       case 'dates':
         return (
           <Step
-            onNext={next}
-            nextLabel={t('continue')}
-            nextDisabled={nights < 1}
+            onNext={() => void confirmDates()}
+            nextLabel={checkingStay ? t('checking') : t('continue')}
+            nextDisabled={!rangeReady || checkingStay}
             nextHint={t('datesTooltip')}
             error={stepError}
           >
             <BookingCalendar
               blocked={blocked}
+              rules={rules}
               firstArrival={firstArrival}
               windowEnd={windowEnd}
               arrival={arrival}
@@ -588,6 +808,12 @@ export function BookingForm({
             <p className="mt-3 text-center text-sm text-ink-soft" role="status" aria-live="polite">
               {nights > 0 ? `${readableRange}, ${t('nights', { count: nights })}` : t('noDatesYet')}
             </p>
+
+            {/* The rule the chosen season asks for, said once an arrival has
+                named which season that is. */}
+            {datesHint ? (
+              <p className="mt-1 text-center text-xs text-ink-soft">{datesHint}</p>
+            ) : null}
           </Step>
         );
 
@@ -679,7 +905,11 @@ export function BookingForm({
 
       case 'guests':
         return (
-          <Step error={stepError}>
+          <Step
+            error={stepError}
+            onNext={guests !== null && guests > 1 ? next : undefined}
+            nextLabel={guests !== null && guests > 1 ? t('continue') : undefined}
+          >
             <fieldset>
               <legend className="font-display text-xl">{t('questions.guests')}</legend>
               <div
@@ -716,6 +946,58 @@ export function BookingForm({
                 ))}
               </div>
             </fieldset>
+
+            {/* Only from two travellers up: with one there is nobody for this
+                question to be about, and a party with no adult is not a stay. */}
+            {guests !== null && guests > 1 ? (
+              <div className="mt-6 border-t border-[rgba(58,42,38,0.12)] pt-5 text-start">
+                <label className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={hasMinors}
+                    onChange={(event) => toggleMinors(event.target.checked)}
+                    className="mt-1.5 h-4 w-4 shrink-0 accent-[var(--color-raspberry)]"
+                  />
+                  <span className="font-display text-lg">{t('questions.minors')}</span>
+                </label>
+                <p className="mt-1 ps-7 text-xs text-ink-soft">{t('minorsNote')}</p>
+
+                {hasMinors ? (
+                  <div className="mt-4 ps-7">
+                    <span className="text-sm font-semibold">{t('questions.minorsCount')}</span>
+                    <div className="mt-2 flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setMinors(Math.max(1, minors - 1))}
+                        disabled={minors <= 1}
+                        aria-label={t('minorsFewer')}
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[rgba(58,42,38,0.18)] text-lg leading-none text-ink transition-colors hover:border-ink disabled:opacity-40"
+                      >
+                        <span aria-hidden="true">&minus;</span>
+                      </button>
+                      <output
+                        aria-live="polite"
+                        className="min-w-8 text-center font-display text-xl tabular-nums"
+                      >
+                        {minors}
+                      </output>
+                      <button
+                        type="button"
+                        onClick={() => setMinors(Math.min(maxMinors, minors + 1))}
+                        disabled={minors >= maxMinors}
+                        aria-label={t('minorsMore')}
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[rgba(58,42,38,0.18)] text-lg leading-none text-ink transition-colors hover:border-ink disabled:opacity-40"
+                      >
+                        <span aria-hidden="true">+</span>
+                      </button>
+                    </div>
+                    <p className="mt-2 text-xs text-ink-soft" role="status" aria-live="polite">
+                      {t('adultsValue', { count: guests - minors })}
+                    </p>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
           </Step>
         );
 
@@ -752,11 +1034,35 @@ export function BookingForm({
               />
               <RecapRow
                 label={t('questions.guests')}
-                value={guests === null ? '' : t('guestsValue', { count: guests })}
+                value={
+                  guests === null
+                    ? ''
+                    : minors > 0
+                      ? t('partyValue', { adults: guests - minors, minors })
+                      : t('guestsValue', { count: guests })
+                }
                 onEdit={() => correct(STEPS.indexOf('guests'))}
                 editLabel={t('edit')}
               />
             </dl>
+
+            {/* Every figure below comes from get_quote. The panel is additive:
+                when no price can be produced the flow is exactly what it was. */}
+            {quoteState === 'ready' && quote ? (
+              <QuotePanel quote={quote} />
+            ) : quoteState === 'loading' ? (
+              <p
+                className="mt-6 text-center text-sm text-ink-soft"
+                role="status"
+                aria-live="polite"
+              >
+                {t('quote.loading')}
+              </p>
+            ) : quoteState === 'unavailable' ? (
+              <p className="mt-6 rounded-[var(--radius-card)] bg-sand p-4 text-center text-sm text-ink-soft">
+                {t('quote.unavailable')}
+              </p>
+            ) : null}
 
             <button
               type="button"
@@ -794,7 +1100,7 @@ export function BookingForm({
   }
 
   return (
-    <div className="card px-6 py-8 sm:px-8 sm:py-10">
+    <div className="booking-card card px-6 py-8 sm:px-8 sm:py-10">
       {formError ? (
         <p
           role="alert"

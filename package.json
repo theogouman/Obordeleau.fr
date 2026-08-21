@@ -15,9 +15,10 @@
     "check:reviews": "node scripts/check-reviews.mjs",
     "check": "npm run lint:copy && npm run check:reviews && npm run lint",
     "test:e2e": "playwright test",
-    "test:sql": "npm run test:sql:pricing && npm run test:sql:admin",
+    "test:sql": "npm run test:sql:pricing && npm run test:sql:admin && npm run test:sql:stay",
     "test:sql:pricing": "psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f supabase/tests/pricing.test.sql",
     "test:sql:admin": "psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f supabase/tests/pricing-admin.test.sql",
+    "test:sql:stay": "psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f supabase/tests/stay-rules.test.sql",
     "test:e2e:install": "playwright install --with-deps chromium"
   },
   "dependencies": {

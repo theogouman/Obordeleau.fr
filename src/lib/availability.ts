@@ -88,6 +88,8 @@ export type ReservationRequest = {
   startDate: string;
   endDate: string;
   partySize: number | null;
+  /** Guests under 18, exempt from the tourist tax. Always fewer than the party. */
+  minors: number;
   notes: string | null;
   locale: string | null;
 };
@@ -96,9 +98,24 @@ export type ReservationOutcome =
   | { ok: true; id: string; startDate: string; endDate: string }
   | {
       ok: false;
-      reason: 'unavailable' | 'too_soon' | 'min_nights' | 'invalid_range';
+      /**
+       * The vocabulary validate_stay answers in. The write path re-applies the
+       * whole stay rule now, so a Tuesday arrival in July and a length that is
+       * not a whole number of weeks each come back named rather than as a
+       * blanket "unavailable".
+       */
+      reason:
+        | 'unavailable'
+        | 'too_soon'
+        | 'min_nights'
+        | 'invalid_range'
+        | 'checkin_day'
+        | 'stay_multiple'
+        | 'minors';
       minArrival?: string;
       minNights?: number;
+      requiredCheckinDay?: string;
+      stayMultiple?: number;
     };
 
 /**
@@ -114,6 +131,8 @@ export async function reserve(request: ReservationRequest): Promise<ReservationO
     end_date?: string;
     min_arrival?: string;
     min_nights?: number;
+    required_checkin_day?: string;
+    stay_multiple?: number;
   }>('create_direct_reservation', {
     p_guest_name: request.guestName,
     p_guest_email: request.guestEmail,
@@ -122,6 +141,7 @@ export async function reserve(request: ReservationRequest): Promise<ReservationO
     p_party_size: request.partySize,
     p_notes: request.notes,
     p_locale: request.locale,
+    p_minors: request.minors,
   });
 
   if (result.ok && result.id) {
@@ -133,15 +153,25 @@ export async function reserve(request: ReservationRequest): Promise<ReservationO
     };
   }
 
+  const named = [
+    'too_soon',
+    'min_nights',
+    'invalid_range',
+    'checkin_day',
+    'stay_multiple',
+    'minors',
+  ] as const;
+
   const reason = result.reason ?? 'unavailable';
 
   return {
     ok: false,
-    reason:
-      reason === 'too_soon' || reason === 'min_nights' || reason === 'invalid_range'
-        ? reason
-        : 'unavailable',
+    reason: (named as readonly string[]).includes(reason)
+      ? (reason as (typeof named)[number])
+      : 'unavailable',
     minArrival: result.min_arrival,
     minNights: result.min_nights,
+    requiredCheckinDay: result.required_checkin_day,
+    stayMultiple: result.stay_multiple,
   };
 }

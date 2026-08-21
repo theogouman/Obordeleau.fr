@@ -1,3 +1,4 @@
+import type { CheckinConstraint, Season, StayRules } from '@/lib/stay';
 import { BookingStoreError, callDatabase } from '@/lib/supabase';
 
 /**
@@ -182,5 +183,44 @@ export async function validateStay(checkIn: string, checkOut: string): Promise<S
     minNights: row.min_nights,
     requiredCheckinDay: row.required_checkin_day,
     stayMultiple: row.stay_multiple,
+  };
+}
+
+type StayRulesRow = {
+  today: string;
+  min_arrival: string;
+  default_min_nights: number;
+  seasons: {
+    label: string;
+    start_date: string;
+    end_date: string;
+    min_nights: number;
+    checkin_constraint: string;
+    stay_multiple: number | null;
+  }[];
+};
+
+/**
+ * The constraints the visitor's picker needs to guide with, and deliberately
+ * nothing else: no rate crosses this boundary. The picker greys out what the
+ * server would refuse; validate_stay is still what refuses.
+ */
+export async function stayRules(): Promise<StayRules> {
+  const row = await callDatabase<StayRulesRow>('public_stay_rules', {});
+
+  return {
+    today: row.today,
+    minArrival: row.min_arrival,
+    defaultMinNights: row.default_min_nights,
+    seasons: (row.seasons ?? []).map(
+      (season): Season => ({
+        label: season.label,
+        startDate: season.start_date,
+        endDate: season.end_date,
+        minNights: season.min_nights,
+        checkinConstraint: season.checkin_constraint as CheckinConstraint,
+        stayMultiple: season.stay_multiple,
+      }),
+    ),
   };
 }
