@@ -3,7 +3,7 @@
   "source_url": "https://www.airbnb.fr/rooms/53950636",
   "extracted_at": "2026-08-20",
   "locale": "fr-FR",
-  "total_reviews": 171,
+  "total_reviews": 168,
   "reviews": [
     {
       "id": "001",
@@ -1271,17 +1271,6 @@
       "has_custom_photo": true
     },
     {
-      "id": "116",
-      "image_filename": "116.jpg",
-      "reviewer_name": "Audrey",
-      "rating": 5,
-      "date": "mars 2023",
-      "date_iso": "2023-03-31",
-      "review_fr": "Logement très agréable et idéalement  situé.\nPlein de petits restos de qualité aux alentours.",
-      "photo_url": "https://a0.muscache.com/im/users/12055572/profile_pic/1391886798/original.jpg",
-      "has_custom_photo": true
-    },
-    {
       "id": "117",
       "image_filename": "117.jpg",
       "reviewer_name": "Laurent",
@@ -1304,17 +1293,6 @@
       "has_custom_photo": true
     },
     {
-      "id": "119",
-      "image_filename": "119.jpg",
-      "reviewer_name": "Audrey",
-      "rating": 5,
-      "date": "mars 2023",
-      "date_iso": "2023-03-15",
-      "review_fr": "Un séjour très agréable dans ce logement d’une propreté remarquable et idéalement situé.",
-      "photo_url": "https://a0.muscache.com/im/users/12055572/profile_pic/1391886798/original.jpg",
-      "has_custom_photo": true
-    },
-    {
       "id": "120",
       "image_filename": "120.jpg",
       "reviewer_name": "Audrey",
@@ -1322,17 +1300,6 @@
       "date": "mars 2023",
       "date_iso": "2023-03-10",
       "review_fr": "Le logement est d’une propreté irréprochable. Tout est fonctionnel , il est parfaitement équipé. Corine est très accueillante et disponible.\nMerci et à très vite !!",
-      "photo_url": "https://a0.muscache.com/im/users/12055572/profile_pic/1391886798/original.jpg",
-      "has_custom_photo": true
-    },
-    {
-      "id": "121",
-      "image_filename": "121.jpg",
-      "reviewer_name": "Audrey",
-      "rating": 5,
-      "date": "mars 2023",
-      "date_iso": "2023-03-03",
-      "review_fr": "Tout simplement PARFAIT!!!\nCorine, le logement, l’emplacement, la propreté, les attentions,… tout est parfait!\nMerci",
       "photo_url": "https://a0.muscache.com/im/users/12055572/profile_pic/1391886798/original.jpg",
       "has_custom_photo": true
     },
