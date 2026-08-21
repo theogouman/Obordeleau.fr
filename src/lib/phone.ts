@@ -30,6 +30,9 @@ const FALLBACK_BY_LOCALE = dialData.fallbackByLocale as Record<string, string>;
  */
 const KEEP_TRUNK_ZERO = new Set(dialData.keepTrunkZero as string[]);
 
+const GROUPING = dialData.grouping as Record<string, number[]>;
+const DEFAULT_GROUPING = dialData.defaultGrouping as number[];
+
 /**
  * Regional indicator symbols: two letters become the flag of that country in
  * every font that carries them, and degrade to the two letters where they do
@@ -80,6 +83,41 @@ export function dialOptions(localeTag: string): { priority: DialOption[]; rest: 
     .sort((a, b) => a.name.localeCompare(b.name, localeTag));
 
   return { priority, rest };
+}
+
+/**
+ * Spaces the number as it is typed, following the national grouping of the
+ * chosen country and falling back to groups of three. Nothing is added or
+ * removed, so the caret keeps its meaning and a paste still works.
+ */
+export function formatNational(country: string, input: string): string {
+  const digits = phoneDigits(input);
+  if (digits === '') return '';
+
+  const groups = GROUPING[country.toUpperCase()] ?? DEFAULT_GROUPING;
+  const parts: string[] = [];
+  let index = 0;
+
+  for (const size of groups) {
+    if (index >= digits.length) break;
+    parts.push(digits.slice(index, index + size));
+    index += size;
+  }
+
+  // A number longer than its pattern keeps going in threes rather than running
+  // into one unreadable block.
+  while (index < digits.length) {
+    parts.push(digits.slice(index, index + 3));
+    index += 3;
+  }
+
+  // A single digit left on its own reads as a typing mistake, so it joins the
+  // group before it.
+  if (parts.length > 1 && parts[parts.length - 1].length === 1) {
+    parts[parts.length - 2] += parts.pop();
+  }
+
+  return parts.join(' ');
 }
 
 /** Digits only, so a number typed with spaces, dots or dashes still counts. */

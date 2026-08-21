@@ -11,23 +11,25 @@ import {
   type ReactNode,
 } from 'react';
 import { BookingCalendar } from '@/components/BookingCalendar';
+import { Icon, type IconName } from '@/components/Icon';
+import { PhoneField } from '@/components/PhoneField';
 import { localeTags, type Locale } from '@/i18n/routing';
 import { trackBookingConfirmed } from '@/lib/analytics';
 import { addDays, nightsBetween, todayInParis } from '@/lib/dates';
-import { defaultCountry, dialFor, dialOptions, fullPhoneNumber, phoneDigits } from '@/lib/phone';
+import { defaultCountry, formatNational, fullPhoneNumber, phoneDigits } from '@/lib/phone';
 
 /**
  * FR-103: the direct booking flow, one question at a time.
  *
  * The card opens on the calendar and nothing else. Once a stay is picked the
- * questions arrive one by one, each sliding in from the right while the one
- * just answered leaves to the left: that is transitions.dev page side by side
- * (08), generalised to six steps in `src/styles/transitions.css`. The card
- * follows the height of whichever step is showing, tweened by card resize (01),
- * a wrong answer shakes its field with error state shake (12), and a night
- * already taken explains itself through tooltip (17) in the calendar.
+ * questions arrive one at a time: the answered one lifts away and fades, and
+ * only once it is gone does the next rise into its place. One step is mounted
+ * at a time and the answers live in state, so going back never loses one.
  *
- * Every step stays mounted, so going back to change an answer never loses one.
+ * The card follows the height of whichever step is showing, tweened by
+ * transitions.dev card resize (01), a wrong answer shakes its field with error
+ * state shake (12), a night already taken explains itself through tooltip (17)
+ * in the calendar, and the country menu opens with menu dropdown (05).
  */
 
 type Props = {
@@ -50,6 +52,10 @@ const STEPS: readonly StepId[] = ['dates', 'name', 'email', 'phone', 'guests', '
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const MIN_PHONE_DIGITS = 6;
 const SHAKE_MS = 280;
+const STEP_EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+const STEP_SHIFT = 34;
+const STEP_OUT_MS = 240;
+const STEP_IN_MS = 300;
 const EMPTY_BLOCKED: ReadonlySet<string> = new Set<string>();
 
 export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
@@ -140,40 +146,91 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
     });
   }, [arrival, departure, longDate, t]);
 
-  const dials = useMemo(() => dialOptions(localeTag), [localeTag]);
+  /* --- one step at a time, lifted away then risen into place -------------- */
 
-  /* --- the card follows the step that is showing ------------------------- */
-
-  const panelRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const direction = useRef<1 | -1>(1);
+  const animating = useRef(false);
+  const navigated = useRef(false);
   const [frameHeight, setFrameHeight] = useState<number>();
-  const [measured, setMeasured] = useState(false);
 
+  function reducedMotion(): boolean {
+    return (
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    );
+  }
+
+  // The card tweens to the height of the step now showing, so nothing snaps
+  // underneath while the question rises into place.
   useEffect(() => {
-    const panel = panelRefs.current[stepIndex];
-    if (!panel) return;
+    const stage = stageRef.current;
+    if (!stage) return;
 
-    const measure = () => setFrameHeight(panel.offsetHeight);
+    const measure = () => setFrameHeight(stage.offsetHeight);
     measure();
-    setMeasured(true);
 
     const observer = new ResizeObserver(measure);
-    observer.observe(panel);
+    observer.observe(stage);
     return () => observer.disconnect();
   }, [stepIndex, state]);
 
-  /* --- navigation -------------------------------------------------------- */
-
-  const navigated = useRef(false);
-
+  // Entry of the new question, then the focus, once the old one has gone.
   useEffect(() => {
     if (!navigated.current) return;
-    panelRefs.current[stepIndex]?.querySelector<HTMLElement>('[data-autofocus]')?.focus();
+    const stage = stageRef.current;
+
+    if (stage && !reducedMotion()) {
+      stage.getAnimations().forEach((animation) => animation.cancel());
+      stage.animate(
+        [
+          { transform: `translateY(${STEP_SHIFT * direction.current}px)`, opacity: 0 },
+          { transform: 'translateY(0)', opacity: 1 },
+        ],
+        { duration: STEP_IN_MS, easing: STEP_EASE, fill: 'both' },
+      );
+    }
+
+    const timer = window.setTimeout(
+      () => stageRef.current?.querySelector<HTMLElement>('[data-autofocus]')?.focus(),
+      60,
+    );
+    return () => window.clearTimeout(timer);
   }, [stepIndex]);
 
-  function goTo(index: number) {
+  /* --- navigation -------------------------------------------------------- */
+
+  function goTo(index: number, towards: 1 | -1 = 1) {
     navigated.current = true;
+    direction.current = towards;
     setStepError(null);
-    setStepIndex(index);
+
+    const stage = stageRef.current;
+    if (!stage || reducedMotion()) {
+      setStepIndex(index);
+      return;
+    }
+
+    if (animating.current) return;
+    animating.current = true;
+
+    stage.getAnimations().forEach((animation) => animation.cancel());
+    const exit = stage.animate(
+      [
+        { transform: 'translateY(0)', opacity: 1 },
+        { transform: `translateY(${-STEP_SHIFT * towards}px)`, opacity: 0 },
+      ],
+      { duration: STEP_OUT_MS, easing: STEP_EASE, fill: 'forwards' },
+    );
+
+    exit.onfinish = () => {
+      animating.current = false;
+      setStepIndex(index);
+    };
+  }
+
+  function goBack(index: number) {
+    goTo(index, -1);
   }
 
   function refuse(message: string) {
@@ -350,6 +407,256 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
 
   const recapIndex = STEPS.indexOf('recap');
 
+  function stepContent() {
+    switch (step) {
+      case 'dates':
+        return (
+          <Step onNext={next} nextLabel={t('continue')} nextDisabled={nights < 1} error={stepError}>
+            <BookingCalendar
+              blocked={blocked}
+              firstArrival={firstArrival}
+              windowEnd={windowEnd}
+              arrival={arrival}
+              departure={departure}
+              onChange={onRangeChange}
+              status={calendarStatus}
+              onRetry={() => void loadAvailability()}
+            />
+            <p className="mt-3 text-center text-sm text-ink-soft" role="status" aria-live="polite">
+              {nights > 0 ? `${readableRange}, ${t('nights', { count: nights })}` : t('noDatesYet')}
+            </p>
+          </Step>
+        );
+
+      case 'name':
+        return (
+          <Step
+            onNext={next}
+            nextLabel={t('continue')}
+            onBack={() => goBack(stepIndex - 1)}
+            backLabel={t('back')}
+            error={stepError}
+          >
+            <Question htmlFor="booking-name" label={t('questions.name')}>
+              <input
+                id="booking-name"
+                data-autofocus
+                type="text"
+                autoComplete="name"
+                placeholder={t('placeholders.name')}
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                onKeyDown={submitOnEnter(next)}
+                aria-invalid={stepError ? 'true' : undefined}
+                className={fieldClass(shaking, Boolean(stepError))}
+              />
+            </Question>
+          </Step>
+        );
+
+      case 'email':
+        return (
+          <Step
+            onNext={next}
+            nextLabel={t('continue')}
+            onBack={() => goBack(stepIndex - 1)}
+            backLabel={t('back')}
+            error={stepError}
+          >
+            <Question htmlFor="booking-email" label={t('questions.email')}>
+              <input
+                id="booking-email"
+                data-autofocus
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                placeholder={t('placeholders.email')}
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                onKeyDown={submitOnEnter(next)}
+                aria-invalid={stepError ? 'true' : undefined}
+                className={fieldClass(shaking, Boolean(stepError))}
+              />
+            </Question>
+          </Step>
+        );
+
+      case 'phone':
+        return (
+          <Step
+            onNext={next}
+            nextLabel={t('continue')}
+            onBack={() => goBack(stepIndex - 1)}
+            backLabel={t('back')}
+            error={stepError}
+          >
+            <Question htmlFor="booking-phone" label={t('questions.phone')}>
+              <div className={`mt-4 ${shaking && stepError ? 't-input is-shaking' : ''}`}>
+                <PhoneField
+                  id="booking-phone"
+                  country={country}
+                  onCountryChange={(next) => {
+                    touchedCountry.current = true;
+                    setCountry(next);
+                    setPhone((current) => formatNational(next, current));
+                  }}
+                  value={phone}
+                  onValueChange={(value) => setPhone(formatNational(country, value))}
+                  onEnter={next}
+                  invalid={Boolean(stepError)}
+                  placeholder={t('placeholders.phone')}
+                  localeTag={localeTag}
+                  autoFocus
+                  labels={{
+                    choose: t('questions.dial'),
+                    search: t('questions.dialSearch'),
+                    common: t('questions.dialCommon'),
+                    all: t('questions.dialAll'),
+                    empty: t('questions.dialEmpty'),
+                  }}
+                />
+              </div>
+            </Question>
+          </Step>
+        );
+
+      case 'guests':
+        return (
+          <Step
+            onNext={next}
+            nextLabel={t('continue')}
+            onBack={() => goBack(stepIndex - 1)}
+            backLabel={t('back')}
+            error={stepError}
+          >
+            <fieldset>
+              <legend className="font-display text-xl">{t('questions.guests')}</legend>
+              <div className="mt-4 grid grid-cols-4 gap-2">
+                {Array.from({ length: maxGuests }, (_, seat) => seat + 1).map((count) => (
+                  <label
+                    key={count}
+                    data-guests={count}
+                    className={`flex cursor-pointer flex-col items-center justify-center rounded-[var(--radius-card)] border py-3 transition-colors ${
+                      guests === count
+                        ? 'border-raspberry bg-[rgba(206,66,87,0.07)] text-raspberry-ink'
+                        : 'border-[rgba(58,42,38,0.18)] text-ink-soft hover:border-ink'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="guests"
+                      value={count}
+                      checked={guests === count}
+                      onChange={() => chooseGuests(count)}
+                      className="visually-hidden peer"
+                      {...(count === 1 ? { 'data-autofocus': true } : {})}
+                    />
+                    {/* One silhouette per traveller, so the count is legible
+                        before the digit is read. */}
+                    <span className="flex h-4 items-end justify-center gap-px" aria-hidden="true">
+                      {Array.from({ length: count }, (_, seat) => (
+                        <Icon key={seat} name="person" className="h-3.5 w-auto" />
+                      ))}
+                    </span>
+                    <span className="mt-1.5 text-sm font-semibold peer-focus-visible:underline peer-focus-visible:underline-offset-4">
+                      {count}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          </Step>
+        );
+
+      case 'recap':
+      default:
+        return (
+          <div>
+            <h3 className="font-display text-xl">{t('recapTitle')}</h3>
+
+            <dl className="mt-4 divide-y divide-[rgba(58,42,38,0.12)]">
+              <RecapRow
+                icon="calendar"
+                label={t('questions.dates')}
+                value={`${readableRange}, ${t('nights', { count: nights })}`}
+                onEdit={() => goBack(STEPS.indexOf('dates'))}
+                editLabel={t('edit')}
+              />
+              <RecapRow
+                icon="personCard"
+                label={t('questions.name')}
+                value={name.trim()}
+                onEdit={() => goBack(STEPS.indexOf('name'))}
+                editLabel={t('edit')}
+              />
+              <RecapRow
+                icon="at"
+                label={t('questions.email')}
+                value={email.trim()}
+                onEdit={() => goBack(STEPS.indexOf('email'))}
+                editLabel={t('edit')}
+              />
+              <RecapRow
+                icon="phone"
+                label={t('questions.phone')}
+                value={fullPhoneNumber(country, phone)}
+                onEdit={() => goBack(STEPS.indexOf('phone'))}
+                editLabel={t('edit')}
+              />
+              <RecapRow
+                icon="person"
+                label={t('questions.guests')}
+                value={String(guests ?? '')}
+                onEdit={() => goBack(STEPS.indexOf('guests'))}
+                editLabel={t('edit')}
+              />
+            </dl>
+
+            <button
+              type="button"
+              onClick={() => void submit()}
+              disabled={state === 'sending'}
+              className="btn btn-primary mt-6 w-full"
+            >
+              {state === 'sending' ? (
+                <>
+                  <Spinner />
+                  {t('submitting')}
+                </>
+              ) : (
+                <>
+                  <Icon name="checkCircle" className="h-[1.05em] w-auto" />
+                  {t('submit')}
+                </>
+              )}
+            </button>
+
+            <p className="mt-3 text-center text-xs text-ink-soft">{t('noPayment')}</p>
+
+            <p className="mt-1 text-center text-xs text-ink-soft">
+              {t.rich('consentNotice', {
+                link: (chunks) => (
+                  <a className="text-raspberry-ink underline underline-offset-4" href={privacyHref}>
+                    {chunks}
+                  </a>
+                ),
+              })}
+            </p>
+
+            <div className="mt-4 text-center">
+              <button
+                type="button"
+                onClick={() => goBack(recapIndex - 1)}
+                className="text-sm text-ink-soft underline underline-offset-4"
+              >
+                {t('back')}
+              </button>
+            </div>
+          </div>
+        );
+    }
+  }
+
   return (
     <div className="card p-6 sm:p-8">
       {formError ? (
@@ -375,287 +682,10 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
       </div>
 
       <div
-        className="t-step-slide t-resize"
-        style={measured && frameHeight ? { height: `${frameHeight}px` } : undefined}
+        className="t-resize overflow-hidden"
+        style={frameHeight ? { height: `${frameHeight}px` } : undefined}
       >
-        {STEPS.map((id, index) => {
-          const position = index < stepIndex ? 'before' : index > stepIndex ? 'after' : 'active';
-          const active = position === 'active';
-
-          return (
-            <div
-              key={id}
-              ref={(node) => {
-                panelRefs.current[index] = node;
-              }}
-              data-position={position}
-              inert={active ? undefined : true}
-              // Before the first measurement there is no height to hold the
-              // absolutely placed steps up, so the active one stays in flow.
-              className={`t-step ${measured ? '' : active ? 'static' : 'hidden'}`}
-            >
-              {id === 'dates' ? (
-                <Step
-                  onNext={next}
-                  nextLabel={t('continue')}
-                  nextDisabled={nights < 1}
-                  error={stepError}
-                  shaking={shaking}
-                >
-                  <BookingCalendar
-                    blocked={blocked}
-                    firstArrival={firstArrival}
-                    windowEnd={windowEnd}
-                    arrival={arrival}
-                    departure={departure}
-                    onChange={onRangeChange}
-                    status={calendarStatus}
-                    onRetry={() => void loadAvailability()}
-                  />
-                  <p className="mt-3 text-center text-sm text-ink-soft" role="status" aria-live="polite">
-                    {nights > 0
-                      ? `${readableRange}, ${t('nights', { count: nights })}`
-                      : t('noDatesYet')}
-                  </p>
-                </Step>
-              ) : null}
-
-              {id === 'name' ? (
-                <Step
-                  onNext={next}
-                  onBack={() => goTo(index - 1)}
-                  backLabel={t('back')}
-                  nextLabel={t('continue')}
-                  error={stepError}
-                  shaking={shaking}
-                >
-                  <Question htmlFor="booking-name" label={t('questions.name')}>
-                    <input
-                      id="booking-name"
-                      data-autofocus
-                      type="text"
-                      autoComplete="name"
-                      placeholder={t('placeholders.name')}
-                      value={name}
-                      onChange={(event) => setName(event.target.value)}
-                      onKeyDown={submitOnEnter(next)}
-                      aria-invalid={stepError ? 'true' : undefined}
-                      className={fieldClass(shaking, Boolean(stepError))}
-                    />
-                  </Question>
-                </Step>
-              ) : null}
-
-              {id === 'email' ? (
-                <Step
-                  onNext={next}
-                  onBack={() => goTo(index - 1)}
-                  backLabel={t('back')}
-                  nextLabel={t('continue')}
-                  error={stepError}
-                  shaking={shaking}
-                >
-                  <Question htmlFor="booking-email" label={t('questions.email')}>
-                    <input
-                      id="booking-email"
-                      data-autofocus
-                      type="email"
-                      inputMode="email"
-                      autoComplete="email"
-                      placeholder={t('placeholders.email')}
-                      value={email}
-                      onChange={(event) => setEmail(event.target.value)}
-                      onKeyDown={submitOnEnter(next)}
-                      aria-invalid={stepError ? 'true' : undefined}
-                      className={fieldClass(shaking, Boolean(stepError))}
-                    />
-                  </Question>
-                </Step>
-              ) : null}
-
-              {id === 'phone' ? (
-                <Step
-                  onNext={next}
-                  onBack={() => goTo(index - 1)}
-                  backLabel={t('back')}
-                  nextLabel={t('continue')}
-                  error={stepError}
-                  shaking={shaking}
-                >
-                  <Question htmlFor="booking-phone" label={t('questions.phone')}>
-                    <div className="flex gap-2">
-                      <label htmlFor="booking-dial" className="visually-hidden">
-                        {t('questions.dial')}
-                      </label>
-                      <select
-                        id="booking-dial"
-                        value={country}
-                        onChange={(event) => {
-                          touchedCountry.current = true;
-                          setCountry(event.target.value);
-                        }}
-                        className="shrink-0 rounded-[var(--radius-card)] border border-[rgba(58,42,38,0.22)] bg-cream px-2 py-3 text-base"
-                      >
-                        <optgroup label={t('questions.dialCommon')}>
-                          {dials.priority.map((option) => (
-                            <option key={option.country} value={option.country}>
-                              {option.flag} {option.name} +{option.dial}
-                            </option>
-                          ))}
-                        </optgroup>
-                        <optgroup label={t('questions.dialAll')}>
-                          {dials.rest.map((option) => (
-                            <option key={option.country} value={option.country}>
-                              {option.flag} {option.name} +{option.dial}
-                            </option>
-                          ))}
-                        </optgroup>
-                      </select>
-                      <div className="relative flex-1">
-                        <span
-                          aria-hidden="true"
-                          className="pointer-events-none absolute inset-y-0 start-3 flex items-center text-ink-soft"
-                        >
-                          +{dialFor(country)}
-                        </span>
-                        <input
-                          id="booking-phone"
-                          data-autofocus
-                          type="tel"
-                          inputMode="tel"
-                          autoComplete="tel-national"
-                          placeholder={t('placeholders.phone')}
-                          value={phone}
-                          onChange={(event) => setPhone(event.target.value)}
-                          onKeyDown={submitOnEnter(next)}
-                          aria-invalid={stepError ? 'true' : undefined}
-                          className={`${fieldClass(shaking, Boolean(stepError))} ps-14`}
-                        />
-                      </div>
-                    </div>
-                  </Question>
-                </Step>
-              ) : null}
-
-              {id === 'guests' ? (
-                <Step
-                  onNext={next}
-                  nextLabel={t('continue')}
-                  onBack={() => goTo(index - 1)}
-                  backLabel={t('back')}
-                  error={stepError}
-                  shaking={shaking}
-                >
-                  <fieldset>
-                    <legend className="font-display text-xl">{t('questions.guests')}</legend>
-                    <div className="mt-4 grid grid-cols-4 gap-3">
-                      {Array.from({ length: maxGuests }, (_, seat) => seat + 1).map((count) => (
-                        <label
-                          key={count}
-                          data-guests={count}
-                          className={`flex cursor-pointer items-center justify-center rounded-[var(--radius-card)] border py-4 text-lg font-semibold transition-colors ${
-                            guests === count
-                              ? 'border-raspberry bg-raspberry text-white'
-                              : 'border-[rgba(58,42,38,0.22)] bg-cream hover:border-ink'
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="guests"
-                            value={count}
-                            checked={guests === count}
-                            onChange={() => chooseGuests(count)}
-                            className="visually-hidden peer"
-                            {...(count === 1 ? { 'data-autofocus': true } : {})}
-                          />
-                          <span className="peer-focus-visible:underline peer-focus-visible:underline-offset-4">
-                            {count}
-                          </span>
-                        </label>
-                      ))}
-                    </div>
-                  </fieldset>
-                </Step>
-              ) : null}
-
-              {id === 'recap' ? (
-                <div>
-                  <h3 className="font-display text-xl">{t('recapTitle')}</h3>
-
-                  <dl className="mt-4 divide-y divide-[rgba(58,42,38,0.12)]">
-                    <RecapRow
-                      label={t('questions.dates')}
-                      value={`${readableRange}, ${t('nights', { count: nights })}`}
-                      onEdit={() => goTo(STEPS.indexOf('dates'))}
-                      editLabel={t('edit')}
-                    />
-                    <RecapRow
-                      label={t('questions.name')}
-                      value={name.trim()}
-                      onEdit={() => goTo(STEPS.indexOf('name'))}
-                      editLabel={t('edit')}
-                    />
-                    <RecapRow
-                      label={t('questions.email')}
-                      value={email.trim()}
-                      onEdit={() => goTo(STEPS.indexOf('email'))}
-                      editLabel={t('edit')}
-                    />
-                    <RecapRow
-                      label={t('questions.phone')}
-                      value={fullPhoneNumber(country, phone)}
-                      onEdit={() => goTo(STEPS.indexOf('phone'))}
-                      editLabel={t('edit')}
-                    />
-                    <RecapRow
-                      label={t('questions.guests')}
-                      value={String(guests ?? '')}
-                      onEdit={() => goTo(STEPS.indexOf('guests'))}
-                      editLabel={t('edit')}
-                    />
-                  </dl>
-
-                  <button
-                    type="button"
-                    onClick={() => void submit()}
-                    disabled={state === 'sending'}
-                    className="btn btn-primary mt-6 w-full"
-                  >
-                    {state === 'sending' ? (
-                      <>
-                        <Spinner />
-                        {t('submitting')}
-                      </>
-                    ) : (
-                      t('submit')
-                    )}
-                  </button>
-
-                  <p className="mt-3 text-center text-xs text-ink-soft">
-                    {t.rich('consentNotice', {
-                      link: (chunks) => (
-                        <a
-                          className="text-raspberry-ink underline underline-offset-4"
-                          href={privacyHref}
-                        >
-                          {chunks}
-                        </a>
-                      ),
-                    })}
-                  </p>
-
-                  <button
-                    type="button"
-                    onClick={() => goTo(recapIndex - 1)}
-                    className="mt-4 block w-full text-center text-sm text-ink-soft underline underline-offset-4"
-                  >
-                    {t('back')}
-                  </button>
-                </div>
-              ) : null}
-            </div>
-          );
-        })}
+        <div ref={stageRef}>{stepContent()}</div>
       </div>
     </div>
   );
@@ -682,7 +712,6 @@ function fieldClass(shaking: boolean, invalid: boolean): string {
 type StepProps = {
   children: ReactNode;
   error: string | null;
-  shaking: boolean;
   onNext?: () => void;
   nextLabel?: string;
   nextDisabled?: boolean;
@@ -710,14 +739,18 @@ function Step({ children, error, onNext, nextLabel, nextDisabled, onBack, backLa
         </button>
       ) : null}
 
+      {/* Centred by its wrapper rather than stretched: only the word itself
+          answers to the pointer. */}
       {onBack && backLabel ? (
-        <button
-          type="button"
-          onClick={onBack}
-          className="mt-4 block w-full text-center text-sm text-ink-soft underline underline-offset-4"
-        >
-          {backLabel}
-        </button>
+        <div className="mt-4 text-center">
+          <button
+            type="button"
+            onClick={onBack}
+            className="text-sm text-ink-soft underline underline-offset-4"
+          >
+            {backLabel}
+          </button>
+        </div>
       ) : null}
     </div>
   );
@@ -743,11 +776,13 @@ function Question({
 }
 
 function RecapRow({
+  icon,
   label,
   value,
   onEdit,
   editLabel,
 }: {
+  icon: IconName;
   label: string;
   value: string;
   onEdit: () => void;
@@ -756,7 +791,10 @@ function RecapRow({
   return (
     <div className="flex items-baseline justify-between gap-4 py-3">
       <div className="min-w-0">
-        <dt className="text-xs uppercase tracking-[0.14em] text-ink-soft">{label}</dt>
+        <dt className="flex items-center gap-1.5 text-xs uppercase tracking-[0.14em] text-ink-soft">
+          <Icon name={icon} className="h-3.5 w-auto shrink-0" />
+          {label}
+        </dt>
         <dd className="truncate font-medium">{value}</dd>
       </div>
       <button

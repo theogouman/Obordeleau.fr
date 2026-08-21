@@ -1,13 +1,14 @@
 /*
  * transitions.dev snippets, from the transitions-dev skill at commit 3bec612.
  *
- * Four are used by the booking flow: card resize (01), page side by side (08),
- * error state shake (12) and tooltip (17). Two deliberate changes were made.
- * The em dashes of the original comments are gone, because the copy lint that
- * guards constitution VII reads source files too. And page side by side, which
- * ships with exactly two pages keyed by data-page-id, is generalised to the six
- * steps of the booking wizard: the mechanism, the tokens and the blur are
- * untouched, only the direction now comes from a data attribute per step.
+ * Three are used by the booking flow: card resize (01), error state shake (12)
+ * and tooltip (17). Menu dropdown (05) lives beside the phone field it belongs
+ * to. The em dashes of the original comments are gone, because the copy lint
+ * that guards constitution VII reads source files too.
+ *
+ * The movement from one question to the next is not a snippet from here: it is
+ * vertical and sequential, the answered question lifting away before the next
+ * one rises, so the two are never on screen at once.
  *
  * Every `prefers-reduced-motion` guard is kept verbatim. They are a hard
  * requirement of the snippets and of constitution V.
@@ -17,16 +18,6 @@
   /* 01 Card resize */
   --resize-dur: 300ms;
   --resize-ease: cubic-bezier(0.22, 1, 0.36, 1);
-
-  /* 08 Page side by side */
-  --page-slide-dur: 250ms;
-  --page-fade-dur: 250ms;
-  --page-slide-distance: 8px;
-  --page-blur: 3px;
-  --page-stagger: 0ms;
-  --page-exit-enabled: 1;
-  --page-slide-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --page-fade-ease: cubic-bezier(0.22, 1, 0.36, 1);
 
   /* 12 Error state shake */
   --shake-distance: 6px;
@@ -54,45 +45,6 @@
       width var(--resize-dur) var(--resize-ease),
       height var(--resize-dur) var(--resize-ease);
     will-change: width, height;
-  }
-
-  /* 08 Page side by side, generalised to N steps */
-  .t-step-slide {
-    position: relative;
-  }
-
-  .t-step-slide .t-step {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    opacity: 0;
-    pointer-events: none;
-    transform: translateX(calc(var(--t-step-from-x, 0px) * var(--page-exit-enabled)));
-    filter: blur(calc(var(--page-blur) * var(--page-exit-enabled)));
-    transition:
-      opacity var(--page-fade-dur) var(--page-fade-ease),
-      transform var(--page-slide-dur) var(--page-slide-ease),
-      filter var(--page-slide-dur) var(--page-slide-ease);
-    will-change: opacity, transform, filter;
-  }
-
-  /* A step already answered leaves to the left, one still to come enters from
-     the right, exactly as page 1 and page 2 do in the original snippet. */
-  .t-step-slide .t-step[data-position='before'] {
-    --t-step-from-x: calc(var(--page-slide-distance) * -1);
-  }
-
-  .t-step-slide .t-step[data-position='after'] {
-    --t-step-from-x: var(--page-slide-distance);
-  }
-
-  .t-step-slide .t-step[data-position='active'] {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateX(0);
-    filter: blur(0);
-    transition-delay: var(--page-stagger);
   }
 
   /* 12 Error state shake */
@@ -191,10 +143,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .t-resize {
-    transition: none !important;
-  }
-
-  .t-step-slide .t-step {
     transition: none !important;
   }
 

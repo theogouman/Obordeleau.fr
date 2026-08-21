@@ -32,9 +32,8 @@ test.describe('P1 booking journey', () => {
     country: 'FR',
   };
 
-  /** Only the active step accepts input: the others are inert and pointer free. */
-  const onStep = (page: import('@playwright/test').Page) =>
-    page.locator('[data-position="active"]');
+  /** One step is mounted at a time, so the card itself is the active step. */
+  const onStep = (page: import('@playwright/test').Page) => page.locator('#booking-form');
 
   test('a direct booking is written and confirmed to the visitor', async ({ page }) => {
     await page.route('**/api/availability', async (route) => {
@@ -62,7 +61,7 @@ test.describe('P1 booking journey', () => {
     await onStep(page).getByLabel(/votre mail/i).fill('test@example.com');
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
 
-    await onStep(page).getByLabel(/votre numéro de téléphone/i).fill('06 12 34 56 78');
+    await onStep(page).locator('#booking-phone').fill('0612345678');
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
 
     await onStep(page).locator('label[data-guests="2"]').click();
@@ -122,7 +121,7 @@ test.describe('P1 booking journey', () => {
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
     await onStep(page).getByLabel(/votre mail/i).fill('test@example.com');
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
-    await onStep(page).getByLabel(/votre numéro de téléphone/i).fill('0612345678');
+    await onStep(page).locator('#booking-phone').fill('0612345678');
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
     await onStep(page).locator('label[data-guests="2"]').click();
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();

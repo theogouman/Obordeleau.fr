@@ -38,7 +38,6 @@ export function ReviewsSection() {
           accent={t('titleAccent')}
           tail={t('titleTail')}
         />
-        <p className="mt-4 text-lg text-ink-soft">{t('intro')}</p>
         <RatingBadge className="mt-6" />
       </Reveal>
 
