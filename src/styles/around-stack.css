@@ -47,22 +47,22 @@
    * The pinned frame holds the heading and the pile together, so the section
    * keeps its name for the whole of the scroll.
    *
-   * The padding is what the frame gives away, and it is not decoration: 5.5rem
-   * at the top so the heading never slides under the sticky site header, 1.5rem
-   * at the bottom for air. Their sum is HEADER_ROOM in AroundStack, and the two
-   * have to keep agreeing. Between those bounds the pair is centred, which on a
-   * tall screen puts it in the middle and on a short one simply against the top
-   * padding.
+   * It is exactly as tall as what it holds, and not a whole viewport. A frame
+   * of one viewport ends wherever the viewport ends, which left a strip of
+   * nothing under the last card, and that strip landed on top of the space
+   * between this section and the next one: the taller the screen, the wider
+   * the hole. Sized to its content, the section closes where the pile closes,
+   * and the gap after it is the gap every other section gets.
+   *
+   * `top` is the line it pins on, clear of the sticky site header, and
+   * STICKY_TOP in AroundStack is the same number: the scroll position is read
+   * against it.
    */
   .around-stack[data-stack='on'] .around-stack__sticky {
     position: sticky;
-    top: 0;
+    top: 5.5rem;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    height: 100vh;
-    padding-top: 5.5rem;
-    padding-bottom: 1.5rem;
     overflow: hidden;
   }
 

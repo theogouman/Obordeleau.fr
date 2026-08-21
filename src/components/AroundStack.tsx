@@ -38,12 +38,13 @@ const CARD_MAX_DESKTOP = 420;
 const CARD_MAX_MOBILE = 540;
 const CARD_MIN = 260;
 /**
- * Room the pinned frame gives away: 5.5rem at the top for the sticky site
- * header, 1.5rem at the bottom for air. It is padding in the stylesheet and a
- * number here, and the two have to agree, because this is what the card height
- * is worked out from.
+ * Where the frame pins: 5.5rem down, clear of the sticky site header. It is a
+ * `top` in the stylesheet and a number here, and the two have to agree, since
+ * the scroll position is read against it.
  */
-const HEADER_ROOM = 112;
+const STICKY_TOP = 88;
+/** Air kept under the pile so it never sits on the fold. */
+const BOTTOM_AIR = 24;
 /** The gap under the heading, matching the stylesheet. */
 const HEAD_GAP = 24;
 const RESIZE_SETTLE_MS = 150;
@@ -52,11 +53,13 @@ export function AroundStack({ header, children }: { header: ReactNode; children:
   const scrollRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
   const headRef = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const scroll = scrollRef.current;
     const area = cardsRef.current;
-    if (!scroll || !area) return;
+    const frame = frameRef.current;
+    if (!scroll || !area || !frame) return;
 
     const cards = Array.from(area.querySelectorAll<HTMLElement>('.around-card'));
     const segments = cards.length - 1;
@@ -77,7 +80,13 @@ export function AroundStack({ header, children }: { header: ReactNode; children:
       // What the heading takes is measured rather than assumed: it is three
       // lines in German and one in English at the same width.
       const head = headRef.current ? headRef.current.offsetHeight + HEAD_GAP : 0;
-      const room = window.innerHeight - HEADER_ROOM - head - segments * LAND_STEP;
+      const landing = segments * LAND_STEP;
+      const room = window.innerHeight - STICKY_TOP - BOTTOM_AIR - head - landing;
+
+      // The frame is exactly as tall as what it holds, so the cards that land
+      // lower than the first one need that much room asked for, or the frame
+      // would clip their last centimetre.
+      area.style.paddingBottom = `${landing}px`;
       const height = Math.max(
         CARD_MIN,
         Math.min(room, isDesktop ? CARD_MAX_DESKTOP : CARD_MAX_MOBILE),
@@ -109,10 +118,13 @@ export function AroundStack({ header, children }: { header: ReactNode; children:
       requestAnimationFrame(() => {
         ticking = false;
 
-        const distance = scroll.offsetHeight - window.innerHeight;
+        // The frame is pinned from the moment the box's top passes the sticky
+        // line until its bottom arrives, so the travel is the box less the
+        // frame, and the position is read against the same line.
+        const distance = scroll.offsetHeight - frame.offsetHeight;
         if (distance <= 0) return;
 
-        const scrolled = -scroll.getBoundingClientRect().top;
+        const scrolled = STICKY_TOP - scroll.getBoundingClientRect().top;
         const progress = Math.max(0, Math.min(1, scrolled / distance));
 
         stack.forEach((card, index) => {
@@ -140,6 +152,7 @@ export function AroundStack({ header, children }: { header: ReactNode; children:
 
       delete scroll.dataset.stack;
       scroll.style.height = '';
+      area.style.paddingBottom = '';
       for (const card of cards) {
         card.style.height = '';
         card.style.transform = '';
@@ -151,7 +164,7 @@ export function AroundStack({ header, children }: { header: ReactNode; children:
 
   return (
     <div ref={scrollRef} className="around-stack">
-      <div className="around-stack__sticky">
+      <div ref={frameRef} className="around-stack__sticky">
         <div ref={headRef} className="around-stack__head">
           {header}
         </div>
