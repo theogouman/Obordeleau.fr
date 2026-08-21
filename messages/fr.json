@@ -311,8 +311,10 @@
         "phone": "Votre numéro de téléphone",
         "guests": "Nombre de voyageurs",
         "dial": "Indicatif du pays",
+        "dialSearch": "Rechercher un pays",
         "dialCommon": "Le plus souvent",
-        "dialAll": "Tous les pays"
+        "dialAll": "Tous les pays",
+        "dialEmpty": "Aucun pays ne correspond."
       },
       "placeholders": {
         "name": "Ex: Corine PIERRET",

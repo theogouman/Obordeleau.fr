@@ -1,0 +1,283 @@
+/*
+ * The phone field: one compound control, not two boxes side by side.
+ *
+ * The border, the radius and the focus ring belong to the wrapper, so the
+ * country button and the number share exactly one outline and exactly one
+ * height whatever their content. The native select could do neither: it sized
+ * itself to its longest country name and opened an operating system menu that
+ * no amount of CSS reaches.
+ *
+ * The open and close of the menu is transitions.dev menu dropdown (05).
+ */
+
+:root {
+  /* 05 Menu dropdown */
+  --dropdown-open-dur: 250ms;
+  --dropdown-close-dur: 150ms;
+  --dropdown-pre-scale: 0.97;
+  --dropdown-closing-scale: 0.99;
+  --dropdown-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer components {
+  .phone-field {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+    background-color: var(--color-cream);
+    border: 1px solid rgba(58, 42, 38, 0.22);
+    border-radius: var(--radius-card);
+    transition:
+      border-color var(--duration-fast) var(--ease-out-quad),
+      box-shadow var(--duration-fast) var(--ease-out-quad),
+      background-color var(--duration-fast) var(--ease-out-quad);
+  }
+
+  /* The open menu has to clear every sibling that comes after it in the DOM. */
+  .phone-field.is-open {
+    z-index: 500;
+  }
+
+  .phone-field:focus-within {
+    border-color: var(--color-raspberry);
+    background-color: var(--color-shell);
+    box-shadow: 0 0 0 4px rgba(206, 66, 87, 0.12);
+  }
+
+  .phone-field.is-error {
+    border-color: var(--color-raspberry-ink);
+  }
+
+  .phone-country {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 10px 0 12px;
+    border: 0;
+    border-right: 1px solid rgba(58, 42, 38, 0.22);
+    border-radius: var(--radius-card) 0 0 var(--radius-card);
+    background: transparent;
+    font: inherit;
+    color: var(--color-ink);
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-out-quad);
+  }
+
+  .phone-country:hover {
+    background-color: rgba(58, 42, 38, 0.04);
+  }
+
+  /*
+   * Regional indicator pairs only render as a flag in a font that carries one.
+   * Naming the three system emoji fonts gets it right on macOS, iOS, Android
+   * and most Linux desktops; Windows ships no flag glyphs at all, so there the
+   * pair falls back to the two letters of the country, which still reads.
+   */
+  .phone-flag {
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .phone-dial {
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .phone-chevron {
+    width: 14px;
+    height: 14px;
+    color: var(--color-ink-soft);
+    transition: transform var(--duration-fast) var(--ease-out-quad);
+  }
+
+  .phone-field.is-open .phone-chevron {
+    transform: rotate(180deg);
+  }
+
+  .phone-number {
+    flex: 1;
+    min-width: 0;
+    padding: 0.75rem 0.875rem;
+    border: 0;
+    background: transparent;
+    border-radius: 0 var(--radius-card) var(--radius-card) 0;
+    font: inherit;
+    font-size: 1rem;
+    color: var(--color-ink);
+  }
+
+  .phone-number::placeholder {
+    color: rgba(107, 87, 80, 0.55);
+  }
+
+  .phone-number:focus {
+    outline: none;
+  }
+
+  /* The menu */
+  .phone-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    overflow: hidden;
+    background-color: var(--color-shell);
+    border: 1px solid rgba(58, 42, 38, 0.18);
+    border-radius: var(--radius-card);
+    box-shadow:
+      0 -2px 16px -4px rgba(0, 0, 0, 0.03),
+      0 20px 50px -10px rgba(0, 0, 0, 0.12),
+      0 1px 3px 0 rgba(0, 0, 0, 0.04);
+  }
+
+  .phone-search {
+    position: relative;
+    padding: 10px;
+    border-bottom: 1px solid rgba(58, 42, 38, 0.12);
+    background-color: var(--color-cream);
+  }
+
+  .phone-search-input {
+    width: 100%;
+    padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+    border: 1px solid rgba(58, 42, 38, 0.22);
+    border-radius: calc(var(--radius-card) * 0.6);
+    background-color: var(--color-shell);
+    font: inherit;
+    font-size: 0.875rem;
+    color: var(--color-ink);
+  }
+
+  .phone-search-input:focus {
+    outline: none;
+    border-color: var(--color-raspberry);
+    box-shadow: 0 0 0 3px rgba(206, 66, 87, 0.1);
+  }
+
+  .phone-search-icon {
+    position: absolute;
+    left: 22px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15px;
+    height: 15px;
+    color: var(--color-ink-soft);
+    pointer-events: none;
+  }
+
+  .phone-list {
+    max-height: 260px;
+    overflow-y: auto;
+    padding: 6px 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(58, 42, 38, 0.25) transparent;
+  }
+
+  .phone-list::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .phone-list::-webkit-scrollbar-thumb {
+    background-color: rgba(58, 42, 38, 0.25);
+    border-radius: 3px;
+  }
+
+  .phone-list::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .phone-option {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 10px;
+    padding: 0.5rem 0.875rem;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 0.875rem;
+    color: var(--color-ink);
+    text-align: start;
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-out-quad);
+  }
+
+  .phone-option:hover,
+  .phone-option[data-active='true'] {
+    background-color: rgba(206, 66, 87, 0.08);
+  }
+
+  .phone-option-name {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .phone-option-dial {
+    flex-shrink: 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-ink-soft);
+  }
+
+  .phone-group {
+    padding: 0.375rem 0.875rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
+
+  .phone-separator {
+    height: 1px;
+    margin: 6px 14px;
+    background-color: rgba(58, 42, 38, 0.12);
+  }
+
+  .phone-empty {
+    padding: 1.5rem 0.875rem;
+    text-align: center;
+    font-size: 0.8125rem;
+    color: var(--color-ink-soft);
+  }
+
+  /* 05 Menu dropdown */
+  .t-dropdown {
+    transform-origin: top left;
+    transform: scale(var(--dropdown-pre-scale));
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      transform var(--dropdown-open-dur) var(--dropdown-ease),
+      opacity var(--dropdown-open-dur) var(--dropdown-ease);
+    will-change: transform, opacity;
+  }
+
+  .t-dropdown.is-open {
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .t-dropdown.is-closing {
+    transform: scale(var(--dropdown-closing-scale));
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      transform var(--dropdown-close-dur) var(--dropdown-ease),
+      opacity var(--dropdown-close-dur) var(--dropdown-ease);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-dropdown {
+    transition: none !important;
+  }
+}

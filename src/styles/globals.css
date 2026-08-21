@@ -2,6 +2,7 @@
 @import './tokens.css';
 @import './_root.css';
 @import './transitions.css';
+@import './phone-field.css';
 
 @theme {
   --color-cream: #faf7f2;

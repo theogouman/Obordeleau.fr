@@ -311,8 +311,10 @@
         "phone": "Ihre Telefonnummer",
         "guests": "Anzahl der Gäste",
         "dial": "Ländervorwahl",
+        "dialSearch": "Land suchen",
         "dialCommon": "Am häufigsten",
-        "dialAll": "Alle Länder"
+        "dialAll": "Alle Länder",
+        "dialEmpty": "Kein Land gefunden."
       },
       "placeholders": {
         "name": "Ex: Corine PIERRET",

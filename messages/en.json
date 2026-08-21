@@ -311,8 +311,10 @@
         "phone": "Your phone number",
         "guests": "Number of guests",
         "dial": "Country code",
+        "dialSearch": "Search for a country",
         "dialCommon": "Most often",
-        "dialAll": "All countries"
+        "dialAll": "All countries",
+        "dialEmpty": "No country matches."
       },
       "placeholders": {
         "name": "Ex: Corine PIERRET",
