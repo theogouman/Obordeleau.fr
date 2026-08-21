@@ -170,32 +170,52 @@
     flex: none;
   }
 
-  /* The key keeps its closed footprint in the header row while the panel it
-     becomes grows over the page and not into it. */
+  /*
+   * The key keeps its closed footprint in the header row while the panel it
+   * becomes grows over the page and not into it.
+   *
+   * The outline is an inset ring rather than a border, and that is about
+   * where the glyph lands. A border takes its width out of the box, so the
+   * area the trigger is positioned against was two pixels smaller than the
+   * trigger itself: pinned to a corner, it hung a pixel past the two far
+   * edges, the clip cut them off, and the icon sat a pixel low and a pixel
+   * left of centre. An inset shadow costs no layout, so the trigger fills the
+   * box exactly and the glyph is centred on the square the eye sees.
+   */
   .lang-key__morph {
     position: absolute;
     inset: 0 auto auto 0;
     z-index: 30;
-    border: 1px solid rgba(58, 42, 38, 0.18);
     background-color: var(--color-shell);
-    box-shadow: var(--shadow-card);
+    box-shadow:
+      inset 0 0 0 1px rgba(58, 42, 38, 0.18),
+      var(--shadow-card);
   }
 
   /*
    * Anchored to the end, the panel grows out of the top right corner instead,
    * because in the header the key is the last thing before the edge of the
-   * page. The two halves of the morph then swap the other way round: the key
-   * leaves towards the outside and the list arrives from the inside, so the
-   * movement still reads as one thing replacing another rather than as two
-   * things crossing.
+   * page. The list then arrives from the inside rather than from the outside,
+   * so it comes in along the edge the box is growing towards.
    */
   .lang-key[data-align='end'] .lang-key__morph,
   .lang-key[data-align='end'] .lang-key__trigger {
     inset: 0 0 auto auto;
   }
 
-  .lang-key[data-align='end'] .lang-key__morph[data-open='true'] .lang-key__trigger {
-    transform: translateX(var(--morph-slide));
+  /*
+   * The one part of the snippet the key does not take. The trigger is meant
+   * to slide out as the list slides in, and the slide is forty pixels: on the
+   * reviews chip, which is six times wider than it is tall, that is a drift
+   * inside a box that stays around it. On a square of thirty six it is the
+   * whole box, so the icon left the key, and a language change cut the return
+   * journey halfway through and snapped it back. It stays exactly where it
+   * is, in both alignments, and hands over on the fade alone. The list keeps
+   * its slide, which is where the movement was doing any work.
+   */
+  .lang-key .lang-key__trigger,
+  .lang-key .lang-key__morph[data-open='true'] .lang-key__trigger {
+    transform: none;
   }
 
   .lang-key[data-align='end'] .lang-key__menu {
