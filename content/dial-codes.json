@@ -12,7 +12,8 @@
   "fallbackByLocale": {
     "fr": "FR",
     "en": "GB",
-    "de": "DE"
+    "de": "DE",
+    "it": "IT"
   },
   "keepTrunkZero": [
     "IT",

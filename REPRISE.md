@@ -58,7 +58,7 @@ les `.gitkeep`. Attention, `npm run build` appelle `scripts/no-emdash.mjs` : ce 
 
 ## Vérifié en production le 20 août 2026
 
-Toutes ces routes répondent 200 : `/`, `/en`, `/de`, `/avis`, `/en/reviews`, `/de/bewertungen`,
+Toutes ces routes répondent 200 : `/`, `/en`, `/de`, `/it`, `/avis`, `/en/reviews`, `/de/bewertungen`, `/it/recensioni`,
 `/confidentialite`, `/mentions-legales`, `/robots.txt`, `/sitemap.xml`, `/opengraph-image`.
 
 - Un seul H1 par page, natif dans chaque langue, avec `lang` correct (`fr-FR`, `en-GB`, `de-DE`).
@@ -83,7 +83,7 @@ Next.js 15 App Router, TypeScript, Tailwind CSS 4, next-intl 4, cible Vercel.
 constitution.md                 les dix principes qui priment sur les préférences
 specs/001-obordeleau-site/      spec.md, plan.md, reviews-curation.md, seo-keywords.md
 content/                        property.json, host.json, reviews.json, reviews-curation.json
-messages/                       fr.json (source), en.json, de.json
+messages/                       fr.json (source), en.json, de.json, it.json
 public/images/                  hero, gallery, host, area, reviews (vides, voir IMAGE-MANIFEST.md)
 src/app/[locale]/               page, reviews, legal-notice, privacy, not-found, opengraph-image
 src/app/api/inquiry/route.ts    envoi de la demande par email
@@ -100,9 +100,9 @@ Sections de la page d'accueil, dans l'ordre imposé par FR-001 : héros en arche
 clés, galerie avec visionneuse, équipements plus un accordéon « à savoir avant de réserver »,
 « autour de vous », l'hôte, les avis, la carte, la réservation.
 
-URLs : `/`, `/en`, `/de` pour l'accueil ; `/avis`, `/en/reviews`, `/de/bewertungen` ;
-`/mentions-legales`, `/en/legal-notice`, `/de/impressum` ; `/confidentialite`, `/en/privacy`,
-`/de/datenschutz`. Le français n'est pas préfixé.
+URLs : `/`, `/en`, `/de`, `/it` pour l'accueil ; `/avis`, `/en/reviews`, `/de/bewertungen`,
+`/it/recensioni` ; `/mentions-legales`, `/en/legal-notice`, `/de/impressum`, `/it/note-legali` ;
+`/confidentialite`, `/en/privacy`, `/de/datenschutz`, `/it/privacy`. Le français n'est pas préfixé.
 
 ## Vérifications déjà faites, et leurs limites
 
@@ -185,7 +185,7 @@ Restreindre la clé Maps au domaine **et** à l'API Maps JavaScript, puis poser 
 1. Poser `NEXT_PUBLIC_SITE_URL` sur l'URL réellement servie, puis redéployer.
 2. Brancher le domaine depuis Hostinger vers Vercel. Sans domaine, la mise en production n'a pas de
    sens pour le référencement.
-3. Vérifier à la main : les trois langues, le sélecteur de langue qui garde la page, l'absence totale
+3. Vérifier à la main : les quatre langues, le sélecteur de langue qui garde la page, l'absence totale
    de requête vers Google avant acceptation de la carte, et un envoi réel du formulaire.
 4. Lancer les tests une fois Node disponible : `npm run check`, `npm run test:e2e`,
    `npx @lhci/cli autorun`.

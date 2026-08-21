@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 /** Constitution V / FR-020: WCAG 2.2 AA on every Phase 1 page. */
-const pages = ['/', '/en', '/de', '/avis', '/confidentialite', '/mentions-legales'];
+const pages = ['/', '/en', '/de', '/it', '/avis', '/confidentialite', '/mentions-legales'];
 
 for (const path of pages) {
   test(`${path} has no detectable accessibility violation`, async ({ page }) => {

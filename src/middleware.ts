@@ -50,7 +50,7 @@ export const config = {
     // is unprefixed) never gets rewritten to /fr and returns a platform 404.
     '/',
     // Every localized path.
-    '/(fr|en|de)/:path*',
+    '/(fr|en|de|it)/:path*',
     // Everything else except API routes, Next internals and files. The console
     // is covered by this one, which is how the gate above ever runs.
     '/((?!api|_next|_vercel|.*\\..*).*)',

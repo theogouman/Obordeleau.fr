@@ -81,6 +81,7 @@ export default async function LocaleLayout({
           openMenu: nav('openMenu'),
           closeMenu: nav('closeMenu'),
           language: nav('language'),
+          languageSwitch: nav('languageSwitch'),
           primary: nav('primary'),
           mobileMenu: nav('mobileMenu'),
         }}

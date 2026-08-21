@@ -1,7 +1,7 @@
 # Obordeleau.fr
 
 Direct-booking site for **Obordeleau**, a 3-star classified holiday studio at Les Sablettes,
-La Seyne-sur-Mer. French by default, English and German as full peers.
+La Seyne-sur-Mer. French by default, English, German and Italian as full peers.
 
 Governing documents, read them before changing anything:
 
@@ -42,7 +42,7 @@ Useful scripts:
 
 ```text
 content/          property.json, host.json, reviews.json, reviews-curation.json
-messages/         fr.json (source of truth), en.json, de.json
+messages/         fr.json (source of truth), en.json, de.json, it.json
 public/images/    hero, gallery, host, area, reviews  (see public/IMAGE-MANIFEST.md)
 src/app/          [locale] pages, api/{availability,stay,quote,reservations,calendar},
                   sitemap, robots, icon
@@ -61,20 +61,24 @@ tests/e2e/        journey, reviews, accessibility
 ```
 
 Nothing visitor facing is hardcoded in a component (constitution II). Facts live in `content/`,
-words live in `messages/`. To change a sentence, edit the three catalogues; to change a fact, edit
+words live in `messages/`. To change a sentence, edit the four catalogues; to change a fact, edit
 `content/property.json`.
 
 ## URLs
 
-| Page | FR | EN | DE |
-| --- | --- | --- | --- |
-| Home | `/` | `/en` | `/de` |
-| Reviews | `/avis` | `/en/reviews` | `/de/bewertungen` |
-| Legal notice | `/mentions-legales` | `/en/legal-notice` | `/de/impressum` |
-| Privacy | `/confidentialite` | `/en/privacy` | `/de/datenschutz` |
+| Page | FR | EN | DE | IT |
+| --- | --- | --- | --- | --- |
+| Home | `/` | `/en` | `/de` | `/it` |
+| Reviews | `/avis` | `/en/reviews` | `/de/bewertungen` | `/it/recensioni` |
+| Legal notice | `/mentions-legales` | `/en/legal-notice` | `/de/impressum` | `/it/note-legali` |
+| Privacy | `/confidentialite` | `/en/privacy` | `/de/datenschutz` | `/it/privacy` |
 
-French is unprefixed, every page emits a self-referencing canonical plus `fr-FR`, `en-GB`, `de-DE`
-and `x-default` alternates, and any key missing from a translation falls back to French.
+French is unprefixed, every page emits a self-referencing canonical plus `fr-FR`, `en-GB`, `de-DE`,
+`it-IT` and `x-default` alternates, and any key missing from a translation falls back to French.
+
+The header carries one language key, the icon in a rounded square that becomes the list of
+languages (transitions.dev plus to menu morph, the movement the reviews platform filter uses). The
+footer keeps the pill with all four flags on show.
 
 ## Environment variables
 

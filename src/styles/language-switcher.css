@@ -130,3 +130,162 @@
     transform: scale(1.06);
   }
 }
+
+/*
+ * The language key of the header.
+ *
+ * The pill above is still the footer control, where showing the four
+ * languages at once is the point. Up in the header the row is already full,
+ * so the same job is done by one key: the icon in a small rounded square with
+ * a ground of its own, exactly the control the payment recap uses to reopen an
+ * answer, on white rather than sand because the header is the lighter surface.
+ *
+ * Opening it is transitions.dev plus to menu morph (20), the same snippet and
+ * the same tokens as the platform filter on the reviews page: the key does not
+ * open a panel beside itself, it becomes the panel. Everything that animates
+ * comes from `.t-morph`, `.t-morph-plus` and `.t-morph-menu` in
+ * `transitions.css`, so the reduced-motion block over there covers this too
+ * (constitution V).
+ */
+
+@layer components {
+  .lang-key {
+    --morph-w-closed: 2.25rem;
+    --morph-h-closed: 2.25rem;
+    --morph-w-open: 10.5rem;
+    --morph-h-open: 11.7rem;
+    /*
+     * The closed corner is the 10px of the recap key, not a pill, so the
+     * radius has a real value to interpolate from while the box grows.
+     */
+    --morph-r-closed: 0.625rem;
+    --morph-r-open: 1rem;
+    /* The snippet's own overshoot, taken down: on a key this small the box
+       reaching past its open size and coming back reads as a wobble rather
+       than as life. */
+    --morph-ease: cubic-bezier(0.34, 1.12, 0.64, 1);
+    position: relative;
+    width: var(--morph-w-closed);
+    height: var(--morph-h-closed);
+    flex: none;
+  }
+
+  /* The key keeps its closed footprint in the header row while the panel it
+     becomes grows over the page and not into it. */
+  .lang-key__morph {
+    position: absolute;
+    inset: 0 auto auto 0;
+    z-index: 30;
+    border: 1px solid rgba(58, 42, 38, 0.18);
+    background-color: var(--color-shell);
+    box-shadow: var(--shadow-card);
+  }
+
+  /*
+   * Anchored to the end, the panel grows out of the top right corner instead,
+   * because in the header the key is the last thing before the edge of the
+   * page. The two halves of the morph then swap the other way round: the key
+   * leaves towards the outside and the list arrives from the inside, so the
+   * movement still reads as one thing replacing another rather than as two
+   * things crossing.
+   */
+  .lang-key[data-align='end'] .lang-key__morph,
+  .lang-key[data-align='end'] .lang-key__trigger {
+    inset: 0 0 auto auto;
+  }
+
+  .lang-key[data-align='end'] .lang-key__morph[data-open='true'] .lang-key__trigger {
+    transform: translateX(var(--morph-slide));
+  }
+
+  .lang-key[data-align='end'] .lang-key__menu {
+    transform: translateX(calc(-1 * var(--morph-slide))) scale(var(--morph-scale));
+  }
+
+  .lang-key[data-align='end'] .lang-key__morph[data-open='true'] .lang-key__menu {
+    transform: translateX(0) scale(1);
+  }
+
+  .lang-key__trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-ink-soft);
+  }
+
+  .lang-key__trigger:hover {
+    color: var(--color-ink);
+  }
+
+  /*
+   * The morph clips itself, so an outline drawn outside the control would be
+   * cut off at the edge of the box. The ring is drawn inside instead, in the
+   * same colour as the global one, and stays whole in both states.
+   */
+  .lang-key__trigger:focus-visible,
+  .lang-key__option:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--color-raspberry-ink);
+  }
+
+  /* The colour is inherited, so the tween belongs to the glyph: the button's
+     own transition is the morph and must not be touched. */
+  .lang-key__icon {
+    transition: color var(--duration-fast) var(--ease-out-quad);
+  }
+
+  .lang-key__menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    padding: 0.5rem;
+  }
+
+  .lang-key__title {
+    padding-inline: 0.5rem;
+    padding-block: 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
+
+  .lang-key__option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 2.125rem;
+    padding-inline: 0.5rem;
+    border-radius: 0.625rem;
+    color: var(--color-ink);
+    text-align: start;
+    font-size: 0.875rem;
+    line-height: 1;
+    transition: background-color var(--duration-fast) var(--ease-out-quad);
+  }
+
+  .lang-key__option:hover {
+    background-color: var(--color-sand);
+  }
+
+  .lang-key__option[aria-current='true'] {
+    background-color: var(--color-sunset-100);
+    font-weight: 600;
+  }
+
+  .lang-key__flag {
+    font-size: 1.125rem;
+    line-height: 1;
+  }
+
+  /* The same fallback the pill takes when the system has no flag font. */
+  .lang-key__code {
+    min-width: 1.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
+}

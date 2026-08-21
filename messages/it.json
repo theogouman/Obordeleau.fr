@@ -1,0 +1,693 @@
+{
+  "common": {
+    "locale": "it",
+    "localeName": "Italiano",
+    "required": "obbligatorio",
+    "optional": "facoltativo",
+    "loading": "Caricamento",
+    "close": "Chiudi",
+    "previous": "Precedente",
+    "next": "Successivo",
+    "skipToContent": "Vai al contenuto",
+    "retry": "Riprova"
+  },
+  "meta": {
+    "siteName": "Obordeleau",
+    "home": {
+      "title": "Obordeleau, monolocale climatizzato a Les Sablettes a 70 m dalla spiaggia | La Seyne-sur-Mer",
+      "description": "Monolocale 3 stelle a Les Sablettes, spiaggia a due minuti a piedi, battello per Tolone ai piedi della residenza. Si fa tutto senza auto. Prenota direttamente."
+    },
+    "reviews": {
+      "title": "Recensioni dei viaggiatori | Obordeleau, Les Sablettes",
+      "description": "Tutte le recensioni lasciate dai viaggiatori del monolocale Obordeleau a Les Sablettes, La Seyne-sur-Mer. Voto medio, commenti integrali, senza selezione e senza filtri."
+    },
+    "legal": {
+      "title": "Note legali | Obordeleau",
+      "description": "Note legali del sito Obordeleau, monolocale per vacanze a Les Sablettes, La Seyne-sur-Mer."
+    },
+    "privacy": {
+      "title": "Informativa sulla privacy | Obordeleau",
+      "description": "Come il sito Obordeleau tratta i tuoi dati: statistiche di visita senza cookie, mappa mostrata solo dopo il tuo consenso, richieste di prenotazione."
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "gallery": "Le foto",
+    "amenities": "Servizi",
+    "around": "Dintorni",
+    "about": "L'host",
+    "reviews": "Recensioni",
+    "location": "Posizione",
+    "book": "Prenota",
+    "openMenu": "Apri il menu",
+    "closeMenu": "Chiudi il menu",
+    "language": "Lingua",
+    "languageSwitch": "Cambia lingua",
+    "primary": "Navigazione principale",
+    "mobileMenu": "Menu"
+  },
+  "hero": {
+    "eyebrow": "Les Sablettes, La Seyne-sur-Mer",
+    "titleLead": "Un monolocale climatizzato a",
+    "titleAccent": "70 metri",
+    "titleTail": "dalla spiaggia",
+    "subtitle": "Parcheggi l'auto e te ne dimentichi. La spiaggia delle Sablettes è a due minuti a piedi attraverso il parco, il battello per Tolone parte ai piedi della residenza, negozi e ristoranti sono nel quartiere.",
+    "ctaPrimary": "Prenota le mie date",
+    "ctaSecondary": "Guarda il monolocale",
+    "imageAlt": "Il monolocale Obordeleau e la spiaggia delle Sablettes a La Seyne-sur-Mer",
+    "badge": "Alloggio turistico 3 stelle"
+  },
+  "quickFacts": {
+    "title": "In breve",
+    "beach": {
+      "label": "dalla spiaggia",
+      "detail": "a piedi"
+    },
+    "size": {
+      "label": "abitabili",
+      "detail": "climatizzati"
+    },
+    "guests": {
+      "label": "Da 1 a 4 viaggiatori",
+      "detail": ""
+    },
+    "unit": {
+      "m": "m",
+      "m2": "m²",
+      "min": "min"
+    },
+    "equipped": {
+      "label": "Tutto attrezzato",
+      "detail": ""
+    }
+  },
+  "gallery": {
+    "titleLead": "Il tuo posto per le",
+    "titleAccent": "vacanze",
+    "titleTail": "",
+    "intro": "Un ambiente luminoso di 33 m² affacciato sul giardino, pensato perché non manchi nulla: zona notte, zona pranzo, spazi per riporre le cose e l'aria condizionata per le giornate calde.",
+    "open": "Ingrandisci la foto",
+    "counter": "Foto {current} di {total}",
+    "missing": "Foto in arrivo",
+    "viewAll": "Guarda tutte le foto",
+    "alt": {
+      "01": "L'ingresso del monolocale, con il pannello di listelli di legno chiaro e l'applique in corda",
+      "02": "Il bagno, con il lavabo, il grande specchio e la doccia",
+      "03": "L'angolo lavabo del bagno e le sue mensole in legno",
+      "04": "La zona notte con il letto matrimoniale, sotto le mensole della testiera",
+      "05": "L'angolo cucina con microonde, bollitore e macchina del caffè, aperto sul tavolo",
+      "06": "Il soggiorno e la cucina a vista, con la grande vetrata sul giardino",
+      "07": "Il divano del soggiorno e la panca sistemata sotto la vetrata",
+      "08": "La cucina attrezzata: frigorifero, piano cottura, lavatrice e microonde",
+      "09": "Il piano di lavoro della cucina, il lavello e la lavatrice",
+      "10": "La cucina e il bancone con i suoi due sgabelli alti",
+      "11": "Il piano cottura, la cappa e il lavello della cucina",
+      "12": "Il monolocale visto in lunghezza, dal bancone fino al soggiorno aperto sul giardino",
+      "13": "Il soggiorno, il suo tavolino basso e la panca davanti alla vetrata",
+      "14": "Il monolocale per tutta la sua lunghezza, dal soggiorno verso l'angolo cucina e il bancone",
+      "15": "Il soggiorno in pieno giorno, la vetrata aperta sul verde del giardino",
+      "16": "Il divano letto del soggiorno, il grande specchio e il bancone sullo sfondo"
+    }
+  },
+  "amenities": {
+    "titleLead": "C'è già tutto",
+    "titleAccent": "sul posto",
+    "titleTail": "",
+    "intro": "Posa le valigie e goditi il soggiorno. Tutte le dotazioni che cerchi sono incluse.",
+    "groups": {
+      "comfort": "Comfort",
+      "practical": "Pratico",
+      "family": "In famiglia"
+    },
+    "items": {
+      "air-conditioning": {
+        "label": "Climatizzatore caldo e freddo",
+        "note": "Un vero vantaggio nelle giornate di gran caldo."
+      },
+      "private-garden-view": {
+        "label": "Vista sul giardino privato",
+        "note": "Del verde davanti alle finestre, non la strada."
+      },
+      "no-facing-neighbours": {
+        "label": "Senza dirimpettai",
+        "note": "Nessuno di fronte, vivi con le finestre aperte."
+      },
+      "secured-residence": {
+        "label": "Residenza con accesso controllato",
+        "note": "Ingresso con badge e videosorveglianza."
+      },
+      "free-parking": {
+        "label": "Parcheggio gratuito",
+        "note": "Di fronte alla residenza, anche se l'auto resta ferma."
+      },
+      "linens-towels": {
+        "label": "Lenzuola e asciugamani inclusi",
+        "note": "Letti già pronti al tuo arrivo."
+      },
+      "travel-cot": {
+        "label": "Lettino da viaggio su richiesta",
+        "note": "Da segnalare nel tuo messaggio."
+      },
+      "sofa-bed": {
+        "label": "Divano letto",
+        "note": "Per due viaggiatori in più."
+      },
+      "storage": {
+        "label": "Tanto spazio per riporre",
+        "note": "Le valigie si svuotano e spariscono."
+      },
+      "ground-floor-access": {
+        "label": "Accesso senza scale",
+        "note": ""
+      },
+      "wifi": {
+        "label": "Wifi",
+        "note": ""
+      },
+      "kitchen": {
+        "label": "Cucina attrezzata",
+        "note": ""
+      },
+      "washing-machine": {
+        "label": "Lavatrice",
+        "note": ""
+      },
+      "tv": {
+        "label": "Televisione",
+        "note": ""
+      },
+      "terrace": {
+        "label": "Terrazza",
+        "note": ""
+      }
+    }
+  },
+  "around": {
+    "titleLead": "È tutto",
+    "titleAccent": "a due passi",
+    "titleTail": "",
+    "intro": "Si fa tutto a piedi. È il motivo per cui la maggior parte dei viaggiatori dimentica l'auto per tutto il soggiorno.",
+    "items": {
+      "beach": {
+        "label": "La spiaggia delle Sablettes è a 1 min a piedi",
+        "detail": "Non serve mettersi in strada: attraversi il parco e arrivi su una delle più belle spiagge di sabbia fine del Var.",
+        "photoAlt": "Veduta aerea della spiaggia delle Sablettes, del lungomare e della rada di Tolone"
+      },
+      "seaside-park": {
+        "label": "Parco sul lungomare",
+        "detail": "Le famiglie adorano passeggiare in questo parco, dove si possono osservare tartarughe e uccelli."
+      },
+      "boat-shuttle": {
+        "label": "Battello per Tolone",
+        "detail": "Imbarcati per Tolone e per le isole con i battelli navetta che partono di fronte alla residenza."
+      },
+      "shops": {
+        "label": "Negozi e ristoranti",
+        "detail": "Hai tutto vicino: panetteria, negozi e ristoranti sono a pochi passi dalla residenza."
+      }
+    }
+  },
+  "about": {
+    "titleLead": "La tua host,",
+    "titleAccent": "Corine",
+    "titleTail": "",
+    "portraitAlt": "Corine, che accoglie i viaggiatori del monolocale Obordeleau",
+    "paragraphs": [
+      "Accolgo viaggiatori in questo monolocale dal 2021. La mia priorità è rendere il tuo soggiorno il più piacevole possibile e farti sentire come a casa.",
+      "L'alloggio è stato pensato per il comfort e preparato con cura. Resto raggiungibile per tutto il soggiorno se ti serve un consiglio sul quartiere."
+    ],
+    "superhostAlt": "Riconoscimento Superhost di Airbnb"
+  },
+  "reviews": {
+    "titleLead": "Il parere dei nostri",
+    "titleAccent": "viaggiatori",
+    "titleTail": "",
+    "badge": {
+      "ratingLabel": "{rating} su 5",
+      "countLabel": "{count} recensioni",
+      "aria": "Voto medio di {rating} su 5, su {count} recensioni",
+      "about": "circa"
+    },
+    "card": {
+      "ratingAria": "{rating} stelle su 5",
+      "readMore": "Leggi tutto",
+      "readLess": "Riduci",
+      "originalLanguage": "Recensione scritta in {language}",
+      "stayTooltip": "{name} ha lasciato un voto di {rating}/5 su {source} dopo il soggiorno di {month}"
+    },
+    "languages": {
+      "fr": "francese",
+      "en": "inglese",
+      "de": "tedesco",
+      "other": "lingua originale"
+    },
+    "favourite": {
+      "title": "Preferita dagli ospiti",
+      "body": "Questo alloggio rientra nel 10 % degli alloggi preferiti su Airbnb."
+    },
+    "cta": {
+      "lead": "Vuoi vederne altre?",
+      "main": "Leggi tutte le recensioni"
+    },
+    "empty": "Le recensioni compariranno qui non appena l'export sarà aggiunto al sito.",
+    "page": {
+      "titleLead": "Scopri il parere di",
+      "titleAccent": "{count} persone",
+      "titleTail": "",
+      "intro": "Importiamo tutte le recensioni dei nostri viaggiatori precedenti, quelle belle e quelle meno belle.",
+      "backHome": "Torna alla home"
+    },
+    "filters": {
+      "legend": "Ordina e filtra le recensioni",
+      "recent": "Ultimi 3 mesi",
+      "lowest": "Le recensioni meno buone",
+      "highest": "Le recensioni migliori",
+      "platform": "Piattaforma",
+      "platformMenu": "Scegli la piattaforma",
+      "platformOpen": "Apri la scelta della piattaforma",
+      "airbnb": "Airbnb",
+      "booking": "Booking",
+      "clear": "Rimuovi il filtro",
+      "result": "{count} recensioni mostrate",
+      "empty": "Nessuna recensione corrisponde a questo filtro.",
+      "from": "Da",
+      "or": "o"
+    }
+  },
+  "map": {
+    "titleLead": "Dove si",
+    "titleAccent": "trova",
+    "titleTail": "l'alloggio",
+    "intro": "Siamo nel cuore delle Sablettes, tra la spiaggia e l'imbarcadero per Tolone e per le isole.",
+    "addressLabel": "Indirizzo",
+    "openExternal": "Apri in Google Maps",
+    "openExternalHint": "Apre una nuova scheda sul sito di Google.",
+    "unavailable": "La mappa non è configurata al momento. L'indirizzo completo resta indicato qui sopra.",
+    "loadError": "La mappa non si è caricata. L'indirizzo completo resta indicato qui accanto, e il link qui sotto apre la mappa nell'applicazione che preferisci.",
+    "markerAlt": "Posizione del monolocale Obordeleau"
+  },
+  "reservation": {
+    "titleLead": "Quando vuoi",
+    "titleAccent": "venire?",
+    "titleTail": "",
+    "channels": {
+      "alsoOn": "Disponibile anche su",
+      "airbnb": {
+        "title": "Su Airbnb",
+        "body": "Ritrovi l'annuncio e le sue recensioni dal tuo account di sempre.",
+        "cta": "Vedi l'annuncio Airbnb",
+        "external": "Apre il sito Airbnb in una nuova scheda"
+      },
+      "booking": {
+        "title": "Su Booking",
+        "body": "L'annuncio è disponibile anche su Booking, con la classificazione 3 stelle.",
+        "cta": "Vedi l'annuncio Booking",
+        "external": "Apre il sito Booking in una nuova scheda"
+      },
+      "bookOn": "Prenota su {channel}",
+      "dialog": {
+        "title": "Ti costerà di più...",
+        "body": "{channel} ti addebita costi aggiuntivi. Approfitta di tariffe ridotte prenotando direttamente su questo sito, con lo stesso servizio.",
+        "direct": "Prenota diretto",
+        "external": "Vedi su {channel}"
+      },
+      "airbnbName": "Airbnb",
+      "bookingName": "Booking"
+    },
+    "booking": {
+      "noDatesYet": "Scegli una data di arrivo, poi una data di partenza.",
+      "nights": "{count, plural, one {# notte} other {# notti}}",
+      "guestsValue": "{count, plural, one {# persona} other {# persone}}",
+      "range": "Dal {from} al {to}",
+      "continue": "Continua",
+      "back": "Indietro",
+      "edit": "Modifica",
+      "questions": {
+        "dates": "Le tue date",
+        "name": "Il tuo nome e cognome",
+        "email": "La tua email",
+        "phone": "Il tuo numero di telefono",
+        "guests": "Quanti viaggiatori?",
+        "dial": "Prefisso del paese",
+        "dialSearch": "Cerca un paese",
+        "dialCommon": "I più frequenti",
+        "dialAll": "Tutti i paesi",
+        "dialEmpty": "Nessun paese corrisponde.",
+        "minors": "Viaggi con minorenni?",
+        "minorsCount": "Quanti minorenni viaggiano con te?",
+        "party": "Viaggiatori"
+      },
+      "placeholders": {
+        "name": "Es: Corine PIERRET",
+        "email": "Es: corinepierret@gmail.com",
+        "phone": "06 00 00 00 00"
+      },
+      "recapTitle": "Queste informazioni sono corrette?",
+      "submit": "Conferma la prenotazione",
+      "submitting": "Prenotazione in corso",
+      "noPayment": "Su questo sito non viene richiesto alcun pagamento.",
+      "consentNotice": "Continuando accetti l'<link>informativa sulla privacy</link>.",
+      "honeypotLabel": "Lascia questo campo vuoto",
+      "successTitle": "Prenotazione confermata",
+      "successBody": "Le tue date sono bloccate e l'email di conferma è appena partita. Corine ti scrive per l'arrivo e per il pagamento.",
+      "successReference": "Riferimento",
+      "whatsappCta": "Scrivi a Corine su WhatsApp",
+      "whatsappMessage": "Buongiorno Corine,\nAbbiamo appena effettuato una prenotazione dal {from} al {to} sul tuo sito.\n\nAvremmo qualche domanda, per favore:\n\n",
+      "errors": {
+        "required": "Questa risposta serve per confermare la tua prenotazione.",
+        "email": "Questo indirizzo email non sembra valido.",
+        "phone": "Questo numero non sembra valido.",
+        "datesMissing": "Scegli una data di arrivo e una data di partenza.",
+        "datesRule": "Queste date non sono prenotabili: serve almeno una notte, e l'arrivo è possibile a partire da domani.",
+        "guests": "Scegli il numero di viaggiatori.",
+        "unavailable": "Queste date sono appena state prese. Il calendario è stato aggiornato, scegli altre date.",
+        "rateLimited": "Troppi tentativi da questo dispositivo. Riprova tra qualche minuto.",
+        "notConfigured": "La prenotazione online non è ancora attiva. Nel frattempo puoi passare da Airbnb o da Booking.",
+        "server": "La prenotazione non è andata a buon fine. Puoi riprovare, oppure passare da Airbnb o da Booking nel frattempo.",
+        "tooSoon": "L'arrivo è possibile a partire da domani.",
+        "minNights": "{count, plural, one {Il soggiorno minimo è di una notte.} other {Il soggiorno minimo è di # notti.}}",
+        "checkinDay": "In questo periodo l'arrivo è di sabato.",
+        "stayMultiple": "{count, plural, =7 {In questo periodo i soggiorni vanno da sabato a sabato, per settimane intere.} other {In questo periodo la durata deve essere un multiplo di # notti.}}",
+        "holdExpired": "Le tue date non erano più bloccate. Scegliile di nuovo.",
+        "refunded": "Queste date sono appena state prese. Il tuo acconto è stato rimborsato per intero e Corine ti scrive.",
+        "paymentPending": "Il tuo pagamento è stato registrato. La conferma ti arriva per email tra pochi istanti.",
+        "minorsChoice": "Dicci se viaggiano dei minorenni con te."
+      },
+      "datesTooltip": "Nessuna data selezionata",
+      "changeDates": "Modifica le mie date",
+      "checking": "Verifica in corso...",
+      "adultsValue": "{count, plural, one {# adulto} other {# adulti}}",
+      "partyValue": "{adults, plural, one {# adulto} other {# adulti}} e {minors, plural, one {# bambino} other {# bambini}}",
+      "rules": {
+        "minNights": "{count, plural, one {A partire da una notte.} other {A partire da # notti.}}",
+        "weeks": "{count, plural, =7 {Da sabato a sabato, per settimane intere: 7, 14, 21 notti.} other {A multipli di # notti.}}",
+        "stranded": "Da questa data non è possibile nessuna partenza. Scegli un altro arrivo."
+      },
+      "quote": {
+        "title": "Il tuo preventivo",
+        "accommodation": "{count, plural, one {# notte} other {# notti}}",
+        "cleaning": "Spese di pulizia",
+        "cleaningFree": "Offerte",
+        "touristTax": "Tassa di soggiorno locale",
+        "touristTaxNote": "Questa tassa nazionale viene versata all'ente locale TPM ed è calcolata sul numero di notti. I minorenni ne sono esentati.",
+        "total": "Totale",
+        "depositNow": "Acconto da versare oggi ({percent} %)",
+        "balanceLater": "Saldo, addebitato prima dell'arrivo",
+        "loading": "Calcolo dell'importo...",
+        "unavailable": "L'importo ti verrà confermato per email. La tua richiesta resta registrata.",
+        "more": "Scopri di più",
+        "balanceOn": "Saldo, addebitato il <when>{date}</when>",
+        "balanceOnNote": "{count, plural, one {# giorno prima del tuo arrivo} other {# giorni prima del tuo arrivo}}",
+        "guarantee": "Questa tariffa è garantita ancora per",
+        "working": {
+          "price": "Calcoliamo il prezzo",
+          "best": "Cerchiamo il prezzo migliore",
+          "dates": "Verifichiamo le date"
+        },
+        "expired": {
+          "title": "Questa tariffa è scaduta",
+          "body": "Il tuo prezzo era garantito per trenta minuti. Da allora sarà sicuramente cambiato: rilancia la ricerca per vedere la tariffa aggiornata. Tutte le tue risposte restano salvate.",
+          "action": "Aggiorna il prezzo"
+        },
+        "accommodationAt": "{count, plural, one {# notte a {price}} other {# notti a {price}}}"
+      },
+      "noscript": {
+        "title": "Scegliere le date",
+        "body": "Il calendario, il preventivo e il pagamento dell'acconto hanno bisogno di JavaScript. Puoi prenotare con un messaggio, oppure passare da una piattaforma.",
+        "whatsapp": "Scrivi alla tua host su WhatsApp",
+        "airbnb": "Prenota su Airbnb",
+        "booking": "Prenota su Booking.com"
+      },
+      "payment": {
+        "title": "Il pagamento",
+        "summary": "Acconto da versare adesso: {amount}.",
+        "holdNotice": "{minutes, plural, one {Le tue date restano bloccate ancora per # minuto.} other {Le tue date restano bloccate ancora per # minuti.}}",
+        "holdExpired": "Il tempo a disposizione è scaduto e le tue date sono state liberate.",
+        "loading": "Caricamento del modulo di pagamento...",
+        "pay": "Paga {amount}",
+        "paying": "Pagamento in corso...",
+        "back": "Torna al riepilogo",
+        "mandate": "Il saldo di {amount} sarà addebitato il {date} su questa carta.",
+        "payDeposit": "Paga l'acconto, {amount}",
+        "balanceNotice": "Il saldo di {amount} resta da versare prima dell'arrivo.",
+        "saveCard": "Autorizzo l'addebito del saldo di {amount} su questa carta il {date}.",
+        "saveCardTerms": "La tua carta è conservata da Stripe, il nostro fornitore di pagamento, mai da questo sito. Senza questa autorizzazione nessuna carta viene registrata e il saldo ti viene richiesto per email prima dell'arrivo.",
+        "errors": {
+          "load": "Il modulo di pagamento non si è caricato. Riprova tra un istante.",
+          "card": "Il pagamento non è andato a buon fine. Controlla la tua carta o provane un'altra."
+        }
+      },
+      "successBodyPaid": "Il tuo acconto è pagato, le tue date sono bloccate e l'email di conferma è appena partita. Corine ti scrive per l'arrivo.",
+      "notch": {
+        "label": "Hai una domanda? Scrivimi!",
+        "aria": "Scrivi a Corine su WhatsApp",
+        "message": "Buongiorno Corine,\nVorrei prenotare l'alloggio a Les Sablettes, ma avrei qualche domanda, per favore:\n\n",
+        "messageDates": "Buongiorno Corine,\nVorrei prenotare dal {from} al {to} l'alloggio a Les Sablettes, ma avrei qualche domanda, per favore:\n\n",
+        "messageGuests": "Buongiorno Corine,\nVorrei prenotare per {guests, plural, one {# persona} other {# persone}}, dal {from} al {to}, l'alloggio a Les Sablettes, ma avrei qualche domanda, per favore:\n\n"
+      },
+      "getPrice": "Ottieni il prezzo",
+      "yes": "Sì",
+      "no": "No",
+      "confirmBooking": "Conferma la mia prenotazione"
+    },
+    "calendar": {
+      "arrival": "arrivo",
+      "departure": "partenza",
+      "previousMonth": "Mese precedente",
+      "nextMonth": "Mese successivo",
+      "chooseArrival": "Scegli il tuo arrivo",
+      "chooseDeparture": "Scegli la tua partenza",
+      "clear": "Cancella le date",
+      "unavailable": "non disponibile",
+      "loading": "Caricamento delle disponibilità",
+      "loadError": "Le disponibilità non si sono caricate. Puoi riprovare, oppure passare da Airbnb o da Booking.",
+      "retry": "Riprova",
+      "taken": "Già prenotato",
+      "minNights": "{count, plural, one {Minimo # notte} other {Minimo # notti}}",
+      "multipleNights": "{count, plural, =7 {Per settimane intere} other {A multipli di # notti}}",
+      "saturdayOnly": "Arrivo di sabato"
+    }
+  },
+  "footer": {
+    "tagline": "Monolocale climatizzato a Les Sablettes, a 70 metri dalla spiaggia.",
+    "addressTitle": "Indirizzo",
+    "bookTitle": "Prenotare",
+    "aboutTitle": "Il sito",
+    "legalNotice": "Note legali",
+    "privacy": "Informativa sulla privacy",
+    "reviews": "Recensioni dei viaggiatori",
+    "copyright": "© {year} Obordeleau. Tutti i diritti riservati.",
+    "contactTitle": "Contatti",
+    "whatsapp": "WhatsApp",
+    "whatsappMessage": "Buongiorno Corine,\nAbbiamo visitato il tuo sito per il monolocale a Les Sablettes.\n\nAvrei qualche domanda, per favore.",
+    "email": "Email",
+    "emailSubject": "Richiesta di informazioni⎜Monolocale a Les Sablettes",
+    "classificationAlt": "Alloggio turistico classificato 3 stelle"
+  },
+  "legalPage": {
+    "titleLead": "Note",
+    "titleAccent": "legali",
+    "titleTail": "",
+    "pendingNotice": "Questa pagina attende le informazioni legali definitive della proprietaria. I campi contrassegnati con « da completare » devono essere compilati prima della pubblicazione.",
+    "placeholder": "da completare",
+    "sections": {
+      "publisher": {
+        "title": "Editore del sito",
+        "body": "Il sito obordeleau.fr è edito da {name}, {status}, con sede in {address}. Numero SIRET: {siret}. Contatto: {email}."
+      },
+      "director": {
+        "title": "Direttrice della pubblicazione",
+        "body": "{name}."
+      },
+      "hosting": {
+        "title": "Hosting",
+        "body": "Il sito è ospitato da Vercel Inc., 340 S Lemon Ave #4133, Walnut, CA 91789, Stati Uniti. Il nome di dominio è gestito da Hostinger."
+      },
+      "property": {
+        "title": "L'alloggio",
+        "body": "Obordeleau è un alloggio turistico classificato 3 stelle situato in 253 Av. Jean-Baptiste Mattei, 83500 La Seyne-sur-Mer. Numero di dichiarazione al Comune: {declaration}."
+      },
+      "intellectual": {
+        "title": "Proprietà intellettuale",
+        "body": "I testi e le fotografie presenti su questo sito sono di proprietà dell'editrice. Ogni riproduzione senza autorizzazione è vietata. Le recensioni dei viaggiatori restano di proprietà dei loro autori e sono riprodotte senza modifiche."
+      },
+      "credits": {
+        "title": "Crediti",
+        "body": "Cartografia: Google Maps, caricata solo dopo il tuo consenso. Statistiche di visita: Vercel Web Analytics, senza cookie."
+      }
+    }
+  },
+  "privacyPage": {
+    "titleLead": "Informativa sulla",
+    "titleAccent": "privacy",
+    "titleTail": "",
+    "updated": "Ultimo aggiornamento: {date}",
+    "sections": {
+      "principle": {
+        "title": "Il principio",
+        "body": "Questo sito raccoglie il minimo indispensabile. Nessun dato personale circola negli indirizzi delle pagine, non viene installato nessun cookie pubblicitario e nessun servizio esterno si carica prima del tuo consenso esplicito."
+      },
+      "booking": {
+        "title": "La tua prenotazione",
+        "body": "Quando prenoti, le tue informazioni vengono registrate nel nostro database per bloccare le date e preparare il tuo soggiorno: nome, indirizzo email, telefono se lo indichi, date del soggiorno, numero di viaggiatori e messaggio. Ti vengono inviate anche per email, così come alla proprietaria. Queste informazioni servono solo a gestire il tuo soggiorno. Non vengono rivendute e non servono per attività commerciali. Sono conservate per la durata del soggiorno, poi al massimo per tre anni dopo l'ultimo contatto. Il calendario pubblico trasmesso ad Airbnb e a Booking contiene solo date non disponibili, mai il tuo nome e nessuna informazione che ti riguardi."
+      },
+      "analytics": {
+        "title": "Statistiche di visita",
+        "body": "Usiamo Vercel Web Analytics, che misura le visite senza cookie e senza identificatori che permettano di riconoscerti da una visita all'altra. Sappiamo quante persone hanno visto una pagina e quali pulsanti di prenotazione sono stati cliccati, mai chi sei."
+      },
+      "map": {
+        "title": "La mappa",
+        "body": "La mappa della sezione « Dove si trova l'alloggio » è fornita da Google Maps e si carica all'apertura della pagina. Google riceve quindi il tuo indirizzo IP e può installare cookie secondo le proprie regole, senza alcuna azione da parte tua. Se preferisci evitarlo, l'indirizzo completo è scritto in chiaro proprio accanto alla mappa e puoi consultare la posizione dall'applicazione che preferisci."
+      },
+      "hosting": {
+        "title": "Hosting e registri",
+        "body": "Il sito è ospitato da Vercel, che conserva registri tecnici di connessione per garantire il servizio e la sicurezza. Il database delle prenotazioni è ospitato da Supabase, in Irlanda. L'invio delle email passa da Resend, un servizio di posta transazionale."
+      },
+      "reviews": {
+        "title": "Le recensioni e le foto profilo",
+        "body": "Le recensioni sono mostrate solo con il nome di battesimo. Le foto profilo sono ospitate su questo sito e non vengono caricate da un servizio esterno."
+      },
+      "rights": {
+        "title": "I tuoi diritti",
+        "body": "Puoi chiedere l'accesso, la rettifica o la cancellazione delle informazioni che ti riguardano scrivendo a {email}. Puoi anche presentare un reclamo alla CNIL, l'autorità francese per la protezione dei dati."
+      }
+    }
+  },
+  "notFound": {
+    "titleLead": "Questa pagina",
+    "titleAccent": "non esiste",
+    "titleTail": "",
+    "body": "Il link è forse vecchio o copiato male. Puoi ripartire dalla home.",
+    "cta": "Torna alla home"
+  },
+  "emails": {
+    "booking": {
+      "labels": {
+        "arrival": "Arrivo",
+        "departure": "Partenza",
+        "nights": "Notti",
+        "guests": "Viaggiatori",
+        "name": "Nome",
+        "email": "Email",
+        "phone": "Telefono",
+        "message": "Messaggio",
+        "language": "Lingua del visitatore",
+        "reference": "Riferimento"
+      },
+      "guest": {
+        "subject": "La tua prenotazione è confermata, {property}",
+        "title": "La tua prenotazione è confermata",
+        "intro": "Buongiorno {name}, le tue date sono prenotate. Ecco il riepilogo.",
+        "address": "L'alloggio: {address}",
+        "noPayment": "Su questo sito non è stato preso nessun pagamento. Corine ti scrive per l'arrivo e per il pagamento.",
+        "changes": "Per modificare o annullare, rispondi semplicemente a questo messaggio.",
+        "signature": "A prestissimo, {host}"
+      },
+      "host": {
+        "subject": "Nuova prenotazione diretta, dal {from} al {to}",
+        "title": "Nuova prenotazione diretta",
+        "intro": "Una prenotazione è appena stata registrata dal sito.",
+        "blocked": "Le date sono già bloccate sul sito e nel calendario inviato ad Airbnb e a Booking."
+      }
+    },
+    "deposit": {
+      "labels": {
+        "arrival": "Arrivo",
+        "departure": "Partenza",
+        "nights": "Notti",
+        "guests": "Viaggiatori",
+        "name": "Nome",
+        "email": "Email",
+        "depositPaid": "Acconto versato",
+        "balance": "Saldo",
+        "balanceDate": "Addebito del saldo",
+        "reference": "Riferimento"
+      },
+      "guest": {
+        "subject": "Il tuo acconto è stato ricevuto, {property}",
+        "title": "La tua prenotazione è confermata",
+        "intro": "Buongiorno {name}, il tuo acconto è stato ricevuto e le tue date sono prenotate.",
+        "address": "L'alloggio: {address}",
+        "balanceAuto": "Il saldo di {amount} sarà addebitato automaticamente il {date} sulla carta usata oggi.",
+        "balanceManual": "Il saldo di {amount} resta da versare prima dell'arrivo. Corine ti scrive per concordare il pagamento.",
+        "changes": "Per modificare o annullare, rispondi semplicemente a questo messaggio.",
+        "signature": "A prestissimo, {host}"
+      },
+      "host": {
+        "subject": "Acconto ricevuto, prenotazione dal {from} al {to}",
+        "title": "Acconto ricevuto, prenotazione confermata",
+        "intro": "Un acconto è appena stato versato sul sito e la prenotazione è confermata.",
+        "balanceManual": "Da concordare, nessuna autorizzazione di addebito",
+        "blocked": "Le date sono già bloccate sul sito e nel calendario inviato ad Airbnb e a Booking."
+      },
+      "refunded": {
+        "subject": "Acconto rimborsato, dal {from} al {to}",
+        "title": "Un acconto è stato rimborsato",
+        "intro": "Un pagamento è andato a buon fine per date che erano appena state prese altrove.",
+        "done": "L'acconto è stato rimborsato per intero in automatico. Resta da scrivere al viaggiatore."
+      }
+    },
+    "balance": {
+      "labels": {
+        "arrival": "Arrivo",
+        "departure": "Partenza",
+        "nights": "Notti",
+        "amount": "Importo",
+        "reference": "Riferimento",
+        "guest": "Viaggiatore",
+        "email": "Email",
+        "attempts": "Tentativi"
+      },
+      "receipt": {
+        "subject": "Il tuo saldo è stato pagato, {property}",
+        "title": "Il tuo saldo è stato pagato",
+        "intro": "Buongiorno {name}, il saldo del tuo soggiorno è appena stato addebitato sulla carta registrata.",
+        "settled": "È tutto a posto: non resta più nulla da pagare prima dell'arrivo.",
+        "address": "L'alloggio: {address}",
+        "signature": "A prestissimo, {host}"
+      },
+      "link": {
+        "subject": "Il saldo del tuo soggiorno, {property}",
+        "subjectReminder": "Promemoria, il saldo del tuo soggiorno, {property}",
+        "title": "Resta il saldo da pagare",
+        "titleReminder": "Il saldo del tuo soggiorno è ancora in attesa",
+        "reminder": "Un piccolo promemoria.",
+        "introAuthentication": "Buongiorno {name}, la tua banca chiede una conferma da parte tua per convalidare questo pagamento, quindi l'addebito non è potuto avvenire da solo.",
+        "introNoCard": "Buongiorno {name}, per il tuo soggiorno non era stata registrata nessuna carta, quindi il saldo va pagato online.",
+        "introFailed": "Buongiorno {name}, l'addebito del saldo non è andato a buon fine sulla carta registrata.",
+        "action": "Paga {amount}",
+        "secure": "Il pagamento avviene sulla pagina sicura di Stripe. La tua carta non viene mai conservata da questo sito.",
+        "changes": "Hai una domanda su questo importo? Rispondi semplicemente a questo messaggio.",
+        "signature": "A prestissimo, {host}"
+      },
+      "host": {
+        "subjectFailed": "Saldo non riuscito, dal {from} al {to}",
+        "subjectEscalation": "Saldo ancora non pagato, dal {from} al {to}",
+        "titleFailed": "Un saldo non è stato addebitato",
+        "titleEscalation": "Un saldo resta non pagato dopo i solleciti",
+        "introFailed": "L'addebito automatico non è riuscito. Il viaggiatore ha ricevuto un link di pagamento.",
+        "introEscalation": "Il viaggiatore è stato sollecitato due volte e non ha ancora pagato. Probabilmente va chiamato.",
+        "detail": "Dettaglio: {detail}",
+        "console": "La console su /admin elenca tutti i saldi e il loro stato.",
+        "action": "Apri il link di pagamento del viaggiatore"
+      }
+    }
+  },
+  "balancePage": {
+    "metaTitle": "Saldo del tuo soggiorno",
+    "metaDescription": "Il pagamento del saldo del tuo soggiorno a Obordeleau.",
+    "home": "Torna al sito",
+    "paid": {
+      "title": "Il tuo saldo è stato pagato",
+      "body": "Grazie. È tutto in ordine per il tuo soggiorno, e la ricevuta è appena partita per email. Corine ti scrive prima dell'arrivo per le chiavi e per l'orario che ti fa più comodo."
+    },
+    "cancelled": {
+      "title": "Pagamento interrotto",
+      "body": "Non è stato addebitato nulla. Il link ricevuto per email resta valido: riaprilo quando vuoi per completare."
+    },
+    "unavailable": {
+      "title": "Questo link non è più attivo",
+      "body": "O il saldo è già stato pagato, oppure questo link è scaduto. Rispondi all'email di conferma della tua prenotazione e Corine ti risponde."
+    }
+  }
+}

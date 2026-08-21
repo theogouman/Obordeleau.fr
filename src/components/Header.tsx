@@ -4,7 +4,7 @@ import NextLink from 'next/link';
 import { useLocale } from 'next-intl';
 import { useEffect, useState, type MouseEvent, type ReactNode } from 'react';
 import { getPathname, Link, usePathname } from '@/i18n/navigation';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { LanguageMenu } from '@/components/LanguageMenu';
 import { Wordmark } from '@/components/Wordmark';
 import type { Locale } from '@/i18n/routing';
 
@@ -20,6 +20,7 @@ export type HeaderLabels = {
   openMenu: string;
   closeMenu: string;
   language: string;
+  languageSwitch: string;
   primary: string;
   mobileMenu: string;
 };
@@ -147,7 +148,11 @@ export function Header({ labels }: Props) {
         </nav>
 
         <div className="flex items-center gap-2">
-          <LanguageSwitcher label={labels.language} className="hidden sm:flex" />
+          <LanguageMenu
+            label={labels.language}
+            switchLabel={labels.languageSwitch}
+            className="hidden sm:block"
+          />
           <SectionLink
             {...shared}
             hash="#book"
@@ -204,7 +209,11 @@ export function Header({ labels }: Props) {
           ))}
 
           <div className="mt-2 flex items-center justify-between gap-3 border-t border-[rgba(58,42,38,0.08)] pt-4">
-            <LanguageSwitcher label={labels.language} />
+            <LanguageMenu
+              label={labels.language}
+              switchLabel={labels.languageSwitch}
+              align="start"
+            />
             <SectionLink {...shared} hash="#book" className="btn btn-primary px-4 py-2 text-sm">
               {labels.book}
             </SectionLink>

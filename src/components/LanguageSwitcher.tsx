@@ -9,6 +9,7 @@ import {
   type MouseEvent,
 } from 'react';
 import { useLocale } from 'next-intl';
+import { knownFlagSupport, supportsFlagEmoji } from '@/components/flag-emoji';
 import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { localeFlags, localeNames, routing, type Locale } from '@/i18n/routing';
 
@@ -18,15 +19,6 @@ type Props = {
   /** The footer sits on the dark ink background. */
   tone?: 'light' | 'dark';
 };
-
-/**
- * Measured once per page: a system without a flag font paints a regional
- * indicator pair as two letter boxes, which would read as a bug next to two
- * real flags. The French flag is drawn on a canvas in black text and the
- * pixels are read back. A painted flag brings its blue stripe, the fallback
- * brings black only, and the switcher then keeps the language codes.
- */
-let flagSupport: boolean | undefined;
 
 /**
  * Where the pill was when the last instance of this switcher was measured.
@@ -41,40 +33,6 @@ let flagSupport: boolean | undefined;
  * effect writes it, and effects do not run there.
  */
 let lastGeometry: { x: number; width: number } | null = null;
-
-function supportsFlagEmoji(): boolean {
-  if (flagSupport !== undefined) return flagSupport;
-
-  flagSupport = false;
-
-  try {
-    const canvas = document.createElement('canvas');
-    canvas.width = 24;
-    canvas.height = 24;
-    const context = canvas.getContext('2d', { willReadFrequently: true });
-
-    if (context) {
-      context.textBaseline = 'top';
-      context.font = '20px sans-serif';
-      context.fillStyle = '#000000';
-      context.fillText(localeFlags.fr, 0, 0);
-
-      const { data } = context.getImageData(0, 0, canvas.width, canvas.height);
-      for (let index = 0; index < data.length; index += 4) {
-        const isPainted = data[index + 3] > 96;
-        const isBlue = data[index + 2] > data[index] + 48;
-        if (isPainted && isBlue) {
-          flagSupport = true;
-          break;
-        }
-      }
-    }
-  } catch {
-    flagSupport = false;
-  }
-
-  return flagSupport;
-}
 
 /**
  * FR-005: the switcher keeps the visitor on the same page, and the switch is a
@@ -97,7 +55,7 @@ export function LanguageSwitcher({ label, className = '', tone = 'light' }: Prop
   // Both start from the module cache, so an instance that replaces another one
   // never flashes the language codes before the flags, and never blinks its
   // pill back to nothing before measuring itself.
-  const [flags, setFlags] = useState(() => flagSupport === true);
+  const [flags, setFlags] = useState(knownFlagSupport);
   const [pill, setPill] = useState<{ x: number; width: number } | null>(() => lastGeometry);
   const trackRef = useRef<HTMLDivElement>(null);
 

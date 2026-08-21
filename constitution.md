@@ -20,9 +20,9 @@ components. The owner must be able to change a price, a photo, or a sentence
 without touching application logic.
 
 ### III. Internationalization is first-class
-French is the default language. English and German are full peers, not
+French is the default language. English, German and Italian are full peers, not
 afterthoughts: same content coverage, correct `hreflang`, localized URLs
-(`/`, `/en`, `/de`), and localized metadata. Translations must read as written by
+(`/`, `/en`, `/de`, `/it`), and localized metadata. Translations must read as written by
 a native speaker, never as machine output.
 
 ### IV. Performance and Core Web Vitals
@@ -73,4 +73,4 @@ and justified in Complexity Tracking, with the simpler rejected alternative name
 Copy that contains an em dash, a third party that loads before consent, or a Phase
 2 payment path without collision safety are automatic blockers.
 
-**Version**: 1.0.0 | **Ratified**: 2026-08-20 | **Last Amended**: 2026-08-20
+**Version**: 1.1.0 | **Ratified**: 2026-08-20 | **Last Amended**: 2026-08-22

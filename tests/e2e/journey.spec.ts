@@ -196,6 +196,7 @@ test.describe('internationalisation', () => {
     ['fr', '/', 'plage'],
     ['en', '/en', 'beach'],
     ['de', '/de', 'Strand'],
+    ['it', '/it', 'spiaggia'],
   ] as const) {
     test(`${locale} renders localized content and metadata`, async ({ page }) => {
       await page.goto(path);
@@ -206,7 +207,7 @@ test.describe('internationalisation', () => {
       const canonical = page.locator('link[rel="canonical"]');
       await expect(canonical).toHaveCount(1);
 
-      for (const tag of ['fr-FR', 'en-GB', 'de-DE', 'x-default']) {
+      for (const tag of ['fr-FR', 'en-GB', 'de-DE', 'it-IT', 'x-default']) {
         await expect(page.locator(`link[rel="alternate"][hreflang="${tag}"]`)).toHaveCount(1);
       }
 
@@ -215,17 +216,53 @@ test.describe('internationalisation', () => {
     });
   }
 
-  test('the language switcher keeps the visitor on the same page', async ({ page }) => {
+  /* The footer keeps the pill, where the four languages are on show at once. */
+  test('the footer switcher keeps the visitor on the same page', async ({ page }) => {
+    const footer = page.locator('footer');
+
     await page.goto('/avis');
-    await page.getByRole('link', { name: /english/i }).first().click();
+    await footer.getByRole('link', { name: /english/i }).click();
     await expect(page).toHaveURL(/\/en\/reviews$/);
 
-    await page.getByRole('link', { name: /deutsch/i }).first().click();
+    await footer.getByRole('link', { name: /deutsch/i }).click();
     await expect(page).toHaveURL(/\/de\/bewertungen$/);
+
+    await footer.getByRole('link', { name: /italiano/i }).click();
+    await expect(page).toHaveURL(/\/it\/recensioni$/);
+  });
+
+  /* The header carries one key instead, and the list only exists once open. */
+  test('the header key opens the language menu and switches from it', async ({ page }) => {
+    await page.goto('/avis');
+
+    const header = page.locator('header');
+    const key = header.getByRole('button', { name: /changer de langue/i }).filter({ visible: true });
+
+    // Below the small breakpoint the key lives inside the mobile menu.
+    if ((await key.count()) === 0) {
+      await header.getByRole('button', { name: /ouvrir le menu/i }).click();
+    }
+
+    await key.click();
+    await header
+      .getByRole('menuitemradio', { name: /italiano/i })
+      .filter({ visible: true })
+      .click();
+
+    await expect(page).toHaveURL(/\/it\/recensioni$/);
   });
 
   test('no raw message key ever renders', async ({ page }) => {
-    for (const path of ['/', '/en', '/de', '/avis', '/en/reviews', '/de/bewertungen']) {
+    for (const path of [
+      '/',
+      '/en',
+      '/de',
+      '/it',
+      '/avis',
+      '/en/reviews',
+      '/de/bewertungen',
+      '/it/recensioni',
+    ]) {
       await page.goto(path);
       await expect(page.locator('body')).not.toContainText('[missing:');
     }
