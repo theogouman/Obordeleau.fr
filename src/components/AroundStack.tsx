@@ -5,6 +5,14 @@ import { useEffect, useRef, type ReactNode } from 'react';
 /**
  * The places nearby, stacking as the section is scrolled through.
  *
+ * The heading travels with them. It used to sit above the tall scroll box, so
+ * the moment the pile took over the screen the section lost its own name and
+ * the reader was left with cards and no idea what they were a list of. It is
+ * inside the pinned frame now, over the pile, and stays for the whole of the
+ * scroll. That also closes the gap the old arrangement opened: the frame was a
+ * whole viewport with the cards centred in it, which put most of a screen of
+ * nothing between the paragraph and the first card.
+ *
  * The mechanism is the one in theogouman/Consultant-Notion (ProcessStack): a
  * container as tall as one viewport per card creates the distance, a frame
  * inside it is pinned for the whole of that distance, and each card after the
@@ -29,13 +37,21 @@ const LAND_STEP = 12;
 const CARD_MAX_DESKTOP = 420;
 const CARD_MAX_MOBILE = 540;
 const CARD_MIN = 260;
-/** Room left above the pinned card for the sticky site header and some air. */
+/**
+ * Room the pinned frame gives away: 5.5rem at the top for the sticky site
+ * header, 1.5rem at the bottom for air. It is padding in the stylesheet and a
+ * number here, and the two have to agree, because this is what the card height
+ * is worked out from.
+ */
 const HEADER_ROOM = 112;
+/** The gap under the heading, matching the stylesheet. */
+const HEAD_GAP = 24;
 const RESIZE_SETTLE_MS = 150;
 
-export function AroundStack({ children }: { children: ReactNode }) {
+export function AroundStack({ header, children }: { header: ReactNode; children: ReactNode }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
+  const headRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const scroll = scrollRef.current;
@@ -58,7 +74,10 @@ export function AroundStack({ children }: { children: ReactNode }) {
       scroll.style.height = `${cards.length * 100}vh`;
 
       const isDesktop = window.innerWidth >= 768;
-      const room = window.innerHeight - HEADER_ROOM - segments * LAND_STEP;
+      // What the heading takes is measured rather than assumed: it is three
+      // lines in German and one in English at the same width.
+      const head = headRef.current ? headRef.current.offsetHeight + HEAD_GAP : 0;
+      const room = window.innerHeight - HEADER_ROOM - head - segments * LAND_STEP;
       const height = Math.max(
         CARD_MIN,
         Math.min(room, isDesktop ? CARD_MAX_DESKTOP : CARD_MAX_MOBILE),
@@ -133,6 +152,10 @@ export function AroundStack({ children }: { children: ReactNode }) {
   return (
     <div ref={scrollRef} className="around-stack">
       <div className="around-stack__sticky">
+        <div ref={headRef} className="around-stack__head">
+          {header}
+        </div>
+
         <div ref={cardsRef} className="around-stack__cards">
           {children}
         </div>

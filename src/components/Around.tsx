@@ -32,56 +32,56 @@ export function Around() {
 
   return (
     <Section id="around" labelledBy="around-title">
-      <Reveal className="max-w-2xl">
-        <AccentHeading
-          id="around-title"
-          lead={t('titleLead')}
-          accent={t('titleAccent')}
-          tail={t('titleTail')}
-        />
-        <p className="lead mt-4 text-lg text-ink-soft">{t('intro')}</p>
-      </Reveal>
+      <AroundStack
+        header={
+          <Reveal className="max-w-2xl">
+            <AccentHeading
+              id="around-title"
+              lead={t('titleLead')}
+              accent={t('titleAccent')}
+              tail={t('titleTail')}
+            />
+            <p className="lead mt-4 text-lg text-ink-soft">{t('intro')}</p>
+          </Reveal>
+        }
+      >
+        {aroundItems.map((item, index) => {
+          const file = photos.get(item.id);
+          const source = file ? `/images/area/${file}` : null;
+          const photo = source && assetExists(source) ? source : null;
 
-      <div className="mt-10">
-        <AroundStack>
-          {aroundItems.map((item, index) => {
-            const file = photos.get(item.id);
-            const source = file ? `/images/area/${file}` : null;
-            const photo = source && assetExists(source) ? source : null;
+          return (
+            <article
+              key={item.id}
+              className={`around-card ${photo ? 'around-card--photo' : 'around-card--plain'}`}
+            >
+              <div className="around-card__grid">
+                <div className="around-card__body">
+                  {photo ? null : <Icon name="location" className="around-card__mark" />}
 
-            return (
-              <article
-                key={item.id}
-                className={`around-card ${photo ? 'around-card--photo' : 'around-card--plain'}`}
-              >
-                <div className="around-card__grid">
-                  <div className="around-card__body">
-                    {photo ? null : <Icon name="location" className="around-card__mark" />}
-
-                    <span className="around-card__num" aria-hidden="true">
-                      {index + 1}
-                    </span>
-                    <h3 className="around-card__title">{t(`items.${item.id}.label`)}</h3>
-                    <p className="around-card__detail">{t(`items.${item.id}.detail`)}</p>
-                  </div>
-
-                  {photo ? (
-                    <div className="around-card__visual">
-                      <Image
-                        src={photo}
-                        alt={t(`items.${item.id}.photoAlt`)}
-                        fill
-                        sizes="(min-width: 768px) 45vw, 100vw"
-                        className="object-cover"
-                      />
-                    </div>
-                  ) : null}
+                  <span className="around-card__num" aria-hidden="true">
+                    {index + 1}
+                  </span>
+                  <h3 className="around-card__title">{t(`items.${item.id}.label`)}</h3>
+                  <p className="around-card__detail">{t(`items.${item.id}.detail`)}</p>
                 </div>
-              </article>
-            );
-          })}
-        </AroundStack>
-      </div>
+
+                {photo ? (
+                  <div className="around-card__visual">
+                    <Image
+                      src={photo}
+                      alt={t(`items.${item.id}.photoAlt`)}
+                      fill
+                      sizes="(min-width: 768px) 45vw, 100vw"
+                      className="object-cover"
+                    />
+                  </div>
+                ) : null}
+              </div>
+            </article>
+          );
+        })}
+      </AroundStack>
     </Section>
   );
 }

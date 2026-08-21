@@ -19,6 +19,14 @@
     position: relative;
   }
 
+  /* The gap between the heading and the pile, in both states. It was two and a
+     half times this, which read as a hole rather than as spacing. The number
+     is repeated in AroundStack as HEAD_GAP, because the card height is worked
+     out from what is left once the heading has taken its share. */
+  .around-stack__head {
+    margin-bottom: 1.5rem;
+  }
+
   .around-stack__cards {
     display: grid;
     gap: 1.25rem;
@@ -35,14 +43,32 @@
 
   /* --- the scrolled pile ------------------------------------------------- */
 
+  /*
+   * The pinned frame holds the heading and the pile together, so the section
+   * keeps its name for the whole of the scroll.
+   *
+   * The padding is what the frame gives away, and it is not decoration: 5.5rem
+   * at the top so the heading never slides under the sticky site header, 1.5rem
+   * at the bottom for air. Their sum is HEADER_ROOM in AroundStack, and the two
+   * have to keep agreeing. Between those bounds the pair is centred, which on a
+   * tall screen puts it in the middle and on a short one simply against the top
+   * padding.
+   */
   .around-stack[data-stack='on'] .around-stack__sticky {
     position: sticky;
     top: 0;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
     height: 100vh;
+    padding-top: 5.5rem;
+    padding-bottom: 1.5rem;
     overflow: hidden;
+  }
+
+  .around-stack[data-stack='on'] .around-stack__head,
+  .around-stack[data-stack='on'] .around-stack__cards {
+    flex: none;
   }
 
   .around-stack[data-stack='on'] .around-stack__cards {
@@ -173,6 +199,7 @@
     position: static;
     display: block;
     height: auto;
+    padding: 0;
     overflow: visible;
   }
 
