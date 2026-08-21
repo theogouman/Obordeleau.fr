@@ -127,10 +127,13 @@ Expect the usual first-run adjustments (dependency versions, a stray type) on `n
    spec already live in `content/reviews-curation.json`.
 2. **Photographs.** Every slot renders a reserved placeholder of the right size until a file appears.
    See [public/IMAGE-MANIFEST.md](public/IMAGE-MANIFEST.md) for the exact filenames.
-3. **Legal identity (FR-023).** Name, status, SIRET, registration number and contact email are the
-   open `[NEEDS CLARIFICATION]` from the spec. `/mentions-legales` renders a visible "à compléter"
-   for each one and is excluded from indexing until they are filled in, in
-   `messages/*.json` under `legalPage` and in `robots.ts`.
+3. **A SIRET, if there is one.** The legal notice is filled in and no longer shows a single
+   "à compléter": who owns the flat, who runs the site, and where both can be reached all come from
+   `content/legal.json`, once, because none of it is translated. The one identity field nobody has
+   given is a SIRET, and rather than print a placeholder for it the notice simply does not claim
+   one. Add it to `content/legal.json` and to the `publisher` body in the four catalogues if the
+   let is registered. The page stays out of the index in `robots.ts` and through its own `noindex`,
+   which is now a choice rather than a wait: a legal notice has to be reachable, not ranked.
 
 ### Facts still to confirm
 

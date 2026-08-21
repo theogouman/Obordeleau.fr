@@ -1,4 +1,5 @@
 import hostData from '@content/host.json';
+import legalData from '@content/legal.json';
 import propertyData from '@content/property.json';
 
 /**
@@ -42,6 +43,7 @@ export type GalleryItem = {
 
 export const property = propertyData;
 export const host = hostData;
+export const legal = legalData;
 
 export const channels = property.channels as Channel[];
 

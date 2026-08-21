@@ -7,11 +7,11 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        // The legal notice stays out of the index until its identity fields
-        // are filled in, the inquiry endpoint is never a landing page, and
-        // the owner's console is not a page at all as far as a crawler is
-        // concerned. The console also sends its own noindex, since a
-        // robots rule is a request and a header is not.
+        // The legal notice has to be reachable, not ranked, so it stays out
+        // of the index now that it is filled in too. The inquiry endpoint is
+        // never a landing page, and the owner's console is not a page at all
+        // as far as a crawler is concerned. The console also sends its own
+        // noindex, since a robots rule is a request and a header is not.
         disallow: [
           '/api/',
           '/admin',

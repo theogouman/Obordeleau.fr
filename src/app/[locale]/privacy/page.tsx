@@ -3,10 +3,11 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { AccentHeading } from '@/components/AccentHeading';
 import { Section } from '@/components/Section';
 import { localeTags, type Locale } from '@/i18n/routing';
+import { host } from '@/lib/content';
 import { buildMetadata } from '@/lib/seo';
 
-/** Kept in one place so all three languages show the same date. */
-const LAST_UPDATED = '2026-08-21';
+/** Kept in one place so every language shows the same date. */
+const LAST_UPDATED = '2026-08-22';
 
 export async function generateMetadata({
   params,
@@ -30,7 +31,6 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
   setRequestLocale(locale);
 
   const t = await getTranslations({ locale, namespace: 'privacyPage' });
-  const legal = await getTranslations({ locale, namespace: 'legalPage' });
 
   const formattedDate = new Intl.DateTimeFormat(localeTags[locale], {
     day: 'numeric',
@@ -67,7 +67,10 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
               <div key={section}>
                 <h2 className="font-display text-2xl">{t(`sections.${section}.title`)}</h2>
                 <p className="mt-2 text-ink-soft">
-                  {t(`sections.${section}.body`, { email: legal('placeholder') })}
+                  {/* Where a rights request actually lands. It used to be the
+                      legal notice's "to be completed", which told a visitor
+                      asking for their data to write to nobody. */}
+                  {t(`sections.${section}.body`, { email: host.contact.email })}
                 </p>
               </div>
             ))}

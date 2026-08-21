@@ -469,8 +469,6 @@
     }
   },
   "footer": {
-    "tagline": "Monolocale climatizzato a Les Sablettes, a 70 metri dalla spiaggia.",
-    "addressTitle": "Indirizzo",
     "bookTitle": "Prenotare",
     "aboutTitle": "Il sito",
     "legalNotice": "Note legali",
@@ -482,22 +480,20 @@
     "whatsappMessage": "Buongiorno Corine,\nAbbiamo visitato il tuo sito per il monolocale a Les Sablettes.\n\nAvrei qualche domanda, per favore.",
     "email": "Email",
     "emailSubject": "Richiesta di informazioni⎜Monolocale a Les Sablettes",
-    "classificationAlt": "Alloggio turistico classificato 3 stelle"
+    "classificationAlt": "Alloggio turistico classificato 3 stelle",
+    "bookDirect": "Diretta"
   },
   "legalPage": {
     "titleLead": "Note",
     "titleAccent": "legali",
     "titleTail": "",
-    "pendingNotice": "Questa pagina attende le informazioni legali definitive della proprietaria. I campi contrassegnati con « da completare » devono essere compilati prima della pubblicazione.",
-    "placeholder": "da completare",
     "sections": {
+      "owner": {
+        "title": "Proprietaria"
+      },
       "publisher": {
         "title": "Editore del sito",
-        "body": "Il sito obordeleau.fr è edito da {name}, {status}, con sede in {address}. Numero SIRET: {siret}. Contatto: {email}."
-      },
-      "director": {
-        "title": "Direttrice della pubblicazione",
-        "body": "{name}."
+        "body": "Questo sito è progettato, pubblicato e gestito da {name}."
       },
       "hosting": {
         "title": "Hosting",
@@ -505,11 +501,7 @@
       },
       "property": {
         "title": "L'alloggio",
-        "body": "Obordeleau è un alloggio turistico classificato 3 stelle situato in 253 Av. Jean-Baptiste Mattei, 83500 La Seyne-sur-Mer. Numero di dichiarazione al Comune: {declaration}."
-      },
-      "intellectual": {
-        "title": "Proprietà intellettuale",
-        "body": "I testi e le fotografie presenti su questo sito sono di proprietà dell'editrice. Ogni riproduzione senza autorizzazione è vietata. Le recensioni dei viaggiatori restano di proprietà dei loro autori e sono riprodotte senza modifiche."
+        "body": "Obordeleau è un alloggio turistico classificato 3 stelle situato in {address}."
       },
       "credits": {
         "title": "Crediti",

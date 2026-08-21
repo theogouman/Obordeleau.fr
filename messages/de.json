@@ -469,8 +469,6 @@
     }
   },
   "footer": {
-    "tagline": "Klimatisiertes Studio in Les Sablettes, 70 Meter vom Strand.",
-    "addressTitle": "Adresse",
     "bookTitle": "Buchen",
     "aboutTitle": "Diese Website",
     "legalNotice": "Impressum",
@@ -482,22 +480,20 @@
     "whatsappMessage": "Guten Tag Corine,\nwir haben uns Ihre Website für das Studio in Les Sablettes angesehen.\n\nIch hätte ein paar Fragen.",
     "email": "E-Mail",
     "emailSubject": "Informationsanfrage⎜Studio in Les Sablettes",
-    "classificationAlt": "Als 3-Sterne-Ferienwohnung klassifiziert"
+    "classificationAlt": "Als 3-Sterne-Ferienwohnung klassifiziert",
+    "bookDirect": "Direkt"
   },
   "legalPage": {
     "titleLead": "",
     "titleAccent": "Impressum",
     "titleTail": "",
-    "pendingNotice": "Diese Seite wartet noch auf die endgültigen rechtlichen Angaben der Eigentümerin. Alle mit „noch zu ergänzen“ markierten Felder müssen vor der Veröffentlichung ausgefüllt werden.",
-    "placeholder": "noch zu ergänzen",
     "sections": {
-      "publisher": {
-        "title": "Betreiberin der Website",
-        "body": "Die Website obordeleau.fr wird betrieben von {name}, {status}, mit Sitz in {address}. SIRET-Nummer: {siret}. Kontakt: {email}."
+      "owner": {
+        "title": "Eigentümerin"
       },
-      "director": {
-        "title": "Verantwortlich für den Inhalt",
-        "body": "{name}."
+      "publisher": {
+        "title": "Betreiber der Website",
+        "body": "Diese Website wird von {name} gestaltet, herausgegeben und betreut."
       },
       "hosting": {
         "title": "Hosting",
@@ -505,11 +501,7 @@
       },
       "property": {
         "title": "Die Unterkunft",
-        "body": "Obordeleau ist eine als 3-Sterne klassifizierte Ferienwohnung in 253 Av. Jean-Baptiste Mattei, 83500 La Seyne-sur-Mer, Frankreich. Registriernummer der Gemeinde: {declaration}."
-      },
-      "intellectual": {
-        "title": "Urheberrecht",
-        "body": "Die Texte und Fotos dieser Website gehören der Betreiberin. Eine Vervielfältigung ohne Genehmigung ist nicht gestattet. Die Gästebewertungen bleiben Eigentum ihrer Verfasser und werden unverändert wiedergegeben."
+        "body": "Obordeleau ist eine als 3 Sterne klassifizierte Ferienwohnung in {address}, Frankreich."
       },
       "credits": {
         "title": "Nachweise",

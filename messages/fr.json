@@ -469,8 +469,6 @@
     }
   },
   "footer": {
-    "tagline": "Studio climatisé aux Sablettes, à 70 mètres de la plage.",
-    "addressTitle": "Adresse",
     "bookTitle": "Réserver",
     "aboutTitle": "Le site",
     "legalNotice": "Mentions légales",
@@ -482,22 +480,20 @@
     "whatsappMessage": "Bonjour Corine,\nNous avons consulté votre site pour le studio aux Sablettes.\n\nJ'ai quelques questions s'il vous plaît.",
     "email": "Email",
     "emailSubject": "Demande d'informations⎜Studio aux Sablettes",
-    "classificationAlt": "Meublé de tourisme classé 3 étoiles"
+    "classificationAlt": "Meublé de tourisme classé 3 étoiles",
+    "bookDirect": "En direct"
   },
   "legalPage": {
     "titleLead": "Mentions",
     "titleAccent": "légales",
     "titleTail": "",
-    "pendingNotice": "Cette page attend les informations légales définitives de la propriétaire. Les champs marqués « à compléter » doivent être renseignés avant la mise en ligne publique.",
-    "placeholder": "à compléter",
     "sections": {
+      "owner": {
+        "title": "Propriétaire"
+      },
       "publisher": {
         "title": "Éditeur du site",
-        "body": "Le site obordeleau.fr est édité par {name}, {status}, dont l'adresse est {address}. Numéro SIRET : {siret}. Contact : {email}."
-      },
-      "director": {
-        "title": "Directrice de la publication",
-        "body": "{name}."
+        "body": "Ce site Internet est conçu, édité et géré par {name}."
       },
       "hosting": {
         "title": "Hébergement",
@@ -505,11 +501,7 @@
       },
       "property": {
         "title": "Le logement",
-        "body": "Obordeleau est un meublé de tourisme classé 3 étoiles situé 253 Av. Jean-Baptiste Mattei, 83500 La Seyne-sur-Mer. Numéro de déclaration en mairie : {declaration}."
-      },
-      "intellectual": {
-        "title": "Propriété intellectuelle",
-        "body": "Les textes et les photographies présents sur ce site sont la propriété de l'éditrice. Toute reproduction sans autorisation est interdite. Les avis des voyageurs restent la propriété de leurs auteurs et sont reproduits sans modification."
+        "body": "Obordeleau est un meublé de tourisme classé 3 étoiles situé {address}."
       },
       "credits": {
         "title": "Crédits",

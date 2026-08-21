@@ -1,0 +1,16 @@
+{
+  "$comment": "Constitution II: the identity facts behind the legal notice. They are not translated, so they live here once instead of four times in messages/. The owner lets the flat; the publisher runs the site.",
+  "owner": {
+    "name": "Corine Pierret",
+    "street": "110 Rue des Eucalyptus",
+    "postalCode": "83220",
+    "locality": "Le Pradet",
+    "email": "corinepierret@gmail.com",
+    "phone": "+33 6 01 99 55 58"
+  },
+  "publisher": {
+    "name": "Théo Gouman",
+    "email": "theo@gouman.fr",
+    "phone": "+33 6 46 26 26 10"
+  }
+}

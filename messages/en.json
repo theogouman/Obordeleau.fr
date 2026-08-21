@@ -469,8 +469,6 @@
     }
   },
   "footer": {
-    "tagline": "An air-conditioned studio at Les Sablettes, 70 metres from the beach.",
-    "addressTitle": "Address",
     "bookTitle": "Book",
     "aboutTitle": "This site",
     "legalNotice": "Legal notice",
@@ -482,22 +480,20 @@
     "whatsappMessage": "Hello Corine,\nWe have been looking at your website for the studio at Les Sablettes.\n\nI have a few questions, if I may.",
     "email": "Email",
     "emailSubject": "Information request⎜Studio at Les Sablettes",
-    "classificationAlt": "Officially classified 3-star holiday rental"
+    "classificationAlt": "Officially classified 3-star holiday rental",
+    "bookDirect": "Direct"
   },
   "legalPage": {
     "titleLead": "Legal",
     "titleAccent": "notice",
     "titleTail": "",
-    "pendingNotice": "This page is waiting for the owner's final legal details. Every field marked \"to be completed\" must be filled in before the site goes public.",
-    "placeholder": "to be completed",
     "sections": {
+      "owner": {
+        "title": "Owner"
+      },
       "publisher": {
         "title": "Site publisher",
-        "body": "The obordeleau.fr website is published by {name}, {status}, whose address is {address}. SIRET number: {siret}. Contact: {email}."
-      },
-      "director": {
-        "title": "Publication director",
-        "body": "{name}."
+        "body": "This website is designed, published and run by {name}."
       },
       "hosting": {
         "title": "Hosting",
@@ -505,11 +501,7 @@
       },
       "property": {
         "title": "The property",
-        "body": "Obordeleau is a 3-star classified furnished holiday rental at 253 Av. Jean-Baptiste Mattei, 83500 La Seyne-sur-Mer, France. Local registration number: {declaration}."
-      },
-      "intellectual": {
-        "title": "Intellectual property",
-        "body": "The texts and photographs on this site belong to the publisher. Reproduction without permission is not allowed. Guest reviews remain the property of their authors and are reproduced unaltered."
+        "body": "Obordeleau is a 3 star classified furnished holiday rental at {address}, France."
       },
       "credits": {
         "title": "Credits",
