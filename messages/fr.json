@@ -438,7 +438,7 @@
       },
       "successBodyPaid": "Votre acompte est réglé, vos dates sont bloquées et un email de confirmation vient de partir. Corine vous écrit pour l'arrivée.",
       "notch": {
-        "label": "Une question ?",
+        "label": "Une question ? Écrivez-moi !",
         "aria": "Écrire à Corine sur WhatsApp",
         "message": "Bonjour Corine,\nJe souhaite effectuer une réservation pour le logement aux Sablettes, mais j'ai quelques questions s'il vous plaît :\n\n",
         "messageDates": "Bonjour Corine,\nJe souhaite effectuer une réservation du {from} au {to} pour le logement aux Sablettes, mais j'ai quelques questions s'il vous plaît :\n\n",

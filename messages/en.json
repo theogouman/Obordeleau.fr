@@ -438,7 +438,7 @@
       },
       "successBodyPaid": "Your deposit is paid, your dates are held and a confirmation email has just gone out. Corine will write to you about arrival.",
       "notch": {
-        "label": "A question?",
+        "label": "Got a question? Message me!",
         "aria": "Message Corine on WhatsApp",
         "message": "Hello Corine,\nI would like to book the studio in Les Sablettes, but I have a few questions first:\n\n",
         "messageDates": "Hello Corine,\nI would like to book the studio in Les Sablettes from {from} to {to}, but I have a few questions first:\n\n",

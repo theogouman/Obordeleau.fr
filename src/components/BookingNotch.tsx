@@ -3,6 +3,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { Icon } from '@/components/Icon';
 
+/*
+ * A pause before it comes out. The section arrives, the calendar is what the
+ * visitor came for and gets a few seconds to itself, and only then does the
+ * notch rise: a movement that starts after the eye has settled is noticed,
+ * one that arrives with everything else is not.
+ */
+const APPEAR_DELAY_MS = 2600;
+
 type Props = {
   href: string;
   label: string;
@@ -36,20 +44,25 @@ export function BookingNotch({ href, label, title }: Props) {
       return;
     }
 
+    let timer: number | undefined;
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries.some((entry) => entry.isIntersecting)) {
-          setShown(true);
           observer.disconnect();
+          timer = window.setTimeout(() => setShown(true), APPEAR_DELAY_MS);
         }
       },
-      // A little into the page rather than on the very first pixel: the notch
-      // should come out as the section arrives, not as it grazes the fold.
+      // A little into the page rather than on the very first pixel: the delay
+      // should start as the section arrives, not as it grazes the fold.
       { rootMargin: '0px 0px -10% 0px' },
     );
 
     observer.observe(node);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (timer !== undefined) window.clearTimeout(timer);
+    };
   }, [shown]);
 
   return (
@@ -63,7 +76,7 @@ export function BookingNotch({ href, label, title }: Props) {
       title={title}
       aria-label={title}
     >
-      <Icon name="phone" className="h-[0.85em] w-auto" />
+      <Icon name="whatsapp" className="h-[1.15em] w-auto shrink-0" />
       <span>{label}</span>
     </a>
   );

@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { Icon } from '@/components/Icon';
 import { Link } from '@/i18n/navigation';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Wordmark } from '@/components/Wordmark';
@@ -59,12 +60,7 @@ export function Footer({ year }: { year: number }) {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 hover:text-sunset"
               >
-                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
-                  <path
-                    fill="currentColor"
-                    d="M12 2a10 10 0 0 0-8.7 15L2 22l5.1-1.3A10 10 0 1 0 12 2zm0 2a8 8 0 1 1-4.2 14.8l-.3-.2-2.6.7.7-2.5-.2-.3A8 8 0 0 1 12 4zm-3.3 4c-.2 0-.5.1-.7.4-.2.3-.8.8-.8 1.9s.8 2.2.9 2.3c.1.2 1.6 2.6 4 3.5 1.9.8 2.3.6 2.7.6.4 0 1.3-.5 1.5-1.1.2-.6.2-1 .1-1.1l-.6-.3-1.4-.7c-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1-.2-.1-.9-.4-1.8-1.1-.7-.6-1.1-1.3-1.2-1.5-.1-.2 0-.4.1-.5l.4-.5.2-.4v-.4L9.4 8.4c-.2-.4-.4-.4-.5-.4z"
-                  />
-                </svg>
+                <Icon name="whatsapp" className="h-[18px] w-auto shrink-0" />
                 {t('whatsapp')}
               </a>
             </li>
