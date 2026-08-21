@@ -358,9 +358,14 @@ openssl rand -base64 24   # ADMIN_PASSWORD, or a passphrase you will remember
 openssl rand -base64 48   # ADMIN_SESSION_SECRET, at least 32 characters
 ```
 
-They are different secrets and neither is reused elsewhere. The console is
-French only and is not a visitor surface, so next-intl never touches it: every
-string in it is written where it is used.
+They are different secrets and neither is reused elsewhere. **Set them, then
+redeploy**: Vercel gives a deployment the environment it had when it was built,
+so a variable added afterwards does not reach the build that is already live.
+Until both are set the console shows why rather than a form, and refuses to
+sign anyone in.
+
+The console is French only and is not a visitor surface, so next-intl never
+touches it: every string in it is written where it is used.
 
 Changing the password is one environment variable and a redeploy. It does not
 invalidate sessions already signed, since the cookie says the check passed
