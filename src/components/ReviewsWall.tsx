@@ -25,33 +25,41 @@ type Props = {
  * columns the reader was not looking at. With a container per column, the card
  * that grows lengthens its own column and its neighbours never move.
  *
- * The cards are dealt out in contiguous slices rather than one in three, so a
- * column reads top to bottom in the order they were given in, which is also
- * the order they come back in when the three columns collapse into one.
+ * The cards are dealt out one in three and not in contiguous slices, because
+ * the order they are given in is chronological and has to read across the
+ * wall, not down it. A slice per column put every 2026 review in the first
+ * column and every 2023 one in the last, which reads as three separate walls
+ * that happen to sit side by side.
+ *
+ * Dealing across costs the single column view its order, since the columns are
+ * then read one after the other: card 1, 4, 7 and only later card 2. Each card
+ * therefore carries its rank as a flex order. Inside a column the ranks climb
+ * anyway, so the property changes nothing there; when the columns are dropped
+ * and every card becomes a child of the wall itself, it puts them back in the
+ * order they were given in.
  */
 export function ReviewsWall({ items, className = '' }: Props) {
-  const columns: WallItem[][] = [];
+  const columns: Array<Array<{ item: WallItem; rank: number }>> = Array.from(
+    { length: COLUMN_COUNT },
+    () => [],
+  );
 
-  let taken = 0;
-  for (let index = 0; index < COLUMN_COUNT; index += 1) {
-    // Ceil against what is left, so the remainder is spread over the first
-    // columns instead of landing on the last one.
-    const size = Math.ceil((items.length - taken) / (COLUMN_COUNT - index));
-    columns.push(items.slice(taken, taken + size));
-    taken += size;
-  }
+  items.forEach((item, rank) => {
+    columns[rank % COLUMN_COUNT].push({ item, rank });
+  });
 
   return (
     <div className={`reviews-columns ${className}`.trim()} role="list">
       {columns.map((column, index) => (
         <div className="reviews-columns__col" key={`col-${index}`}>
-          {column.map((item) => (
+          {column.map(({ item, rank }) => (
             <div
               className="reviews-columns__item"
               role="listitem"
               key={item.id}
               data-review={item.id}
               data-leaving={item.leaving ? 'true' : undefined}
+              style={{ order: rank }}
             >
               {item.node}
             </div>
