@@ -35,6 +35,40 @@ test.describe('P1 booking journey', () => {
   /** One step is mounted at a time, so the card itself is the active step. */
   const onStep = (page: import('@playwright/test').Page) => page.locator('#booking-form');
 
+  /** get_quote's own fields, as /api/quote hands them over. */
+  const QUOTE = {
+    checkIn: '2030-07-01',
+    checkOut: '2030-07-04',
+    nightsCount: 3,
+    adults: 2,
+    minors: 0,
+    nights: [],
+    accommodationSubtotal: 450,
+    cleaningFee: 0,
+    touristTax: 9.9,
+    total: 459.9,
+    depositPercentage: 50,
+    depositAmount: 225,
+    balanceAmount: 234.9,
+    balanceChargeDaysBeforeArrival: 10,
+    balanceChargeOn: '2030-06-21',
+    currency: 'EUR',
+  };
+
+  /**
+   * The stay, then the party, then the price. The quote is a step of its own
+   * now, so every walk through the form goes past it.
+   */
+  const pickDatesAndParty = async (page: import('@playwright/test').Page) => {
+    await page.locator('[data-date="2030-07-01"]').click();
+    await page.locator('[data-date="2030-07-04"]').click();
+    await onStep(page).getByRole('button', { name: /obtenir le prix/i }).click();
+
+    await onStep(page).locator('button[data-guests="2"]').click();
+    await onStep(page).getByRole('radio', { name: /^non$/i }).click();
+    await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
+  };
+
   test('a direct booking is written and confirmed to the visitor', async ({ page }) => {
     await page.route('**/api/availability', async (route) => {
       await route.fulfill({ status: 200, json: AVAILABILITY });
@@ -49,10 +83,17 @@ test.describe('P1 booking journey', () => {
       });
     });
 
+    await page.route('**/api/quote', async (route) => {
+      await route.fulfill({ status: 200, json: { valid: true, quote: QUOTE } });
+    });
+
     await page.goto('/#book');
 
-    await page.locator('[data-date="2030-07-01"]').click();
-    await page.locator('[data-date="2030-07-04"]').click();
+    await pickDatesAndParty(page);
+
+    // The price is shown before a single detail about the visitor is asked for.
+    await expect(onStep(page).getByText(/votre devis/i)).toBeVisible();
+    await expect(onStep(page).getByText(/acompte à régler aujourd'hui/i)).toBeVisible();
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
 
     await onStep(page).getByLabel(/votre nom complet/i).fill('Test Voyageur');
@@ -63,10 +104,6 @@ test.describe('P1 booking journey', () => {
 
     await onStep(page).locator('#booking-phone').fill('0612345678');
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
-
-    // Choosing the party size answers the question, so the recap follows on
-    // its own.
-    await onStep(page).locator('button[data-guests="2"]').click();
 
     // The recap is the last thing between the visitor and a real reservation.
     await expect(onStep(page).getByText(/ces informations sont-elles correctes/i)).toBeVisible();
@@ -113,20 +150,22 @@ test.describe('P1 booking journey', () => {
       await route.fulfill({ status: 409, json: { error: 'unavailable' } });
     });
 
+    // No price can be produced, so the flow is the enquiry it was before.
+    await page.route('**/api/quote', async (route) => {
+      await route.fulfill({ status: 503, json: { error: 'not_priced' } });
+    });
+
     await page.goto('/#book');
 
-    await page.locator('[data-date="2030-07-01"]').click();
-    await page.locator('[data-date="2030-07-04"]').click();
+    await pickDatesAndParty(page);
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
+
     await onStep(page).getByLabel(/votre nom complet/i).fill('Test');
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
     await onStep(page).getByLabel(/votre mail/i).fill('test@example.com');
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
     await onStep(page).locator('#booking-phone').fill('0612345678');
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
-    // Choosing the party size answers the question, so the recap follows on
-    // its own.
-    await onStep(page).locator('button[data-guests="2"]').click();
     await onStep(page).getByRole('button', { name: /confirmer la réservation/i }).click();
 
     await expect(page.getByRole('alert').first()).toContainText(/viennent d'être prises/i);

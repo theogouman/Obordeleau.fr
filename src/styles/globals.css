@@ -8,6 +8,7 @@
 @import './around-stack.css';
 @import './booking-notch.css';
 @import './channel-dialog.css';
+@import './quote.css';
 
 @theme {
   --color-cream: #faf7f2;

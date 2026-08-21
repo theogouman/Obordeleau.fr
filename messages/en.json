@@ -327,14 +327,15 @@
         "name": "Your full name",
         "email": "Your email",
         "phone": "Your phone number",
-        "guests": "Number of guests",
+        "guests": "How many guests?",
         "dial": "Country code",
         "dialSearch": "Search for a country",
         "dialCommon": "Most often",
         "dialAll": "All countries",
         "dialEmpty": "No country matches.",
-        "minors": "Any children under 18?",
-        "minorsCount": "How many?"
+        "minors": "Are any children under 18 travelling with you?",
+        "minorsCount": "How many under 18s are travelling with you?",
+        "party": "Guests"
       },
       "placeholders": {
         "name": "e.g. Corine PIERRET",
@@ -369,14 +370,12 @@
         "stayMultiple": "{count, plural, =7 {In this season, stays run Saturday to Saturday, in whole weeks.} other {In this season, the length must be a multiple of # nights.}}",
         "holdExpired": "Your dates were no longer held. Please choose them again.",
         "refunded": "Those dates have just been taken. Your deposit has been refunded in full and Corine will write to you.",
-        "paymentPending": "Your payment has been recorded. The confirmation reaches you by email in a few moments."
+        "paymentPending": "Your payment has been recorded. The confirmation reaches you by email in a few moments.",
+        "minorsChoice": "Tell us whether any under 18s are travelling with you."
       },
       "datesTooltip": "No dates are selected yet",
       "changeDates": "Change my dates",
       "checking": "Checking...",
-      "minorsNote": "They do not pay the tourist tax.",
-      "minorsFewer": "One child fewer",
-      "minorsMore": "One child more",
       "adultsValue": "{count, plural, one {# adult} other {# adults}}",
       "partyValue": "{adults, plural, one {# adult} other {# adults}} and {minors, plural, one {# child} other {# children}}",
       "rules": {
@@ -386,16 +385,30 @@
       },
       "quote": {
         "title": "Your quote",
-        "accommodation": "{count, plural, one {Accommodation, # night} other {Accommodation, # nights}}",
-        "cleaning": "Cleaning",
+        "accommodation": "{count, plural, one {# night} other {# nights}}",
+        "cleaning": "Cleaning fee",
         "cleaningFree": "Included",
-        "touristTax": "{adults, plural, one {Tourist tax, # adult} other {Tourist tax, # adults}} over {nights, plural, one {# night} other {# nights}}",
-        "touristTaxNote": "Per adult per night, passed on to the local authority. Under 18s are exempt.",
+        "touristTax": "Local tourist tax",
+        "touristTaxNote": "This national tax is passed on to the TPM local authority and is worked out from the number of nights. Under 18s are exempt from it.",
         "total": "Total",
-        "depositNow": "To pay now ({percent}%)",
+        "depositNow": "Deposit to pay today ({percent}%)",
         "balanceLater": "Balance, charged before arrival",
         "loading": "Working out the amount...",
-        "unavailable": "The amount will be confirmed by email. Your request is still recorded."
+        "unavailable": "The amount will be confirmed by email. Your request is still recorded.",
+        "more": "More about this",
+        "balanceOn": "Balance, charged on <when>{date}</when>",
+        "balanceOnNote": "{count, plural, one {# day before you arrive} other {# days before you arrive}}",
+        "guarantee": "This price is held for another",
+        "working": {
+          "price": "Working out the price",
+          "best": "Finding you the best price",
+          "dates": "Checking the dates"
+        },
+        "expired": {
+          "title": "This price has expired",
+          "body": "Your price was held for thirty minutes. It has most likely moved since then: ask again to see the current rate. Everything you have answered is kept.",
+          "action": "Refresh the price"
+        }
       },
       "noscript": {
         "title": "Choosing your dates",
@@ -430,7 +443,10 @@
         "message": "Hello Corine,\nI would like to book the studio in Les Sablettes, but I have a few questions first:\n\n",
         "messageDates": "Hello Corine,\nI would like to book the studio in Les Sablettes from {from} to {to}, but I have a few questions first:\n\n",
         "messageGuests": "Hello Corine,\nI would like to book the studio in Les Sablettes for {guests, plural, one {# guest} other {# guests}}, from {from} to {to}, but I have a few questions first:\n\n"
-      }
+      },
+      "getPrice": "Get the price",
+      "yes": "Yes",
+      "no": "No"
     },
     "calendar": {
       "arrival": "arrival",

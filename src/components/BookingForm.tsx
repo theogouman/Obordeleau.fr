@@ -16,6 +16,13 @@ import { CheckoutPanel } from '@/components/CheckoutPanel';
 import { ChannelChoice } from '@/components/ChannelChoice';
 import { Icon } from '@/components/Icon';
 import { PhoneField } from '@/components/PhoneField';
+import {
+  GUARANTEE_MS,
+  GuaranteeNotch,
+  QuoteExpiredDialog,
+  clockFace,
+} from '@/components/PriceGuarantee';
+import { QuoteLoader } from '@/components/QuoteLoader';
 import { QuotePanel } from '@/components/QuotePanel';
 import { localeTags, type Locale } from '@/i18n/routing';
 import { trackBookingConfirmed } from '@/lib/analytics';
@@ -84,10 +91,23 @@ type Checkout = {
   reference: string;
 };
 
-type StepId = 'dates' | 'name' | 'email' | 'phone' | 'guests' | 'recap';
+/**
+ * The stay first, then who is coming, then what it costs, and only then who
+ * the visitor is. Nobody should have to hand over a name and a number to find
+ * out a price: the quote is a simulation, and it comes before the form.
+ */
+type StepId = 'dates' | 'guests' | 'quote' | 'name' | 'email' | 'phone' | 'recap';
 
-const STEPS: readonly StepId[] = ['dates', 'name', 'email', 'phone', 'guests', 'recap'];
-const RECAP = STEPS.indexOf('recap');
+const STEPS: readonly StepId[] = [
+  'dates',
+  'guests',
+  'quote',
+  'name',
+  'email',
+  'phone',
+  'recap',
+];
+const QUOTE = STEPS.indexOf('quote');
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const MIN_PHONE_DIGITS = 6;
@@ -119,6 +139,15 @@ function shortDate(isoDate: string | null): string {
   return `${isoDate.slice(8, 10)}/${isoDate.slice(5, 7)}/${isoDate.slice(0, 4)}`;
 }
 
+/**
+ * The messages shown while the price is worked out are not a spinner dressed
+ * up: they say what is being done, and they are given long enough to be read
+ * even when the answer comes back at once.
+ */
+const MIN_LOADER_MS = 2000;
+/** The exit of mask-reveal-up, so the messages are gone before the quote lands. */
+const LOADER_OUT_MS = 520;
+
 const EMPTY_BLOCKED: ReadonlySet<string> = new Set<string>();
 
 export function BookingForm({
@@ -146,12 +175,31 @@ export function BookingForm({
   const [guestFocus, setGuestFocus] = useState(0);
   // Under 18s are exempt from the tourist tax, so the split is part of the
   // stay, not a detail. adults = guests - minors, and there is always one.
-  const [hasMinors, setHasMinors] = useState(false);
+  // Null until the question has been answered: not yet asked and answered no
+  // are different things, and only one of them lets the step move on.
+  const [minorsChoice, setMinorsChoice] = useState<boolean | null>(null);
   const [minors, setMinors] = useState(0);
 
   const [checkingStay, setCheckingStay] = useState(false);
   const [quote, setQuote] = useState<Quote | null>(null);
   const [quoteState, setQuoteState] = useState<QuoteState>('idle');
+  /**
+   * How the quote takes the place of the messages that stood in for it. It
+   * waits, then it lifts away, and only once it has gone does the panel rise
+   * into the same place.
+   */
+  const [reveal, setReveal] = useState<'loading' | 'leaving' | 'shown'>('shown');
+  const loadingSince = useRef(0);
+  /** Bumped to ask for the same stay to be priced again. */
+  const [quoteNonce, setQuoteNonce] = useState(0);
+  /**
+   * A quote is the rates as they were when it was asked for, and it is
+   * honoured for half an hour. After that the visitor is told rather than
+   * quietly left holding a price the database no longer agrees with.
+   */
+  const [guaranteeUntil, setGuaranteeUntil] = useState<number | null>(null);
+  const [guaranteeLeft, setGuaranteeLeft] = useState(GUARANTEE_MS);
+  const [guaranteeExpired, setGuaranteeExpired] = useState(false);
   // The step to come back to once the question now on screen has been dealt
   // with. Set when a single answer is reopened, from the recap or from the
   // dates chip, so nothing already answered is ever asked twice.
@@ -541,6 +589,12 @@ export function BookingForm({
           refuse(t('errors.guests'));
           return false;
         }
+        // With more than one traveller the split matters: the tourist tax is
+        // per adult, so leaving it unanswered leaves the price unknowable.
+        if (guests > 1 && minorsChoice === null) {
+          refuse(t('errors.minorsChoice'));
+          return false;
+        }
         return true;
       default:
         return true;
@@ -592,21 +646,27 @@ export function BookingForm({
     // Never more minors than there are seats for adults to sit beside.
     if (minors > count - 1) setMinors(Math.max(count - 1, 0));
     if (count === 1) {
-      setHasMinors(false);
+      setMinorsChoice(null);
       setMinors(0);
-    }
 
-    if (count === 1) {
+      const target = returnTo;
       setReturnTo(null);
-      window.setTimeout(() => goTo(RECAP), 160);
+      window.setTimeout(() => goTo(target ?? QUOTE), 160);
     }
   }
 
   const maxMinors = guests === null ? 0 : guests - 1;
 
-  function toggleMinors(on: boolean) {
-    setHasMinors(on);
+  /**
+   * With two travellers there is only one seat a minor can be in, so saying
+   * yes has already answered how many. The question is still shown, with its
+   * one box already chosen, rather than hidden: the visitor sees what was
+   * assumed on their behalf.
+   */
+  function answerMinors(on: boolean) {
+    setMinorsChoice(on);
     setMinors(on ? Math.min(Math.max(minors, 1), maxMinors) : 0);
+    setStepError(null);
   }
 
   // Arrows move the focus without answering, so walking through the four boxes
@@ -650,7 +710,9 @@ export function BookingForm({
   /* --- the quote ---------------------------------------------------------- */
 
   /*
-   * Asked for once the recap is reached and every figure it needs is known.
+   * Asked for as soon as the stay and the party are known, which is a step
+   * before the visitor is asked who they are. Nobody should have to hand over
+   * a name to find out a price.
    *
    * Nothing is added up here. The endpoint validates the stay and then returns
    * get_quote's own fields, which is where the amount charged will come from
@@ -660,11 +722,29 @@ export function BookingForm({
    * is not a failure of the flow: the panel stays away and the booking works
    * exactly as it did before this lot.
    */
-  useEffect(() => {
-    if (step !== 'recap' || !arrival || !departure || guests === null) return;
+  const quoteKey =
+    arrival && departure && guests !== null
+      ? `${arrival}|${departure}|${guests}|${minors}|${quoteNonce}`
+      : null;
+  const loadedQuote = useRef<string | null>(null);
 
+  useEffect(() => {
+    const here = STEPS[stepIndex];
+    if (here !== 'quote' && here !== 'recap') return;
+    if (!quoteKey || loadedQuote.current === quoteKey) return;
+
+    // Claimed before the request goes out, so a re render does not ask twice,
+    // and given back if the answer never arrives, so it can be asked again.
+    loadedQuote.current = quoteKey;
     let cancelled = false;
+    let settled = false;
+
+    loadingSince.current = Date.now();
+    setQuote(null);
     setQuoteState('loading');
+    setReveal('loading');
+    setGuaranteeUntil(null);
+    setGuaranteeExpired(false);
 
     const load = async () => {
       try {
@@ -677,6 +757,7 @@ export function BookingForm({
         if (cancelled) return;
 
         if (!response.ok) {
+          settled = true;
           setQuote(null);
           setQuoteState('unavailable');
           return;
@@ -684,6 +765,8 @@ export function BookingForm({
 
         const data = (await response.json()) as { valid?: boolean; quote?: Quote };
         if (cancelled) return;
+
+        settled = true;
 
         if (data.valid && data.quote) {
           setQuote(data.quote);
@@ -694,6 +777,7 @@ export function BookingForm({
         }
       } catch {
         if (cancelled) return;
+        settled = true;
         setQuote(null);
         setQuoteState('unavailable');
       }
@@ -702,8 +786,101 @@ export function BookingForm({
     void load();
     return () => {
       cancelled = true;
+      if (!settled) loadedQuote.current = null;
     };
-  }, [step, arrival, departure, guests, minors]);
+  }, [stepIndex, quoteKey, arrival, departure, guests, minors]);
+
+  /*
+   * The handover, in two beats and on its own: it is deliberately not tied to
+   * the step the visitor is on, so walking away mid wait and coming back finds
+   * the quote in place rather than the messages still turning.
+   */
+  useEffect(() => {
+    if (reveal !== 'loading') return;
+    if (quoteState !== 'ready' && quoteState !== 'unavailable') return;
+
+    const wait = Math.max(0, MIN_LOADER_MS - (Date.now() - loadingSince.current));
+    const timer = window.setTimeout(() => setReveal('leaving'), wait);
+    return () => window.clearTimeout(timer);
+  }, [reveal, quoteState]);
+
+  useEffect(() => {
+    if (reveal !== 'leaving') return;
+
+    const timer = window.setTimeout(() => {
+      setReveal('shown');
+      // The half hour starts when the price is on screen, not when it was
+      // asked for: the wait is ours, not the visitor's.
+      setGuaranteeUntil(Date.now() + GUARANTEE_MS);
+    }, LOADER_OUT_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [reveal]);
+
+  /*
+   * The countdown, and the moment it runs out.
+   *
+   * It is held while a payment is being taken: Stripe holds the nights on its
+   * own clock there, and a dialog over a card form would be its own kind of
+   * damage. Coming back from the payment picks the count up where it was, and
+   * a deadline that passed in the meantime is noticed at once.
+   */
+  const expire = useCallback(() => {
+    setGuaranteeUntil(null);
+    setGuaranteeExpired(true);
+  }, []);
+
+  useEffect(() => {
+    if (guaranteeUntil === null || state !== 'editing') return;
+
+    const left = guaranteeUntil - Date.now();
+    if (left <= 0) {
+      expire();
+      return;
+    }
+
+    const timer = window.setTimeout(expire, left);
+    return () => window.clearTimeout(timer);
+  }, [guaranteeUntil, state, expire]);
+
+  /*
+   * The clock only runs while it is being read. Ticking every second on the
+   * steps where nothing shows it would re render the whole card sixty times a
+   * minute to move a figure nobody can see.
+   */
+  useEffect(() => {
+    if (guaranteeUntil === null || STEPS[stepIndex] !== 'quote') return;
+
+    const tick = () => {
+      const left = guaranteeUntil - Date.now();
+      setGuaranteeLeft(Math.max(0, left));
+      // A laptop that was asleep comes back with the half hour long gone and
+      // no timer having fired, so the reading is also the check.
+      if (left <= 0) expire();
+    };
+
+    tick();
+    const timer = window.setInterval(tick, 1000);
+    return () => window.clearInterval(timer);
+  }, [guaranteeUntil, stepIndex, expire]);
+
+  /**
+   * A fresh price, with everything already answered kept as it was.
+   *
+   * Only the amount is asked for again. The visitor is walked back to the
+   * quote so they see it being worked out, and the step they were on is
+   * remembered so pressing on from there puts them back where they were.
+   */
+  function refreshQuote() {
+    setGuaranteeExpired(false);
+    setQuoteNonce((nonce) => nonce + 1);
+
+    // Already looking at the price: the messages come back where they are.
+    if (STEPS[stepIndex] === 'quote') return;
+
+    setReturnTo(stepIndex);
+    goBack(QUOTE);
+  }
 
   /* --- submission -------------------------------------------------------- */
 
@@ -795,6 +972,15 @@ export function BookingForm({
    * the stay is recorded without a payment.
    */
   const canPay = paymentsEnabled && quoteState === 'ready' && quote !== null;
+
+  /*
+   * The messages hold the quote's place until there is something to put there
+   * and it has been given its beat. Idle counts as waiting: the step is
+   * mounted a render before the request goes out, and an empty panel flashing
+   * in that gap would be the one frame the visitor remembers.
+   */
+  const showLoader =
+    (quoteState !== 'ready' && quoteState !== 'unavailable') || reveal !== 'shown';
 
   /*
    * And the balance can only be promised as automatic when the config says how
@@ -1083,11 +1269,14 @@ export function BookingForm({
     switch (step) {
       case 'dates':
         return (
+          // The hint is only ever the reason the button is actually refusing.
+          // While the stay is being checked the dates are chosen, and telling
+          // the visitor otherwise reads as a rejection of what they just picked.
           <Step
             onNext={() => void confirmDates()}
-            nextLabel={checkingStay ? t('checking') : t('continue')}
+            nextLabel={checkingStay ? t('checking') : t('getPrice')}
             nextDisabled={!rangeReady || checkingStay}
-            nextHint={t('datesTooltip')}
+            nextHint={rangeReady ? undefined : t('datesTooltip')}
             error={stepError}
           >
             <BookingCalendar
@@ -1247,46 +1436,32 @@ export function BookingForm({
                 question to be about, and a party with no adult is not a stay. */}
             {guests !== null && guests > 1 ? (
               <div className="mt-6 border-t border-[rgba(58,42,38,0.12)] pt-5 text-start">
-                <label className="flex items-start gap-3">
-                  <input
-                    type="checkbox"
-                    checked={hasMinors}
-                    onChange={(event) => toggleMinors(event.target.checked)}
-                    className="mt-1.5 h-4 w-4 shrink-0 accent-[var(--color-raspberry)]"
-                  />
-                  <span className="font-display text-lg">{t('questions.minors')}</span>
-                </label>
-                <p className="mt-1 ps-7 text-xs text-ink-soft">{t('minorsNote')}</p>
+                <ChoiceGroup
+                  legend={t('questions.minors')}
+                  options={[
+                    { value: 'yes', label: t('yes') },
+                    { value: 'no', label: t('no') },
+                  ]}
+                  value={minorsChoice === null ? null : minorsChoice ? 'yes' : 'no'}
+                  onChange={(answer) => answerMinors(answer === 'yes')}
+                  columns={2}
+                />
 
-                {hasMinors ? (
-                  <div className="mt-4 ps-7">
-                    <span className="text-sm font-semibold">{t('questions.minorsCount')}</span>
-                    <div className="mt-2 flex items-center gap-3">
-                      <button
-                        type="button"
-                        onClick={() => setMinors(Math.max(1, minors - 1))}
-                        disabled={minors <= 1}
-                        aria-label={t('minorsFewer')}
-                        className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[rgba(58,42,38,0.18)] text-lg leading-none text-ink transition-colors hover:border-ink disabled:opacity-40"
-                      >
-                        <span aria-hidden="true">&minus;</span>
-                      </button>
-                      <output
-                        aria-live="polite"
-                        className="min-w-8 text-center font-display text-xl tabular-nums"
-                      >
-                        {minors}
-                      </output>
-                      <button
-                        type="button"
-                        onClick={() => setMinors(Math.min(maxMinors, minors + 1))}
-                        disabled={minors >= maxMinors}
-                        aria-label={t('minorsMore')}
-                        className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[rgba(58,42,38,0.18)] text-lg leading-none text-ink transition-colors hover:border-ink disabled:opacity-40"
-                      >
-                        <span aria-hidden="true">+</span>
-                      </button>
-                    </div>
+                {/* With two travellers this holds a single box and it is
+                    already chosen: the answer was implied by the party size,
+                    and it is shown rather than assumed silently. */}
+                {minorsChoice === true ? (
+                  <div className="mt-5">
+                    <ChoiceGroup
+                      legend={t('questions.minorsCount')}
+                      options={Array.from({ length: maxMinors }, (_, seat) => ({
+                        value: String(seat + 1),
+                        label: String(seat + 1),
+                      }))}
+                      value={String(minors)}
+                      onChange={(count) => setMinors(Number(count))}
+                      columns={maxMinors}
+                    />
                     <p className="mt-2 text-xs text-ink-soft" role="status" aria-live="polite">
                       {t('adultsValue', { count: guests - minors })}
                     </p>
@@ -1295,6 +1470,45 @@ export function BookingForm({
               </div>
             ) : null}
           </Step>
+        );
+
+      /*
+       * The price, before a single detail about the visitor is asked for.
+       *
+       * While it is being worked out the messages turn in its place, and when
+       * it is in they lift away and the panel rises where they were. The notch
+       * over the button says how long the figure is held for.
+       */
+      case 'quote':
+        return (
+          <div>
+            {showLoader ? (
+              <QuoteLoader leaving={reveal === 'leaving'} />
+            ) : quoteState === 'ready' && quote ? (
+              <>
+                <QuotePanel quote={quote} reveal />
+
+                <div className="q-notch-wrap mt-11">
+                  <GuaranteeNotch
+                    label={t('quote.guarantee')}
+                    clock={clockFace(guaranteeLeft)}
+                  />
+                  <button type="button" onClick={next} className="btn btn-primary w-full">
+                    {t('continue')}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="rounded-[var(--radius-card)] bg-sand p-4 text-center text-sm text-ink-soft">
+                  {t('quote.unavailable')}
+                </p>
+                <button type="button" onClick={next} className="btn btn-primary mt-6 w-full">
+                  {t('continue')}
+                </button>
+              </>
+            )}
+          </div>
         );
 
       case 'recap':
@@ -1329,7 +1543,7 @@ export function BookingForm({
                 editLabel={t('edit')}
               />
               <RecapRow
-                label={t('questions.guests')}
+                label={t('questions.party')}
                 value={
                   guests === null
                     ? ''
@@ -1345,7 +1559,9 @@ export function BookingForm({
             {/* Every figure below comes from get_quote. The panel is additive:
                 when no price can be produced the flow is exactly what it was. */}
             {quoteState === 'ready' && quote ? (
-              <QuotePanel quote={quote} />
+              <div className="mt-6">
+                <QuotePanel quote={quote} />
+              </div>
             ) : quoteState === 'loading' ? (
               <p
                 className="mt-6 text-center text-sm text-ink-soft"
@@ -1506,6 +1722,13 @@ export function BookingForm({
         <div ref={stageRef}>{stepContent()}</div>
       </div>
 
+      {/* Half an hour has passed and the figures on screen are no longer the
+          ones the database would give. Nothing is lost: the answers are kept
+          and only the price is asked for again. */}
+      {guaranteeExpired && state === 'editing' ? (
+        <QuoteExpiredDialog onRefresh={refreshQuote} />
+      ) : null}
+
       {hasChannels && channelsMounted ? (
         <div
           className="t-resize overflow-hidden"
@@ -1591,6 +1814,90 @@ function Step({ children, error, onNext, nextLabel, nextDisabled, nextHint }: St
         </div>
       ) : null}
     </div>
+  );
+}
+
+/**
+ * A question answered by picking one box out of a row.
+ *
+ * The same shape as the party size boxes above it, so the two questions of the
+ * step read as one: a filled outline for the answer given, a plain one for the
+ * rest. The arrow keys walk the row without answering, which is what a group
+ * of radios is expected to do, and only the box holding the focus is in the
+ * tab order, so the row is one stop rather than four.
+ */
+function ChoiceGroup({
+  legend,
+  options,
+  value,
+  onChange,
+  columns,
+}: {
+  legend: string;
+  options: readonly { value: string; label: string }[];
+  value: string | null;
+  onChange: (value: string) => void;
+  columns: number;
+}) {
+  const chosen = options.findIndex((option) => option.value === value);
+  const [focus, setFocus] = useState(chosen < 0 ? 0 : chosen);
+
+  function onKeys(event: KeyboardEvent<HTMLDivElement>) {
+    const last = options.length - 1;
+    const target =
+      event.key === 'ArrowRight' || event.key === 'ArrowDown'
+        ? Math.min(focus + 1, last)
+        : event.key === 'ArrowLeft' || event.key === 'ArrowUp'
+          ? Math.max(focus - 1, 0)
+          : event.key === 'Home'
+            ? 0
+            : event.key === 'End'
+              ? last
+              : null;
+
+    if (target === null) return;
+    event.preventDefault();
+    setFocus(target);
+
+    const group = event.currentTarget;
+    window.requestAnimationFrame(() =>
+      group.querySelector<HTMLElement>(`[data-box="${options[target].value}"]`)?.focus(),
+    );
+  }
+
+  return (
+    <fieldset>
+      <legend className="font-display text-lg">{legend}</legend>
+      <div
+        role="radiogroup"
+        aria-label={legend}
+        onKeyDown={onKeys}
+        className="mt-3 grid gap-2"
+        style={{ gridTemplateColumns: `repeat(${Math.max(columns, 1)}, minmax(0, 1fr))` }}
+      >
+        {options.map((option, index) => (
+          <button
+            key={option.value}
+            type="button"
+            role="radio"
+            aria-checked={value === option.value}
+            tabIndex={index === focus ? 0 : -1}
+            data-box={option.value}
+            onClick={() => {
+              setFocus(index);
+              onChange(option.value);
+            }}
+            className={`rounded-[var(--radius-card)] border py-2.5 text-sm font-semibold transition-colors ${
+              value === option.value
+                ? 'border-raspberry bg-[rgba(206,66,87,0.07)] text-raspberry-ink'
+                : 'border-[rgba(58,42,38,0.18)] text-ink-soft hover:border-ink'
+            }`}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+    </fieldset>
   );
 }
 

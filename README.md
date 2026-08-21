@@ -607,6 +607,52 @@ its reason, the console ordering, and the frozen amount surviving a rate change.
 npm run test:sql        # all five suites; needs SUPABASE_DB_URL and psql
 ```
 
+## The quote comes first
+
+The card used to ask for a name, an email and a phone number, then show a price
+on the recap. It now asks the stay, asks who is coming, and prices it, and only
+after that does it ask who the visitor is. Nobody should have to hand over
+their details to find out what a week costs.
+
+```text
+  dates  ->  guests  ->  quote  ->  name  ->  email  ->  phone  ->  recap
+```
+
+**Waiting is not a spinner.** While `/api/quote` is out, three sentences take
+turns in the panel's place on shimmer text (15), each arriving and leaving on
+mask reveal up from the animate-text catalogue. They are held for at least two
+seconds even when the answer comes back at once, because a message that flashes
+is worse than no message, and they are hidden from the accessibility tree with
+one quiet status line behind them rather than three phrasings of the same
+thing. When the price is in they lift away and the panel rises where they were.
+
+**The party, in boxes.** Under 18s are a yes or a no rather than a checkbox
+that starts answered, and how many is a row of boxes rather than a plus and a
+minus. The row holds one box per seat a minor could take, which is the party
+size less one: with three travellers there are two boxes, and with two there is
+one and saying yes has already chosen it. The question is still shown, so what
+was assumed on the visitor's behalf is visible.
+
+**The price is held for half an hour.** A quote is the rates as they were when
+it was asked for. A notch over the button says so and counts down on number pop
+in (02), pulled out from under its button the way the WhatsApp notch is pulled
+out from under the card. When the half hour is up, the figures are not left on
+screen to be paid: a dialog says the rate has moved on, and its one action asks
+for a fresh one. Every answer already given is kept, the step the visitor was
+on is remembered, and only the amount is asked for again.
+
+The clock runs on two timers on purpose. One is a single timeout for the whole
+half hour, so the deadline is noticed on whatever step the visitor is on; the
+other ticks each second and only while the notch is on screen, because moving a
+figure nobody is looking at would re render the card sixty times a minute. A
+laptop that was asleep comes back to a reading that is also a check.
+
+**Two lines carry a tooltip.** The local tax explains where it goes and who is
+exempt, and the day the balance leaves explains how it was worked out. Both are
+tooltip (17) behind a mark that takes keyboard focus, and both put their text in
+the accessibility tree as the description of that mark, so a visitor who never
+sees a hover layer is told the same thing.
+
 ## Deploying
 
 Import the repository on Vercel, set the environment variables, point the Hostinger DNS at Vercel.

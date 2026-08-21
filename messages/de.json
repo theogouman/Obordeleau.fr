@@ -327,14 +327,15 @@
         "name": "Ihr vollständiger Name",
         "email": "Ihre E-Mail",
         "phone": "Ihre Telefonnummer",
-        "guests": "Anzahl der Gäste",
+        "guests": "Wie viele Gäste?",
         "dial": "Ländervorwahl",
         "dialSearch": "Land suchen",
         "dialCommon": "Am häufigsten",
         "dialAll": "Alle Länder",
         "dialEmpty": "Kein Land gefunden.",
-        "minors": "Kinder unter 18 Jahren?",
-        "minorsCount": "Wie viele?"
+        "minors": "Reisen Kinder unter 18 Jahren mit?",
+        "minorsCount": "Wie viele Minderjährige reisen mit Ihnen?",
+        "party": "Gäste"
       },
       "placeholders": {
         "name": "z. B. Corine PIERRET",
@@ -369,14 +370,12 @@
         "stayMultiple": "{count, plural, =7 {In dieser Saison geht der Aufenthalt von Samstag zu Samstag, in ganzen Wochen.} other {In dieser Saison muss die Dauer ein Vielfaches von # Nächten sein.}}",
         "holdExpired": "Ihre Daten waren nicht mehr reserviert. Bitte wählen Sie erneut.",
         "refunded": "Diese Daten wurden soeben vergeben. Ihre Anzahlung wurde vollständig erstattet und Corine meldet sich bei Ihnen.",
-        "paymentPending": "Ihre Zahlung wurde erfasst. Die Bestätigung erreicht Sie in Kürze per E-Mail."
+        "paymentPending": "Ihre Zahlung wurde erfasst. Die Bestätigung erreicht Sie in Kürze per E-Mail.",
+        "minorsChoice": "Sagen Sie uns bitte, ob Minderjährige mitreisen."
       },
       "datesTooltip": "Es ist noch kein Zeitraum gewählt",
       "changeDates": "Daten ändern",
       "checking": "Wird geprüft...",
-      "minorsNote": "Sie zahlen keine Kurtaxe.",
-      "minorsFewer": "Ein Kind weniger",
-      "minorsMore": "Ein Kind mehr",
       "adultsValue": "{count, plural, one {# Erwachsener} other {# Erwachsene}}",
       "partyValue": "{adults, plural, one {# Erwachsener} other {# Erwachsene}} und {minors, plural, one {# Kind} other {# Kinder}}",
       "rules": {
@@ -386,16 +385,30 @@
       },
       "quote": {
         "title": "Ihr Angebot",
-        "accommodation": "{count, plural, one {Unterkunft, # Nacht} other {Unterkunft, # Nächte}}",
-        "cleaning": "Endreinigung",
+        "accommodation": "{count, plural, one {# Nacht} other {# Nächte}}",
+        "cleaning": "Reinigungsgebühr",
         "cleaningFree": "Inklusive",
-        "touristTax": "{adults, plural, one {Kurtaxe, # Erwachsener} other {Kurtaxe, # Erwachsene}} für {nights, plural, one {# Nacht} other {# Nächte}}",
-        "touristTaxNote": "Pro Erwachsenem und Nacht, wird an die Gemeinde abgeführt. Unter 18 Jahren entfällt sie.",
+        "touristTax": "Örtliche Kurtaxe",
+        "touristTaxNote": "Diese staatliche Abgabe wird an die Gebietskörperschaft TPM abgeführt und richtet sich nach der Anzahl der Nächte. Minderjährige sind davon befreit.",
         "total": "Gesamt",
-        "depositNow": "Jetzt zu zahlen ({percent} %)",
+        "depositNow": "Heute fällige Anzahlung ({percent} %)",
         "balanceLater": "Restbetrag, wird vor der Anreise abgebucht",
         "loading": "Betrag wird berechnet...",
-        "unavailable": "Der Betrag wird Ihnen per E-Mail bestätigt. Ihre Anfrage bleibt gespeichert."
+        "unavailable": "Der Betrag wird Ihnen per E-Mail bestätigt. Ihre Anfrage bleibt gespeichert.",
+        "more": "Mehr dazu",
+        "balanceOn": "Restbetrag, wird am <when>{date}</when> abgebucht",
+        "balanceOnNote": "{count, plural, one {# Tag vor Ihrer Anreise} other {# Tage vor Ihrer Anreise}}",
+        "guarantee": "Dieser Preis gilt noch",
+        "working": {
+          "price": "Wir berechnen den Preis",
+          "best": "Wir suchen den besten Preis",
+          "dates": "Wir prüfen die Daten"
+        },
+        "expired": {
+          "title": "Dieser Preis ist abgelaufen",
+          "body": "Ihr Preis galt dreißig Minuten. Er hat sich seitdem wahrscheinlich geändert: fragen Sie erneut an, um den aktuellen Tarif zu sehen. Alle Ihre Angaben bleiben erhalten.",
+          "action": "Preis aktualisieren"
+        }
       },
       "noscript": {
         "title": "Ihre Daten wählen",
@@ -430,7 +443,10 @@
         "message": "Guten Tag Corine,\nich möchte die Wohnung in Les Sablettes buchen, habe aber vorher noch ein paar Fragen:\n\n",
         "messageDates": "Guten Tag Corine,\nich möchte die Wohnung in Les Sablettes vom {from} bis zum {to} buchen, habe aber vorher noch ein paar Fragen:\n\n",
         "messageGuests": "Guten Tag Corine,\nich möchte die Wohnung in Les Sablettes für {guests, plural, one {# Person} other {# Personen}} vom {from} bis zum {to} buchen, habe aber vorher noch ein paar Fragen:\n\n"
-      }
+      },
+      "getPrice": "Preis berechnen",
+      "yes": "Ja",
+      "no": "Nein"
     },
     "calendar": {
       "arrival": "Anreise",

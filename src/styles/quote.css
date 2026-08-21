@@ -1,0 +1,187 @@
+/*
+ * The quote: the wait, the reveal, and the promise held over the button.
+ *
+ * Three movements live here. The messages shown while the price is being
+ * worked out come and go on mask reveal up, from the animate-text catalogue at
+ * pixel-point/animate-text; the quote itself arrives on the same curve once
+ * there is something to show; and the notch that says how long the price is
+ * held is the booking notch again, pulled out from under its button instead of
+ * from under the card.
+ *
+ * Every duration and easing below is the one the catalogue gives for
+ * mask-reveal-up, kept as written: 760ms in on the calm curve, 520ms out on
+ * the sharp one, 90ms of stagger between lines, and a 35ms micro delay so the
+ * line arriving does not start on the very frame the line leaving does.
+ */
+
+:root {
+  --mask-in-dur: 760ms;
+  --mask-in-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --mask-in-y: 30px;
+  --mask-in-blur: 6px;
+  --mask-out-dur: 520ms;
+  --mask-out-ease: cubic-bezier(0.64, 0, 0.78, 0);
+  --mask-out-y: -22px;
+  --mask-out-blur: 6px;
+  --mask-stagger: 90ms;
+  --mask-micro-delay: 35ms;
+}
+
+@layer components {
+  /*
+   * The two messages, the one arriving and the one leaving, are on screen at
+   * the same time for as long as the crossfade lasts. The one arriving keeps
+   * the flow, so the block is as tall as it needs to be; the one leaving is
+   * lifted out of the flow and fades over it.
+   */
+  .q-stack {
+    position: relative;
+    display: block;
+  }
+
+  .q-line {
+    display: block;
+  }
+
+  .q-line[data-state='in'] {
+    animation: q-mask-in var(--mask-in-dur) var(--mask-in-ease) var(--mask-micro-delay) both;
+  }
+
+  .q-line[data-state='out'] {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    animation: q-mask-out var(--mask-out-dur) var(--mask-out-ease) both;
+  }
+
+  /* The quote itself, arriving where the messages were. */
+  .q-reveal {
+    animation: q-mask-in var(--mask-in-dur) var(--mask-in-ease) both;
+  }
+
+  /* One line behind the next, on the stagger the catalogue gives. */
+  .q-reveal[data-line='1'] {
+    animation-delay: var(--mask-stagger);
+  }
+
+  .q-reveal[data-line='2'] {
+    animation-delay: calc(var(--mask-stagger) * 2);
+  }
+
+  .q-vanish {
+    animation: q-mask-out var(--mask-out-dur) var(--mask-out-ease) both;
+  }
+
+  /*
+   * The notch over the call to action, on the booking notch again.
+   *
+   * It hangs above the button and starts pushed down by its own height, which
+   * puts it exactly under the button's top edge. The wrapper is a stacking
+   * context of its own, which is what makes the trick work here: inside it the
+   * notch is painted first because of its negative level, then the button's
+   * own background is painted over it, while the whole wrapper still sits
+   * above the card it is standing on.
+   */
+  .q-notch-wrap {
+    position: relative;
+    z-index: 0;
+    /* A flex box rather than a block: an inline level button sits on a
+       baseline and leaves half a line of air above itself, which is exactly
+       where the notch is meant to be hidden. As a flex item its top edge is
+       the wrapper's top edge, and the notch tucks under it cleanly. */
+    display: flex;
+    flex-direction: column;
+  }
+
+  .q-notch {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    z-index: -1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    height: 2.25rem;
+    padding-inline: 1.1rem;
+    border-radius: 1rem 1rem 0 0;
+    background-color: var(--color-night);
+    color: var(--color-cream);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    transform: translate(-50%, 100%);
+    transition: transform var(--duration-slow) var(--ease-out-expo);
+    will-change: transform;
+  }
+
+  .q-notch[data-shown] {
+    transform: translate(-50%, 0);
+  }
+
+  /* A notch is one line or it is nothing, and the sentence is long enough to
+     be worth the room on a small phone. It gives some back rather than being
+     clipped by the frame the questions move inside. */
+  @media (max-width: 25rem) {
+    .q-notch {
+      padding-inline: 0.85rem;
+      font-size: 0.75rem;
+    }
+  }
+
+  /* The countdown is the only part that changes, so it is the only part given
+     room of its own: without it the notch would breathe on every tick. */
+  .q-notch time {
+    display: inline-block;
+    min-width: 2.9em;
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@keyframes q-mask-in {
+  0% {
+    opacity: 0;
+    transform: translateY(var(--mask-in-y));
+    filter: blur(var(--mask-in-blur));
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes q-mask-out {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(var(--mask-out-y));
+    filter: blur(var(--mask-out-blur));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /*
+   * Nothing rises, nothing blurs. The line leaving is still taken out of the
+   * flow and still ends invisible, so the two never pile up on each other.
+   */
+  .q-line[data-state='in'],
+  .q-reveal {
+    animation: none !important;
+  }
+
+  .q-line[data-state='out'],
+  .q-vanish {
+    animation: none !important;
+    opacity: 0;
+  }
+
+  .q-notch {
+    transition: none !important;
+  }
+}

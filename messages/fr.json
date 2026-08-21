@@ -327,14 +327,15 @@
         "name": "Votre nom complet",
         "email": "Votre mail",
         "phone": "Votre numéro de téléphone",
-        "guests": "Nombre de voyageurs",
+        "guests": "Combien de voyageurs ?",
         "dial": "Indicatif du pays",
         "dialSearch": "Rechercher un pays",
         "dialCommon": "Les plus habituels",
         "dialAll": "Tous les pays",
         "dialEmpty": "Aucun pays ne correspond.",
-        "minors": "Des enfants de moins de 18 ans ?",
-        "minorsCount": "Combien ?"
+        "minors": "Voyagez-vous avec des enfants mineurs ?",
+        "minorsCount": "Combien de mineurs voyagent avec vous ?",
+        "party": "Voyageurs"
       },
       "placeholders": {
         "name": "Ex: Corine PIERRET",
@@ -369,14 +370,12 @@
         "stayMultiple": "{count, plural, =7 {Sur cette période, les séjours vont du samedi au samedi, par semaines entières.} other {Sur cette période, la durée doit être un multiple de # nuits.}}",
         "holdExpired": "Vos dates n'étaient plus retenues. Choisissez-les à nouveau.",
         "refunded": "Ces dates viennent d'être prises. Votre acompte a été intégralement remboursé et Corine vous écrit.",
-        "paymentPending": "Votre paiement a bien été enregistré. La confirmation vous arrive par email dans quelques instants."
+        "paymentPending": "Votre paiement a bien été enregistré. La confirmation vous arrive par email dans quelques instants.",
+        "minorsChoice": "Dites-nous si des mineurs voyagent avec vous."
       },
       "datesTooltip": "Aucune date n'est sélectionnée",
       "changeDates": "Modifier mes dates",
       "checking": "Vérification...",
-      "minorsNote": "Ils ne paient pas la taxe de séjour.",
-      "minorsFewer": "Un enfant de moins",
-      "minorsMore": "Un enfant de plus",
       "adultsValue": "{count, plural, one {# adulte} other {# adultes}}",
       "partyValue": "{adults, plural, one {# adulte} other {# adultes}} et {minors, plural, one {# enfant} other {# enfants}}",
       "rules": {
@@ -386,16 +385,30 @@
       },
       "quote": {
         "title": "Votre devis",
-        "accommodation": "{count, plural, one {Hébergement, # nuit} other {Hébergement, # nuits}}",
-        "cleaning": "Ménage",
+        "accommodation": "{count, plural, one {# nuit} other {# nuits}}",
+        "cleaning": "Frais de ménage",
         "cleaningFree": "Offert",
-        "touristTax": "{adults, plural, one {Taxe de séjour, # adulte} other {Taxe de séjour, # adultes}} sur {nights, plural, one {# nuit} other {# nuits}}",
-        "touristTaxNote": "Par adulte et par nuit, reversée à la collectivité. Les moins de 18 ans en sont exonérés.",
+        "touristTax": "Taxe de séjour locale",
+        "touristTaxNote": "Cette taxe nationale est reversée à la collectivité de TPM et est calculée sur base du nombre de nuits. Les mineurs en sont exonérés.",
         "total": "Total",
-        "depositNow": "À régler maintenant ({percent} %)",
+        "depositNow": "Acompte à régler aujourd'hui ({percent} %)",
         "balanceLater": "Solde, débité avant l'arrivée",
         "loading": "Calcul du montant...",
-        "unavailable": "Le montant vous sera confirmé par email. Votre demande reste enregistrée."
+        "unavailable": "Le montant vous sera confirmé par email. Votre demande reste enregistrée.",
+        "more": "En savoir plus",
+        "balanceOn": "Solde, débité le <when>{date}</when>",
+        "balanceOnNote": "{count, plural, one {# jour avant votre arrivée} other {# jours avant votre arrivée}}",
+        "guarantee": "Ce tarif est garanti encore",
+        "working": {
+          "price": "Nous calculons le prix",
+          "best": "Nous trouvons le meilleur prix",
+          "dates": "On vérifie les dates"
+        },
+        "expired": {
+          "title": "Ce tarif a expiré",
+          "body": "Votre prix était garanti trente minutes. Il a sûrement évolué depuis : relancez la recherche pour voir le tarif à jour. Toutes vos réponses sont conservées.",
+          "action": "Actualiser le prix"
+        }
       },
       "noscript": {
         "title": "Choisir vos dates",
@@ -430,7 +443,10 @@
         "message": "Bonjour Corine,\nJe souhaite effectuer une réservation pour le logement aux Sablettes, mais j'ai quelques questions s'il vous plaît :\n\n",
         "messageDates": "Bonjour Corine,\nJe souhaite effectuer une réservation du {from} au {to} pour le logement aux Sablettes, mais j'ai quelques questions s'il vous plaît :\n\n",
         "messageGuests": "Bonjour Corine,\nJe souhaite effectuer une réservation pour {guests, plural, one {# personne} other {# personnes}}, du {from} au {to} pour le logement aux Sablettes, mais j'ai quelques questions s'il vous plaît :\n\n"
-      }
+      },
+      "getPrice": "Obtenir le prix",
+      "yes": "Oui",
+      "no": "Non"
     },
     "calendar": {
       "arrival": "arrivée",
