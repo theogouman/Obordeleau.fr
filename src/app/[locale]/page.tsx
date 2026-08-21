@@ -4,7 +4,6 @@ import { About } from '@/components/About';
 import { Amenities } from '@/components/Amenities';
 import { Around } from '@/components/Around';
 import { Gallery } from '@/components/Gallery';
-import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
 import { JsonLd } from '@/components/JsonLd';
 import { MapSection } from '@/components/MapSection';
@@ -37,7 +36,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
   setRequestLocale(locale);
 
   const meta = await getTranslations({ locale, namespace: 'meta' });
-  const nav = await getTranslations({ locale, namespace: 'nav' });
   const amenities = await getTranslations({ locale, namespace: 'amenities' });
 
   const lodging = lodgingJsonLd(locale, {
@@ -50,25 +48,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
     <>
       <JsonLd data={lodging} />
       <JsonLd data={websiteJsonLd(locale, meta('siteName'))} />
-
-      <Header
-        variant="home"
-        labels={{
-          home: nav('home'),
-          gallery: nav('gallery'),
-          amenities: nav('amenities'),
-          around: nav('around'),
-          about: nav('about'),
-          reviews: nav('reviews'),
-          location: nav('location'),
-          book: nav('book'),
-          openMenu: nav('openMenu'),
-          closeMenu: nav('closeMenu'),
-          language: nav('language'),
-          primary: nav('primary'),
-          mobileMenu: nav('mobileMenu'),
-        }}
-      />
 
       <main id="main">
         <Hero />

@@ -38,6 +38,16 @@
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    transition: opacity var(--duration-base) var(--ease-out-quad);
+  }
+
+  /* A language change is a client navigation, so the page it is leaving stays
+     on screen while the next one is fetched. Dimming it says the switch was
+     heard, and turns the swap into one movement instead of a jump cut. The
+     switcher sets the flag, DocumentLocale clears it when the new language is
+     painted, and the duration token is already zero under reduced motion. */
+  html[data-locale-switching] body {
+    opacity: 0.45;
   }
 
   h1,

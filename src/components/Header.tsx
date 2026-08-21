@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Link } from '@/i18n/navigation';
+import { Link, usePathname } from '@/i18n/navigation';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Wordmark } from '@/components/Wordmark';
 
@@ -23,12 +23,22 @@ export type HeaderLabels = {
 
 type Props = {
   labels: HeaderLabels;
-  /** On the home page the nav scrolls to sections, elsewhere it links back. */
-  variant: 'home' | 'inner';
 };
 
-export function Header({ labels, variant }: Props) {
+export function Header({ labels }: Props) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  // On the home page the nav scrolls to sections, elsewhere it links back.
+  // Read from the route rather than passed down, now that the header is
+  // mounted once by the layout instead of once by each page.
+  const variant = pathname === '/' ? 'home' : 'inner';
+
+  // The header no longer unmounts between pages, so the open menu has to be
+  // closed by hand when a link inside it lands somewhere else.
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     if (!open) return;

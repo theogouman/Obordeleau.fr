@@ -28,6 +28,20 @@ type Props = {
  */
 let flagSupport: boolean | undefined;
 
+/**
+ * Where the pill was when the last instance of this switcher was measured.
+ *
+ * A language change replaces the whole locale subtree, so the switcher on
+ * screen afterwards is a new component with new DOM: its pill cannot inherit
+ * the CSS transition of the old one. It inherits the position instead, mounts
+ * exactly where the visitor last saw the pill, and travels from there to the
+ * language that just arrived. The cache is module scope, so it lives as long
+ * as the JavaScript context does, which is precisely as long as there is no
+ * full page load. It is never written on the server: only the measuring
+ * effect writes it, and effects do not run there.
+ */
+let lastGeometry: { x: number; width: number } | null = null;
+
 function supportsFlagEmoji(): boolean {
   if (flagSupport !== undefined) return flagSupport;
 
@@ -63,12 +77,16 @@ function supportsFlagEmoji(): boolean {
 }
 
 /**
- * FR-005: the switcher keeps the visitor on the same page. `usePathname` from
- * next-intl returns the internal pathname, so the localized segment
- * (/avis, /reviews, /bewertungen) is resolved by the Link itself, and the click
- * is handled as a client navigation: the section under the switcher is
- * re-rendered in the new language, the page is never fetched again from zero
- * and the scroll position is kept.
+ * FR-005: the switcher keeps the visitor on the same page, and the switch is a
+ * client navigation. The shell above the [locale] segment is what makes that
+ * possible (see src/app/layout.tsx): the document is never reloaded, so the
+ * page the visitor is leaving stays on screen, dimmed, until the new language
+ * arrives, and the pill then slides across in one movement.
+ *
+ * The pill deliberately does not move on the click. It waits for the language
+ * to actually land, because a navigation that is served from the prefetch
+ * cache commits in a few milliseconds: an optimistic slide would be cut off
+ * halfway by the new subtree almost every time.
  */
 export function LanguageSwitcher({ label, className = '', tone = 'light' }: Props) {
   const pathname = usePathname();
@@ -76,34 +94,39 @@ export function LanguageSwitcher({ label, className = '', tone = 'light' }: Prop
   const active = useLocale() as Locale;
 
   const [, startTransition] = useTransition();
-  const [pending, setPending] = useState<Locale | null>(null);
-  const [flags, setFlags] = useState(false);
-  const [pill, setPill] = useState<{ x: number; width: number } | null>(null);
+  // Both start from the module cache, so an instance that replaces another one
+  // never flashes the language codes before the flags, and never blinks its
+  // pill back to nothing before measuring itself.
+  const [flags, setFlags] = useState(() => flagSupport === true);
+  const [pill, setPill] = useState<{ x: number; width: number } | null>(() => lastGeometry);
   const trackRef = useRef<HTMLDivElement>(null);
-
-  /** The pill leads, the content follows. */
-  const selected = pending ?? active;
 
   useEffect(() => {
     setFlags(supportsFlagEmoji());
   }, []);
 
-  // The navigation landed, so the optimistic choice is now the real one.
-  useEffect(() => {
-    setPending(null);
-  }, [active]);
-
   useEffect(() => {
     let cancelled = false;
 
     const measure = () => {
-      const track = trackRef.current;
-      const option = track?.querySelector<HTMLElement>(`[data-locale="${selected}"]`);
-      if (cancelled || !track || !option) return;
-      setPill({ x: option.offsetLeft, width: option.offsetWidth });
+      const option = trackRef.current?.querySelector<HTMLElement>(`[data-locale="${active}"]`);
+      // The mobile menu is display:none until it opens, and a hidden option
+      // measures zero. That is not a position, so it is neither shown nor
+      // cached; the observer below measures again when the menu opens.
+      if (cancelled || !option || option.offsetWidth === 0) return;
+
+      const next = { x: option.offsetLeft, width: option.offsetWidth };
+      lastGeometry = next;
+      setPill((current) =>
+        current && current.x === next.x && current.width === next.width ? current : next,
+      );
     };
 
-    measure();
+    // One frame at the inherited position first, otherwise the pill is already
+    // at its destination when the browser paints and there is nothing to
+    // animate. On a first load there is nothing to inherit and the pill simply
+    // fades in where it belongs.
+    const frame = requestAnimationFrame(measure);
 
     const observer = new ResizeObserver(measure);
     if (trackRef.current) observer.observe(trackRef.current);
@@ -113,9 +136,10 @@ export function LanguageSwitcher({ label, className = '', tone = 'light' }: Prop
 
     return () => {
       cancelled = true;
+      cancelAnimationFrame(frame);
       observer.disconnect();
     };
-  }, [selected, flags]);
+  }, [active, flags]);
 
   const select = (event: MouseEvent<HTMLAnchorElement>, locale: Locale) => {
     // A middle click or a modified click still belongs to the browser.
@@ -126,7 +150,12 @@ export function LanguageSwitcher({ label, className = '', tone = 'light' }: Prop
     event.preventDefault();
     if (locale === active) return;
 
-    setPending(locale);
+    const root = document.documentElement;
+    root.setAttribute('data-locale-switching', '');
+    // DocumentLocale clears the flag when the new language is painted. This is
+    // only the safety net for a navigation that never lands.
+    window.setTimeout(() => root.removeAttribute('data-locale-switching'), 4000);
+
     startTransition(() => {
       router.replace(pathname, { locale, scroll: false });
     });
@@ -156,7 +185,7 @@ export function LanguageSwitcher({ label, className = '', tone = 'light' }: Prop
           locale={locale}
           hrefLang={locale}
           data-locale={locale}
-          aria-current={locale === selected ? 'true' : undefined}
+          aria-current={locale === active ? 'true' : undefined}
           onClick={(event) => select(event, locale)}
           className="lang-switch__option"
         >

@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { AccentHeading } from '@/components/AccentHeading';
-import { Header } from '@/components/Header';
 import { JsonLd } from '@/components/JsonLd';
 import { RatingBadge } from '@/components/RatingBadge';
 import { ReviewCard, type ReviewCardLabels } from '@/components/ReviewCard';
@@ -58,25 +57,6 @@ export default async function ReviewsPage({ params }: { params: Promise<{ locale
           { name: meta('siteName'), pathname: '/' },
           { name: nav('reviews'), pathname: '/reviews' },
         ])}
-      />
-
-      <Header
-        variant="inner"
-        labels={{
-          home: nav('home'),
-          gallery: nav('gallery'),
-          amenities: nav('amenities'),
-          around: nav('around'),
-          about: nav('about'),
-          reviews: nav('reviews'),
-          location: nav('location'),
-          book: nav('book'),
-          openMenu: nav('openMenu'),
-          closeMenu: nav('closeMenu'),
-          language: nav('language'),
-          primary: nav('primary'),
-          mobileMenu: nav('mobileMenu'),
-        }}
       />
 
       <main id="main">
