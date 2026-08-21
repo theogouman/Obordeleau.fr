@@ -46,43 +46,64 @@
 
   .reviews-veil {
     position: relative;
-    /* How tall the teaser stands, and the band the page reclaims at its foot. */
-    --veil-wall: 68rem;
-    --veil-band: 5rem;
+    /* How much of the wall stays on the page before it dissolves. */
+    --veil-visible: 58rem;
   }
 
-  /* Filled column by column rather than balanced, so the wall is cut at one
-     clean line across the section instead of ending in a staircase. */
+  /*
+   * The wall is laid out in full and balanced, then simply not shown past a
+   * point: the columns are equally deep down to the cut, and the card the cut
+   * lands in is dissolved where it is rather than pushed out of sight. Filling
+   * column by column did the opposite. A card is not allowed to break, so
+   * rather than being cut it moved on to the next column, and each column
+   * stopped early on a ragged edge with the fade hanging over nothing.
+   *
+   * The gradient is a mask on the wall itself and not a curtain over it, so
+   * what fades is the cards and never the page behind them.
+   */
   .reviews-veil .reviews-wall {
-    column-fill: auto;
-    height: var(--veil-wall);
+    max-height: var(--veil-visible);
     overflow: hidden;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 0,
+      #000 66%,
+      rgba(0, 0, 0, 0.4) 86%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      #000 0,
+      #000 66%,
+      rgba(0, 0, 0, 0.4) 86%,
+      transparent 100%
+    );
   }
 
   @media (min-width: 768px) {
     .reviews-veil {
-      --veil-wall: 40rem;
+      --veil-visible: 44rem;
     }
   }
 
   @media (min-width: 1024px) {
     .reviews-veil {
-      --veil-wall: 37rem;
+      --veil-visible: 42rem;
     }
   }
 
+  /* The band the blur works on, tied to the wall so the two always agree. */
   .reviews-veil__blur {
     position: absolute;
     inset-inline: 0;
     bottom: 0;
-    height: var(--veil-band);
+    height: calc(var(--veil-visible) * 0.36);
     pointer-events: none;
   }
 
   /* Three layers rather than one. A single radius reads as a sheet of frosted
      glass laid on top of the wall; radii that grow as their mask starts lower
-     read as the wall itself dissolving. They all start well down the band, so
-     a card caught by the cut still shows its name and its opening line sharp. */
+     read as the wall itself dissolving. */
   .reviews-veil__blur > span {
     position: absolute;
     inset: 0;
@@ -90,24 +111,24 @@
   }
 
   .reviews-veil__blur > span:nth-child(1) {
-    -webkit-backdrop-filter: blur(1.5px);
-    backdrop-filter: blur(1.5px);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 48%);
-    mask-image: linear-gradient(to bottom, transparent 0, #000 48%);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 42%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 42%);
   }
 
   .reviews-veil__blur > span:nth-child(2) {
-    -webkit-backdrop-filter: blur(5px);
-    backdrop-filter: blur(5px);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 40%, #000 76%);
-    mask-image: linear-gradient(to bottom, transparent 40%, #000 76%);
+    -webkit-backdrop-filter: blur(7px);
+    backdrop-filter: blur(7px);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 32%, #000 70%);
+    mask-image: linear-gradient(to bottom, transparent 32%, #000 70%);
   }
 
   .reviews-veil__blur > span:nth-child(3) {
-    -webkit-backdrop-filter: blur(13px);
-    backdrop-filter: blur(13px);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 68%, #000 96%);
-    mask-image: linear-gradient(to bottom, transparent 68%, #000 96%);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 62%, #000 94%);
+    mask-image: linear-gradient(to bottom, transparent 62%, #000 94%);
   }
 
   /* The page itself, so the wall dissolves into the background and not a hole. */
@@ -118,41 +139,42 @@
     background: linear-gradient(
       to bottom,
       rgba(250, 247, 242, 0) 0,
-      rgba(250, 247, 242, 0.5) 58%,
-      var(--color-cream) 96%
+      rgba(250, 247, 242, 0.45) 62%,
+      var(--color-cream) 97%
     );
   }
 
   /*
-   * The call to action. Two lines that have to read as one block, so each is
-   * set at the size that fills the same width: the component works that size
-   * out from the length of the line, and the justification closes whatever the
-   * estimate left. Written as .btn.reviews-cta because the button rules live
-   * in the same layer and come later in the sheet.
+   * The call to action: an eyebrow over a title, which is the pairing the rest
+   * of the site already uses above its headings, in the one place where it has
+   * to fit inside a button.
+   *
+   * Forcing the two lines to exactly the same width was the wrong idea: the
+   * only way to stretch a line to a width it does not have is to open its word
+   * spaces, and four words pulled apart read as a mistake rather than as a
+   * block. The lines are simply centred on each other now, and the eyebrow is
+   * small and letterspaced, which is what makes the pair sit together.
    */
   .btn.reviews-cta {
-    width: 15.5rem;
     flex-direction: column;
-    align-items: stretch;
-    gap: 0.1rem;
-    padding: 0.7rem 1.5rem;
-  }
-
-  .reviews-cta > span {
-    display: block;
-    line-height: 1.18;
-    text-align: justify;
-    -moz-text-align-last: justify;
-    text-align-last: justify;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.8rem 2rem;
+    line-height: 1.15;
   }
 
   .reviews-cta__lead {
+    font-size: 0.75rem;
     font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
     opacity: 0.82;
   }
 
   .reviews-cta__main {
+    font-size: 1.1875rem;
     font-weight: 700;
+    letter-spacing: -0.01em;
   }
 
   .guest-favourite {

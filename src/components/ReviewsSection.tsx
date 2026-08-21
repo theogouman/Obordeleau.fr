@@ -66,10 +66,9 @@ export function ReviewsSection() {
             </div>
           </div>
 
-          {/* Pulled up into the tail of the gradient: the wall stops being
-              readable well before the crop line, and the way out belongs where
-              the reading stops. */}
-          <div className="-mt-6 flex justify-center">
+          {/* Up in the tail of the gradient, where the reading stops, rather
+              than under the cut, which is a good deal lower. */}
+          <div className="-mt-12 flex justify-center md:-mt-14">
             <ReviewsCta lead={t('cta.lead')} main={t('cta.main')} />
           </div>
         </>
