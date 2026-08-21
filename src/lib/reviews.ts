@@ -22,7 +22,11 @@ type RawReview = {
   lang?: string;
   image_filename?: string;
   has_custom_photo?: boolean;
+  source?: string;
 };
+
+/** Where the review was written. Everything without a source came from Airbnb. */
+export type ReviewSource = 'airbnb' | 'booking';
 
 export type Review = {
   id: string;
@@ -34,6 +38,7 @@ export type Review = {
   text: string;
   language: ReviewLanguage;
   avatar: string | null;
+  source: ReviewSource;
 };
 
 const GERMAN_MARKERS =
@@ -106,6 +111,7 @@ function normalize(raw: RawReview, index: number): Review | null {
     language:
       declared && ['fr', 'en', 'de', 'other'].includes(declared) ? declared : detectLanguage(text),
     avatar: hasPhoto ? `/images/reviews/${raw.image_filename}` : null,
+    source: (raw.source ?? '').trim().toLowerCase() === 'booking' ? 'booking' : 'airbnb',
   };
 }
 

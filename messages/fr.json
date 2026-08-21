@@ -245,7 +245,8 @@
       "ratingAria": "{rating} étoiles sur 5",
       "readMore": "Lire plus",
       "readLess": "Réduire",
-      "originalLanguage": "Avis rédigé en {language}"
+      "originalLanguage": "Avis rédigé en {language}",
+      "stayTooltip": "{name} a laissé une note de {rating}/5 sur {source} suite à son séjour en {month}"
     },
     "languages": {
       "fr": "français",
@@ -268,6 +269,22 @@
       "titleTail": "",
       "intro": "Nous importons tous les avis de nos précédents voyageurs, les bons comme les mauvais.",
       "backHome": "Retour à l'accueil"
+    },
+    "filters": {
+      "legend": "Trier et filtrer les avis",
+      "recent": "3 derniers mois",
+      "lowest": "Les moins bons avis",
+      "highest": "Les meilleurs avis",
+      "platform": "Plateforme",
+      "platformMenu": "Choisir la plateforme",
+      "platformOpen": "Ouvrir le choix de plateforme",
+      "airbnb": "Airbnb",
+      "booking": "Booking",
+      "clear": "Tout afficher",
+      "result": "{count} avis affichés",
+      "empty": "Aucun avis ne correspond à ce filtre.",
+      "from": "De",
+      "or": "ou"
     }
   },
   "map": {

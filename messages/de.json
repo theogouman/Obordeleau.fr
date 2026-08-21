@@ -245,7 +245,8 @@
       "ratingAria": "{rating} von 5 Sternen",
       "readMore": "Mehr lesen",
       "readLess": "Weniger anzeigen",
-      "originalLanguage": "Bewertung auf {language} verfasst"
+      "originalLanguage": "Bewertung auf {language} verfasst",
+      "stayTooltip": "{name} hat nach dem Aufenthalt im {month} auf {source} {rating}/5 gegeben"
     },
     "languages": {
       "fr": "Französisch",
@@ -268,6 +269,22 @@
       "titleTail": "",
       "intro": "Wir übernehmen alle Bewertungen unserer bisherigen Gäste, die guten wie die schlechten.",
       "backHome": "Zurück zur Startseite"
+    },
+    "filters": {
+      "legend": "Bewertungen sortieren und filtern",
+      "recent": "Letzte 3 Monate",
+      "lowest": "Schwächste Bewertungen",
+      "highest": "Beste Bewertungen",
+      "platform": "Plattform",
+      "platformMenu": "Plattform wählen",
+      "platformOpen": "Plattformauswahl öffnen",
+      "airbnb": "Airbnb",
+      "booking": "Booking",
+      "clear": "Alle anzeigen",
+      "result": "{count} Bewertungen angezeigt",
+      "empty": "Keine Bewertung passt zu diesem Filter.",
+      "from": "Von",
+      "or": "oder"
     }
   },
   "map": {

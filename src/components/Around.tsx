@@ -35,7 +35,7 @@ export function Around() {
           accent={t('titleAccent')}
           tail={t('titleTail')}
         />
-        <p className="mt-4 text-lg text-ink-soft">{t('intro')}</p>
+        <p className="lead mt-4 text-lg text-ink-soft">{t('intro')}</p>
       </Reveal>
 
       <div className="mt-10">

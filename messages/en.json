@@ -245,7 +245,8 @@
       "ratingAria": "{rating} stars out of 5",
       "readMore": "Read more",
       "readLess": "Show less",
-      "originalLanguage": "Review written in {language}"
+      "originalLanguage": "Review written in {language}",
+      "stayTooltip": "{name} gave {rating}/5 on {source} after a stay in {month}"
     },
     "languages": {
       "fr": "French",
@@ -268,6 +269,22 @@
       "titleTail": "say",
       "intro": "We import every review our past guests left, the good ones and the bad ones.",
       "backHome": "Back to the home page"
+    },
+    "filters": {
+      "legend": "Sort and filter the reviews",
+      "recent": "Last 3 months",
+      "lowest": "Lowest rated",
+      "highest": "Highest rated",
+      "platform": "Platform",
+      "platformMenu": "Choose a platform",
+      "platformOpen": "Open the platform choice",
+      "airbnb": "Airbnb",
+      "booking": "Booking",
+      "clear": "Show everything",
+      "result": "{count} reviews shown",
+      "empty": "No review matches this filter.",
+      "from": "From",
+      "or": "or"
     }
   },
   "map": {

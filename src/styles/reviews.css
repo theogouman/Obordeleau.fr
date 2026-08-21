@@ -241,8 +241,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    font-size: 3.25rem;
+    gap: 0.625rem;
+    font-size: 4rem;
     font-weight: 700;
     line-height: 1;
     letter-spacing: -0.02em;
@@ -250,23 +250,27 @@
     font-feature-settings: 'tnum' 1;
   }
 
+  /* The shadow is on the leaves and not on a box behind them: drop-shadow
+     follows the alpha of the image, so the branch lifts off the cream instead
+     of sitting in a rectangle. */
   .guest-favourite__laurel {
     width: auto;
-    height: 4.25rem;
+    height: 5.25rem;
     object-fit: contain;
+    filter: drop-shadow(0 2px 3px rgba(58, 42, 38, 0.22));
   }
 
   .guest-favourite__title {
     margin-top: 0.6rem;
-    font-size: 1.0625rem;
+    font-size: 1.1875rem;
     font-weight: 700;
     color: var(--color-ink);
   }
 
   .guest-favourite__body {
     margin-top: 0.25rem;
-    max-width: 22rem;
-    font-size: 0.9375rem;
+    max-width: 24rem;
+    font-size: 1rem;
     font-weight: 500;
     line-height: 1.25;
     color: var(--color-ink-soft);
@@ -275,12 +279,210 @@
 
   @media (min-width: 768px) {
     .guest-favourite__score {
-      font-size: 3.75rem;
-      gap: 0.75rem;
+      font-size: 4.5rem;
+      gap: 0.875rem;
     }
 
     .guest-favourite__laurel {
-      height: 5rem;
+      height: 6rem;
     }
+  }
+
+  /*
+   * The filter bar. Three chips that isolate a slice of the wall, and the
+   * platform, which is a choice between two and so is a menu rather than a
+   * chip. The three are exclusive of each other, the platform is not: it
+   * narrows whatever the chips have already picked.
+   */
+  .reviews-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 2.75rem;
+    padding-inline: 1rem;
+    border: 1px solid rgba(58, 42, 38, 0.14);
+    border-radius: var(--radius-pill);
+    background-color: var(--color-shell);
+    color: var(--color-ink);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    transition:
+      transform var(--duration-fast) var(--ease-out-quad),
+      background-color var(--duration-fast) var(--ease-out-quad),
+      border-color var(--duration-fast) var(--ease-out-quad),
+      color var(--duration-fast) var(--ease-out-quad);
+  }
+
+  .filter-chip:hover {
+    transform: translateY(calc(-1 * var(--lift-sm)));
+  }
+
+  .filter-chip[aria-pressed='true'] {
+    background-color: var(--color-raspberry);
+    border-color: var(--color-raspberry);
+    color: #ffffff;
+  }
+
+  .filter-chip--clear {
+    border-style: dashed;
+    color: var(--color-ink-soft);
+  }
+
+  .reviews-filters__count {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--color-ink-soft);
+  }
+
+  /* The platform chip keeps its closed footprint in the row while the panel it
+     becomes grows out of its top left corner, over the wall and not into it. */
+  .reviews-source {
+    --morph-w-closed: 13rem;
+    --morph-h-closed: 2.75rem;
+    --morph-w-open: 15rem;
+    --morph-h-open: 10rem;
+    position: relative;
+    width: var(--morph-w-closed);
+    height: var(--morph-h-closed);
+  }
+
+  .reviews-source__morph {
+    position: absolute;
+    inset: 0 auto auto 0;
+    z-index: 20;
+    border: 1px solid rgba(58, 42, 38, 0.14);
+    background-color: var(--color-shell);
+    box-shadow: var(--shadow-card);
+  }
+
+  .reviews-source__trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding-inline: 1rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .reviews-source__trigger[data-active='true'] {
+    color: var(--color-raspberry-ink);
+    font-weight: 600;
+  }
+
+  .reviews-source__menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.625rem;
+  }
+
+  .reviews-source__title {
+    padding-inline: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
+
+  .reviews-source__option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 2.25rem;
+    padding-inline: 0.5rem;
+    border-radius: 0.625rem;
+    text-align: start;
+    font-size: 0.9375rem;
+    transition: background-color var(--duration-fast) var(--ease-out-quad);
+  }
+
+  .reviews-source__option:hover {
+    background-color: var(--color-sand);
+  }
+
+  .reviews-source__option[aria-checked='true'] {
+    background-color: var(--color-sunset-100);
+    font-weight: 600;
+  }
+
+  .reviews-source__option--plain {
+    color: var(--color-ink-soft);
+    font-size: 0.875rem;
+  }
+
+  /*
+   * Filtering rearranges, it does not blink. A card that is leaving fades
+   * where it stands, so nothing moves under a card still being read; the ones
+   * that stay are carried to their new place by the browser after the list has
+   * changed; the ones that arrive come up into the gap. The travel itself is
+   * an inline transform written by the page, because only the page knows how
+   * far each card has to go.
+   */
+  .reviews-columns__item[data-leaving='true'] {
+    opacity: 0;
+    transform: scale(0.98);
+    pointer-events: none;
+    transition:
+      opacity 140ms cubic-bezier(0.4, 0, 1, 1),
+      transform 140ms cubic-bezier(0.4, 0, 1, 1);
+  }
+
+  .reviews-columns__item[data-entering] {
+    animation: review-in 200ms cubic-bezier(0.23, 1, 0.32, 1) both;
+  }
+
+  /*
+   * The card tooltip. It opens below the header and not above it, which is the
+   * one difference from snippet 17: above, the cards on the first row would
+   * hang their tooltip outside the wall, and the wall is clipped on the home
+   * page.
+   */
+  .review-tip-wrap {
+    position: relative;
+  }
+
+  .t-tt.review-tip {
+    top: calc(100% + 8px);
+    bottom: auto;
+    transform-origin: 50% 0;
+    width: max-content;
+    max-width: 17rem;
+    white-space: normal;
+    font-size: 0.8125rem;
+    line-height: 1.35;
+    text-align: center;
+  }
+}
+
+@keyframes review-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reviews-columns__item[data-leaving='true'],
+  .reviews-columns__item[data-entering] {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
   }
 }

@@ -18,7 +18,7 @@ export default function LocaleNotFound() {
             tail={t('titleTail')}
             className="text-4xl md:text-6xl"
           />
-          <p className="mt-4 text-lg text-ink-soft">{t('body')}</p>
+          <p className="lead mt-4 text-lg text-ink-soft">{t('body')}</p>
           <Link href="/" className="btn btn-primary mt-8">
             {t('cta')}
           </Link>

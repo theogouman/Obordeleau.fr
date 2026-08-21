@@ -30,7 +30,7 @@ export function Hero() {
             className="mt-4 text-4xl md:text-6xl"
           />
 
-          <p className="mt-5 max-w-xl text-lg text-ink-soft">{t('subtitle')}</p>
+          <p className="lead mt-5 max-w-xl text-lg text-ink-soft">{t('subtitle')}</p>
 
           <p className="mt-5 inline-flex items-center gap-2 rounded-[var(--radius-pill)] border border-[rgba(206,66,87,0.35)] px-3 py-1 text-sm text-raspberry-ink">
             <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true" focusable="false">

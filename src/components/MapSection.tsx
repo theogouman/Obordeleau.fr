@@ -21,7 +21,7 @@ export function MapSection() {
             accent={t('titleAccent')}
             tail={t('titleTail')}
           />
-          <p className="mt-4 text-lg text-ink-soft">{t('intro')}</p>
+          <p className="lead mt-4 text-lg text-ink-soft">{t('intro')}</p>
 
           <h3 className="mt-6 text-sm uppercase tracking-[0.2em] text-ink-soft">
             {t('addressLabel')}

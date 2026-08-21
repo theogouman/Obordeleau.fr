@@ -1,8 +1,10 @@
 'use client';
 
 import Image from 'next/image';
+import { useLocale } from 'next-intl';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Stars } from '@/components/Stars';
+import { localeTags, type Locale } from '@/i18n/routing';
 import type { Review } from '@/lib/reviews';
 
 export type ReviewCardLabels = {
@@ -11,6 +13,9 @@ export type ReviewCardLabels = {
   readLess: string;
   originalLanguage: string;
   languageNames: Record<string, string>;
+  /** {name} {rating} {source} {month}, the sentence the header carries. */
+  stayTooltip: string;
+  sourceNames: Record<string, string>;
 };
 
 type Props = {
@@ -33,7 +38,18 @@ const LOCALE_TAGS: Record<string, string> = {
   other: 'fr-FR',
 };
 
+/** The month of the stay, in the language of the page rather than of the export. */
+function stayMonth(dateIso: string, fallback: string, tag: string): string {
+  if (!dateIso) return fallback;
+  const date = new Date(`${dateIso}T00:00:00Z`);
+  if (Number.isNaN(date.getTime())) return fallback;
+  return new Intl.DateTimeFormat(tag, { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(
+    date,
+  );
+}
+
 export function ReviewCard({ review, labels, clampThreshold = 260, teaser = false }: Props) {
+  const locale = useLocale() as Locale;
   const [expanded, setExpanded] = useState(false);
   const textId = useId();
   const long = review.text.length > clampThreshold;
@@ -83,9 +99,27 @@ export function ReviewCard({ review, labels, clampThreshold = 260, teaser = fals
 
   const languageName = labels.languageNames[review.language] ?? labels.languageNames.other;
 
+  /*
+   * The whole header is one hover target, because the name, the face, the date
+   * and the stars are four halves of the same sentence: who wrote it, where,
+   * and when they stayed. The tooltip opens below and not above, so it stays
+   * inside the card whatever row the card is on.
+   */
+  const pageTag = localeTags[locale] ?? 'fr-FR';
+  const tooltip = labels.stayTooltip
+    .replace('{name}', review.firstName)
+    .replace('{rating}', review.rating.toLocaleString(pageTag))
+    .replace('{source}', labels.sourceNames[review.source] ?? review.source)
+    .replace('{month}', stayMonth(review.dateIso, review.dateLabel, pageTag));
+
+  // The marker only earns its place when the review is not in the language the
+  // visitor is already reading. On the French page, "FR" on a French review
+  // says nothing.
+  const showLanguage = review.language !== 'other' && review.language !== locale;
+
   return (
     <article className="card flex h-full flex-col p-5">
-      <header className="flex items-center gap-3">
+      <header className="t-tt-wrap review-tip-wrap flex items-center gap-3">
         {review.avatar ? (
           <Image
             src={review.avatar}
@@ -118,6 +152,13 @@ export function ReviewCard({ review, labels, clampThreshold = 260, teaser = fals
           label={labels.ratingAria.replace('{rating}', String(review.rating))}
           className="ms-auto shrink-0"
         />
+
+        {/* Pointer only: the same sentence is in the accessibility tree just
+            below, where a screen reader reads it in the order of the card. */}
+        <span className="t-tt review-tip" role="tooltip" aria-hidden="true">
+          {tooltip}
+        </span>
+        <span className="visually-hidden">{tooltip}</span>
       </header>
 
       <div
@@ -153,14 +194,19 @@ export function ReviewCard({ review, labels, clampThreshold = 260, teaser = fals
           <span />
         )}
 
-        <span className="text-ink-soft" title={labels.originalLanguage.replace('{language}', languageName)}>
-          <span className="visually-hidden">
-            {labels.originalLanguage.replace('{language}', languageName)}
+        {showLanguage ? (
+          <span
+            className="text-ink-soft"
+            title={labels.originalLanguage.replace('{language}', languageName)}
+          >
+            <span className="visually-hidden">
+              {labels.originalLanguage.replace('{language}', languageName)}
+            </span>
+            <span aria-hidden="true" lang={LOCALE_TAGS[review.language]}>
+              {review.language.toUpperCase()}
+            </span>
           </span>
-          <span aria-hidden="true" lang={LOCALE_TAGS[review.language]}>
-            {review.language === 'other' ? '' : review.language.toUpperCase()}
-          </span>
-        </span>
+        ) : null}
       </footer>
     </article>
   );

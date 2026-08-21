@@ -3,8 +3,8 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { AccentHeading } from '@/components/AccentHeading';
 import { JsonLd } from '@/components/JsonLd';
 import { GuestFavourite } from '@/components/GuestFavourite';
-import { ReviewCard, type ReviewCardLabels } from '@/components/ReviewCard';
-import { ReviewsWall } from '@/components/ReviewsWall';
+import { type ReviewCardLabels } from '@/components/ReviewCard';
+import { ReviewsBrowser, type ReviewFilterLabels } from '@/components/ReviewsBrowser';
 import { Section } from '@/components/Section';
 import { Link } from '@/i18n/navigation';
 import type { Locale } from '@/i18n/routing';
@@ -49,6 +49,33 @@ export default async function ReviewsPage({ params }: { params: Promise<{ locale
       de: t('languages.de'),
       other: t('languages.other'),
     },
+    stayTooltip: t('card.stayTooltip', {
+      name: '{name}',
+      rating: '{rating}',
+      source: '{source}',
+      month: '{month}',
+    }),
+    sourceNames: {
+      airbnb: t('filters.airbnb'),
+      booking: t('filters.booking'),
+    },
+  };
+
+  const filters: ReviewFilterLabels = {
+    legend: t('filters.legend'),
+    recent: t('filters.recent'),
+    lowest: t('filters.lowest'),
+    highest: t('filters.highest'),
+    platform: t('filters.platform'),
+    platformMenu: t('filters.platformMenu'),
+    platformOpen: t('filters.platformOpen'),
+    from: t('filters.from'),
+    or: t('filters.or'),
+    airbnb: t('filters.airbnb'),
+    booking: t('filters.booking'),
+    clear: t('filters.clear'),
+    result: t('filters.result', { count: '{count}' }),
+    empty: t('filters.empty'),
   };
 
   return (
@@ -74,7 +101,7 @@ export default async function ReviewsPage({ params }: { params: Promise<{ locale
                 tail={t('page.titleTail')}
                 className="text-4xl md:text-6xl"
               />
-              <p className="mt-4 text-lg text-ink-soft">{t('page.intro')}</p>
+              <p className="lead mt-4 text-lg text-ink-soft">{t('page.intro')}</p>
             </div>
 
             <GuestFavourite className="lg:shrink-0" />
@@ -83,12 +110,9 @@ export default async function ReviewsPage({ params }: { params: Promise<{ locale
           {hasReviews ? (
             /* Three columns that are containers of their own: opening a review
                pushes down the ones under it in that column, and leaves both
-               the other columns untouched. */
-            <ReviewsWall className="mt-12">
-              {allReviews.map((review) => (
-                <ReviewCard key={review.id} review={review} labels={labels} />
-              ))}
-            </ReviewsWall>
+               the other columns untouched. The filters, the order and the move
+               from one order to the next belong to the browser. */
+            <ReviewsBrowser reviews={allReviews} labels={labels} filters={filters} />
           ) : (
             <p className="mt-8 rounded-[var(--radius-card)] border border-dashed border-[rgba(58,42,38,0.25)] p-6 text-ink-soft">
               {t('empty')}

@@ -1,9 +1,16 @@
-import { Children, isValidElement, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 const COLUMN_COUNT = 3;
 
+export type WallItem = {
+  /** Stable across a filter change: the move animation is keyed on it. */
+  id: string;
+  node: ReactNode;
+  leaving?: boolean;
+};
+
 type Props = {
-  children: ReactNode;
+  items: WallItem[];
   className?: string;
 };
 
@@ -19,12 +26,11 @@ type Props = {
  * that grows lengthens its own column and its neighbours never move.
  *
  * The cards are dealt out in contiguous slices rather than one in three, so a
- * column reads top to bottom in the order the reviews were written, which is
- * also the order they come back in when the three columns collapse into one.
+ * column reads top to bottom in the order they were given in, which is also
+ * the order they come back in when the three columns collapse into one.
  */
-export function ReviewsWall({ children, className = '' }: Props) {
-  const items = Children.toArray(children).filter(isValidElement);
-  const columns: (typeof items)[] = [];
+export function ReviewsWall({ items, className = '' }: Props) {
+  const columns: WallItem[][] = [];
 
   let taken = 0;
   for (let index = 0; index < COLUMN_COUNT; index += 1) {
@@ -40,8 +46,14 @@ export function ReviewsWall({ children, className = '' }: Props) {
       {columns.map((column, index) => (
         <div className="reviews-columns__col" key={`col-${index}`}>
           {column.map((item) => (
-            <div className="reviews-columns__item" role="listitem" key={item.key}>
-              {item}
+            <div
+              className="reviews-columns__item"
+              role="listitem"
+              key={item.id}
+              data-review={item.id}
+              data-leaving={item.leaving ? 'true' : undefined}
+            >
+              {item.node}
             </div>
           ))}
         </div>

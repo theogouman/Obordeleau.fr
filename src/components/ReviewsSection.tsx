@@ -20,6 +20,16 @@ export function useReviewCardLabels(): ReviewCardLabels {
       de: t('languages.de'),
       other: t('languages.other'),
     },
+    stayTooltip: t('card.stayTooltip', {
+      name: '{name}',
+      rating: '{rating}',
+      source: '{source}',
+      month: '{month}',
+    }),
+    sourceNames: {
+      airbnb: t('filters.airbnb'),
+      booking: t('filters.booking'),
+    },
   };
 }
 

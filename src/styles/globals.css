@@ -122,6 +122,26 @@
     }
   }
 
+  /*
+   * The sentence under a title.
+   *
+   * A paragraph as wide as the page breaks where its box ends, which is how a
+   * first line of twelve words comes to sit over a second of two: the last
+   * line keeps whatever the others left it. Balanced wrapping asks the
+   * browser to spread the words evenly over the lines instead, and the measure
+   * is capped so the block reads as belonging to the title above it rather
+   * than running past it. A width utility on the element still wins over the
+   * cap, for the places where the title is narrower still.
+   *
+   * Applies to lead paragraphs only. A body of several paragraphs is not
+   * balanced: browsers stop balancing past a handful of lines anyway, and a
+   * long text reads better on a full measure.
+   */
+  .lead {
+    max-width: 46ch;
+    text-wrap: balance;
+  }
+
   .accent-word {
     font-style: italic;
     color: var(--color-raspberry-ink);
