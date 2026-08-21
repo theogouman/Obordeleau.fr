@@ -284,7 +284,7 @@
     "titleAccent": "come",
     "titleTail": "?",
     "channels": {
-      "alsoOn": "The studio is also listed on",
+      "alsoOn": "Also available on",
       "airbnb": {
         "title": "On Airbnb",
         "body": "The listing and its reviews are there under your usual account.",
@@ -355,7 +355,8 @@
         "notConfigured": "Online booking is not live yet. You can go through Airbnb or Booking in the meantime.",
         "server": "The booking failed. You can try again, or go through Airbnb or Booking in the meantime."
       },
-      "datesTooltip": "No dates are selected yet"
+      "datesTooltip": "No dates are selected yet",
+      "changeDates": "Change my dates"
     },
     "calendar": {
       "arrival": "arrival",

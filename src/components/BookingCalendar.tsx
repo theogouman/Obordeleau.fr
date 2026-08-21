@@ -14,7 +14,26 @@ import { addDays } from '@/lib/dates';
  *
  * Everything here is a hint. The server re-applies the whole rule on submit,
  * because a night can go while the visitor is choosing.
+ *
+ * Paging between months is transitions.dev page side by side (08), on the
+ * values that snippet ships: the month on screen leaves in the direction of
+ * travel while it fades and blurs, and only once it is gone does the next one
+ * arrive from the other side.
  */
+
+const MONTH_EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+/** --page-slide-distance */
+const MONTH_SHIFT = 8;
+/** --page-blur */
+const MONTH_BLUR = 3;
+/** --page-slide-dur and --page-fade-dur, which the snippet keeps equal. */
+const MONTH_DUR = 250;
+
+function reducedMotion(): boolean {
+  return (
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+}
 
 type Props = {
   blocked: ReadonlySet<string>;
@@ -96,6 +115,9 @@ export function BookingCalendar({
   const [moveFocus, setMoveFocus] = useState(false);
   const tooltipId = useId();
   const gridRef = useRef<HTMLDivElement>(null);
+  const paging = useRef<1 | -1>(1);
+  const sliding = useRef(false);
+  const paged = useRef(false);
 
   const monthName = useMemo(
     () => new Intl.DateTimeFormat(localeTag, { month: 'long', year: 'numeric', timeZone: 'UTC' }),
@@ -166,13 +188,44 @@ export function BookingCalendar({
    * Paging with the arrows has to carry the focused date along, otherwise no
    * day holds the single tab stop and the grid drops out of the tab order.
    */
-  function goToMonth(offset: number) {
+  function showMonth(offset: number) {
     const next = addMonths(visibleMonth, offset);
     setVisibleMonth(next);
 
     if (focused >= next && focused < addMonths(next, 1)) return;
     const target = next > firstArrival ? next : firstArrival;
     setFocused(target < windowEnd ? target : addDays(windowEnd, -1));
+  }
+
+  function goToMonth(offset: number) {
+    const grid = gridRef.current;
+    if (!grid || reducedMotion()) {
+      showMonth(offset);
+      return;
+    }
+
+    if (sliding.current) return;
+    sliding.current = true;
+    paged.current = true;
+    paging.current = offset > 0 ? 1 : -1;
+
+    grid.getAnimations().forEach((animation) => animation.cancel());
+    const exit = grid.animate(
+      [
+        { transform: 'translateX(0)', opacity: 1, filter: 'blur(0px)' },
+        {
+          transform: `translateX(${-MONTH_SHIFT * paging.current}px)`,
+          opacity: 0,
+          filter: `blur(${MONTH_BLUR}px)`,
+        },
+      ],
+      { duration: MONTH_DUR, easing: MONTH_EASE, fill: 'forwards' },
+    );
+
+    exit.onfinish = () => {
+      sliding.current = false;
+      showMonth(offset);
+    };
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
@@ -206,6 +259,31 @@ export function BookingCalendar({
       current < startOfMonth(firstArrival) ? startOfMonth(firstArrival) : current,
     );
   }, [firstArrival, focused]);
+
+  // The month that has just arrived, entering from the side the travel came
+  // from. Keyboard paging is deliberately left out: it moves the focus at the
+  // same time, and a focus landing inside a blurred, half moved grid is worse
+  // than no movement at all.
+  useEffect(() => {
+    if (!paged.current) return;
+    paged.current = false;
+
+    const grid = gridRef.current;
+    if (!grid || reducedMotion()) return;
+
+    grid.getAnimations().forEach((animation) => animation.cancel());
+    grid.animate(
+      [
+        {
+          transform: `translateX(${MONTH_SHIFT * paging.current}px)`,
+          opacity: 0,
+          filter: `blur(${MONTH_BLUR}px)`,
+        },
+        { transform: 'translateX(0)', opacity: 1, filter: 'blur(0px)' },
+      ],
+      { duration: MONTH_DUR, easing: MONTH_EASE, fill: 'both' },
+    );
+  }, [visibleMonth]);
 
   // Only chase the focus after a key press, never on first paint: landing on a
   // date on load would drag the page down to the calendar.

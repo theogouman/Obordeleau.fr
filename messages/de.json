@@ -284,7 +284,7 @@
     "titleAccent": "kommen",
     "titleTail": "?",
     "channels": {
-      "alsoOn": "Das Inserat finden Sie auch auf",
+      "alsoOn": "Ebenfalls verfügbar auf",
       "airbnb": {
         "title": "Auf Airbnb",
         "body": "Das Inserat und seine Bewertungen finden Sie über Ihr gewohntes Konto.",
@@ -355,7 +355,8 @@
         "notConfigured": "Die Onlinebuchung ist noch nicht aktiv. Sie können solange über Airbnb oder Booking gehen.",
         "server": "Die Buchung hat nicht geklappt. Sie können es erneut versuchen oder solange über Airbnb oder Booking gehen."
       },
-      "datesTooltip": "Es ist noch kein Zeitraum gewählt"
+      "datesTooltip": "Es ist noch kein Zeitraum gewählt",
+      "changeDates": "Daten ändern"
     },
     "calendar": {
       "arrival": "Anreise",

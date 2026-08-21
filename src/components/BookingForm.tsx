@@ -71,6 +71,21 @@ const STEP_IN_MS = 300;
  */
 const FRAME_INSET_Y = 8;
 
+/**
+ * The two controls in the top corners of the card: a white ground and a soft
+ * outline, small enough that neither of them competes with the question. The
+ * row stretches them, so the one carrying two lines and the one carrying a
+ * single word still come out the same height.
+ */
+const CHIP =
+  'inline-flex items-center gap-1.5 rounded-[10px] border border-[rgba(58,42,38,0.14)] bg-shell px-2.5 py-1.5 text-xs text-ink transition-colors hover:border-ink';
+
+/** The chip is a glance, not a sentence: 08/07/2026, not 8 juillet 2026. */
+function shortDate(isoDate: string | null): string {
+  if (!isoDate) return '';
+  return `${isoDate.slice(8, 10)}/${isoDate.slice(5, 7)}/${isoDate.slice(0, 4)}`;
+}
+
 const EMPTY_BLOCKED: ReadonlySet<string> = new Set<string>();
 
 export function BookingForm({
@@ -96,10 +111,10 @@ export function BookingForm({
   const [phone, setPhone] = useState('');
   const [guests, setGuests] = useState<number | null>(null);
   const [guestFocus, setGuestFocus] = useState(0);
-  // Set while a single answer is being corrected from the recap: the recap is
-  // then where Continuer and Retour both lead, so nothing already answered is
-  // asked twice.
-  const [correcting, setCorrecting] = useState(false);
+  // The step to come back to once the question now on screen has been dealt
+  // with. Set when a single answer is reopened, from the recap or from the
+  // dates chip, so nothing already answered is ever asked twice.
+  const [returnTo, setReturnTo] = useState<number | null>(null);
 
   const [state, setState] = useState<'editing' | 'sending' | 'booked'>('editing');
   const [booked, setBooked] = useState<{ reference: string; from: string; to: string } | null>(null);
@@ -304,9 +319,10 @@ export function BookingForm({
 
   function next() {
     if (!validateStep()) return;
-    if (correcting) {
-      setCorrecting(false);
-      goTo(RECAP);
+    if (returnTo !== null) {
+      const target = returnTo;
+      setReturnTo(null);
+      goTo(target);
       return;
     }
     goTo(Math.min(stepIndex + 1, STEPS.length - 1));
@@ -314,17 +330,18 @@ export function BookingForm({
 
   /** The one control in the corner of the card. */
   function back() {
-    if (correcting) {
-      setCorrecting(false);
-      goTo(RECAP);
+    if (returnTo !== null) {
+      const target = returnTo;
+      setReturnTo(null);
+      goTo(target);
       return;
     }
     goBack(stepIndex - 1);
   }
 
-  /** A question reopened from the recap, and returning straight to it. */
-  function correct(index: number) {
-    setCorrecting(true);
+  /** A question reopened on its own, and returning to wherever it was left. */
+  function correct(index: number, from = stepIndex) {
+    setReturnTo(from);
     goBack(index);
   }
 
@@ -334,7 +351,7 @@ export function BookingForm({
     setGuests(count);
     setGuestFocus(count - 1);
     setStepError(null);
-    setCorrecting(false);
+    setReturnTo(null);
     window.setTimeout(() => goTo(RECAP), 160);
   }
 
@@ -408,7 +425,7 @@ export function BookingForm({
         setArrival(null);
         setDeparture(null);
         setState('editing');
-        setCorrecting(false);
+        setReturnTo(null);
         goTo(0);
         void loadAvailability();
         return;
@@ -743,17 +760,33 @@ export function BookingForm({
       </div>
 
       {/* Back belongs to the card, not to the question: it stays put while the
-          questions move underneath it. */}
-      {stepIndex > 0 || correcting ? (
-        <div className="mb-6">
-          <button
-            type="button"
-            onClick={back}
-            className="inline-flex items-center gap-1.5 text-sm text-ink-soft transition-colors hover:text-ink"
-          >
-            <Icon name="returnArrow" className="h-3 w-auto" />
+          questions move underneath it. The dates chosen sit opposite it, so
+          they are readable and reopenable from every question. */}
+      {stepIndex > 0 || returnTo !== null ? (
+        <div className="mb-6 flex items-stretch justify-between gap-3">
+          <button type="button" onClick={back} className={CHIP}>
+            <Icon name="returnArrow" className="h-3 w-auto shrink-0" />
             {t('back')}
           </button>
+
+          {stepIndex > 0 && nights > 0 ? (
+            <button
+              type="button"
+              onClick={() => correct(0)}
+              className={`${CHIP} text-end leading-tight`}
+            >
+              <Icon name="calendar" className="h-3.5 w-auto shrink-0" />
+              <span className="block">
+                <span className="block">
+                  {t('range', {
+                    from: shortDate(arrival),
+                    to: shortDate(departure),
+                  })}
+                </span>
+                <span className="block text-[0.6875rem] text-ink-soft">{t('changeDates')}</span>
+              </span>
+            </button>
+          ) : null}
         </div>
       ) : null}
 
@@ -764,12 +797,16 @@ export function BookingForm({
         <div ref={stageRef}>{stepContent()}</div>
       </div>
 
-      <ChannelChoice
-        locale={locale}
-        airbnbUrl={airbnbUrl}
-        bookingUrl={bookingUrl}
-        calendarId="booking-form"
-      />
+      {/* Once a stay is picked the visitor is booking here: the two platforms
+          would only be a way out of a form they have started. */}
+      {nights < 1 ? (
+        <ChannelChoice
+          locale={locale}
+          airbnbUrl={airbnbUrl}
+          bookingUrl={bookingUrl}
+          calendarId="booking-form"
+        />
+      ) : null}
     </div>
   );
 }
@@ -859,6 +896,11 @@ function Question({
  * ground of its own so it reads as a key on the frame rather than as a word in
  * the sentence.
  */
+/**
+ * One answer, in its own frame: the question on a filled band at the top, a
+ * rule, then the answer underneath with the control that reopens it on the
+ * same line, so the eye reads the answer and the way to change it together.
+ */
 function RecapRow({
   label,
   value,
@@ -872,20 +914,20 @@ function RecapRow({
 }) {
   return (
     <div className="overflow-hidden rounded-[var(--radius-card)] border border-[rgba(58,42,38,0.14)]">
-      <dt className="flex items-center justify-between gap-3 py-2 pe-2 ps-4 text-xs uppercase tracking-[0.14em] text-ink-soft">
+      <dt className="bg-sand px-4 py-2 text-xs uppercase tracking-[0.14em] text-ink-soft">
         {label}
+      </dt>
+      <dd className="flex items-center justify-between gap-3 border-t border-[rgba(58,42,38,0.12)] py-2 pe-2 ps-4">
+        <span className="min-w-0 truncate font-medium">{value}</span>
         <button
           type="button"
           onClick={onEdit}
           aria-label={`${editLabel} : ${label}`}
           title={editLabel}
-          className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] bg-sand text-ink-soft transition-colors hover:bg-[rgba(206,66,87,0.12)] hover:text-raspberry-ink"
+          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] border border-[rgba(58,42,38,0.18)] bg-sand text-ink-soft transition-colors hover:border-ink hover:text-ink"
         >
-          <Icon name="pencilSquare" className="h-3.5 w-auto" />
+          <Icon name="pencilSquare" className="h-4 w-auto" />
         </button>
-      </dt>
-      <dd className="truncate border-t border-[rgba(58,42,38,0.12)] px-4 py-3 font-medium">
-        {value}
       </dd>
     </div>
   );
