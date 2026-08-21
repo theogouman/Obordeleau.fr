@@ -251,15 +251,17 @@
       "de": "German",
       "other": "its original language"
     },
-    "seeAll": "Read all {count} reviews",
-    "seeAllShort": "Read all reviews",
+    "favourite": {
+      "title": "Guest favourite",
+      "body": "This studio is one of the 10 % most loved homes on Airbnb."
+    },
+    "seeAllShort": "See all reviews",
     "empty": "Reviews will appear here as soon as the export is added to the site.",
     "page": {
-      "titleLead": "All",
-      "titleAccent": "reviews",
-      "titleTail": "",
-      "intro": "Here is every review received, newest first. We remove none of them, so the average ones are here too.",
-      "count": "{count} reviews",
+      "titleLead": "What",
+      "titleAccent": "{count} guests",
+      "titleTail": "say",
+      "intro": "We import every Airbnb review our past guests left, the good ones and the bad ones.",
       "backHome": "Back to the home page"
     }
   },

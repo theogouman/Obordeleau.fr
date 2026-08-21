@@ -124,11 +124,13 @@ export const allReviews: Review[] = (rawReviews.reviews as RawReview[])
 
 export const reviewCount = allReviews.length;
 
-export const averageRating =
+/** The unrounded mean, for the badge that prints two decimals. */
+export const averageRatingExact =
   reviewCount === 0
     ? 0
-    : Math.round((allReviews.reduce((sum, review) => sum + review.rating, 0) / reviewCount) * 10) /
-      10;
+    : allReviews.reduce((sum, review) => sum + review.rating, 0) / reviewCount;
+
+export const averageRating = Math.round(averageRatingExact * 10) / 10;
 
 export const hasReviews = reviewCount > 0;
 

@@ -251,15 +251,17 @@
       "de": "Deutsch",
       "other": "der Originalsprache"
     },
-    "seeAll": "Alle {count} Bewertungen lesen",
-    "seeAllShort": "Alle Bewertungen lesen",
+    "favourite": {
+      "title": "Gästeliebling",
+      "body": "Dieses Studio gehört zu den 10 % beliebtesten Unterkünften auf Airbnb."
+    },
+    "seeAllShort": "Alle Bewertungen ansehen",
     "empty": "Die Bewertungen erscheinen hier, sobald der Export auf der Website liegt.",
     "page": {
-      "titleLead": "Alle",
-      "titleAccent": "Bewertungen",
+      "titleLead": "Das sagen",
+      "titleAccent": "{count} Gäste",
       "titleTail": "",
-      "intro": "Hier stehen alle erhaltenen Bewertungen, die neueste zuerst. Wir entfernen keine davon, auch die durchschnittlichen Aufenthalte sind dabei.",
-      "count": "{count} Bewertungen",
+      "intro": "Wir übernehmen alle Airbnb-Bewertungen unserer bisherigen Gäste, die guten wie die schlechten.",
       "backHome": "Zurück zur Startseite"
     }
   },

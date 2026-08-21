@@ -18,6 +18,12 @@ type Props = {
   labels: ReviewCardLabels;
   /** Reviews longer than this get the accordion toggle. */
   clampThreshold?: number;
+  /**
+   * The home page row, where the last cards are cut in half. The text stays
+   * clamped and the toggle is dropped: a control nobody can see is a control
+   * the keyboard should not be able to reach either.
+   */
+  teaser?: boolean;
 };
 
 const LOCALE_TAGS: Record<string, string> = {
@@ -27,10 +33,11 @@ const LOCALE_TAGS: Record<string, string> = {
   other: 'fr-FR',
 };
 
-export function ReviewCard({ review, labels, clampThreshold = 260 }: Props) {
+export function ReviewCard({ review, labels, clampThreshold = 260, teaser = false }: Props) {
   const [expanded, setExpanded] = useState(false);
   const textId = useId();
   const long = review.text.length > clampThreshold;
+  const clamped = long && (teaser || !expanded);
 
   const languageName = labels.languageNames[review.language] ?? labels.languageNames.other;
 
@@ -74,14 +81,14 @@ export function ReviewCard({ review, labels, clampThreshold = 260 }: Props) {
       <p
         id={textId}
         lang={review.language === 'other' ? undefined : review.language}
-        className={`mt-4 grow ${long && !expanded ? 'clamp-lines' : ''}`}
-        style={long && !expanded ? { WebkitLineClamp: 5 } : undefined}
+        className={`mt-4 grow ${clamped ? 'clamp-lines' : ''}`}
+        style={clamped ? { WebkitLineClamp: 5 } : undefined}
       >
         {review.text}
       </p>
 
       <footer className="mt-4 flex items-center justify-between gap-3 text-sm">
-        {long ? (
+        {long && !teaser ? (
           <button
             type="button"
             onClick={() => setExpanded((value) => !value)}

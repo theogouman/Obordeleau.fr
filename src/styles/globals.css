@@ -4,6 +4,7 @@
 @import './transitions.css';
 @import './phone-field.css';
 @import './language-switcher.css';
+@import './reviews.css';
 
 @theme {
   --color-cream: #faf7f2;

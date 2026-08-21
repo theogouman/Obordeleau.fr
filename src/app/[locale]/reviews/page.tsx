@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { AccentHeading } from '@/components/AccentHeading';
 import { JsonLd } from '@/components/JsonLd';
-import { RatingBadge } from '@/components/RatingBadge';
+import { GuestFavourite } from '@/components/GuestFavourite';
 import { ReviewCard, type ReviewCardLabels } from '@/components/ReviewCard';
 import { Section } from '@/components/Section';
 import { Link } from '@/i18n/navigation';
@@ -66,20 +66,18 @@ export default async function ReviewsPage({ params }: { params: Promise<{ locale
               as="h1"
               id="reviews-page-title"
               lead={t('page.titleLead')}
-              accent={t('page.titleAccent')}
+              accent={t('page.titleAccent', { count: reviewCount })}
               tail={t('page.titleTail')}
               className="text-4xl md:text-6xl"
             />
             <p className="mt-4 text-lg text-ink-soft">{t('page.intro')}</p>
-            <RatingBadge className="mt-6" />
           </div>
+
+          <GuestFavourite className="mt-10" />
 
           {hasReviews ? (
             <>
-              <p className="mt-8 text-sm uppercase tracking-[0.2em] text-ink-soft">
-                {t('page.count', { count: reviewCount })}
-              </p>
-              <ul className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <ul className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {allReviews.map((review) => (
                   <li key={review.id}>
                     <ReviewCard review={review} labels={labels} />

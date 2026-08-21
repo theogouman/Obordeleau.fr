@@ -5,7 +5,7 @@ import { ReviewCard, type ReviewCardLabels } from '@/components/ReviewCard';
 import { Reveal } from '@/components/Reveal';
 import { Section } from '@/components/Section';
 import { Link } from '@/i18n/navigation';
-import { curatedReviews, hasReviews, reviewCount } from '@/lib/reviews';
+import { curatedReviews, hasReviews } from '@/lib/reviews';
 
 export function useReviewCardLabels(): ReviewCardLabels {
   const t = useTranslations('reviews');
@@ -43,19 +43,30 @@ export function ReviewsSection() {
 
       {hasReviews ? (
         <>
-          <ul className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {reviews.map((review, index) => (
-              <li key={review.id}>
-                <Reveal delay={index * 60} className="h-full">
-                  <ReviewCard review={review} labels={labels} />
-                </Reveal>
-              </li>
-            ))}
-          </ul>
+          {/* The last row is cut in half and dissolved into the page by
+              reviews.css, which decides on its own which cards those are at
+              each column count. */}
+          <div className="reviews-veil mt-10">
+            <ul className="reviews-veil__grid grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {reviews.map((review, index) => (
+                <li key={review.id}>
+                  <Reveal delay={index * 60} className="h-full">
+                    <ReviewCard review={review} labels={labels} teaser />
+                  </Reveal>
+                </li>
+              ))}
+            </ul>
 
-          <div className="mt-8">
-            <Link href="/reviews" className="btn btn-secondary">
-              {t('seeAll', { count: reviewCount })}
+            <div className="reviews-veil__blur" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </div>
+          </div>
+
+          <div className="mt-6 flex justify-center">
+            <Link href="/reviews" className="btn btn-primary">
+              {t('seeAllShort')}
             </Link>
           </div>
         </>

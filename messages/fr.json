@@ -251,15 +251,17 @@
       "de": "allemand",
       "other": "langue d'origine"
     },
-    "seeAll": "Lire les {count} avis",
-    "seeAllShort": "Lire tous les avis",
+    "favourite": {
+      "title": "Coup de cœur voyageurs",
+      "body": "Ce logement fait partie des 10 % de logements préférés sur Airbnb."
+    },
+    "seeAllShort": "Voir tous les avis",
     "empty": "Les avis seront affichés ici dès que l'export sera ajouté au site.",
     "page": {
-      "titleLead": "Tous les",
-      "titleAccent": "avis",
+      "titleLead": "Découvrez l'avis de",
+      "titleAccent": "{count} personnes",
       "titleTail": "",
-      "intro": "Voici l'intégralité des avis reçus, du plus récent au plus ancien. Nous n'en retirons aucun : les séjours moyens y sont aussi.",
-      "count": "{count} avis",
+      "intro": "Nous importons tous les avis Airbnb de nos précédents voyageurs, les bons comme les mauvais.",
       "backHome": "Retour à l'accueil"
     }
   },
