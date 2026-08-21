@@ -20,15 +20,34 @@ export function About() {
       <div className="grid items-center gap-10 md:grid-cols-[0.7fr_1fr]">
         {host.showPortrait ? (
           <Reveal>
-            <SmartImage
-              src={`/images/host/${host.portrait}`}
-              alt={t('portraitAlt')}
-              aspect="2 / 3"
-              sizes="(min-width: 768px) 30vw, 80vw"
-              rounded="arch"
-              missingLabel={gallery('missing')}
-              className="mx-auto max-w-xs"
-            />
+            {/* The distinction belongs to the person in the photograph, so it
+                is pinned to her portrait rather than left as a footnote to the
+                paragraphs. It is a sibling of the arch and not a child of it,
+                because the arch clips and the badge overhangs its left edge.
+                Unoptimised because it is an SVG, which the image optimiser is
+                deliberately not allowed to touch. */}
+            <div className="host-portrait mx-auto max-w-xs">
+              <SmartImage
+                src={`/images/host/${host.portrait}`}
+                alt={t('portraitAlt')}
+                aspect="2 / 3"
+                sizes="(min-width: 768px) 30vw, 80vw"
+                rounded="arch"
+                missingLabel={gallery('missing')}
+                className="host-portrait__photo"
+              />
+
+              <div className="host-portrait__badge">
+                <Image
+                  src="/images/annexes/airbnb-superhost.svg"
+                  alt={t('superhostAlt')}
+                  width={450}
+                  height={275}
+                  unoptimized
+                  className="host-portrait__mark"
+                />
+              </div>
+            </div>
           </Reveal>
         ) : null}
 
@@ -44,19 +63,6 @@ export function About() {
               <p key={paragraph.slice(0, 24)}>{paragraph}</p>
             ))}
           </div>
-
-          {/* The distinction, at reading size rather than as a banner: it
-              confirms what the paragraphs say instead of announcing it.
-              Unoptimised because it is an SVG, which the image optimiser is
-              deliberately not allowed to touch. */}
-          <Image
-            src="/images/annexes/airbnb-superhost.svg"
-            alt={t('superhostAlt')}
-            width={500}
-            height={500}
-            unoptimized
-            className="mt-6 h-24 w-auto md:h-28"
-          />
         </Reveal>
       </div>
     </Section>

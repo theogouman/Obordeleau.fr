@@ -1,0 +1,79 @@
+/*
+ * The host's portrait, and the Airbnb distinction pinned to it.
+ *
+ * The badge used to sit under the paragraphs on the other side of the grid,
+ * where it read as a footnote to the text. It belongs to the person in the
+ * photograph, so it hangs off the top left of the arch, half over the picture
+ * and half over the page, on a white key of its own. The arch clips (it is a
+ * shape, not a rectangle), so the badge is its sibling rather than its child:
+ * inside it, the half that overhangs would be cut away.
+ *
+ * Both then float, gently and on their own clocks. The two periods are
+ * deliberately not multiples of one another, so the badge and the picture
+ * drift in and out of step instead of moving as one block, which is what
+ * makes them read as two things suspended rather than one thing wobbling.
+ */
+
+@layer components {
+  .host-portrait {
+    --host-float-ease: cubic-bezier(0.45, 0, 0.55, 1);
+    position: relative;
+  }
+
+  .host-portrait__photo {
+    --host-float: 5px;
+    animation: host-float 7s var(--host-float-ease) infinite alternate;
+    will-change: transform;
+  }
+
+  /*
+   * Placed from the picture rather than in absolute units, so the badge keeps
+   * the same overhang and the same drop whatever width the column gives the
+   * arch. The numbers are read off the design: a twenty fifth of the width
+   * hanging past the left edge, a seventh of the height down from the top.
+   */
+  .host-portrait__badge {
+    --host-float: 7px;
+    position: absolute;
+    top: 14%;
+    left: -4%;
+    z-index: 1;
+    padding: 0.5rem;
+    border-radius: 0.75rem;
+    background-color: var(--color-shell);
+    box-shadow: var(--shadow-card);
+    animation: host-float 5.4s var(--host-float-ease) infinite alternate;
+    will-change: transform;
+  }
+
+  /*
+   * The mark is cropped to its own ink in the file (the exporter left a fifth
+   * of the canvas empty above and below it), so the white key can hug it and
+   * this is a plain width with the height following the ratio.
+   */
+  .host-portrait__mark {
+    display: block;
+    width: 5.5rem;
+    height: auto;
+  }
+}
+
+@keyframes host-float {
+  from {
+    transform: translateY(calc(-1 * var(--host-float)));
+  }
+  to {
+    transform: translateY(var(--host-float));
+  }
+}
+
+/* Constitution V. The global block already flattens every duration, but a
+   one millisecond alternate still parks the element at one end of its travel,
+   so the movement is taken away rather than shortened. */
+@media (prefers-reduced-motion: reduce) {
+  .host-portrait__photo,
+  .host-portrait__badge {
+    animation: none !important;
+    transform: none !important;
+  }
+}
