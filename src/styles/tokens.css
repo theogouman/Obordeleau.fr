@@ -11,6 +11,13 @@
  *   #F25C54 on cream = 3.0:1  -> fills and rules only
  *   #FF9B54 on cream = 1.9:1  -> fills only
  * White on #CE4257 = 4.6:1, which is why the primary button uses raspberry.
+ *
+ * The sunset also comes as a tint ramp, mixed towards white with a little of
+ * the page's cream in it so the light steps stay peachy instead of turning
+ * beige. They are backgrounds, not colours to write in: at full strength the
+ * sunset is a highlighter, and a highlighter behind a paragraph is the one
+ * thing that makes a warm palette look cheap. Ink reads at 10.3:1 on the 200
+ * and better on everything lighter, so any of them can carry body copy.
  */
 
 :root {
@@ -19,7 +26,13 @@
   --brand-ink: #3a2a26;
   --brand-ink-soft: #6b5750;
   --brand-night: #2a1e1b;
-  --brand-sunset: #ff9b54;
+  --brand-sunset-50: #fdf2e9;
+  --brand-sunset-100: #fde9d9;
+  --brand-sunset-200: #fed9be;
+  --brand-sunset-300: #fec69d;
+  --brand-sunset-400: #ffb079;
+  --brand-sunset-500: #ff9b54;
+  --brand-sunset: var(--brand-sunset-500);
   --brand-coral: #f25c54;
   --brand-raspberry: #ce4257;
   --brand-raspberry-ink: #a8253c;

@@ -14,6 +14,14 @@
   --color-ink: #3a2a26;
   --color-ink-soft: #6b5750;
   --color-night: #2a1e1b;
+  /* Sunset as a ramp: the light steps are the ones meant to sit behind text,
+     the full strength one stays for fills and marks. */
+  --color-sunset-50: #fdf2e9;
+  --color-sunset-100: #fde9d9;
+  --color-sunset-200: #fed9be;
+  --color-sunset-300: #fec69d;
+  --color-sunset-400: #ffb079;
+  --color-sunset-500: #ff9b54;
   --color-sunset: #ff9b54;
   --color-coral: #f25c54;
   --color-raspberry: #ce4257;
@@ -79,9 +87,13 @@
     height: auto;
   }
 
+  /* A pastel step of the sunset and not the sunset itself: a full strength
+     orange behind a sentence reads as a highlighter pen drawn over the page,
+     and the text has to darken to survive it. The tint holds the same warmth,
+     lets the words keep their own colour, and leaves ink at 10.3:1 on it. */
   ::selection {
-    background-color: var(--color-sunset);
-    color: var(--color-night);
+    background-color: var(--color-sunset-200);
+    color: var(--color-ink);
   }
 }
 

@@ -4,6 +4,7 @@ import { AccentHeading } from '@/components/AccentHeading';
 import { JsonLd } from '@/components/JsonLd';
 import { GuestFavourite } from '@/components/GuestFavourite';
 import { ReviewCard, type ReviewCardLabels } from '@/components/ReviewCard';
+import { ReviewsWall } from '@/components/ReviewsWall';
 import { Section } from '@/components/Section';
 import { Link } from '@/i18n/navigation';
 import type { Locale } from '@/i18n/routing';
@@ -80,17 +81,14 @@ export default async function ReviewsPage({ params }: { params: Promise<{ locale
           </div>
 
           {hasReviews ? (
-            <>
-              {/* Columns rather than a grid: opening one review pushes down
-                  the ones under it and leaves no hole beside it. */}
-              <ul className="reviews-wall mt-12">
-                {allReviews.map((review) => (
-                  <li key={review.id}>
-                    <ReviewCard review={review} labels={labels} />
-                  </li>
-                ))}
-              </ul>
-            </>
+            /* Three columns that are containers of their own: opening a review
+               pushes down the ones under it in that column, and leaves both
+               the other columns untouched. */
+            <ReviewsWall className="mt-12">
+              {allReviews.map((review) => (
+                <ReviewCard key={review.id} review={review} labels={labels} />
+              ))}
+            </ReviewsWall>
           ) : (
             <p className="mt-8 rounded-[var(--radius-card)] border border-dashed border-[rgba(58,42,38,0.25)] p-6 text-ink-soft">
               {t('empty')}

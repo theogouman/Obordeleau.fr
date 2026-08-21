@@ -1,12 +1,17 @@
 /*
  * Three pieces of the reviews, all of them too particular for utility classes.
  *
- * 1. The wall. A grid gives every card in a row the height of the tallest one,
+ * 1. The walls. A grid gives every card in a row the height of the tallest one,
  *    which is why opening a review used to leave holes beside it and why cards
  *    of unequal length never sat flush. Columns have no rows to align to: each
  *    card takes the height it needs and the next one starts right under it, so
  *    the wall closes up on its own and the spacing between two cards is the
  *    same everywhere, whatever they contain.
+ *
+ *    There are two of them, because they are asked for different things. The
+ *    teaser on the home page never changes shape, so the browser can cut one
+ *    flow into columns for it. The reviews page opens and closes its cards, so
+ *    it needs columns that are real containers: .reviews-columns.
  *
  * 2. The teaser on the home page: the same wall, cut off at a fixed height and
  *    dissolved into the page over the last few centimetres, so the section
@@ -41,6 +46,53 @@
   @media (min-width: 1024px) {
     .reviews-wall {
       columns: 3;
+    }
+  }
+
+  /*
+   * The reviews page wall, where the cards open.
+   *
+   * A multi-column box holds one stream of cards, so a card that grows no
+   * longer fits where it did and everything after it spills over the column
+   * boundary: cards climb into the next column and push out the ones already
+   * there. Reading one review reshuffled two columns nobody was looking at.
+   * Here each column is its own container, so what grows lengthens its own
+   * column and leaves its neighbours exactly where they were.
+   *
+   * Under the width that carries three columns there is only one, so there is
+   * nothing left to reshuffle: the column containers are dropped with
+   * display: contents and their cards fall back into a single stack, in the
+   * order they were written. One column is also why the wall is capped and
+   * centred there, rather than run edge to edge over a tablet.
+   */
+  .reviews-columns {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 40rem;
+    margin-inline: auto;
+  }
+
+  .reviews-columns__col {
+    display: contents;
+  }
+
+  @media (min-width: 1024px) {
+    .reviews-columns {
+      flex-direction: row;
+      /* Independent columns: none of them is stretched to the height of the
+         tallest, which is the whole point. */
+      align-items: flex-start;
+      max-width: none;
+      margin-inline: 0;
+    }
+
+    .reviews-columns__col {
+      display: flex;
+      flex: 1 1 0;
+      min-width: 0;
+      flex-direction: column;
+      gap: 1rem;
     }
   }
 
