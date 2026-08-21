@@ -2,44 +2,66 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Obordeleau reviews export",
   "description": "Shape expected at content/reviews.json. Validated by scripts/check-reviews.mjs.",
-  "type": "array",
-  "items": {
-    "type": "object",
-    "required": ["id", "reviewer_name", "rating", "date_iso", "review_fr"],
-    "properties": {
-      "id": {
-        "type": "string",
-        "pattern": "^[0-9]{3}$",
-        "description": "Zero padded, 001 to 165. Also the avatar filename stem."
-      },
-      "reviewer_name": {
-        "type": "string",
-        "description": "Only the first token is displayed (RGPD data minimisation, constitution VI)."
-      },
-      "rating": { "type": "number", "minimum": 1, "maximum": 5 },
-      "date": {
-        "type": "string",
-        "description": "Human readable month + year as exported. Optional if date_iso is present."
-      },
-      "date_iso": {
-        "type": "string",
-        "pattern": "^[0-9]{4}-[0-9]{2}(-[0-9]{2})?$",
-        "description": "Used for sorting, newest first."
-      },
-      "review_fr": {
-        "type": "string",
-        "description": "Original review text. Despite the field name some entries are EN or DE. Never machine retranslated."
-      },
-      "lang": {
-        "type": "string",
-        "enum": ["fr", "en", "de", "other"],
-        "description": "Optional. Detected at load time when absent."
-      },
-      "image_filename": {
-        "type": "string",
-        "description": "Avatar file under public/images/reviews/, for example 033.jpg."
-      },
-      "has_custom_photo": { "type": "boolean" }
+  "type": "object",
+  "required": ["reviews"],
+  "properties": {
+    "listing_id": { "type": "string", "description": "Airbnb listing the export was taken from." },
+    "source_url": { "type": "string", "description": "Public page the export was taken from." },
+    "extracted_at": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "Day the export was taken."
+    },
+    "locale": {
+      "type": "string",
+      "description": "Locale the listing page was read in. Says nothing about the language of any one review."
+    },
+    "total_reviews": {
+      "type": "number",
+      "description": "Count announced by the listing, which can exceed the entries actually exported."
+    },
+    "reviews": {
+      "type": "array",
+      "description": "The entries themselves. This is the key src/lib/reviews.ts reads and the one scripts/check-reviews.mjs validates.",
+      "items": {
+        "type": "object",
+        "required": ["id", "reviewer_name", "rating", "date_iso", "review_fr"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9]{3}$",
+            "description": "Zero padded, 001 to 165. Also the avatar filename stem."
+          },
+          "reviewer_name": {
+            "type": "string",
+            "description": "Only the first token is displayed (RGPD data minimisation, constitution VI)."
+          },
+          "rating": { "type": "number", "minimum": 1, "maximum": 5 },
+          "date": {
+            "type": "string",
+            "description": "Human readable month + year as exported. Optional if date_iso is present."
+          },
+          "date_iso": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}(-[0-9]{2})?$",
+            "description": "Used for sorting, newest first."
+          },
+          "review_fr": {
+            "type": "string",
+            "description": "Original review text. Despite the field name some entries are EN or DE. Never machine retranslated."
+          },
+          "lang": {
+            "type": "string",
+            "enum": ["fr", "en", "de", "other"],
+            "description": "Optional. Detected at load time when absent."
+          },
+          "image_filename": {
+            "type": "string",
+            "description": "Avatar file under public/images/reviews/, for example 033.jpg."
+          },
+          "has_custom_photo": { "type": "boolean" }
+        }
+      }
     }
   }
 }

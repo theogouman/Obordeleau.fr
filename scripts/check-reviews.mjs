@@ -15,16 +15,24 @@ if (!existsSync(reviewsPath)) {
   process.exit(1);
 }
 
-let reviews;
+let parsed;
 try {
-  reviews = JSON.parse(readFileSync(reviewsPath, 'utf8'));
+  parsed = JSON.parse(readFileSync(reviewsPath, 'utf8'));
 } catch (error) {
   console.error(`content/reviews.json is not valid JSON: ${error.message}`);
   process.exit(1);
 }
 
+/*
+ * The export wraps its entries in an object, under `reviews`, alongside the
+ * listing it came from. That is what src/lib/reviews.ts reads, so it is what
+ * this has to validate. A bare array is still accepted, so a hand trimmed or
+ * older file keeps working.
+ */
+const reviews = Array.isArray(parsed) ? parsed : parsed?.reviews;
+
 if (!Array.isArray(reviews)) {
-  console.error('content/reviews.json must be an array.');
+  console.error('content/reviews.json must be an array, or an object with a reviews array.');
   process.exit(1);
 }
 
