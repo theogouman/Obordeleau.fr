@@ -42,12 +42,18 @@ function toBase64Url(bytes: Uint8Array): string {
   return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-function fromBase64Url(value: string): Uint8Array {
+/**
+ * Returns the buffer rather than the view. Since TypeScript 5.7 a bare
+ * `Uint8Array` is `Uint8Array<ArrayBufferLike>`, which no longer satisfies
+ * `BufferSource` because the backing store could in principle be a
+ * SharedArrayBuffer. An ArrayBuffer is a BufferSource on any version.
+ */
+function fromBase64Url(value: string): ArrayBuffer {
   const padded = value.replace(/-/g, '+').replace(/_/g, '/');
   const binary = atob(padded + '='.repeat((4 - (padded.length % 4)) % 4));
   const bytes = new Uint8Array(binary.length);
   for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
-  return bytes;
+  return bytes.buffer;
 }
 
 async function hmacKey(): Promise<CryptoKey> {
