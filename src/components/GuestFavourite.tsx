@@ -9,11 +9,15 @@ import { averageRatingExact, reviewCount } from '@/lib/reviews';
  * supplied are used for the badge and for nothing else. They are not preloaded:
  * a decoration is not worth blocking the page for, and the fallback stack below
  * is metric compatible enough that the swap is barely visible.
+ *
+ * They live in src/fonts rather than in public: next/font hashes and serves
+ * them itself, so a copy under public would be a second, unused download path.
+ * The lowercase extension is not cosmetic either, next/font matches it exactly.
  */
 const sanFrancisco = localFont({
   src: [
-    { path: '../../public/brand/SFPRODISPLAYMEDIUM.OTF', weight: '500', style: 'normal' },
-    { path: '../../public/brand/SFPRODISPLAYBOLD.OTF', weight: '700', style: 'normal' },
+    { path: '../fonts/sf-pro-display-medium.otf', weight: '500', style: 'normal' },
+    { path: '../fonts/sf-pro-display-bold.otf', weight: '700', style: 'normal' },
   ],
   variable: '--font-sf',
   display: 'swap',
