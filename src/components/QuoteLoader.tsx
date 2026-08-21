@@ -8,21 +8,30 @@ import { useEffect, useState } from 'react';
  *
  * Three sentences take turns, on shimmer text (15) so the words are alive
  * without a spinner, and each one arrives and leaves on mask reveal up from
- * the animate-text catalogue: the sentence going lifts and blurs away while
- * the one coming rises into the same place, the two crossing for as long as
- * the catalogue says they should.
+ * the animate-text catalogue.
+ *
+ * They take turns strictly. The catalogue offers a crossfade with the two
+ * lines overlapping, and that reads as two sentences to look at rather than
+ * one thought changing, so the one leaving is gone before the next one starts
+ * arriving. One element carries both states, which is what makes the sequence
+ * exact: flipping it to the leaving state swaps the animation on the element
+ * already there, and only once that has run does the next sentence mount.
  *
  * The rotation is decoration. A screen reader is told once what is happening
- * and is not made to sit through three phrasings of it, so the stack is hidden
- * from the accessibility tree and a single quiet line carries the status.
+ * and is not made to sit through three phrasings of it, so the line is hidden
+ * from the accessibility tree and a single quiet status carries the message.
  */
 
-/** Long enough for a sentence to be read, short enough not to be a wait. */
-const HOLD_MS = 1100;
-/** The exit of mask-reveal-up, so a line is gone before it is unmounted. */
+/**
+ * How long a sentence owns the block, counted from the moment it starts
+ * arriving. The catalogue's entry takes 760ms of it, which leaves the words
+ * standing still for long enough to be read before they go.
+ */
+const HOLD_MS = 1250;
+/** The exit of mask-reveal-up, run in full before the next sentence mounts. */
 const OUT_MS = 520;
 
-type Turn = { shown: number; previous: number | null };
+type Turn = { shown: number; leaving: boolean };
 
 type Props = {
   /**
@@ -37,44 +46,34 @@ export function QuoteLoader({ leaving }: Props) {
   const messages = [t('price'), t('best'), t('dates')];
   const count = messages.length;
 
-  const [turn, setTurn] = useState<Turn>({ shown: 0, previous: null });
+  const [turn, setTurn] = useState<Turn>({ shown: 0, leaving: false });
 
   useEffect(() => {
+    // The whole block is on its way out: the sentence in it stays as it is
+    // rather than starting a turn it will not finish.
     if (leaving) return;
 
-    const rotate = window.setInterval(
-      () => setTurn((current) => ({ shown: (current.shown + 1) % count, previous: current.shown })),
-      HOLD_MS,
+    const timer = window.setTimeout(
+      () =>
+        setTurn((current) =>
+          current.leaving
+            ? { shown: (current.shown + 1) % count, leaving: false }
+            : { ...current, leaving: true },
+        ),
+      turn.leaving ? OUT_MS : HOLD_MS,
     );
 
-    return () => window.clearInterval(rotate);
-  }, [leaving, count]);
-
-  // The line that has left is dropped once its exit has run, so at most two
-  // are ever mounted and the block never grows a stack of ghosts.
-  useEffect(() => {
-    if (turn.previous === null) return;
-
-    const drop = window.setTimeout(
-      () => setTurn((current) => ({ ...current, previous: null })),
-      OUT_MS,
-    );
-
-    return () => window.clearTimeout(drop);
-  }, [turn.previous]);
+    return () => window.clearTimeout(timer);
+  }, [leaving, count, turn]);
 
   return (
     <div className={`py-8 text-center ${leaving ? 'q-vanish' : ''}`}>
       <p className="q-stack font-display text-xl sm:text-2xl" aria-hidden="true">
-        {turn.previous !== null ? (
-          <span key={`out-${turn.previous}`} className="q-line" data-state="out">
-            <span className="t-shimmer" data-text={messages[turn.previous]}>
-              {messages[turn.previous]}
-            </span>
-          </span>
-        ) : null}
-
-        <span key={`in-${turn.shown}`} className="q-line" data-state="in">
+        <span
+          key={turn.shown}
+          className="q-line"
+          data-state={turn.leaving ? 'out' : 'in'}
+        >
           <span className="t-shimmer" data-text={messages[turn.shown]}>
             {messages[turn.shown]}
           </span>

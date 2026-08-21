@@ -408,7 +408,8 @@
           "title": "Dieser Preis ist abgelaufen",
           "body": "Ihr Preis galt dreißig Minuten. Er hat sich seitdem wahrscheinlich geändert: fragen Sie erneut an, um den aktuellen Tarif zu sehen. Alle Ihre Angaben bleiben erhalten.",
           "action": "Preis aktualisieren"
-        }
+        },
+        "accommodationAt": "{count, plural, one {# Nacht zu {price}} other {# Nächte zu {price}}}"
       },
       "noscript": {
         "title": "Ihre Daten wählen",
@@ -446,7 +447,8 @@
       },
       "getPrice": "Preis berechnen",
       "yes": "Ja",
-      "no": "Nein"
+      "no": "Nein",
+      "confirmBooking": "Meine Buchung bestätigen"
     },
     "calendar": {
       "arrival": "Anreise",
@@ -460,7 +462,10 @@
       "loading": "Verfügbarkeiten werden geladen",
       "loadError": "Die Verfügbarkeiten konnten nicht geladen werden. Sie können es erneut versuchen oder über Airbnb oder Booking gehen.",
       "retry": "Erneut versuchen",
-      "taken": "Bereits gebucht"
+      "taken": "Bereits gebucht",
+      "minNights": "{count, plural, one {Mindestens # Nacht} other {Mindestens # Nächte}}",
+      "multipleNights": "{count, plural, =7 {Nur ganze Wochen} other {In Vielfachen von # Nächten}}",
+      "saturdayOnly": "Anreise samstags"
     }
   },
   "footer": {
@@ -472,7 +477,6 @@
     "privacy": "Datenschutzerklärung",
     "reviews": "Gästebewertungen",
     "copyright": "© {year} Obordeleau. Alle Rechte vorbehalten.",
-    "madeNote": "Keine Werbe-Cookies. Die Karte lädt nur mit Ihrer Zustimmung.",
     "contactTitle": "Kontakt",
     "whatsapp": "WhatsApp",
     "whatsappMessage": "Guten Tag Corine,\nwir haben uns Ihre Website für das Studio in Les Sablettes angesehen.\n\nIch hätte ein paar Fragen.",

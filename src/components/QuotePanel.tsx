@@ -49,6 +49,20 @@ export function QuotePanel({ quote, reveal = false }: Props) {
     [localeTag, quote.currency],
   );
 
+  /**
+   * The rate the nights were let at, when there is a single one to name.
+   *
+   * A stay can cross a season boundary or a night the owner priced by hand, and
+   * then the nights are not all the same price. Naming one of them would be
+   * wrong and averaging them would be arithmetic, which is the one thing this
+   * panel does not do: the line falls back to the plain count instead.
+   */
+  const nightly = useMemo(() => {
+    const prices = quote.nights.map((night) => night.resolvedPrice);
+    if (prices.length === 0 || prices.some((price) => price === null)) return null;
+    return prices.every((price) => price === prices[0]) ? prices[0] : null;
+  }, [quote.nights]);
+
   const chargeDate = useMemo(() => {
     if (!quote.balanceChargeOn) return null;
     return new Intl.DateTimeFormat(localeTag, {
@@ -68,7 +82,14 @@ export function QuotePanel({ quote, reveal = false }: Props) {
 
         <dl className="mt-4 space-y-2.5 text-sm">
           <div className="flex items-baseline justify-between gap-4">
-            <dt className="text-ink-soft">{t('accommodation', { count: quote.nightsCount })}</dt>
+            <dt className="text-ink-soft">
+              {nightly === null
+                ? t('accommodation', { count: quote.nightsCount })
+                : t('accommodationAt', {
+                    count: quote.nightsCount,
+                    price: money.format(nightly),
+                  })}
+            </dt>
             <dd className="tabular-nums">{money.format(quote.accommodationSubtotal)}</dd>
           </div>
 

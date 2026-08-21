@@ -5,9 +5,12 @@ import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 
 import { localeTags, type Locale } from '@/i18n/routing';
 import { addDays } from '@/lib/dates';
 import {
+  constraintsFor,
   isValidArrival,
   lastCheckout,
+  refusalFor,
   satisfiesStayRules,
+  seasonOf,
   type StayRules,
 } from '@/lib/stay';
 
@@ -179,6 +182,47 @@ export function BookingCalendar({
     // An arrival is judged on the season it falls in. A range that later runs
     // into a stricter one is caught above, where both ends are known.
     return !blocked.has(date) && isValidArrival(rules, date);
+  }
+
+  /**
+   * Why a square cannot be taken, in the few words a tooltip has room for, or
+   * null when there is nothing worth saying.
+   *
+   * A night already let says so, and it always did. What is new is the squares
+   * the rule greys out: with a two night minimum the day after the arrival is
+   * dead and nothing on screen explained it, which reads as a bug rather than
+   * as a rule. The wording comes from the same refusal the picker and the
+   * server both answer in, so a square never says one thing while the button
+   * under the calendar says another.
+   */
+  function refusalHint(date: string): string | null {
+    if (status !== 'ready') return null;
+    if (blocked.has(date)) return t('taken');
+    if (date < firstArrival || date >= windowEnd) return null;
+
+    if (pickingDeparture && arrival) {
+      // Nothing to explain about the days before the arrival, and a run of
+      // free nights that simply ends is not this square's fault either.
+      if (date <= arrival) return null;
+      if (maxCheckout !== null && date > maxCheckout) return null;
+      if (satisfiesStayRules(rules, arrival, date)) return null;
+
+      const reason = refusalFor(rules, arrival, date);
+      const { minNights, stayMultiple } = constraintsFor(rules, arrival, date);
+
+      if (reason === 'min_nights') return t('minNights', { count: minNights });
+      if (reason === 'stay_multiple' && stayMultiple !== null) {
+        return t('multipleNights', { count: stayMultiple });
+      }
+      return null;
+    }
+
+    // Picking an arrival: the one rule that greys a free night is the season
+    // that only takes Saturdays.
+    if (isValidArrival(rules, date)) return null;
+    return seasonOf(rules, date)?.checkinConstraint === 'saturday'
+      ? t('saturdayOnly')
+      : null;
   }
 
   function select(date: string) {
@@ -421,29 +465,18 @@ export function BookingCalendar({
                   {week.map((date, cell) => (
                     <td key={date ?? `empty-${cell}`} className="p-0.5 text-center">
                       {date ? (
-                        <span className="t-tt-wrap block">
-                          <button
-                            type="button"
-                            data-date={date}
-                            tabIndex={date === focused ? 0 : -1}
-                            aria-disabled={!isSelectable(date) || undefined}
-                            aria-current={
-                              date === arrival || date === departure ? 'date' : undefined
-                            }
-                            aria-label={dayLabel(date)}
-                            aria-describedby={blocked.has(date) ? `${tooltipId}-${date}` : undefined}
-                            onClick={() => select(date)}
-                            onFocus={() => setFocused(date)}
-                            className={`${dayClasses(date)} ${blocked.has(date) ? 't-tt-trigger' : ''}`}
-                          >
-                            <span aria-hidden="true">{Number(date.slice(8, 10))}</span>
-                          </button>
-                          {blocked.has(date) ? (
-                            <span className="t-tt text-xs font-medium" id={`${tooltipId}-${date}`} role="tooltip">
-                              {t('taken')}
-                            </span>
-                          ) : null}
-                        </span>
+                        <DayCell
+                          date={date}
+                          focused={focused === date}
+                          selectable={isSelectable(date)}
+                          current={date === arrival || date === departure}
+                          label={dayLabel(date)}
+                          hint={refusalHint(date)}
+                          tooltipId={`${tooltipId}-${date}`}
+                          className={dayClasses(date)}
+                          onSelect={select}
+                          onFocus={setFocused}
+                        />
                       ) : null}
                     </td>
                   ))}
@@ -468,6 +501,62 @@ export function BookingCalendar({
         ) : null}
       </div>
     </div>
+  );
+}
+
+/**
+ * One square, and the reason it cannot be taken when it cannot.
+ *
+ * The reason is worked out once and then used three times: it decides whether
+ * the square is a tooltip trigger at all, it is the tooltip, and it is the
+ * description the square carries in the accessibility tree, so a visitor who
+ * never sees a hover layer is told the same thing.
+ */
+function DayCell({
+  date,
+  focused,
+  selectable,
+  current,
+  label,
+  hint,
+  tooltipId,
+  className,
+  onSelect,
+  onFocus,
+}: {
+  date: string;
+  focused: boolean;
+  selectable: boolean;
+  current: boolean;
+  label: string;
+  hint: string | null;
+  tooltipId: string;
+  className: string;
+  onSelect: (date: string) => void;
+  onFocus: (date: string) => void;
+}) {
+  return (
+    <span className="t-tt-wrap block">
+      <button
+        type="button"
+        data-date={date}
+        tabIndex={focused ? 0 : -1}
+        aria-disabled={!selectable || undefined}
+        aria-current={current ? 'date' : undefined}
+        aria-label={label}
+        aria-describedby={hint ? tooltipId : undefined}
+        onClick={() => onSelect(date)}
+        onFocus={() => onFocus(date)}
+        className={`${className} ${hint ? 't-tt-trigger' : ''}`}
+      >
+        <span aria-hidden="true">{Number(date.slice(8, 10))}</span>
+      </button>
+      {hint ? (
+        <span className="t-tt text-xs font-medium" id={tooltipId} role="tooltip">
+          {hint}
+        </span>
+      ) : null}
+    </span>
   );
 }
 

@@ -408,7 +408,8 @@
           "title": "This price has expired",
           "body": "Your price was held for thirty minutes. It has most likely moved since then: ask again to see the current rate. Everything you have answered is kept.",
           "action": "Refresh the price"
-        }
+        },
+        "accommodationAt": "{count, plural, one {# night at {price}} other {# nights at {price}}}"
       },
       "noscript": {
         "title": "Choosing your dates",
@@ -446,7 +447,8 @@
       },
       "getPrice": "Get the price",
       "yes": "Yes",
-      "no": "No"
+      "no": "No",
+      "confirmBooking": "Confirm my booking"
     },
     "calendar": {
       "arrival": "arrival",
@@ -460,7 +462,10 @@
       "loading": "Loading availability",
       "loadError": "Availability could not be loaded. You can try again, or go through Airbnb or Booking.",
       "retry": "Try again",
-      "taken": "Already booked"
+      "taken": "Already booked",
+      "minNights": "{count, plural, one {Minimum # night} other {Minimum # nights}}",
+      "multipleNights": "{count, plural, =7 {Whole weeks only} other {In multiples of # nights}}",
+      "saturdayOnly": "Saturday arrivals"
     }
   },
   "footer": {
@@ -472,7 +477,6 @@
     "privacy": "Privacy policy",
     "reviews": "Guest reviews",
     "copyright": "© {year} Obordeleau. All rights reserved.",
-    "madeNote": "No advertising cookies. The map loads only with your agreement.",
     "contactTitle": "Contact",
     "whatsapp": "WhatsApp",
     "whatsappMessage": "Hello Corine,\nWe have been looking at your website for the studio at Les Sablettes.\n\nI have a few questions, if I may.",

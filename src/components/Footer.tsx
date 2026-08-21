@@ -138,7 +138,6 @@ export function Footer({ year }: { year: number }) {
       <div className="border-t border-cream/15">
         <div className="container-page flex flex-col gap-4 py-6 text-sm text-cream/70 md:flex-row md:items-center md:justify-between">
           <p>{t('copyright', { year })}</p>
-          <p>{t('madeNote')}</p>
           <LanguageSwitcher label={nav('language')} tone="dark" />
         </div>
       </div>

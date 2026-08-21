@@ -620,11 +620,16 @@ their details to find out what a week costs.
 
 **Waiting is not a spinner.** While `/api/quote` is out, three sentences take
 turns in the panel's place on shimmer text (15), each arriving and leaving on
-mask reveal up from the animate-text catalogue. They are held for at least two
-seconds even when the answer comes back at once, because a message that flashes
-is worse than no message, and they are hidden from the accessibility tree with
-one quiet status line behind them rather than three phrasings of the same
-thing. When the price is in they lift away and the panel rises where they were.
+mask reveal up from the animate-text catalogue. They take turns strictly: the
+catalogue offers a crossfade with the two lines overlapping, and two sentences
+on screen at once read as two things to look at rather than one thought
+changing, so the one leaving is gone before the next starts arriving. The block
+is held long enough for a sentence and most of a second one even when the
+answer comes back at once, and it leaves while a sentence is standing still
+rather than halfway through its arrival. It is hidden from the accessibility
+tree with one quiet status line behind it, rather than three phrasings of the
+same thing. When the price is in they lift away and the panel rises where they
+were.
 
 **The party, in boxes.** Under 18s are a yes or a no rather than a checkbox
 that starts answered, and how many is a row of boxes rather than a plus and a
@@ -636,7 +641,10 @@ was assumed on the visitor's behalf is visible.
 **The price is held for half an hour.** A quote is the rates as they were when
 it was asked for. A notch over the button says so and counts down on number pop
 in (02), pulled out from under its button the way the WhatsApp notch is pulled
-out from under the card. When the half hour is up, the figures are not left on
+out from under the card, in the button's own colour so the two read as one
+shape with a tab on it. It waits a couple of seconds before it comes out, for
+the same reason the WhatsApp one does: a movement that arrives with everything
+else is not noticed. When the half hour is up, the figures are not left on
 screen to be paid: a dialog says the rate has moved on, and its one action asks
 for a fresh one. Every answer already given is kept, the step the visitor was
 on is remembered, and only the amount is asked for again.
@@ -646,6 +654,14 @@ half hour, so the deadline is noticed on whatever step the visitor is on; the
 other ticks each second and only while the notch is on screen, because moving a
 figure nobody is looking at would re render the card sixty times a minute. A
 laptop that was asleep comes back to a reading that is also a check.
+
+**The calendar says why a square is dead.** A night already let always said so.
+The squares the rule greys out did not: with a two night minimum the day after
+the arrival is dead and nothing on screen explained it, which reads as a bug
+rather than as a rule. Each one now carries the refusal in the few words a
+tooltip has room for, worded from the same `refusalFor` the picker and the
+server both answer in, so a square never says one thing while the button under
+the calendar says another.
 
 **Two lines carry a tooltip.** The local tax explains where it goes and who is
 exempt, and the day the balance leaves explains how it was worked out. Both are

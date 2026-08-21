@@ -142,9 +142,11 @@ function shortDate(isoDate: string | null): string {
 /**
  * The messages shown while the price is worked out are not a spinner dressed
  * up: they say what is being done, and they are given long enough to be read
- * even when the answer comes back at once.
+ * even when the answer comes back at once. The figure is one sentence and most
+ * of a second one, so the block leaves while a sentence is standing still
+ * rather than halfway through its arrival.
  */
-const MIN_LOADER_MS = 2000;
+const MIN_LOADER_MS = 2600;
 /** The exit of mask-reveal-up, so the messages are gone before the quote lands. */
 const LOADER_OUT_MS = 520;
 
@@ -1393,7 +1395,7 @@ export function BookingForm({
           <Step
             error={stepError}
             onNext={guests !== null && guests > 1 ? next : undefined}
-            nextLabel={guests !== null && guests > 1 ? t('continue') : undefined}
+            nextLabel={guests !== null && guests > 1 ? t('getPrice') : undefined}
           >
             <fieldset>
               <legend className="font-display text-xl">{t('questions.guests')}</legend>
@@ -1494,7 +1496,7 @@ export function BookingForm({
                     clock={clockFace(guaranteeLeft)}
                   />
                   <button type="button" onClick={next} className="btn btn-primary w-full">
-                    {t('continue')}
+                    {t('confirmBooking')}
                   </button>
                 </div>
               </>
@@ -1504,7 +1506,7 @@ export function BookingForm({
                   {t('quote.unavailable')}
                 </p>
                 <button type="button" onClick={next} className="btn btn-primary mt-6 w-full">
-                  {t('continue')}
+                  {t('confirmBooking')}
                 </button>
               </>
             )}
@@ -1686,19 +1688,25 @@ export function BookingForm({
 
       {/* Back belongs to the card, not to the question: it stays put while the
           questions move underneath it. The dates chosen sit opposite it, so
-          they are readable and reopenable from every question. */}
-      {stepIndex > 0 || returnTo !== null ? (
+          they are readable and reopenable from every question.
+
+          Never on the calendar itself. Reopening the dates from a later
+          question puts a back control on a step that has nothing behind it,
+          and one that would carry the visitor forward rather than back: the
+          way out of the calendar is to pick a stay, which returns them to the
+          question they left. */}
+      {stepIndex > 0 ? (
         <div className="mb-6 flex items-stretch justify-between gap-3">
           <button type="button" onClick={back} className={CHIP}>
             <Icon name="returnArrow" className="h-3 w-auto shrink-0" />
             {t('back')}
           </button>
 
-          {stepIndex > 0 && nights > 0 ? (
+          {nights > 0 ? (
             <button
               type="button"
               onClick={() => correct(0)}
-              className={`${CHIP} text-end leading-tight`}
+              className={`${CHIP} text-start leading-tight`}
             >
               <Icon name="calendar" className="h-3.5 w-auto shrink-0" />
               <span className="block">

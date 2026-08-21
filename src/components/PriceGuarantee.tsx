@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { Icon } from '@/components/Icon';
 import { PopNumber } from '@/components/PopNumber';
 
 /**
@@ -22,8 +23,12 @@ import { PopNumber } from '@/components/PopNumber';
 /** Long enough to fill a form in, short enough that the rate is still true. */
 export const GUARANTEE_MS = 30 * 60 * 1000;
 
-/** The quote lands first and the notch follows it, rather than racing it. */
-const NOTCH_DELAY_MS = 600;
+/**
+ * The quote is read first and the notch follows it. A movement that arrives
+ * with everything else is not noticed, so it waits until the figures have been
+ * looked at, the same reasoning that holds the WhatsApp notch back.
+ */
+const NOTCH_DELAY_MS = 2400;
 
 /** Matches the closing duration in channel-dialog.css. */
 const CLOSE_MS = 160;
@@ -52,6 +57,7 @@ export function GuaranteeNotch({ label, clock }: { label: string; clock: string 
       <time aria-label={clock}>
         <PopNumber value={clock} stagger={false} />
       </time>
+      <Icon name="alarm" className="h-[1.1em] w-auto shrink-0" />
     </span>
   );
 }

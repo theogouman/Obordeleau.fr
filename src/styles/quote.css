@@ -10,8 +10,9 @@
  *
  * Every duration and easing below is the one the catalogue gives for
  * mask-reveal-up, kept as written: 760ms in on the calm curve, 520ms out on
- * the sharp one, 90ms of stagger between lines, and a 35ms micro delay so the
- * line arriving does not start on the very frame the line leaving does.
+ * the sharp one, and 90ms of stagger between lines. Its crossfade is the one
+ * thing not taken: the messages take turns strictly instead, so the sentence
+ * leaving is gone before the next starts arriving.
  */
 
 :root {
@@ -24,15 +25,15 @@
   --mask-out-y: -22px;
   --mask-out-blur: 6px;
   --mask-stagger: 90ms;
-  --mask-micro-delay: 35ms;
 }
 
 @layer components {
   /*
-   * The two messages, the one arriving and the one leaving, are on screen at
-   * the same time for as long as the crossfade lasts. The one arriving keeps
-   * the flow, so the block is as tall as it needs to be; the one leaving is
-   * lifted out of the flow and fades over it.
+   * One message at a time, and strictly one. The catalogue offers a crossfade
+   * with the two lines overlapping, and read side by side that is two things
+   * to look at rather than one thought changing: the sentence leaving is gone
+   * before the next one starts arriving. The same element carries both, so the
+   * block never has to hold room for two of them.
    */
   .q-stack {
     position: relative;
@@ -44,12 +45,10 @@
   }
 
   .q-line[data-state='in'] {
-    animation: q-mask-in var(--mask-in-dur) var(--mask-in-ease) var(--mask-micro-delay) both;
+    animation: q-mask-in var(--mask-in-dur) var(--mask-in-ease) both;
   }
 
   .q-line[data-state='out'] {
-    position: absolute;
-    inset: 0;
     pointer-events: none;
     animation: q-mask-out var(--mask-out-dur) var(--mask-out-ease) both;
   }
@@ -81,6 +80,12 @@
    * notch is painted first because of its negative level, then the button's
    * own background is painted over it, while the whole wrapper still sits
    * above the card it is standing on.
+   *
+   * It wears the button's own colour, so the two read as one shape with a tab
+   * on top rather than as a dark label sitting on a pink button. That is also
+   * why it reaches two pixels into the button and follows it on hover: the
+   * button lifts by that much, and a hairline of card showing through the
+   * middle of a single shape is exactly what the eye catches.
    */
   .q-notch-wrap {
     position: relative;
@@ -95,28 +100,35 @@
 
   .q-notch {
     position: absolute;
-    bottom: 100%;
+    bottom: calc(100% - 2px);
     left: 50%;
     z-index: -1;
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    height: 2.25rem;
+    height: calc(2.25rem + 2px);
     padding-inline: 1.1rem;
     border-radius: 1rem 1rem 0 0;
-    background-color: var(--color-night);
-    color: var(--color-cream);
+    background-color: var(--color-raspberry);
+    color: #ffffff;
     font-size: 0.8125rem;
     font-weight: 600;
     line-height: 1;
     white-space: nowrap;
     transform: translate(-50%, 100%);
-    transition: transform var(--duration-slow) var(--ease-out-expo);
+    transition:
+      transform var(--duration-slow) var(--ease-out-expo),
+      background-color var(--duration-fast) var(--ease-out-quad);
     will-change: transform;
   }
 
   .q-notch[data-shown] {
     transform: translate(-50%, 0);
+  }
+
+  /* The wrapper holds nothing but the button, so this is the button's hover. */
+  .q-notch-wrap:hover .q-notch {
+    background-color: var(--color-raspberry-ink);
   }
 
   /* A notch is one line or it is nothing, and the sentence is long enough to
@@ -167,8 +179,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   /*
-   * Nothing rises, nothing blurs. The line leaving is still taken out of the
-   * flow and still ends invisible, so the two never pile up on each other.
+   * Nothing rises, nothing blurs. The sentence leaving still ends invisible,
+   * so the swap is a cut rather than two sentences on top of each other.
    */
   .q-line[data-state='in'],
   .q-reveal {

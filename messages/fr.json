@@ -408,7 +408,8 @@
           "title": "Ce tarif a expiré",
           "body": "Votre prix était garanti trente minutes. Il a sûrement évolué depuis : relancez la recherche pour voir le tarif à jour. Toutes vos réponses sont conservées.",
           "action": "Actualiser le prix"
-        }
+        },
+        "accommodationAt": "{count, plural, one {# nuit à {price}} other {# nuits à {price}}}"
       },
       "noscript": {
         "title": "Choisir vos dates",
@@ -446,7 +447,8 @@
       },
       "getPrice": "Obtenir le prix",
       "yes": "Oui",
-      "no": "Non"
+      "no": "Non",
+      "confirmBooking": "Confirmer ma réservation"
     },
     "calendar": {
       "arrival": "arrivée",
@@ -460,7 +462,10 @@
       "loading": "Chargement des disponibilités",
       "loadError": "Les disponibilités n'ont pas pu être chargées. Vous pouvez réessayer, ou passer par Airbnb ou Booking.",
       "retry": "Réessayer",
-      "taken": "Déjà réservé"
+      "taken": "Déjà réservé",
+      "minNights": "{count, plural, one {Minimum # nuit} other {Minimum # nuits}}",
+      "multipleNights": "{count, plural, =7 {Par semaines entières} other {Par multiples de # nuits}}",
+      "saturdayOnly": "Arrivée le samedi"
     }
   },
   "footer": {
@@ -472,7 +477,6 @@
     "privacy": "Politique de confidentialité",
     "reviews": "Avis des voyageurs",
     "copyright": "© {year} Obordeleau. Tous droits réservés.",
-    "madeNote": "Site sans cookie publicitaire. La carte ne se charge qu'avec votre accord.",
     "contactTitle": "Contact",
     "whatsapp": "WhatsApp",
     "whatsappMessage": "Bonjour Corine,\nNous avons consulté votre site pour le studio aux Sablettes.\n\nJ'ai quelques questions s'il vous plaît.",

@@ -66,7 +66,8 @@ test.describe('P1 booking journey', () => {
 
     await onStep(page).locator('button[data-guests="2"]').click();
     await onStep(page).getByRole('radio', { name: /^non$/i }).click();
-    await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
+    // The party step promises the price the same way the calendar does.
+    await onStep(page).getByRole('button', { name: /obtenir le prix/i }).click();
   };
 
   test('a direct booking is written and confirmed to the visitor', async ({ page }) => {
@@ -94,7 +95,7 @@ test.describe('P1 booking journey', () => {
     // The price is shown before a single detail about the visitor is asked for.
     await expect(onStep(page).getByText(/votre devis/i)).toBeVisible();
     await expect(onStep(page).getByText(/acompte à régler aujourd'hui/i)).toBeVisible();
-    await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
+    await onStep(page).getByRole('button', { name: /confirmer ma réservation/i }).click();
 
     await onStep(page).getByLabel(/votre nom complet/i).fill('Test Voyageur');
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
@@ -158,7 +159,7 @@ test.describe('P1 booking journey', () => {
     await page.goto('/#book');
 
     await pickDatesAndParty(page);
-    await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
+    await onStep(page).getByRole('button', { name: /confirmer ma réservation/i }).click();
 
     await onStep(page).getByLabel(/votre nom complet/i).fill('Test');
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
