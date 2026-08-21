@@ -51,6 +51,7 @@ type Availability = {
 type StepId = 'dates' | 'name' | 'email' | 'phone' | 'guests' | 'recap';
 
 const STEPS: readonly StepId[] = ['dates', 'name', 'email', 'phone', 'guests', 'recap'];
+const RECAP = STEPS.indexOf('recap');
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const MIN_PHONE_DIGITS = 6;
@@ -86,6 +87,10 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
   const [phone, setPhone] = useState('');
   const [guests, setGuests] = useState<number | null>(null);
   const [guestFocus, setGuestFocus] = useState(0);
+  // Set while a single answer is being corrected from the recap: the recap is
+  // then where Continuer and Retour both lead, so nothing already answered is
+  // asked twice.
+  const [correcting, setCorrecting] = useState(false);
 
   const [state, setState] = useState<'editing' | 'sending' | 'booked'>('editing');
   const [booked, setBooked] = useState<{ reference: string; from: string; to: string } | null>(null);
@@ -290,7 +295,28 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
 
   function next() {
     if (!validateStep()) return;
+    if (correcting) {
+      setCorrecting(false);
+      goTo(RECAP);
+      return;
+    }
     goTo(Math.min(stepIndex + 1, STEPS.length - 1));
+  }
+
+  /** The one control in the corner of the card. */
+  function back() {
+    if (correcting) {
+      setCorrecting(false);
+      goTo(RECAP);
+      return;
+    }
+    goBack(stepIndex - 1);
+  }
+
+  /** A question reopened from the recap, and returning straight to it. */
+  function correct(index: number) {
+    setCorrecting(true);
+    goBack(index);
   }
 
   // Choosing is answering: the recap follows on its own, after just long
@@ -299,7 +325,8 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
     setGuests(count);
     setGuestFocus(count - 1);
     setStepError(null);
-    window.setTimeout(() => goTo(STEPS.indexOf('recap')), 160);
+    setCorrecting(false);
+    window.setTimeout(() => goTo(RECAP), 160);
   }
 
   // Arrows move the focus without answering, so walking through the four boxes
@@ -372,6 +399,7 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
         setArrival(null);
         setDeparture(null);
         setState('editing');
+        setCorrecting(false);
         goTo(0);
         void loadAvailability();
         return;
@@ -607,35 +635,35 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
           <div>
             <h3 className="font-display text-xl">{t('recapTitle')}</h3>
 
-            <dl className="mt-4 divide-y divide-[rgba(58,42,38,0.12)]">
+            <dl className="mt-4 space-y-2.5">
               <RecapRow
                 label={t('questions.dates')}
                 value={`${readableRange}, ${t('nights', { count: nights })}`}
-                onEdit={() => goBack(STEPS.indexOf('dates'))}
+                onEdit={() => correct(STEPS.indexOf('dates'))}
                 editLabel={t('edit')}
               />
               <RecapRow
                 label={t('questions.name')}
                 value={name.trim()}
-                onEdit={() => goBack(STEPS.indexOf('name'))}
+                onEdit={() => correct(STEPS.indexOf('name'))}
                 editLabel={t('edit')}
               />
               <RecapRow
                 label={t('questions.email')}
                 value={email.trim()}
-                onEdit={() => goBack(STEPS.indexOf('email'))}
+                onEdit={() => correct(STEPS.indexOf('email'))}
                 editLabel={t('edit')}
               />
               <RecapRow
                 label={t('questions.phone')}
                 value={fullPhoneNumber(country, phone)}
-                onEdit={() => goBack(STEPS.indexOf('phone'))}
+                onEdit={() => correct(STEPS.indexOf('phone'))}
                 editLabel={t('edit')}
               />
               <RecapRow
                 label={t('questions.guests')}
                 value={guests === null ? '' : t('guestsValue', { count: guests })}
-                onEdit={() => goBack(STEPS.indexOf('guests'))}
+                onEdit={() => correct(STEPS.indexOf('guests'))}
                 editLabel={t('edit')}
               />
             </dl>
@@ -653,8 +681,8 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
                 </>
               ) : (
                 <>
-                  <Icon name="checkCircle" className="h-[1.05em] w-auto" />
                   {t('submit')}
+                  <Icon name="checkCircle" className="h-[1.05em] w-auto" />
                 </>
               )}
             </button>
@@ -701,11 +729,11 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
 
       {/* Back belongs to the card, not to the question: it stays put while the
           questions move underneath it. */}
-      {stepIndex > 0 ? (
+      {stepIndex > 0 || correcting ? (
         <div className="mb-6">
           <button
             type="button"
-            onClick={() => goBack(stepIndex - 1)}
+            onClick={back}
             className="inline-flex items-center gap-1.5 text-sm text-ink-soft transition-colors hover:text-ink"
           >
             <Icon name="returnArrow" className="h-3 w-auto" />
@@ -792,6 +820,12 @@ function Question({
   );
 }
 
+/**
+ * One answer, in its own frame: the question at the top with the control that
+ * reopens it, a rule, then the answer underneath. The control carries a filled
+ * ground of its own so it reads as a key on the frame rather than as a word in
+ * the sentence.
+ */
 function RecapRow({
   label,
   value,
@@ -804,22 +838,22 @@ function RecapRow({
   editLabel: string;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 py-3">
-      <div className="min-w-0">
-        <dt className="text-xs uppercase tracking-[0.14em] text-ink-soft">{label}</dt>
-        <dd className="truncate font-medium">{value}</dd>
-      </div>
-      {/* A key rather than a word: five of them down a column read as one set
-          of controls instead of five sentences. */}
-      <button
-        type="button"
-        onClick={onEdit}
-        aria-label={`${editLabel} : ${label}`}
-        title={editLabel}
-        className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] border border-[rgba(58,42,38,0.18)] bg-cream text-ink-soft shadow-[0_1px_0_rgba(58,42,38,0.12)] transition-colors hover:border-ink hover:text-ink"
-      >
-        <Icon name="pencilSquare" className="h-4 w-auto" />
-      </button>
+    <div className="overflow-hidden rounded-[var(--radius-card)] border border-[rgba(58,42,38,0.14)]">
+      <dt className="flex items-center justify-between gap-3 py-2 pe-2 ps-4 text-xs uppercase tracking-[0.14em] text-ink-soft">
+        {label}
+        <button
+          type="button"
+          onClick={onEdit}
+          aria-label={`${editLabel} : ${label}`}
+          title={editLabel}
+          className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] bg-sand text-ink-soft transition-colors hover:bg-[rgba(206,66,87,0.12)] hover:text-raspberry-ink"
+        >
+          <Icon name="pencilSquare" className="h-3.5 w-auto" />
+        </button>
+      </dt>
+      <dd className="truncate border-t border-[rgba(58,42,38,0.12)] px-4 py-3 font-medium">
+        {value}
+      </dd>
     </div>
   );
 }
