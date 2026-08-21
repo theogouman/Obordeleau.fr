@@ -102,9 +102,10 @@ export function AroundStack({ header, children }: { header: ReactNode; children:
       // so this is what a card has to be pushed down by to clear the fold.
       away = window.innerHeight - STICKY_TOP - head + OFF_SCREEN;
 
-      // The frame is exactly as tall as what it holds, so the cards that land
-      // lower than the first one need that much room asked for, or the frame
-      // would clip their last centimetre.
+      // The frame is exactly as tall as what it holds, and what it holds ends
+      // lower than the first card: every card after it lands a step further
+      // down. Asking for that much room is what makes the section close on the
+      // bottom of the pile rather than on the bottom of the top card.
       area.style.paddingBottom = `${landing}px`;
       const height = Math.max(
         CARD_MIN,
