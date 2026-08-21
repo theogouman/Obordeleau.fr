@@ -32,7 +32,7 @@
   },
   "nav": {
     "home": "Startseite",
-    "gallery": "Das Studio",
+    "gallery": "Fotos",
     "amenities": "Ausstattung",
     "around": "Die Umgebung",
     "about": "Ihre Gastgeberin",
@@ -257,13 +257,16 @@
       "title": "Gästeliebling",
       "body": "Dieses Studio gehört zu den 10 % beliebtesten Unterkünften auf Airbnb."
     },
-    "seeAllShort": "Alle Bewertungen ansehen",
+    "cta": {
+      "lead": "Neugierig auf mehr Stimmen?",
+      "main": "Alle Bewertungen lesen"
+    },
     "empty": "Die Bewertungen erscheinen hier, sobald der Export auf der Website liegt.",
     "page": {
       "titleLead": "Das sagen",
       "titleAccent": "{count} Gäste",
       "titleTail": "",
-      "intro": "Wir übernehmen alle Airbnb-Bewertungen unserer bisherigen Gäste, die guten wie die schlechten.",
+      "intro": "Wir übernehmen alle Bewertungen unserer bisherigen Gäste, die guten wie die schlechten.",
       "backHome": "Zurück zur Startseite"
     }
   },

@@ -32,12 +32,12 @@
   },
   "nav": {
     "home": "Accueil",
-    "gallery": "Le studio",
+    "gallery": "Les photos",
     "amenities": "Équipements",
     "around": "Autour",
     "about": "L'hôte",
     "reviews": "Avis",
-    "location": "Location",
+    "location": "Localisation",
     "book": "Réserver",
     "openMenu": "Ouvrir le menu",
     "closeMenu": "Fermer le menu",
@@ -257,13 +257,16 @@
       "title": "Coup de cœur voyageurs",
       "body": "Ce logement fait partie des 10 % de logements préférés sur Airbnb."
     },
-    "seeAllShort": "Voir tous les avis",
+    "cta": {
+      "lead": "Curieux d'en voir plus ?",
+      "main": "Lire tous les avis"
+    },
     "empty": "Les avis seront affichés ici dès que l'export sera ajouté au site.",
     "page": {
       "titleLead": "Découvrez l'avis de",
       "titleAccent": "{count} personnes",
       "titleTail": "",
-      "intro": "Nous importons tous les avis Airbnb de nos précédents voyageurs, les bons comme les mauvais.",
+      "intro": "Nous importons tous les avis de nos précédents voyageurs, les bons comme les mauvais.",
       "backHome": "Retour à l'accueil"
     }
   },

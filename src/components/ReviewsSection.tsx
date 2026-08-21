@@ -3,8 +3,8 @@ import { AccentHeading } from '@/components/AccentHeading';
 import { RatingBadge } from '@/components/RatingBadge';
 import { ReviewCard, type ReviewCardLabels } from '@/components/ReviewCard';
 import { Reveal } from '@/components/Reveal';
+import { ReviewsCta } from '@/components/ReviewsCta';
 import { Section } from '@/components/Section';
-import { Link } from '@/i18n/navigation';
 import { curatedReviews, hasReviews } from '@/lib/reviews';
 
 export function useReviewCardLabels(): ReviewCardLabels {
@@ -27,7 +27,9 @@ export function useReviewCardLabels(): ReviewCardLabels {
 export function ReviewsSection() {
   const t = useTranslations('reviews');
   const labels = useReviewCardLabels();
-  const reviews = curatedReviews();
+  // More than the wall can show at any width: the cut has to land inside the
+  // cards, never past the end of a column.
+  const reviews = curatedReviews(12);
 
   return (
     <Section id="reviews" labelledBy="reviews-title">
@@ -43,14 +45,14 @@ export function ReviewsSection() {
 
       {hasReviews ? (
         <>
-          {/* The last row is cut in half and dissolved into the page by
-              reviews.css, which decides on its own which cards those are at
-              each column count. */}
+          {/* Columns, not a grid: the cards close up under each other whatever
+              their length. The wall is cut at a fixed height and dissolved into
+              the page by reviews.css. */}
           <div className="reviews-veil mt-10">
-            <ul className="reviews-veil__grid grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <ul className="reviews-wall">
               {reviews.map((review, index) => (
                 <li key={review.id}>
-                  <Reveal delay={index * 60} className="h-full">
+                  <Reveal delay={index * 60}>
                     <ReviewCard review={review} labels={labels} teaser />
                   </Reveal>
                 </li>
@@ -64,10 +66,11 @@ export function ReviewsSection() {
             </div>
           </div>
 
-          <div className="mt-6 flex justify-center">
-            <Link href="/reviews" className="btn btn-primary">
-              {t('seeAllShort')}
-            </Link>
+          {/* Pulled up into the tail of the gradient: the wall stops being
+              readable well before the crop line, and the way out belongs where
+              the reading stops. */}
+          <div className="-mt-6 flex justify-center">
+            <ReviewsCta lead={t('cta.lead')} main={t('cta.main')} />
           </div>
         </>
       ) : (

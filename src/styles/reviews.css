@@ -1,100 +1,73 @@
 /*
- * Two pieces of the reviews, both of them too particular for utility classes.
+ * Three pieces of the reviews, all of them too particular for utility classes.
  *
- * 1. The teaser row on the home page. The last row of the grid is cut to half
- *    a card and dissolved into the page, so the section reads as an opening on
- *    to something larger rather than as a wall that happens to stop. Which row
- *    that is depends on the column count, so the rule is written per breakpoint
- *    and never in the markup: one column shows five reviews and fades the
- *    fifth, two columns show six and fade the last two, three columns show nine
- *    and fade the last three.
+ * 1. The wall. A grid gives every card in a row the height of the tallest one,
+ *    which is why opening a review used to leave holes beside it and why cards
+ *    of unequal length never sat flush. Columns have no rows to align to: each
+ *    card takes the height it needs and the next one starts right under it, so
+ *    the wall closes up on its own and the spacing between two cards is the
+ *    same everywhere, whatever they contain.
  *
- * 2. The guest favourite distinction on the reviews page, in the faces Airbnb
- *    uses for it.
+ * 2. The teaser on the home page: the same wall, cut off at a fixed height and
+ *    dissolved into the page over the last few centimetres, so the section
+ *    reads as an opening on to something larger rather than as a wall that
+ *    happens to stop.
+ *
+ * 3. The guest favourite distinction, in the faces Airbnb uses for it.
  *
  * No motion here, so nothing to guard for reduced motion.
  */
 
 @layer components {
-  .reviews-veil {
-    position: relative;
-    /* How much of the last row survives, and the band the blur covers. */
-    --veil-height: 8.5rem;
+  .reviews-wall {
+    columns: 1;
+    column-gap: 1rem;
   }
 
-  /* Every card reads its own state from these, so a breakpoint only has to set
-     three custom properties on the children it wants veiled. */
-  .reviews-veil__grid > li {
-    max-height: var(--veil-max, none);
-    overflow: var(--veil-overflow, visible);
-    -webkit-mask-image: var(--veil-mask, none);
-    mask-image: var(--veil-mask, none);
-  }
-
-  /* One column: five reviews, and the fifth is the one that goes. */
-  .reviews-veil__grid > li:nth-child(n + 6) {
-    display: none;
-  }
-
-  .reviews-veil__grid > li:nth-child(5) {
-    --veil-max: var(--veil-height);
-    --veil-overflow: hidden;
-    --veil-mask: linear-gradient(
-      to bottom,
-      #000 0,
-      #000 32%,
-      rgba(0, 0, 0, 0.45) 68%,
-      transparent 100%
-    );
+  /* The gap below a card is padding and not margin: a margin at the foot of a
+     column is allowed to be dropped, a padding never is, so the rhythm holds
+     at the bottom of every column. */
+  .reviews-wall > li {
+    break-inside: avoid;
+    padding-bottom: 1rem;
   }
 
   @media (min-width: 768px) {
-    /* Two columns: six reviews, the last row of two goes. */
-    .reviews-veil__grid > li:nth-child(6) {
-      display: block;
-    }
-
-    .reviews-veil__grid > li:nth-child(n + 7) {
-      display: none;
-    }
-
-    .reviews-veil__grid > li:nth-child(n + 5) {
-      --veil-max: var(--veil-height);
-      --veil-overflow: hidden;
-      --veil-mask: linear-gradient(
-        to bottom,
-        #000 0,
-        #000 32%,
-        rgba(0, 0, 0, 0.45) 68%,
-        transparent 100%
-      );
+    .reviews-wall {
+      columns: 2;
     }
   }
 
   @media (min-width: 1024px) {
-    .reviews-veil__grid > li:nth-child(n + 7) {
-      display: block;
+    .reviews-wall {
+      columns: 3;
     }
+  }
 
-    /* Written with :nth-child(n) rather than as a bare child rule, so that it
-       outweighs the fifth and sixth card the narrower layouts had veiled. */
-    .reviews-veil__grid > li:nth-child(n) {
-      --veil-max: none;
-      --veil-overflow: visible;
-      --veil-mask: none;
+  .reviews-veil {
+    position: relative;
+    /* How tall the teaser stands, and the band the page reclaims at its foot. */
+    --veil-wall: 68rem;
+    --veil-band: 5rem;
+  }
+
+  /* Filled column by column rather than balanced, so the wall is cut at one
+     clean line across the section instead of ending in a staircase. */
+  .reviews-veil .reviews-wall {
+    column-fill: auto;
+    height: var(--veil-wall);
+    overflow: hidden;
+  }
+
+  @media (min-width: 768px) {
+    .reviews-veil {
+      --veil-wall: 40rem;
     }
+  }
 
-    /* Three columns: nine reviews, the last row of three goes. */
-    .reviews-veil__grid > li:nth-child(n + 7) {
-      --veil-max: var(--veil-height);
-      --veil-overflow: hidden;
-      --veil-mask: linear-gradient(
-        to bottom,
-        #000 0,
-        #000 32%,
-        rgba(0, 0, 0, 0.45) 68%,
-        transparent 100%
-      );
+  @media (min-width: 1024px) {
+    .reviews-veil {
+      --veil-wall: 37rem;
     }
   }
 
@@ -102,13 +75,14 @@
     position: absolute;
     inset-inline: 0;
     bottom: 0;
-    height: var(--veil-height);
+    height: var(--veil-band);
     pointer-events: none;
   }
 
   /* Three layers rather than one. A single radius reads as a sheet of frosted
-     glass laid on top of the row; radii that grow as their mask starts lower
-     read as the row itself dissolving. */
+     glass laid on top of the wall; radii that grow as their mask starts lower
+     read as the wall itself dissolving. They all start well down the band, so
+     a card caught by the cut still shows its name and its opening line sharp. */
   .reviews-veil__blur > span {
     position: absolute;
     inset: 0;
@@ -116,27 +90,27 @@
   }
 
   .reviews-veil__blur > span:nth-child(1) {
-    -webkit-backdrop-filter: blur(2px);
-    backdrop-filter: blur(2px);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 34%);
-    mask-image: linear-gradient(to bottom, transparent 0, #000 34%);
+    -webkit-backdrop-filter: blur(1.5px);
+    backdrop-filter: blur(1.5px);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 48%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 48%);
   }
 
   .reviews-veil__blur > span:nth-child(2) {
-    -webkit-backdrop-filter: blur(6px);
-    backdrop-filter: blur(6px);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 30%, #000 64%);
-    mask-image: linear-gradient(to bottom, transparent 30%, #000 64%);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 40%, #000 76%);
+    mask-image: linear-gradient(to bottom, transparent 40%, #000 76%);
   }
 
   .reviews-veil__blur > span:nth-child(3) {
-    -webkit-backdrop-filter: blur(16px);
-    backdrop-filter: blur(16px);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 58%, #000 92%);
-    mask-image: linear-gradient(to bottom, transparent 58%, #000 92%);
+    -webkit-backdrop-filter: blur(13px);
+    backdrop-filter: blur(13px);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 68%, #000 96%);
+    mask-image: linear-gradient(to bottom, transparent 68%, #000 96%);
   }
 
-  /* The page itself, so the row dissolves into the background and not a hole. */
+  /* The page itself, so the wall dissolves into the background and not a hole. */
   .reviews-veil__blur::after {
     content: '';
     position: absolute;
@@ -144,9 +118,41 @@
     background: linear-gradient(
       to bottom,
       rgba(250, 247, 242, 0) 0,
-      rgba(250, 247, 242, 0.55) 52%,
-      var(--color-cream) 94%
+      rgba(250, 247, 242, 0.5) 58%,
+      var(--color-cream) 96%
     );
+  }
+
+  /*
+   * The call to action. Two lines that have to read as one block, so each is
+   * set at the size that fills the same width: the component works that size
+   * out from the length of the line, and the justification closes whatever the
+   * estimate left. Written as .btn.reviews-cta because the button rules live
+   * in the same layer and come later in the sheet.
+   */
+  .btn.reviews-cta {
+    width: 15.5rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.1rem;
+    padding: 0.7rem 1.5rem;
+  }
+
+  .reviews-cta > span {
+    display: block;
+    line-height: 1.18;
+    text-align: justify;
+    -moz-text-align-last: justify;
+    text-align-last: justify;
+  }
+
+  .reviews-cta__lead {
+    font-weight: 500;
+    opacity: 0.82;
+  }
+
+  .reviews-cta__main {
+    font-weight: 700;
   }
 
   .guest-favourite {
@@ -177,18 +183,18 @@
   }
 
   .guest-favourite__title {
-    margin-top: 0.75rem;
+    margin-top: 0.6rem;
     font-size: 1.0625rem;
-    font-weight: 500;
+    font-weight: 700;
     color: var(--color-ink);
   }
 
   .guest-favourite__body {
-    margin-top: 0.375rem;
-    max-width: 26rem;
+    margin-top: 0.25rem;
+    max-width: 22rem;
     font-size: 0.9375rem;
     font-weight: 500;
-    line-height: 1.45;
+    line-height: 1.25;
     color: var(--color-ink-soft);
     text-wrap: balance;
   }

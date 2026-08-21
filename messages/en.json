@@ -32,7 +32,7 @@
   },
   "nav": {
     "home": "Home",
-    "gallery": "The studio",
+    "gallery": "Photos",
     "amenities": "Amenities",
     "around": "Around you",
     "about": "Your host",
@@ -257,13 +257,16 @@
       "title": "Guest favourite",
       "body": "This studio is one of the 10 % most loved homes on Airbnb."
     },
-    "seeAllShort": "See all reviews",
+    "cta": {
+      "lead": "Curious to hear more?",
+      "main": "Read all reviews"
+    },
     "empty": "Reviews will appear here as soon as the export is added to the site.",
     "page": {
       "titleLead": "What",
       "titleAccent": "{count} guests",
       "titleTail": "say",
-      "intro": "We import every Airbnb review our past guests left, the good ones and the bad ones.",
+      "intro": "We import every review our past guests left, the good ones and the bad ones.",
       "backHome": "Back to the home page"
     }
   },

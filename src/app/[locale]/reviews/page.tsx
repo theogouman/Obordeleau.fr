@@ -61,25 +61,29 @@ export default async function ReviewsPage({ params }: { params: Promise<{ locale
 
       <main id="main">
         <Section labelledBy="reviews-page-title">
-          <div className="max-w-2xl">
-            <AccentHeading
-              as="h1"
-              id="reviews-page-title"
-              lead={t('page.titleLead')}
-              accent={t('page.titleAccent', { count: reviewCount })}
-              tail={t('page.titleTail')}
-              className="text-4xl md:text-6xl"
-            />
-            <p className="mt-4 text-lg text-ink-soft">{t('page.intro')}</p>
-          </div>
+          {/* The title and the distinction share one line on a wide screen,
+              centred on each other, and stack on a narrow one. */}
+          <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-14">
+            <div className="max-w-2xl">
+              <AccentHeading
+                as="h1"
+                id="reviews-page-title"
+                lead={t('page.titleLead')}
+                accent={t('page.titleAccent', { count: reviewCount })}
+                tail={t('page.titleTail')}
+                className="text-4xl md:text-6xl"
+              />
+              <p className="mt-4 text-lg text-ink-soft">{t('page.intro')}</p>
+            </div>
 
-          <GuestFavourite className="mt-10" />
+            <GuestFavourite className="lg:shrink-0" />
+          </div>
 
           {hasReviews ? (
             <>
-              {/* items-start, so opening one review grows that review and not
-                  the whole row it happens to sit in. */}
-              <ul className="mt-12 grid items-start gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {/* Columns rather than a grid: opening one review pushes down
+                  the ones under it and leaves no hole beside it. */}
+              <ul className="reviews-wall mt-12">
                 {allReviews.map((review) => (
                   <li key={review.id}>
                     <ReviewCard review={review} labels={labels} />
