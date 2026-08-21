@@ -1,0 +1,211 @@
+/*
+ * The "around you" cards, and the pile they make as the section is scrolled.
+ *
+ * Two states live here. The first is the one written below without any
+ * qualifier: a plain vertical stack of cards, which is what the server sends
+ * and what stays on screen when no JavaScript runs. The second is opted into
+ * by AroundStack, which sets data-stack on the container once it knows the
+ * visitor has not asked for less movement; only then does the container grow
+ * to one viewport per card, the frame inside it pin, and the cards after the
+ * first lie over the first one.
+ *
+ * The reduced-motion block at the bottom undoes the second state even if the
+ * attribute is somehow there, so the requirement holds without depending on a
+ * branch in the script.
+ */
+
+@layer components {
+  .around-stack {
+    position: relative;
+  }
+
+  .around-stack__cards {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .around-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(58, 42, 38, 0.12);
+    border-radius: var(--radius-card);
+    background-color: var(--color-shell);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* --- the scrolled pile ------------------------------------------------- */
+
+  .around-stack[data-stack='on'] .around-stack__sticky {
+    position: sticky;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .around-stack[data-stack='on'] .around-stack__cards {
+    display: block;
+    position: relative;
+    width: 100%;
+  }
+
+  /* Every card but the first is laid over the first one. `contain` keeps a
+     card that is moving from asking the rest of the page to lay out again. */
+  .around-stack[data-stack='on'] .around-card + .around-card {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    will-change: transform;
+    contain: layout style paint;
+  }
+
+  /* --- one card ---------------------------------------------------------- */
+
+  .around-card__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .around-card--photo .around-card__grid {
+    grid-template-rows: auto 1fr;
+  }
+
+  @media (min-width: 768px) {
+    .around-card--photo .around-card__grid {
+      grid-template-columns: 1.05fr 1fr;
+      grid-template-rows: 1fr;
+    }
+  }
+
+  .around-card__body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.6rem;
+    min-width: 0;
+    padding: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .around-card__body {
+      padding: 2.25rem 2.5rem;
+      gap: 0.75rem;
+    }
+  }
+
+  /* A card without a photograph is still a card: a warm ground and the mark
+     the rest of the site uses for a place, rather than a paragraph in a box. */
+  .around-card--plain .around-card__body {
+    background-color: var(--color-sunset-50);
+  }
+
+  .around-card__mark {
+    position: absolute;
+    inset-inline-end: -0.5rem;
+    bottom: -0.75rem;
+    width: auto;
+    height: 7rem;
+    color: var(--color-sunset-300);
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  .around-card__num {
+    align-self: start;
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-pill);
+    background-color: rgba(206, 66, 87, 0.1);
+    color: var(--color-raspberry-ink);
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .around-card__title {
+    position: relative;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  @media (min-width: 768px) {
+    .around-card__title {
+      font-size: 1.875rem;
+    }
+  }
+
+  .around-card__detail {
+    position: relative;
+    max-width: 34ch;
+    color: var(--color-ink-soft);
+    line-height: 1.55;
+  }
+
+  .around-card__pill {
+    position: relative;
+    align-self: start;
+    margin-top: 0.25rem;
+    white-space: nowrap;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-sand);
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .around-card--plain .around-card__pill {
+    background-color: var(--color-shell);
+  }
+
+  .around-card__visual {
+    position: relative;
+    min-height: 0;
+    overflow: hidden;
+    background-color: var(--color-sand);
+  }
+
+  .around-card--photo .around-card__visual {
+    min-height: 10rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .around-stack[data-stack='on'] {
+    height: auto !important;
+  }
+
+  .around-stack[data-stack='on'] .around-stack__sticky {
+    position: static;
+    display: block;
+    height: auto;
+    overflow: visible;
+  }
+
+  .around-stack[data-stack='on'] .around-stack__cards {
+    display: grid;
+  }
+
+  .around-stack[data-stack='on'] .around-card + .around-card {
+    position: relative;
+    inset: auto;
+    will-change: auto;
+    contain: none;
+    transform: none !important;
+    visibility: visible !important;
+  }
+
+  .around-card {
+    height: auto !important;
+  }
+}
