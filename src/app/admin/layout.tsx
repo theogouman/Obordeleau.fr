@@ -9,8 +9,9 @@ import '@/styles/admin.css';
  * reaches a visitor: Next scopes a CSS import to the route segment that makes
  * it, and the home page has a Core Web Vitals budget to keep (constitution IV).
  *
- * noindex is a header, not a request. robots.txt asks a crawler not to come;
- * this tells the ones that came anyway not to keep what they found.
+ * robots.txt only asks a crawler not to come. The robots metadata below,
+ * which Next renders as a <meta name="robots"> tag in the head, tells the ones
+ * that came anyway not to keep what they found.
  */
 export const metadata: Metadata = {
   title: 'Console | Obordeleau',
