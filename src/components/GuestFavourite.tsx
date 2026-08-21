@@ -13,11 +13,16 @@ import { averageRatingExact, reviewCount } from '@/lib/reviews';
  * They live in src/fonts rather than in public: next/font hashes and serves
  * them itself, so a copy under public would be a second, unused download path.
  * The lowercase extension is not cosmetic either, next/font matches it exactly.
+ *
+ * Both are cut down to the Latin the three languages actually use and repacked
+ * as woff2, which takes the pair from 655 kB to 53 kB. The originals are not
+ * kept in the repository: they came from the owner and the badge is the only
+ * thing that ever needed them.
  */
 const sanFrancisco = localFont({
   src: [
-    { path: '../fonts/sf-pro-display-medium.otf', weight: '500', style: 'normal' },
-    { path: '../fonts/sf-pro-display-bold.otf', weight: '700', style: 'normal' },
+    { path: '../fonts/sf-pro-display-medium.woff2', weight: '500', style: 'normal' },
+    { path: '../fonts/sf-pro-display-bold.woff2', weight: '700', style: 'normal' },
   ],
   variable: '--font-sf',
   display: 'swap',
