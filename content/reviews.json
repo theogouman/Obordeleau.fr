@@ -3,7 +3,7 @@
   "source_url": "https://www.airbnb.fr/rooms/53950636",
   "extracted_at": "2026-08-20",
   "locale": "fr-FR",
-  "total_reviews": 165,
+  "total_reviews": 171,
   "reviews": [
     {
       "id": "001",
@@ -1819,6 +1819,72 @@
       "review_fr": "Appartement très sympathique, fonctionnel.\nTrès bien situé, a proximité d’un embarcadère ainsi que d’un parcours de santé et bien sûr la mer.\nCorine est très gentille, à l’écoute et disponible.\nJe recommande ce logement.\nÀ bientôt.",
       "photo_url": "https://a0.muscache.com/im/pictures/user/f8270951-969e-4524-af64-7ce23ee3afe1.jpg",
       "has_custom_photo": true
+    },
+    {
+      "id": "166",
+      "reviewer_name": "Findrihan",
+      "rating": 5,
+      "date": "mai 2026",
+      "date_iso": "2026-06-09",
+      "review_fr": "L'endroit parfait quand on veut profiter de la plage avec son enfant. Appartement propre et très bien équipé. On aurait pu passer une semaine entière sans aucun souci. La communication avec les hôtes était super. On reviendra  !",
+      "lang": "fr",
+      "has_custom_photo": false,
+      "source": "booking"
+    },
+    {
+      "id": "167",
+      "reviewer_name": "Ange",
+      "rating": 4.5,
+      "date": "novembre 2025",
+      "date_iso": "2025-11-13",
+      "review_fr": "La propreté, la situation, la décoration chaleureuse de ce petit appartement.\nEt puis l'accueil très sympathique de Corine.",
+      "lang": "fr",
+      "has_custom_photo": false,
+      "source": "booking"
+    },
+    {
+      "id": "168",
+      "reviewer_name": "Mauro",
+      "rating": 5,
+      "date": "août 2025",
+      "date_iso": "2025-08-24",
+      "review_fr": "Posizione super strategica a un passo dal mare e dal centro e con parcheggio gratis in fronte all'appartamento. Appartamento ben arredato con il plus di avere veramente tutto il necessario lato elettrodomestici e anche qualche piacevole sorpresa lato beni di prima necessità a disposizione (olio, sale, ecc). Wi-Fi veloce e potente. La proprietaria è super disponibile e comunicativa!",
+      "lang": "other",
+      "has_custom_photo": false,
+      "source": "booking"
+    },
+    {
+      "id": "169",
+      "reviewer_name": "Andreea",
+      "rating": 5,
+      "date": "mai 2025",
+      "date_iso": "2025-05-11",
+      "review_fr": "L emplacement , les hôtes , les conditions de vie ! Le tout:)",
+      "lang": "fr",
+      "has_custom_photo": false,
+      "source": "booking"
+    },
+    {
+      "id": "170",
+      "reviewer_name": "Meli",
+      "rating": 4.5,
+      "date": "février 2025",
+      "date_iso": "2025-02-18",
+      "review_fr": "Es war sehr ruhig, viele Sitzgelegenheiten, sehr hell, viel Platz",
+      "lang": "de",
+      "has_custom_photo": false,
+      "source": "booking"
+    },
+    {
+      "id": "171",
+      "reviewer_name": "Lisette",
+      "rating": 5,
+      "date": "janvier 2025",
+      "date_iso": "2025-01-07",
+      "review_fr": "L'emplacement proche de la mer et des restaurants.  L'embarcadère pour Toulon et un arrêt de bus en face de la résidence ainsi qu'un parking gratuit à proximité sont appréciables. Mais surtout nous avons aimé ce sympathique petit appartement joliment décoré et agencé et parfaitement équipé C'était parfait pour nous.  La communication avec Corine a été super. Elle nous a permis d'arriver plus tôt et de partir plus tard. Merci !",
+      "lang": "fr",
+      "has_custom_photo": false,
+      "source": "booking"
     }
   ]
 }
