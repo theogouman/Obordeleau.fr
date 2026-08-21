@@ -436,7 +436,14 @@
           "card": "Die Zahlung war nicht erfolgreich. Prüfen Sie Ihre Karte oder nehmen Sie eine andere."
         }
       },
-      "successBodyPaid": "Ihre Anzahlung ist bezahlt, Ihre Daten sind reserviert und eine Bestätigungsmail ist unterwegs. Corine meldet sich wegen der Anreise."
+      "successBodyPaid": "Ihre Anzahlung ist bezahlt, Ihre Daten sind reserviert und eine Bestätigungsmail ist unterwegs. Corine meldet sich wegen der Anreise.",
+      "notch": {
+        "label": "Eine Frage?",
+        "aria": "Corine über WhatsApp schreiben",
+        "message": "Guten Tag Corine,\nich möchte die Wohnung in Les Sablettes buchen, habe aber vorher noch ein paar Fragen:\n\n",
+        "messageDates": "Guten Tag Corine,\nich möchte die Wohnung in Les Sablettes vom {from} bis zum {to} buchen, habe aber vorher noch ein paar Fragen:\n\n",
+        "messageGuests": "Guten Tag Corine,\nich möchte die Wohnung in Les Sablettes für {guests, plural, one {# Person} other {# Personen}} vom {from} bis zum {to} buchen, habe aber vorher noch ein paar Fragen:\n\n"
+      }
     },
     "calendar": {
       "arrival": "Anreise",

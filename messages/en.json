@@ -436,7 +436,14 @@
           "card": "The payment did not go through. Check your card, or try another one."
         }
       },
-      "successBodyPaid": "Your deposit is paid, your dates are held and a confirmation email has just gone out. Corine will write to you about arrival."
+      "successBodyPaid": "Your deposit is paid, your dates are held and a confirmation email has just gone out. Corine will write to you about arrival.",
+      "notch": {
+        "label": "A question?",
+        "aria": "Message Corine on WhatsApp",
+        "message": "Hello Corine,\nI would like to book the studio in Les Sablettes, but I have a few questions first:\n\n",
+        "messageDates": "Hello Corine,\nI would like to book the studio in Les Sablettes from {from} to {to}, but I have a few questions first:\n\n",
+        "messageGuests": "Hello Corine,\nI would like to book the studio in Les Sablettes for {guests, plural, one {# guest} other {# guests}}, from {from} to {to}, but I have a few questions first:\n\n"
+      }
     },
     "calendar": {
       "arrival": "arrival",

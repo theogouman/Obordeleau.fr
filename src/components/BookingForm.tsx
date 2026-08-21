@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from 'react';
 import { BookingCalendar } from '@/components/BookingCalendar';
+import { BookingNotch } from '@/components/BookingNotch';
 import { CheckoutPanel } from '@/components/CheckoutPanel';
 import { ChannelChoice } from '@/components/ChannelChoice';
 import { Icon } from '@/components/Icon';
@@ -1423,8 +1424,28 @@ export function BookingForm({
     }
   }
 
+  /*
+   * The notch over the card, and the message it opens WhatsApp with. What the
+   * visitor has already told the form goes into the sentence, so nobody has to
+   * type their dates twice. The party only appears once the stay does, which
+   * costs nothing: the form asks for the stay first and the party after it.
+   */
+  const dotted = (isoDate: string) =>
+    `${isoDate.slice(8, 10)}.${isoDate.slice(5, 7)}.${isoDate.slice(0, 4)}`;
+
+  const notchMessage =
+    arrival && departure && guests !== null
+      ? t('notch.messageGuests', { guests, from: dotted(arrival), to: dotted(departure) })
+      : arrival && departure
+        ? t('notch.messageDates', { from: dotted(arrival), to: dotted(departure) })
+        : t('notch.message');
+
+  const notchHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(notchMessage)}`;
+
   return (
     <div className="booking-card card px-6 py-8 sm:px-8 sm:py-10">
+      <BookingNotch href={notchHref} label={t('notch.label')} title={t('notch.aria')} />
+
       {formError ? (
         <p
           role="alert"

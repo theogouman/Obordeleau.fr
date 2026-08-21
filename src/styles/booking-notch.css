@@ -1,0 +1,55 @@
+/*
+ * The notch over the booking card, on the one every Mac has: a small rounded
+ * tab, centred, narrower than what it sits on, and continuous with it.
+ *
+ * It hangs above the card and starts pushed down by its own height, which puts
+ * it exactly under the card's top edge. A negative stack level finishes the
+ * job: the card is not a stacking context, so its background is painted after
+ * the notch and hides it completely. Coming out is then a single translate,
+ * and the notch appears to be pulled out of the card rather than drawn over
+ * the page.
+ */
+
+@layer components {
+  .booking-card {
+    /* The containing block for the notch. No z-index on purpose: giving the
+       card a stack level of its own would paint the notch inside it. */
+    position: relative;
+  }
+
+  .booking-notch {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    z-index: -1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    height: 2.25rem;
+    padding-inline: 1.1rem;
+    border-radius: 1rem 1rem 0 0;
+    background-color: var(--color-night);
+    color: var(--color-cream);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    transform: translate(-50%, 100%);
+    transition:
+      transform var(--duration-slow) var(--ease-out-expo),
+      background-color var(--duration-fast) var(--ease-out-quad);
+    will-change: transform;
+  }
+
+  .booking-notch[data-shown] {
+    transform: translate(-50%, 0);
+  }
+
+  .booking-notch[data-shown]:hover {
+    background-color: var(--color-ink);
+    transform: translate(-50%, calc(-1 * var(--lift-sm)));
+  }
+}
+
+/* The tokens are already zeroed under reduced motion, so the notch is simply
+   in place instead of arriving. Nothing else to undo. */
