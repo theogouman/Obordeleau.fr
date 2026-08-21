@@ -39,8 +39,8 @@ export function Reservation() {
             maxGuests={property.capacity.maxGuests}
             privacyHref={privacyHref}
             whatsappNumber={host.contact.whatsappNumber}
-            airbnbUrl={airbnb?.url}
-            bookingUrl={booking?.url}
+            airbnbUrl={airbnb?.url ?? undefined}
+            bookingUrl={booking?.url ?? undefined}
           />
         </div>
       </Reveal>
