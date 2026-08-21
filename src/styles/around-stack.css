@@ -63,7 +63,18 @@
     top: 5.5rem;
     display: flex;
     flex-direction: column;
+    /*
+     * Clip, and not hide. A card carries a soft shadow well outside its own
+     * box; a frame that clips on the exact edge cuts every one of those
+     * shadows along the same straight line, which is a box drawn around the
+     * pile rather than a pile. The margin is the room the shadow needs, and
+     * CLIP_MARGIN in AroundStack is the same number, because a card waiting
+     * its turn has to sit below it. A browser too old for clip keeps hidden,
+     * which is what this looked like before.
+     */
     overflow: hidden;
+    overflow: clip;
+    overflow-clip-margin: 1.5rem;
   }
 
   .around-stack[data-stack='on'] .around-stack__head,

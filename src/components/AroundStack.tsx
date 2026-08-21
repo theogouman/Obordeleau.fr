@@ -45,6 +45,15 @@ const CARD_MIN = 260;
 const STICKY_TOP = 88;
 /** Air kept under the pile so it never sits on the fold. */
 const BOTTOM_AIR = 24;
+/**
+ * How far past its edges the frame lets a card paint, matching
+ * overflow-clip-margin in the stylesheet. A card carries a soft shadow well
+ * outside its own box, and a frame that clips on the exact edge cuts that
+ * shadow off in a straight line, which draws a box around the whole pile. This
+ * is the room that shadow needs, and it is also how far below the frame a card
+ * has to wait to stay out of sight.
+ */
+const CLIP_MARGIN = 24;
 /** The gap under the heading, matching the stylesheet. */
 const HEAD_GAP = 24;
 const RESIZE_SETTLE_MS = 150;
@@ -65,6 +74,10 @@ export function AroundStack({ header, children }: { header: ReactNode; children:
     const segments = cards.length - 1;
     if (segments <= 0) return;
 
+    /** Total drop of the pile, and where a card waits before it is called. */
+    const landing = segments * LAND_STEP;
+    const away = landing + CLIP_MARGIN;
+
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     // Nothing above this line touches the layout.
@@ -80,7 +93,6 @@ export function AroundStack({ header, children }: { header: ReactNode; children:
       // What the heading takes is measured rather than assumed: it is three
       // lines in German and one in English at the same width.
       const head = headRef.current ? headRef.current.offsetHeight + HEAD_GAP : 0;
-      const landing = segments * LAND_STEP;
       const room = window.innerHeight - STICKY_TOP - BOTTOM_AIR - head - landing;
 
       // The frame is exactly as tall as what it holds, so the cards that land
@@ -105,7 +117,7 @@ export function AroundStack({ header, children }: { header: ReactNode; children:
 
     stack.forEach((card, index) => {
       card.style.zIndex = String(20 + index * 10);
-      card.style.transform = 'translateY(100%) scale(0.96)';
+      card.style.transform = `translateY(calc(100% + ${away}px)) scale(0.96)`;
       card.style.visibility = 'hidden';
     });
 
@@ -134,10 +146,16 @@ export function AroundStack({ header, children }: { header: ReactNode; children:
           const local = Math.max(0, Math.min(1, progress * segments - index));
           const eased = easeOut(local);
 
+          // Two ends to travel between: waiting a whole card plus the clip
+          // room below the frame, and landed a step lower than the card under
+          // it. The percentage and the pixels are eased together.
+          const rest = (index + 1) * LAND_STEP;
+          const shift = away + (rest - away) * eased;
+
           card.style.visibility = local > 0 ? 'visible' : 'hidden';
-          card.style.transform = `translate3d(0, calc(${(100 * (1 - eased)).toFixed(1)}% + ${
-            (index + 1) * LAND_STEP
-          }px), 0) scale(${(0.96 + 0.04 * eased).toFixed(4)})`;
+          card.style.transform = `translate3d(0, calc(${(100 * (1 - eased)).toFixed(1)}% + ${shift.toFixed(
+            1,
+          )}px), 0) scale(${(0.96 + 0.04 * eased).toFixed(4)})`;
         });
       });
     };
