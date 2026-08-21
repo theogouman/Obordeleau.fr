@@ -45,10 +45,13 @@ content/          property.json, host.json, reviews.json, reviews-curation.json
 messages/         fr.json (source of truth), en.json, de.json
 public/images/    hero, gallery, host, area, reviews  (see public/IMAGE-MANIFEST.md)
 src/app/          [locale] pages, api/{availability,reservations,calendar}, sitemap, robots, icon
+src/app/admin/    the owner's console: page, login, server actions
 src/components/   presentation, one file per section
+src/components/admin/  the console, French only, not a visitor surface
 src/i18n/         routing (locales and localized paths), request config, navigation
 src/lib/          content, reviews, seo, structured-data, analytics, assets,
-                  dates, supabase, availability, pricing, ical
+                  dates, calendar, money, supabase, availability, pricing, ical,
+                  admin-session, admin-auth, admin-data, admin-forms
 supabase/         migrations/ (schema), tests/ (SQL suites),
                   functions/sync-ical/ (the iCal importer)
 src/styles/       globals.css (Tailwind theme), tokens.css (brand), _root.css (motion)
@@ -85,6 +88,8 @@ All of them are optional for local development. The site degrades on purpose rat
 | `BOOKINGS_TO_EMAIL` (falls back to `INQUIRY_TO_EMAIL`) | The host is not told about a new booking |
 | `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | The calendar cannot load and no booking can be written: the section falls back to its error state and to the Airbnb and Booking links |
 | `ICAL_FEED_TOKEN` | The master `.ics` feed answers 404, so the platforms import nothing |
+| `ADMIN_SESSION_SECRET` | The console at `/admin` refuses to sign anyone in, rather than falling back to something weaker |
+| `SUPABASE_DB_URL` | `npm run test:sql` has nothing to connect to; the site itself never reads it |
 
 `SUPABASE_SERVICE_ROLE_KEY` bypasses row level security. It is server side only and must never be
 given a `NEXT_PUBLIC_` prefix.
@@ -272,6 +277,77 @@ the same answer whatever day it runs.
 
 ```sh
 npm run test:sql        # needs SUPABASE_DB_URL and psql
+```
+
+## Phase 3 lot 2, the owner's console
+
+`/admin`, French only, one account. It is not a visitor surface, so next-intl
+never touches it, it carries `noindex`, and `robots.txt` disallows it.
+
+**Signing in.** The password goes straight to Supabase Auth, which owns the
+account, the hashing and the rate limiting. What comes back is turned into a
+short HMAC signed cookie so later requests are answered without another round
+trip. Three layers, and only the last two are load bearing:
+
+```text
+  middleware      is there a session cookie at all?   fast redirect, no secret
+  the page        verify the signature, check expiry  redirects if not
+  every action    verify again, on its own request    the real gate
+```
+
+A server action is its own HTTP request, so it is checked as one: the page
+having rendered a form is not evidence about who is posting it. The service
+role key only ever reaches the database after that check, which is why the four
+pricing tables can keep RLS on with no policy.
+
+**The page has two halves.** Above, the general rules: base rate, cleaning,
+tourist tax, deposit, the seasons, and the last minute discount. Below, the
+month.
+
+Every figure in the calendar is the resolved price from the lot 1 engine, not a
+preview of it, so what the owner reads is what a visitor would be quoted. Each
+night carries the layer that won it, in words as well as in colour: `saison`,
+`remise`, `manuel`, or nothing for the default rate. That is the guard rail.
+The deposit is charged automatically, so the only way to notice that the last
+minute rule has become a bad idea is to see what it is doing to next week.
+
+Clicking a night selects it, clicking a second takes the range, and the panel
+below sets or clears a manual price. **A booked night is not selectable.** It
+still shows its price and says who is holding it, but no manual price can be
+posted over a figure already agreed with a guest, and `admin_set_override`
+skips such nights server side too, then reports how many it skipped.
+
+**Two conventions are hidden from the person using it.** A season asks for its
+last night rather than an exclusive end date, and the calendar sends the half
+open range the rest of the project speaks; both conversions happen in the
+action and nowhere else. The month is a URL parameter, so paging is an ordinary
+navigation the server answers with fresh prices, and a month can be reloaded or
+linked to.
+
+**Motion.** Every transition in `src/styles/admin.css` is written on the
+`--duration-*` tokens, which `src/styles/_root.css` collapses to 1ms under
+`prefers-reduced-motion: reduce`, on top of the blanket rule that cancels
+animation and transition durations outright.
+
+### Setting up the account
+
+Create the single admin in the Supabase dashboard, Authentication, Add user,
+with a password and email confirmation ticked. Then set `ADMIN_SESSION_SECRET`
+in Vercel:
+
+```sh
+openssl rand -base64 48
+```
+
+### Tests
+
+`supabase/tests/pricing-admin.test.sql` covers the nineteen cases behind the
+console: the settings read, the calendar rows and what is holding each night,
+override writes skipping booked nights, clearing back to the automatic price,
+each refusal by name, and an override still winning inside an exempt season.
+
+```sh
+npm run test:sql        # both suites; needs SUPABASE_DB_URL and psql
 ```
 
 ## Deploying

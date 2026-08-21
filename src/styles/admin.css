@@ -1,0 +1,715 @@
+/*
+ * The owner's console.
+ *
+ * Loaded only by src/app/admin/layout.tsx, so none of it reaches a visitor.
+ * The palette and the type are the project's, taken from the same tokens the
+ * site uses; the treatment is quieter, because this is a workbench and not a
+ * shop window. No token from any reference repository is copied in here.
+ *
+ * Every transition below is written on the --duration-* tokens, which
+ * src/styles/_root.css collapses to 1ms under prefers-reduced-motion, and that
+ * file also cancels animation and transition durations outright. Nothing here
+ * moves for a reader who asked for stillness (constitution V).
+ */
+
+.admin-root {
+  --admin-line: rgba(58, 42, 38, 0.14);
+  --admin-line-strong: rgba(58, 42, 38, 0.3);
+  --admin-layer-base: var(--color-sand);
+  --admin-layer-tier: var(--color-sunset-400);
+  --admin-layer-last-minute: var(--color-raspberry);
+  --admin-layer-override: var(--color-night);
+
+  min-height: 100dvh;
+  background-color: var(--color-cream);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Page frame                                                                 */
+/* -------------------------------------------------------------------------- */
+
+.admin-page {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding: 2rem 1.25rem 5rem;
+}
+
+@media (min-width: 768px) {
+  .admin-page {
+    padding-inline: 2rem;
+  }
+}
+
+.admin-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--admin-line);
+}
+
+.admin-eyebrow,
+.admin-login-eyebrow {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+
+.admin-title {
+  margin: 0.25rem 0 0;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+.admin-header-session {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-header-email {
+  font-size: 0.875rem;
+  color: var(--color-ink-soft);
+}
+
+.admin-section {
+  margin-top: 3rem;
+}
+
+.admin-section-title {
+  margin: 0;
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+}
+
+.admin-subsection-title {
+  margin: 2.5rem 0 1rem;
+  font-size: 1.15rem;
+}
+
+.admin-section-lead {
+  margin: 0.5rem 0 1.5rem;
+  max-width: 52ch;
+  color: var(--color-ink-soft);
+}
+
+.admin-columns {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .admin-columns {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Cards and forms                                                            */
+/* -------------------------------------------------------------------------- */
+
+.admin-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  background-color: var(--color-shell);
+  border: 1px solid var(--admin-line);
+  border-radius: var(--radius-card);
+  padding: 1.5rem;
+}
+
+.admin-card-compact {
+  padding: 1.15rem;
+  gap: 0.85rem;
+  background-color: transparent;
+}
+
+.admin-card-title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.admin-field-row {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 620px) {
+  .admin-field-row {
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  }
+}
+
+.admin-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.admin-help {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--color-ink-soft);
+}
+
+.admin-input {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  font: inherit;
+  font-size: 1rem;
+  color: var(--color-ink);
+  background-color: var(--color-cream);
+  border: 1px solid var(--admin-line-strong);
+  border-radius: 0.5rem;
+  transition:
+    border-color var(--duration-fast) var(--ease-out-quad),
+    box-shadow var(--duration-fast) var(--ease-out-quad);
+}
+
+.admin-input:focus {
+  border-color: var(--color-raspberry-ink);
+  outline: none;
+  box-shadow: var(--shadow-ring);
+}
+
+.admin-input-narrow {
+  max-width: 8rem;
+}
+
+.admin-input-money {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.admin-input-money > span {
+  font-size: 0.875rem;
+  color: var(--color-ink-soft);
+  white-space: nowrap;
+}
+
+.admin-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.9375rem;
+}
+
+.admin-check input {
+  margin-top: 0.2rem;
+  accent-color: var(--color-raspberry);
+}
+
+.admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Buttons                                                                    */
+/* -------------------------------------------------------------------------- */
+
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.1rem;
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.2;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out-quad),
+    border-color var(--duration-fast) var(--ease-out-quad),
+    color var(--duration-fast) var(--ease-out-quad);
+}
+
+.admin-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.admin-btn-primary {
+  background-color: var(--color-raspberry);
+  color: #ffffff;
+}
+
+.admin-btn-primary:hover:not(:disabled) {
+  background-color: var(--color-raspberry-ink);
+}
+
+.admin-btn-secondary {
+  background-color: transparent;
+  color: var(--color-ink);
+  border-color: var(--admin-line-strong);
+}
+
+.admin-btn-secondary:hover:not(:disabled) {
+  border-color: var(--color-ink);
+  background-color: var(--color-sand);
+}
+
+.admin-btn-quiet {
+  background-color: transparent;
+  color: var(--color-ink-soft);
+  padding-inline: 0.65rem;
+}
+
+.admin-btn-quiet:hover:not(:disabled) {
+  color: var(--color-ink);
+  background-color: var(--color-sand);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Notes, feedback and the restated rule                                      */
+/* -------------------------------------------------------------------------- */
+
+.admin-note {
+  margin: 0;
+  padding: 0.75rem 0.9rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  background-color: var(--color-sand);
+  border-radius: 0.5rem;
+}
+
+.admin-note code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
+}
+
+.admin-note-warn {
+  background-color: var(--color-sunset-100);
+  border-left: 3px solid var(--color-sunset-500);
+}
+
+.admin-feedback {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.admin-feedback-ok {
+  color: var(--color-ink-soft);
+}
+
+.admin-feedback-error {
+  color: var(--color-raspberry-ink);
+  font-weight: 600;
+}
+
+/* The sentence that says out loud what the last minute rule will do. It is the
+   guard rail, so it is given the weight of a quote rather than of help text. */
+.admin-rule-summary {
+  margin: 0;
+  padding: 0.9rem 1rem;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  background-color: var(--color-sunset-50);
+  border-left: 3px solid var(--color-sunset-400);
+  border-radius: 0.35rem;
+}
+
+.admin-rule-summary-quiet {
+  background-color: var(--color-sand);
+  border-left-color: var(--admin-line-strong);
+  font-size: 0.875rem;
+  color: var(--color-ink-soft);
+}
+
+.admin-details {
+  border-top: 1px solid var(--admin-line);
+  padding-top: 0.75rem;
+}
+
+.admin-details > summary {
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-raspberry-ink);
+}
+
+.admin-details[open] > summary {
+  margin-bottom: 0.9rem;
+}
+
+.admin-details-block {
+  border: 1px solid var(--admin-line);
+  border-radius: var(--radius-card);
+  padding: 1rem 1.25rem;
+}
+
+.admin-seasons {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.admin-seasons-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.admin-season-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.admin-season-dates {
+  font-size: 0.8125rem;
+  color: var(--color-ink-soft);
+}
+
+/* -------------------------------------------------------------------------- */
+/* The last minute toggle                                                     */
+/* -------------------------------------------------------------------------- */
+
+.admin-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  cursor: pointer;
+}
+
+.admin-toggle input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.admin-toggle-track {
+  display: inline-flex;
+  align-items: center;
+  width: 3.25rem;
+  height: 1.75rem;
+  padding: 0.2rem;
+  background-color: var(--admin-line-strong);
+  border-radius: var(--radius-pill);
+  transition: background-color var(--duration-base) var(--ease-out-quad);
+}
+
+.admin-toggle-thumb {
+  width: 1.35rem;
+  height: 1.35rem;
+  background-color: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(58, 42, 38, 0.35);
+  transition: transform var(--duration-base) var(--ease-out-quad);
+  will-change: transform;
+}
+
+.admin-toggle input:checked + .admin-toggle-track {
+  background-color: var(--color-raspberry);
+}
+
+.admin-toggle input:checked + .admin-toggle-track .admin-toggle-thumb {
+  transform: translateX(1.5rem);
+}
+
+.admin-toggle input:focus-visible + .admin-toggle-track {
+  box-shadow: var(--shadow-ring);
+}
+
+.admin-toggle-label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+/* -------------------------------------------------------------------------- */
+/* The calendar                                                               */
+/* -------------------------------------------------------------------------- */
+
+.admin-calendar {
+  background-color: var(--color-shell);
+  border: 1px solid var(--admin-line);
+  border-radius: var(--radius-card);
+  padding: 1.25rem;
+  overflow-x: auto;
+}
+
+/* Paging is a real navigation, so the month on screen is stale for a moment.
+   Dimming it says the click was heard. The duration token is already 1ms for a
+   reader who asked for reduced motion, which makes this an instant swap. */
+.admin-calendar .admin-grid-table {
+  transition: opacity var(--duration-fast) var(--ease-out-quad);
+}
+
+.admin-calendar[data-pending] .admin-grid-table {
+  opacity: 0.5;
+}
+
+.admin-calendar-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.admin-calendar-month {
+  margin: 0;
+  font-size: 1.15rem;
+  text-transform: capitalize;
+}
+
+.admin-grid-table {
+  width: 100%;
+  min-width: 34rem;
+  border-collapse: separate;
+  border-spacing: 0.25rem;
+  table-layout: fixed;
+}
+
+.admin-grid-table th {
+  padding-bottom: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+
+.admin-grid-table td {
+  padding: 0;
+  vertical-align: top;
+}
+
+.admin-day-pad {
+  padding: 0;
+}
+
+.admin-day {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.15rem;
+  width: 100%;
+  min-height: 4.25rem;
+  padding: 0.4rem 0.45rem;
+  font: inherit;
+  text-align: left;
+  color: var(--color-ink);
+  background-color: var(--color-cream);
+  border: 1px solid var(--admin-line);
+  border-left: 4px solid var(--admin-layer-base);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out-quad),
+    border-color var(--duration-fast) var(--ease-out-quad);
+}
+
+.admin-day:hover:not(:disabled):not([data-selected]) {
+  background-color: var(--color-sand);
+}
+
+.admin-day[data-layer='tier'] {
+  border-left-color: var(--admin-layer-tier);
+  background-color: var(--color-sunset-50);
+}
+
+.admin-day[data-layer='last_minute'] {
+  border-left-color: var(--admin-layer-last-minute);
+  background-color: rgba(206, 66, 87, 0.1);
+}
+
+.admin-day[data-layer='override'] {
+  border-left-color: var(--admin-layer-override);
+  background-color: rgba(58, 42, 38, 0.08);
+}
+
+/* Booked and blocked nights. Hatched rather than merely pale, so the state
+   survives a screen in daylight and does not rest on colour alone: the cell
+   also says who is holding it. */
+.admin-day:disabled {
+  cursor: default;
+  color: var(--color-ink-soft);
+  background-color: var(--color-sand);
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(58, 42, 38, 0.08) 0,
+    rgba(58, 42, 38, 0.08) 2px,
+    transparent 2px,
+    transparent 7px
+  );
+}
+
+.admin-day[data-today] .admin-day-number {
+  position: relative;
+  font-weight: 700;
+  color: var(--color-raspberry-ink);
+}
+
+.admin-day[data-selected] {
+  background-color: var(--color-night);
+  border-color: var(--color-night);
+  color: var(--color-cream);
+}
+
+.admin-day[data-selected] .admin-day-tag {
+  color: rgba(250, 247, 242, 0.75);
+}
+
+.admin-day-number {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.admin-day-price {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  line-height: 1.1;
+}
+
+.admin-day-tag {
+  font-size: 0.6875rem;
+  line-height: 1.2;
+  color: var(--color-ink-soft);
+}
+
+.admin-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8125rem;
+  color: var(--color-ink-soft);
+}
+
+.admin-legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.admin-legend li::before {
+  content: '';
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 0.2rem;
+  background-color: var(--admin-layer-base);
+}
+
+.admin-legend li[data-layer='tier']::before {
+  background-color: var(--admin-layer-tier);
+}
+
+.admin-legend li[data-layer='last_minute']::before {
+  background-color: var(--admin-layer-last-minute);
+}
+
+.admin-legend li[data-layer='override']::before {
+  background-color: var(--admin-layer-override);
+}
+
+.admin-legend li[data-busy]::before {
+  background-color: var(--color-sand);
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(58, 42, 38, 0.35) 0,
+    rgba(58, 42, 38, 0.35) 2px,
+    transparent 2px,
+    transparent 5px
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* The override panel                                                         */
+/* -------------------------------------------------------------------------- */
+
+.admin-override-panel {
+  margin-top: 1.25rem;
+  padding: 1.25rem;
+  background-color: var(--color-sand);
+  border-radius: var(--radius-card);
+}
+
+.admin-override-summary {
+  margin: 0 0 0.9rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.admin-override-empty {
+  margin-bottom: 0;
+  font-weight: 400;
+  color: var(--color-ink-soft);
+}
+
+.admin-override-forms {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.admin-override-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Sign in                                                                    */
+/* -------------------------------------------------------------------------- */
+
+.admin-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: 2rem 1.25rem;
+}
+
+.admin-login-card {
+  width: 100%;
+  max-width: 26rem;
+  padding: 2rem;
+  background-color: var(--color-shell);
+  border: 1px solid var(--admin-line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+.admin-login-title {
+  margin: 0.25rem 0 0;
+  font-size: 2rem;
+}
+
+.admin-login-lead {
+  margin: 0.5rem 0 1.5rem;
+  font-size: 0.9375rem;
+  color: var(--color-ink-soft);
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
