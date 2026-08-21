@@ -29,12 +29,20 @@ export function formatEmailDate(isoDate: string, locale: Locale): string {
   }).format(new Date(`${isoDate}T12:00:00Z`));
 }
 
+/**
+ * The one thing a message asks the reader to do. Rendered as a button in the
+ * HTML part and as a bare URL on its own line in the text part, which is what
+ * mail clients turn back into a link.
+ */
+export type Action = { label: string; url: string };
+
 /** Every message goes out as HTML and as plain text, built from the same parts. */
 export function renderEmail(
   title: string,
   intro: string,
   details: Detail[],
   footer: string[],
+  action?: Action,
 ): { html: string; text: string } {
   const rows = details
     .map(
@@ -44,11 +52,20 @@ export function renderEmail(
     )
     .join('');
 
+  // The palette, written out: an email cannot read the site's custom properties.
+  const button = action
+    ? `<p style="margin:0 0 20px">` +
+      `<a href="${escapeHtml(action.url)}" ` +
+      `style="display:inline-block;background:#ce4257;color:#ffffff;text-decoration:none;` +
+      `padding:12px 20px;border-radius:10px;font-weight:600">${escapeHtml(action.label)}</a></p>`
+    : '';
+
   const html =
     `<div style="font-family:system-ui,sans-serif;line-height:1.6;color:#3a2a26">` +
     `<h1 style="font-size:20px;margin:0 0 12px">${escapeHtml(title)}</h1>` +
     `<p style="margin:0 0 16px">${escapeHtml(intro)}</p>` +
     `<table style="border-collapse:collapse;margin:0 0 16px">${rows}</table>` +
+    button +
     footer.map((line) => `<p style="margin:0 0 8px">${escapeHtml(line)}</p>`).join('') +
     `</div>`;
 
@@ -58,6 +75,7 @@ export function renderEmail(
     intro,
     '',
     ...details.map((detail) => `${detail.label}: ${detail.value}`),
+    ...(action ? ['', action.label, action.url] : []),
     '',
     ...footer,
   ].join('\n');

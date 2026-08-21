@@ -26,6 +26,13 @@ export const routing = defineRouting({
       en: '/privacy',
       de: '/datenschutz',
     },
+    // Where a guest lands after paying a balance from the link in their email.
+    // Transactional, so it carries noindex and stays out of the sitemap.
+    '/balance': {
+      fr: '/solde',
+      en: '/balance',
+      de: '/restbetrag',
+    },
   },
 });
 

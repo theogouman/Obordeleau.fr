@@ -488,6 +488,93 @@ a refused card leaving the hold alone, the conversion happening exactly once,
 the sweep releasing what was abandoned, the deposit that has to go back, the
 capacity refused at the table, and the enquiry path still confirming outright.
 
+## Phase 3 lot 5, the balance
+
+The deposit is taken while the visitor is watching. The balance is taken weeks
+later, with nobody there, on the card they agreed to leave.
+
+**The database decides when, Stripe only executes.** Stripe schedules nothing on
+a calendar date outside a subscription, so a daily pg_cron job at 07:00 posts to
+`/api/balances/run`, on exactly the Phase 2 pattern: the shared secret is
+generated inside the database, sent in a header, and read back through the
+service role. It is in no environment variable, it was never copied by hand, and
+rotating it is one update with no deploy. The Stripe secret key stays on Vercel
+and never comes near the database.
+
+**What is due** is one query, and the cancellation rule is one line of it:
+
+```text
+  status = 'confirmed'          a stay that is off is never charged
+  deposit_status = 'paid'       and one that never started is not either
+  balance_status = 'pending'    and balance_charge_on has arrived
+     or action_required/failed  and the wait is over, and reminders remain
+```
+
+**Charged at most once.** A row is claimed before Stripe is asked anything, and
+the claim is a column rather than a row lock, because the work happens across an
+http round trip and a lock would not survive it. Two runs overlapping cannot
+pick the same row; a claim left behind by a runner that died is taken back after
+half an hour. On top of that the payment intent carries an idempotency key made
+of the stay and the amount, so a run retried within the day replays Stripe's own
+answer rather than taking the money twice.
+
+**The amount is read, never rebuilt.** `balance_due` was frozen when the deposit
+cleared. `get_quote` is not called again on this path, so a rate the owner
+changed in March cannot move a figure a guest agreed to in January.
+
+**When the bank wants the guest.** `authentication_required` is the expected
+European answer, not an exotic one, which is why the fallback is part of the
+design:
+
+```text
+  off session charge  ──▶ succeeded            paid, receipt sent
+                      ──▶ authentication_required  ──┐
+                      ──▶ refused                 ──┤  a link, emailed
+                      ──▶ no card was ever kept   ──┘
+```
+
+The link points at this site, not at Stripe. A Checkout session dies within the
+day and a guest who opens the email the following evening must not find a dead
+link, so `/api/balances/pay/<token>` mints a fresh session at the moment it is
+clicked. The token is ours, does not expire, and is cleared the moment the
+balance is paid, so a spent link opens nothing.
+
+**Two reminders, then a person.** Three days apart, and the third time the guest
+does not answer Corine is told, because at that point it is a telephone call and
+not a cron job. A refused card tells her straight away as well. Every attempt is
+a row in `balance_charge_attempts`, so a charge that silently did not happen is
+visible as an absence rather than being invisible.
+
+**Settled once, whoever hears first.** The runner and the webhook can both learn
+that a card cleared, and Stripe replays webhooks. Both call
+`settle_balance_payment`, which locks the row: one caller comes back with
+`changed: true` and sends the receipt, every later one is told the work was
+already done.
+
+The console at `/admin` grew a **Soldes** table underneath the calendar, ordered
+by what needs a person rather than by date, plus a button that runs the same
+pass immediately. Pressing it twice is safe, for the same reason two cron runs
+are.
+
+### Setting up
+
+Nothing to do beyond the lot 4 Stripe keys. Add `checkout.session.completed` to
+the webhook endpoint alongside the two payment intent events, so a balance paid
+through the fallback link settles itself.
+
+### Tests
+
+`supabase/tests/balance.test.sql` covers the thirty cases behind it: what is
+claimed and what is left alone, a cancelled stay never charged, a claim that
+holds and a stale one taken back, the SCA path and its waiting period, reminders
+counted and then exhausted, the link minted once and spent on payment, the
+webhook settling once and a replay settling nothing, a refused card kept with
+its reason, the console ordering, and the frozen amount surviving a rate change.
+
+```sh
+npm run test:sql        # all five suites; needs SUPABASE_DB_URL and psql
+```
+
 ## Deploying
 
 Import the repository on Vercel, set the environment variables, point the Hostinger DNS at Vercel.

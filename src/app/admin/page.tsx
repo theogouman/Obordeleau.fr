@@ -1,8 +1,10 @@
 import { signOutAction } from '@/app/admin/actions';
+import { BalanceTable } from '@/components/admin/BalanceTable';
 import { GeneralRules } from '@/components/admin/GeneralRules';
 import { PriceCalendar } from '@/components/admin/PriceCalendar';
 import { requireAdmin } from '@/lib/admin-auth';
 import { adminCalendar, adminSettings } from '@/lib/admin-data';
+import { adminBalances } from '@/lib/balances';
 import { addMonths, parseMonth, startOfMonth } from '@/lib/calendar';
 import { bookingStoreConfigured } from '@/lib/supabase';
 
@@ -46,7 +48,10 @@ export default async function AdminPage({ searchParams }: Props) {
   const settings = await adminSettings();
   const monthStart = parseMonth(requestedMonth) ?? startOfMonth(settings.today);
   const monthEnd = addMonths(monthStart, 1);
-  const nights = await adminCalendar(monthStart, monthEnd);
+  const [nights, balances] = await Promise.all([
+    adminCalendar(monthStart, monthEnd),
+    adminBalances(),
+  ]);
 
   return (
     <main className="admin-page">
@@ -71,6 +76,8 @@ export default async function AdminPage({ searchParams }: Props) {
         nights={nights}
         hasUnpricedNights={nights.some((night) => night.price === null)}
       />
+
+      <BalanceTable balances={balances} />
     </main>
   );
 }

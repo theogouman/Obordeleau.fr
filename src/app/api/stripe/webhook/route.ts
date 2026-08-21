@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import type Stripe from 'stripe';
+import { sendBalanceReceipt } from '@/lib/balance-emails';
+import { settleBalancePayment } from '@/lib/balances';
 import { settleSucceededDeposit } from '@/lib/deposit-settlement';
 import { markDepositFailed } from '@/lib/payments';
 import { paymentsConfigured, stripe, stripeWebhookSecret } from '@/lib/stripe';
@@ -57,23 +59,74 @@ export async function POST(request: NextRequest) {
         // Asserted rather than inferred: the event type is the guarantee of
         // what the payload is, and stripe-node types data.object loosely.
         const intent = event.data.object as Stripe.PaymentIntent;
-        if (intent.metadata?.kind !== 'deposit') break;
 
-        const settlement = await settleSucceededDeposit(intent);
-        console.info('[stripe/webhook] deposit settled', intent.id, settlement.status);
+        if (intent.metadata?.kind === 'deposit') {
+          const settlement = await settleSucceededDeposit(intent);
+          console.info('[stripe/webhook] deposit settled', intent.id, settlement.status);
+          break;
+        }
+
+        if (intent.metadata?.kind === 'balance') {
+          // Both the runner and this can hear about the same charge. The
+          // database decides which of them changed the row, and only that one
+          // sends the receipt.
+          const settled = await settleBalancePayment({
+            reservationId: intent.metadata.reservation_id ?? null,
+            intentId: intent.id,
+            source: 'webhook',
+          });
+
+          if (settled.ok && settled.changed) await sendBalanceReceipt(settled.booking);
+          console.info('[stripe/webhook] balance settled', intent.id, settled.ok && settled.changed);
+        }
+
+        break;
+      }
+
+      case 'checkout.session.completed': {
+        const session = event.data.object as Stripe.Checkout.Session;
+        if (session.metadata?.kind !== 'balance') break;
+
+        // An unpaid completed session is a payment method that settles later.
+        // Nothing is marked until the money is actually there.
+        if (session.payment_status !== 'paid') break;
+
+        const settled = await settleBalancePayment({
+          reservationId: session.metadata.reservation_id ?? null,
+          sessionId: session.id,
+          intentId: typeof session.payment_intent === 'string' ? session.payment_intent : null,
+          source: 'webhook',
+        });
+
+        if (settled.ok && settled.changed) await sendBalanceReceipt(settled.booking);
+        console.info('[stripe/webhook] balance link settled', session.id, settled.ok);
         break;
       }
 
       case 'payment_intent.payment_failed': {
         const intent = event.data.object as Stripe.PaymentIntent;
-        if (intent.metadata?.kind !== 'deposit') break;
 
-        // The hold is left standing on purpose: the visitor still has the rest
-        // of its lifetime to try another card.
-        await markDepositFailed(
-          intent.id,
-          intent.last_payment_error?.message ?? intent.last_payment_error?.code ?? 'payment_failed',
-        );
+        if (intent.metadata?.kind === 'deposit') {
+          // The hold is left standing on purpose: the visitor still has the
+          // rest of its lifetime to try another card.
+          await markDepositFailed(
+            intent.id,
+            intent.last_payment_error?.message ??
+              intent.last_payment_error?.code ??
+              'payment_failed',
+          );
+          break;
+        }
+
+        // A balance that failed is deliberately not recorded here. The off
+        // session charge is synchronous, so the runner already wrote what
+        // happened and counted the attempt; writing it again would count it
+        // twice. A card refused on the fallback link leaves the guest on
+        // Stripe's own page, free to try another one.
+        if (intent.metadata?.kind === 'balance') {
+          console.warn('[stripe/webhook] a balance charge failed', intent.id);
+        }
+
         break;
       }
 

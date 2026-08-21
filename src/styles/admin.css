@@ -713,3 +713,97 @@
   flex-direction: column;
   gap: 1rem;
 }
+
+/* --------------------------------------------------------------------------
+ * The balances table.
+ *
+ * A table because it is tabular: six facts about each stay, compared down the
+ * column. It scrolls inside its own box rather than pushing the page sideways,
+ * and the state colours repeat the word rather than replacing it, so the
+ * meaning does not rest on the colour alone.
+ * -------------------------------------------------------------------------- */
+
+.admin-table-scroll {
+  overflow-x: auto;
+  margin-top: 16px;
+  border: 1px solid rgba(58, 42, 38, 0.12);
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.admin-table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.admin-table-caption {
+  caption-side: top;
+  text-align: left;
+  padding: 12px 16px 0;
+  color: var(--brand-ink-soft);
+  font-size: 0.85rem;
+}
+
+.admin-table th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--brand-ink-soft);
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(58, 42, 38, 0.12);
+  white-space: nowrap;
+}
+
+.admin-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(58, 42, 38, 0.07);
+  vertical-align: top;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.admin-table-amount {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.admin-table-note {
+  display: block;
+  margin-top: 2px;
+  color: var(--brand-ink-soft);
+  font-size: 0.8rem;
+}
+
+.admin-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  background: var(--brand-sand);
+  color: var(--brand-ink);
+}
+
+.admin-badge[data-balance='paid'] {
+  background: #e6f0e6;
+  color: #2f5d33;
+}
+
+.admin-badge[data-balance='action_required'] {
+  background: var(--brand-sunset-200);
+  color: #7a4212;
+}
+
+.admin-badge[data-balance='failed'] {
+  background: #f7dfe3;
+  color: var(--brand-raspberry-ink);
+}
+
+.admin-table tr[data-balance='failed'] td:first-child {
+  box-shadow: inset 3px 0 0 var(--brand-raspberry);
+}

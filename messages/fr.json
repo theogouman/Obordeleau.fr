@@ -619,6 +619,68 @@
         "intro": "Un paiement a abouti pour des dates qui venaient d'être prises par ailleurs.",
         "done": "L'acompte a été intégralement remboursé automatiquement. Il reste à écrire au voyageur."
       }
+    },
+    "balance": {
+      "labels": {
+        "arrival": "Arrivée",
+        "departure": "Départ",
+        "nights": "Nuits",
+        "amount": "Montant",
+        "reference": "Référence",
+        "guest": "Voyageur",
+        "email": "Email",
+        "attempts": "Tentatives"
+      },
+      "receipt": {
+        "subject": "Votre solde est réglé, {property}",
+        "title": "Votre solde est réglé",
+        "intro": "Bonjour {name}, le solde de votre séjour vient d'être prélevé sur la carte enregistrée.",
+        "settled": "Tout est réglé : il n'y a plus rien à payer avant l'arrivée.",
+        "address": "Le logement : {address}",
+        "signature": "À très bientôt, {host}"
+      },
+      "link": {
+        "subject": "Le solde de votre séjour, {property}",
+        "subjectReminder": "Rappel, le solde de votre séjour, {property}",
+        "title": "Il reste le solde à régler",
+        "titleReminder": "Le solde de votre séjour attend toujours",
+        "reminder": "Petit rappel.",
+        "introAuthentication": "Bonjour {name}, votre banque demande à vous voir pour valider ce paiement, le prélèvement n'a donc pas pu se faire tout seul.",
+        "introNoCard": "Bonjour {name}, aucune carte n'avait été enregistrée pour votre séjour, le solde est donc à régler en ligne.",
+        "introFailed": "Bonjour {name}, le prélèvement du solde n'a pas abouti sur la carte enregistrée.",
+        "action": "Régler {amount}",
+        "secure": "Le paiement se fait sur la page sécurisée de Stripe. Votre carte n'est jamais conservée par ce site.",
+        "changes": "Une question sur ce montant ? Répondez simplement à ce message.",
+        "signature": "À très bientôt, {host}"
+      },
+      "host": {
+        "subjectFailed": "Solde en échec, du {from} au {to}",
+        "subjectEscalation": "Solde toujours impayé, du {from} au {to}",
+        "titleFailed": "Un solde n'a pas pu être prélevé",
+        "titleEscalation": "Un solde reste impayé après relances",
+        "introFailed": "Le prélèvement automatique a échoué. Le voyageur a reçu un lien de paiement.",
+        "introEscalation": "Le voyageur a été relancé deux fois et n'a toujours pas réglé. Il faut probablement l'appeler.",
+        "detail": "Détail : {detail}",
+        "console": "La console à /admin liste tous les soldes et leur état.",
+        "action": "Ouvrir le lien de paiement du voyageur"
+      }
+    }
+  },
+  "balancePage": {
+    "metaTitle": "Solde de votre séjour",
+    "metaDescription": "Le règlement du solde de votre séjour à Obordeleau.",
+    "home": "Retour au site",
+    "paid": {
+      "title": "Votre solde est réglé",
+      "body": "Merci. Tout est en ordre pour votre séjour, et un reçu vient de partir par email. Corine vous écrit avant l'arrivée pour les clés et pour l'heure qui vous arrange."
+    },
+    "cancelled": {
+      "title": "Paiement interrompu",
+      "body": "Rien n'a été débité. Le lien reçu par email reste valable : rouvrez-le quand vous le souhaitez pour terminer."
+    },
+    "unavailable": {
+      "title": "Ce lien n'est plus actif",
+      "body": "Soit le solde a déjà été réglé, soit ce lien a expiré. Répondez à l'email de confirmation de votre réservation et Corine vous répond."
     }
   }
 }

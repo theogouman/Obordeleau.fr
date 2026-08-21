@@ -619,6 +619,68 @@
         "intro": "A payment cleared for dates that had just been taken elsewhere.",
         "done": "The deposit has been refunded in full, automatically. What is left is to write to the traveller."
       }
+    },
+    "balance": {
+      "labels": {
+        "arrival": "Arrival",
+        "departure": "Departure",
+        "nights": "Nights",
+        "amount": "Amount",
+        "reference": "Reference",
+        "guest": "Guest",
+        "email": "Email",
+        "attempts": "Attempts"
+      },
+      "receipt": {
+        "subject": "Your balance is paid, {property}",
+        "title": "Your balance is paid",
+        "intro": "Hello {name}, the balance of your stay has just been taken from the card you left.",
+        "settled": "Everything is settled: there is nothing left to pay before arrival.",
+        "address": "The studio: {address}",
+        "signature": "See you very soon, {host}"
+      },
+      "link": {
+        "subject": "The balance of your stay, {property}",
+        "subjectReminder": "Reminder, the balance of your stay, {property}",
+        "title": "The balance is still to be paid",
+        "titleReminder": "The balance of your stay is still waiting",
+        "reminder": "A quick reminder.",
+        "introAuthentication": "Hello {name}, your bank wants to see you before it approves this payment, so it could not go through on its own.",
+        "introNoCard": "Hello {name}, no card was kept for your stay, so the balance is to be paid online.",
+        "introFailed": "Hello {name}, the balance could not be taken from the card on file.",
+        "action": "Pay {amount}",
+        "secure": "The payment happens on Stripe's secure page. Your card is never kept by this site.",
+        "changes": "A question about this amount? Simply reply to this message.",
+        "signature": "See you very soon, {host}"
+      },
+      "host": {
+        "subjectFailed": "Balance failed, from {from} to {to}",
+        "subjectEscalation": "Balance still unpaid, from {from} to {to}",
+        "titleFailed": "A balance could not be taken",
+        "titleEscalation": "A balance is still unpaid after reminders",
+        "introFailed": "The automatic charge failed. The guest has been sent a payment link.",
+        "introEscalation": "The guest has been reminded twice and still has not paid. This probably needs a telephone call.",
+        "detail": "Detail: {detail}",
+        "console": "The console at /admin lists every balance and where it stands.",
+        "action": "Open the guest's payment link"
+      }
+    }
+  },
+  "balancePage": {
+    "metaTitle": "The balance of your stay",
+    "metaDescription": "Paying the balance of your stay at Obordeleau.",
+    "home": "Back to the site",
+    "paid": {
+      "title": "Your balance is paid",
+      "body": "Thank you. Everything is settled for your stay, and a receipt has just gone out by email. Corine will write to you before arrival about the keys and a time that suits you."
+    },
+    "cancelled": {
+      "title": "Payment interrupted",
+      "body": "Nothing was charged. The link in your email still works: open it again whenever you like to finish."
+    },
+    "unavailable": {
+      "title": "This link is no longer live",
+      "body": "Either the balance has already been paid, or this link has expired. Reply to your booking confirmation email and Corine will answer."
     }
   }
 }

@@ -619,6 +619,68 @@
         "intro": "Eine Zahlung ging für Daten ein, die soeben anderweitig vergeben wurden.",
         "done": "Die Anzahlung wurde automatisch vollständig erstattet. Es bleibt, dem Gast zu schreiben."
       }
+    },
+    "balance": {
+      "labels": {
+        "arrival": "Anreise",
+        "departure": "Abreise",
+        "nights": "Nächte",
+        "amount": "Betrag",
+        "reference": "Referenz",
+        "guest": "Gast",
+        "email": "E-Mail",
+        "attempts": "Versuche"
+      },
+      "receipt": {
+        "subject": "Ihr Restbetrag ist bezahlt, {property}",
+        "title": "Ihr Restbetrag ist bezahlt",
+        "intro": "Guten Tag {name}, der Restbetrag Ihres Aufenthalts wurde soeben von der hinterlegten Karte eingezogen.",
+        "settled": "Alles ist geregelt: vor der Anreise ist nichts mehr zu zahlen.",
+        "address": "Die Unterkunft: {address}",
+        "signature": "Bis ganz bald, {host}"
+      },
+      "link": {
+        "subject": "Der Restbetrag Ihres Aufenthalts, {property}",
+        "subjectReminder": "Erinnerung, der Restbetrag Ihres Aufenthalts, {property}",
+        "title": "Der Restbetrag ist noch offen",
+        "titleReminder": "Der Restbetrag Ihres Aufenthalts wartet noch",
+        "reminder": "Eine kurze Erinnerung.",
+        "introAuthentication": "Guten Tag {name}, Ihre Bank möchte Sie sehen, bevor sie diese Zahlung freigibt, der Einzug konnte daher nicht von allein erfolgen.",
+        "introNoCard": "Guten Tag {name}, für Ihren Aufenthalt wurde keine Karte gespeichert, der Restbetrag ist daher online zu zahlen.",
+        "introFailed": "Guten Tag {name}, der Restbetrag konnte nicht von der hinterlegten Karte eingezogen werden.",
+        "action": "{amount} zahlen",
+        "secure": "Die Zahlung läuft über die gesicherte Seite von Stripe. Ihre Karte wird niemals von dieser Website gespeichert.",
+        "changes": "Eine Frage zu diesem Betrag? Antworten Sie einfach auf diese Nachricht.",
+        "signature": "Bis ganz bald, {host}"
+      },
+      "host": {
+        "subjectFailed": "Restbetrag fehlgeschlagen, vom {from} bis {to}",
+        "subjectEscalation": "Restbetrag weiterhin offen, vom {from} bis {to}",
+        "titleFailed": "Ein Restbetrag konnte nicht eingezogen werden",
+        "titleEscalation": "Ein Restbetrag ist nach Erinnerungen weiterhin offen",
+        "introFailed": "Der automatische Einzug ist fehlgeschlagen. Der Gast hat einen Zahlungslink erhalten.",
+        "introEscalation": "Der Gast wurde zweimal erinnert und hat noch nicht gezahlt. Hier hilft wahrscheinlich ein Anruf.",
+        "detail": "Detail: {detail}",
+        "console": "Die Konsole unter /admin listet alle Restbeträge und ihren Stand.",
+        "action": "Den Zahlungslink des Gastes öffnen"
+      }
+    }
+  },
+  "balancePage": {
+    "metaTitle": "Der Restbetrag Ihres Aufenthalts",
+    "metaDescription": "Die Zahlung des Restbetrags Ihres Aufenthalts in Obordeleau.",
+    "home": "Zurück zur Website",
+    "paid": {
+      "title": "Ihr Restbetrag ist bezahlt",
+      "body": "Vielen Dank. Für Ihren Aufenthalt ist alles geregelt, und eine Quittung ist gerade per E-Mail unterwegs. Corine meldet sich vor der Anreise wegen der Schlüssel und einer Uhrzeit, die Ihnen passt."
+    },
+    "cancelled": {
+      "title": "Zahlung abgebrochen",
+      "body": "Es wurde nichts abgebucht. Der Link in Ihrer E-Mail gilt weiter: öffnen Sie ihn wieder, wann immer Sie möchten."
+    },
+    "unavailable": {
+      "title": "Dieser Link ist nicht mehr aktiv",
+      "body": "Entweder ist der Restbetrag bereits bezahlt, oder der Link ist abgelaufen. Antworten Sie auf Ihre Buchungsbestätigung, und Corine meldet sich."
     }
   }
 }

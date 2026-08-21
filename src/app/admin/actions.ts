@@ -18,7 +18,9 @@ import {
   type WriteResult,
 } from '@/lib/admin-data';
 import { IDLE, type ActionState } from '@/lib/admin-forms';
+import { runDueBalances } from '@/lib/balance-runner';
 import { addDays, isIsoDate } from '@/lib/dates';
+import { paymentsConfigured } from '@/lib/stripe';
 
 /**
  * Every write the console can make.
@@ -347,4 +349,54 @@ export async function clearOverrideAction(
         status: 'ok',
         message: `${cleared} nuit${cleared > 1 ? 's' : ''} rendue${cleared > 1 ? 's' : ''} au prix automatique.`,
       };
+}
+
+/**
+ * The balance run, on demand.
+ *
+ * The same function the daily cron job calls, invoked here directly rather than
+ * by posting to its route: a server action is already on the server, and asking
+ * ourselves over http would only add a way for an error to go missing.
+ *
+ * Pressing it twice is safe. Every balance is claimed before it is charged, so
+ * a second run finds the first one's work already in flight and passes over it.
+ */
+export async function runBalancesAction(
+  _previous: ActionState,
+  _formData: FormData,
+): Promise<ActionState> {
+  await requireAdmin();
+
+  if (!paymentsConfigured) {
+    return {
+      status: 'error',
+      message: "Stripe n'est pas configuré sur ce déploiement, rien ne peut être débité.",
+    };
+  }
+
+  try {
+    const summary = await runDueBalances();
+    revalidatePath('/admin');
+
+    if (summary.claimed === 0) {
+      return { status: 'ok', message: 'Aucun solde à débiter aujourd\'hui.' };
+    }
+
+    const parts = [
+      `${summary.claimed} solde(s) traité(s)`,
+      summary.paid > 0 ? `${summary.paid} débité(s)` : null,
+      summary.actionRequired > 0 ? `${summary.actionRequired} en attente du voyageur` : null,
+      summary.failed > 0 ? `${summary.failed} en échec` : null,
+      summary.reminded > 0 ? `${summary.reminded} relance(s)` : null,
+      summary.errors > 0 ? `${summary.errors} erreur(s)` : null,
+    ].filter(Boolean);
+
+    return { status: 'ok', message: `${parts.join(', ')}.` };
+  } catch (error) {
+    console.error('[admin] the balance run failed', error);
+    return {
+      status: 'error',
+      message: "Le passage n'a pas pu se faire. Réessayez dans un instant.",
+    };
+  }
 }

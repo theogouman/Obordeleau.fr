@@ -56,3 +56,38 @@ export function isReusableIntentStatus(status: Stripe.PaymentIntent.Status): boo
     status === 'requires_action'
   );
 }
+
+export type StripeFailure = {
+  /** The machine readable reason, `authentication_required` above all. */
+  code: string;
+  message: string;
+  /** The intent Stripe opened before it refused, when there was one. */
+  intentId: string | null;
+};
+
+/**
+ * What went wrong, in the three parts the balance path acts on.
+ *
+ * An off session charge that needs the cardholder present does not come back as
+ * a status: stripe-node throws, and `authentication_required` is on the error.
+ * Telling that apart from a refusal is the whole difference between sending a
+ * link and telling the owner a card has died.
+ */
+export function stripeFailure(error: unknown): StripeFailure {
+  if (error instanceof Stripe.errors.StripeError) {
+    const raw = error.raw as { payment_intent?: { id?: string } | string } | undefined;
+    const intent = raw?.payment_intent;
+
+    return {
+      code: error.code ?? error.type ?? 'stripe_error',
+      message: error.message ?? 'the payment provider refused the charge',
+      intentId: typeof intent === 'string' ? intent : (intent?.id ?? null),
+    };
+  }
+
+  return {
+    code: 'unexpected_error',
+    message: error instanceof Error ? error.message : String(error),
+    intentId: null,
+  };
+}
