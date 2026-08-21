@@ -48,8 +48,9 @@ src/app/          [locale] pages, api/{availability,reservations,calendar}, site
 src/components/   presentation, one file per section
 src/i18n/         routing (locales and localized paths), request config, navigation
 src/lib/          content, reviews, seo, structured-data, analytics, assets,
-                  dates, supabase, availability, ical
-supabase/         migrations/ (schema), functions/sync-ical/ (the iCal importer)
+                  dates, supabase, availability, pricing, ical
+supabase/         migrations/ (schema), tests/ (SQL suites),
+                  functions/sync-ical/ (the iCal importer)
 src/styles/       globals.css (Tailwind theme), tokens.css (brand), _root.css (motion)
 scripts/          no-emdash.mjs, check-reviews.mjs
 tests/e2e/        journey, reviews, accessibility
@@ -204,6 +205,74 @@ insert into ical_sources (platform, url) values ('booking', 'https://...');
 Payment (Phase 3): the write path stays `confirmed`; it becomes a hold converted on payment by
 changing `create_direct_reservation`, not its callers. The admin interface owns manual blocks,
 buffers and minimum stay; the tables are already there.
+
+## Phase 3 lot 1, the price engine
+
+Prices live in the same Postgres database as availability, and the site never
+computes one. A night resolves by stacking four layers, most specific first:
+
+```text
+  price_overrides        a hand set price on one date, wins outright, both ways
+        ▲
+  last_minute_discount   free nights inside a sliding window, downwards only
+        ▲
+  seasonal_tiers         a dated tier with its own rate (July and August today)
+        ▲
+  pricing_config         the base nightly rate
+```
+
+`resolve_nightly_prices(from, to)` returns one row per night with the layer that
+won, which is what the calendar draws. `get_quote(check_in, check_out, adults,
+minors)` is the **only** place a total is ever computed: the figure the visitor
+reads and the figure Stripe is later asked to charge come from the same call, so
+they cannot drift, and an amount posted up from a browser is never trusted.
+
+**The last minute rule** is evaluated per night and anchored on today at the
+property, so the window slides on its own with nothing to recompute on a
+schedule. A night is discounted only when the toggle is on, the night is free,
+it falls within `window_days` of today, its tier is not marked exempt, no
+override sits on it, and the discounted price is genuinely lower. `floor_price`
+is the guard rail: a discounted price set under it becomes the floor rather than
+being refused.
+
+**Stay rules are validation, not pricing**, and live in their own function.
+`validate_stay(check_in, check_out)` answers `{valid, reason}` against the
+constraints of every season the dates touch, then against availability on the
+Phase 2 mechanism. Outside the tiers: two nights minimum, any arrival day.
+July and August: Saturday arrival and a length that is a multiple of seven, with
+no upper bound, which puts the departure on a Saturday too. The date picker uses
+it to answer early, and it is re-run server side before any payment.
+
+**Money fails closed.** A rate the owner has not set is NULL, never zero and
+never a guess, and `get_quote` raises `pricing_not_configured` rather than
+quoting a night it cannot price (constitution VIII). Seeded today: cleaning
+offered at 0, tourist tax at 1.86 EUR per adult per night (minors under 18 are
+exempt, and the rate is a config field because the TPM reindexes it each
+January), deposit at 50 percent of the accommodation alone, and the July and
+August seasons for 2026 to 2032 with their Saturday to Saturday constraints.
+Still to be set by the owner before anything can be quoted:
+
+```sql
+update pricing_config set base_nightly_rate = ..., deposit_charge_days_before_arrival = ...;
+update seasonal_tiers set nightly_rate = ... where label = 'summer-2027';
+update last_minute_discount set window_days = ..., discounted_price = ..., floor_price = ..., enabled = true;
+```
+
+Adding a season is an insert, not a deploy. Nothing in any function knows that
+summer is special.
+
+### Tests
+
+`supabase/tests/pricing.test.sql` covers the twenty eight acceptance cases in
+one transaction that always rolls back, so it can be pointed at any environment
+without leaving a row behind. Fixture dates sit in 2029, far outside the
+imported calendars, and the last minute window is pinned through the
+`p_today` argument rather than by waiting for the calendar, so the suite gives
+the same answer whatever day it runs.
+
+```sh
+npm run test:sql        # needs SUPABASE_DB_URL and psql
+```
 
 ## Deploying
 
