@@ -198,8 +198,19 @@ export function ReviewsBrowser({ reviews, labels, filters }: Props) {
 
   const active = mode !== 'all' || source !== null;
 
+  /*
+   * One filter at a time. The platform is a way of cutting the wall like the
+   * three chips are, not a second dimension laid over them: picking one drops
+   * whatever was picked before, and the bar always describes a single state.
+   */
   function pick(next: Exclude<Mode, 'all'>) {
+    setSource(null);
     setMode((current) => (current === next ? 'all' : next));
+  }
+
+  function pickSource(next: ReviewSource | null) {
+    setMode('all');
+    setSource(next);
   }
 
   return (
@@ -213,17 +224,17 @@ export function ReviewsBrowser({ reviews, labels, filters }: Props) {
             aria-pressed={mode === chip.mode}
             onClick={() => pick(chip.mode)}
           >
-            <Icon name={chip.icon} className="h-4 w-auto shrink-0" />
+            <Icon name={chip.icon} className="h-3.5 w-auto shrink-0" />
             <span>{filters[chip.mode]}</span>
           </button>
         ))}
 
-        <ReviewsSourceMenu value={source} onChange={setSource} labels={filters} />
+        <ReviewsSourceMenu value={source} onChange={pickSource} labels={filters} />
 
         {active ? (
           <button
             type="button"
-            className="filter-chip filter-chip--clear"
+            className="filter-clear"
             onClick={() => {
               setMode('all');
               setSource(null);
@@ -234,7 +245,10 @@ export function ReviewsBrowser({ reviews, labels, filters }: Props) {
         ) : null}
       </div>
 
-      <p className="reviews-filters__count" aria-live="polite">
+      {/* Not on the page any more, still announced: a filter that silently
+          changes what is under it leaves a screen reader with no way of
+          knowing anything happened. */}
+      <p className="visually-hidden" aria-live="polite">
         {filters.result.replace('{count}', String(selected.length))}
       </p>
 
@@ -244,7 +258,7 @@ export function ReviewsBrowser({ reviews, labels, filters }: Props) {
         </p>
       ) : (
         <div ref={wallRef}>
-          <ReviewsWall items={items} className="mt-6" />
+          <ReviewsWall items={items} className="mt-8" />
         </div>
       )}
     </div>

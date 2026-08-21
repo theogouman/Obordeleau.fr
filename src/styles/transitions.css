@@ -102,12 +102,20 @@
     height: var(--morph-h-closed, 40px);
     border-radius: var(--morph-r-closed);
     overflow: hidden;
+    will-change: width, height;
     transition:
       width var(--morph-close-dur) var(--morph-close-ease),
       height var(--morph-close-dur) var(--morph-close-ease),
       border-radius var(--morph-close-dur) var(--morph-close-ease);
   }
 
+  /*
+   * One deviation from the snippet: the corner does not take the bouncy ease
+   * the box takes. A radius that overshoots with the box is a corner that
+   * bulges and comes back while the panel is still growing, and it is the one
+   * part of the movement the eye follows all the way. It settles early, on the
+   * calm curve, and the box keeps its bounce.
+   */
   .t-morph[data-open='true'] {
     width: var(--morph-w-open, 183px);
     height: var(--morph-h-open, 172px);
@@ -115,7 +123,7 @@
     transition:
       width var(--morph-open-dur) var(--morph-ease),
       height var(--morph-open-dur) var(--morph-ease),
-      border-radius var(--morph-open-dur) var(--morph-ease);
+      border-radius var(--morph-fade-dur) var(--morph-close-ease);
   }
 
   .t-morph-plus {

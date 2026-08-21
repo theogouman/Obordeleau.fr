@@ -28,7 +28,7 @@ type Props = {
   labels: SourceMenuLabels;
 };
 
-function Logo({ source, size = 18 }: { source: ReviewSource; size?: number }) {
+function Logo({ source, size = 16 }: { source: ReviewSource; size?: number }) {
   return (
     <Image
       src={LOGOS[source]}
@@ -116,7 +116,7 @@ export function ReviewsSourceMenu({ value, onChange, labels }: Props) {
               className="reviews-source__option"
               onClick={() => choose(source)}
             >
-              <Logo source={source} size={20} />
+              <Logo source={source} size={18} />
               <span>{labels[source]}</span>
             </button>
           ))}
@@ -129,7 +129,7 @@ export function ReviewsSourceMenu({ value, onChange, labels }: Props) {
             className="reviews-source__option reviews-source__option--plain"
             onClick={() => choose(null)}
           >
-            {labels.clear}
+            <span>{labels.clear}</span>
           </button>
         </div>
 

@@ -304,14 +304,14 @@
   .filter-chip {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    height: 2.75rem;
-    padding-inline: 1rem;
+    gap: 0.375rem;
+    height: 2.125rem;
+    padding-inline: 0.75rem;
     border: 1px solid rgba(58, 42, 38, 0.14);
     border-radius: var(--radius-pill);
     background-color: var(--color-shell);
     color: var(--color-ink);
-    font-size: 0.9375rem;
+    font-size: 0.8125rem;
     font-weight: 500;
     line-height: 1;
     white-space: nowrap;
@@ -332,24 +332,40 @@
     color: #ffffff;
   }
 
-  .filter-chip--clear {
-    border-style: dashed;
-    color: var(--color-ink-soft);
-  }
-
-  .reviews-filters__count {
-    margin-top: 0.75rem;
-    font-size: 0.875rem;
-    color: var(--color-ink-soft);
+  /* The way out of a filter is not a fifth thing to choose from: no box, no
+     ground of its own, just the word in the colour the site uses for what can
+     be acted on. */
+  .filter-clear {
+    padding-inline: 0.25rem;
+    color: var(--color-raspberry-ink);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    white-space: nowrap;
   }
 
   /* The platform chip keeps its closed footprint in the row while the panel it
      becomes grows out of its top left corner, over the wall and not into it. */
   .reviews-source {
-    --morph-w-closed: 13rem;
-    --morph-h-closed: 2.75rem;
-    --morph-w-open: 15rem;
-    --morph-h-open: 10rem;
+    --morph-w-closed: 10.5rem;
+    --morph-h-closed: 2.125rem;
+    --morph-w-open: 14rem;
+    --morph-h-open: 9.5rem;
+    /*
+     * Half the closed height and not a large round number. A radius bigger
+     * than the box is clamped to half of whatever the box currently is, so a
+     * radius of 999px does not interpolate at all while the box grows: it
+     * tracks the height, and the corner appears to move on its own curve. Half
+     * the height is the same pill when closed, and it interpolates.
+     */
+    --morph-r-closed: calc(var(--morph-h-closed) / 2);
+    --morph-r-open: 1rem;
+    /* The snippet's own overshoot, taken down: on a chip this small the box
+       reaching past its open size and coming back reads as a wobble rather
+       than as life. */
+    --morph-ease: cubic-bezier(0.34, 1.12, 0.64, 1);
     position: relative;
     width: var(--morph-w-closed);
     height: var(--morph-h-closed);
@@ -368,9 +384,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.4rem;
-    padding-inline: 1rem;
-    font-size: 0.9375rem;
+    gap: 0.35rem;
+    padding-inline: 0.75rem;
+    font-size: 0.8125rem;
     font-weight: 500;
     line-height: 1;
     white-space: nowrap;
@@ -384,13 +400,14 @@
   .reviews-source__menu {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
-    padding: 0.625rem;
+    gap: 0.125rem;
+    padding: 0.5rem;
   }
 
   .reviews-source__title {
     padding-inline: 0.5rem;
-    font-size: 0.75rem;
+    padding-block: 0.25rem;
+    font-size: 0.6875rem;
     font-weight: 500;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -401,11 +418,11 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    height: 2.25rem;
+    height: 2.125rem;
     padding-inline: 0.5rem;
     border-radius: 0.625rem;
     text-align: start;
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     transition: background-color var(--duration-fast) var(--ease-out-quad);
   }
 
@@ -419,8 +436,9 @@
   }
 
   .reviews-source__option--plain {
-    color: var(--color-ink-soft);
-    font-size: 0.875rem;
+    color: var(--color-raspberry-ink);
+    font-size: 0.8125rem;
+    font-weight: 600;
   }
 
   /*
