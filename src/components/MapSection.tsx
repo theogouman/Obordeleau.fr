@@ -48,6 +48,7 @@ export function MapSection() {
               loadError: t('loadError'),
               markerAlt: t('markerAlt'),
               loading: common('loading'),
+              retry: common('retry'),
             }}
           />
         </Reveal>

@@ -8,7 +8,8 @@
     "close": "Fermer",
     "previous": "Précédent",
     "next": "Suivant",
-    "skipToContent": "Aller au contenu"
+    "skipToContent": "Aller au contenu",
+    "retry": "Réessayer"
   },
   "meta": {
     "siteName": "Obordeleau",
@@ -227,7 +228,8 @@
     "paragraphs": [
       "J'accueille des voyageurs dans ce studio depuis 2021. Ma priorité est de rendre votre séjour le plus agréable possible et que vous vous sentiez comme à la maison.",
       "Le logement a été pensé pour le confort, préparé avec soin. Je reste joignable pendant tout le séjour si vous avez besoin d'un conseil sur le quartier."
-    ]
+    ],
+    "superhostAlt": "Distinction Superhost Airbnb"
   },
   "reviews": {
     "titleLead": "L'avis de nos",
@@ -294,7 +296,16 @@
         "body": "L'annonce est également disponible sur Booking, avec le classement 3 étoiles.",
         "cta": "Voir l'annonce Booking",
         "external": "Ouvre le site Booking dans un nouvel onglet"
-      }
+      },
+      "bookOn": "Réserver sur {channel}",
+      "dialog": {
+        "title": "Cela vous coûtera plus cher...",
+        "body": "{channel} vous facture des frais supplémentaires. Profitez de tarifs réduits en réservant en direct sur ce site, avec une qualité de service égale.",
+        "direct": "Réserver en direct",
+        "external": "Voir sur {channel}"
+      },
+      "airbnbName": "Airbnb",
+      "bookingName": "Booking"
     },
     "booking": {
       "noDatesYet": "Choisissez une date d'arrivée, puis une date de départ.",
@@ -343,7 +354,8 @@
         "rateLimited": "Trop de tentatives depuis cet appareil. Merci de réessayer dans quelques minutes.",
         "notConfigured": "La réservation en ligne n'est pas encore active. Vous pouvez passer par Airbnb ou Booking en attendant.",
         "server": "La réservation a échoué. Vous pouvez réessayer, ou passer par Airbnb ou Booking en attendant."
-      }
+      },
+      "datesTooltip": "Aucune date n'est sélectionnée"
     },
     "calendar": {
       "arrival": "arrivée",

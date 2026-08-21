@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { AccentHeading } from '@/components/AccentHeading';
 import { Reveal } from '@/components/Reveal';
@@ -43,6 +44,19 @@ export function About() {
               <p key={paragraph.slice(0, 24)}>{paragraph}</p>
             ))}
           </div>
+
+          {/* The distinction, at reading size rather than as a banner: it
+              confirms what the paragraphs say instead of announcing it.
+              Unoptimised because it is an SVG, which the image optimiser is
+              deliberately not allowed to touch. */}
+          <Image
+            src="/images/annexes/airbnb-superhost.svg"
+            alt={t('superhostAlt')}
+            width={500}
+            height={500}
+            unoptimized
+            className="mt-6 h-16 w-auto"
+          />
         </Reveal>
       </div>
     </Section>

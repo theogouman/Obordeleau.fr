@@ -8,7 +8,8 @@
     "close": "Schließen",
     "previous": "Zurück",
     "next": "Weiter",
-    "skipToContent": "Zum Inhalt springen"
+    "skipToContent": "Zum Inhalt springen",
+    "retry": "Erneut versuchen"
   },
   "meta": {
     "siteName": "Obordeleau",
@@ -227,7 +228,8 @@
     "paragraphs": [
       "Seit 2021 empfange ich Gäste in diesem Studio. Mir ist wichtig, dass Ihr Aufenthalt so angenehm wie möglich wird und Sie sich wie zu Hause fühlen.",
       "Das Studio ist auf Komfort ausgelegt und wird mit Sorgfalt vorbereitet. Während Ihres Aufenthalts bin ich erreichbar, wenn Sie einen Tipp für die Gegend brauchen."
-    ]
+    ],
+    "superhostAlt": "Airbnb-Superhost-Auszeichnung"
   },
   "reviews": {
     "titleLead": "Das sagen unsere",
@@ -294,7 +296,16 @@
         "body": "Das Studio ist auch auf Booking gelistet, mit der 3-Sterne-Klassifizierung.",
         "cta": "Booking-Inserat ansehen",
         "external": "Öffnet die Website von Booking in einem neuen Tab"
-      }
+      },
+      "bookOn": "Auf {channel} buchen",
+      "dialog": {
+        "title": "Das kostet Sie mehr...",
+        "body": "{channel} berechnet Ihnen zusätzliche Gebühren. Buchen Sie direkt auf dieser Website zu einem günstigeren Preis und mit demselben Empfang.",
+        "direct": "Direkt buchen",
+        "external": "Auf {channel} ansehen"
+      },
+      "airbnbName": "Airbnb",
+      "bookingName": "Booking"
     },
     "booking": {
       "noDatesYet": "Wählen Sie ein Anreisedatum und danach ein Abreisedatum.",
@@ -343,7 +354,8 @@
         "rateLimited": "Zu viele Versuche von diesem Gerät. Bitte versuchen Sie es in einigen Minuten erneut.",
         "notConfigured": "Die Onlinebuchung ist noch nicht aktiv. Sie können solange über Airbnb oder Booking gehen.",
         "server": "Die Buchung hat nicht geklappt. Sie können es erneut versuchen oder solange über Airbnb oder Booking gehen."
-      }
+      },
+      "datesTooltip": "Es ist noch kein Zeitraum gewählt"
     },
     "calendar": {
       "arrival": "Anreise",

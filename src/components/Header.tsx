@@ -1,9 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Link, usePathname } from '@/i18n/navigation';
+import NextLink from 'next/link';
+import { useLocale } from 'next-intl';
+import { useEffect, useState, type MouseEvent, type ReactNode } from 'react';
+import { getPathname, Link, usePathname } from '@/i18n/navigation';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Wordmark } from '@/components/Wordmark';
+import type { Locale } from '@/i18n/routing';
 
 export type HeaderLabels = {
   home: string;
@@ -25,9 +28,49 @@ type Props = {
   labels: HeaderLabels;
 };
 
+/**
+ * The same five sections wherever the visitor is. On the home page they are
+ * anchors into the page; elsewhere they are client navigations to the home
+ * page carrying the anchor, which Next then scrolls to.
+ *
+ * Declared here rather than inside Header: a component built during a render
+ * is a new type on every render, and React would tear the whole nav down and
+ * build it again each time the menu opened.
+ */
+function SectionLink({
+  hash,
+  className,
+  children,
+  atHome,
+  home,
+  onNavigate,
+}: {
+  hash: string;
+  className: string;
+  children: ReactNode;
+  atHome: boolean;
+  home: string;
+  onNavigate: () => void;
+}) {
+  if (atHome) {
+    return (
+      <a href={hash} onClick={onNavigate} className={className}>
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <NextLink href={`${home}${hash}`} onClick={onNavigate} className={className}>
+      {children}
+    </NextLink>
+  );
+}
+
 export function Header({ labels }: Props) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const locale = useLocale() as Locale;
 
   // On the home page the nav scrolls to sections, elsewhere it links back.
   // Read from the route rather than passed down, now that the header is
@@ -50,54 +93,68 @@ export function Header({ labels }: Props) {
   }, [open]);
 
   const sections = [
-    { href: '#gallery', label: labels.gallery },
-    { href: '#amenities', label: labels.amenities },
-    { href: '#around', label: labels.around },
-    { href: '#reviews', label: labels.reviews },
-    { href: '#location', label: labels.location },
+    { hash: '#gallery', label: labels.gallery },
+    { hash: '#amenities', label: labels.amenities },
+    { hash: '#around', label: labels.around },
+    { hash: '#reviews', label: labels.reviews },
+    { hash: '#location', label: labels.location },
   ];
+
+  // The localized home page, so a section of it can be reached from anywhere.
+  const home = getPathname({ href: '/', locale });
+
+  // The three props every section link shares.
+  const shared = { atHome: variant === 'home', home, onNavigate: () => setOpen(false) };
+
+  /**
+   * The page is already loaded, so going back to the top is a scroll and not a
+   * navigation. Without this the browser reloads the document, which is the
+   * jump the owner saw.
+   */
+  function toTop(event: MouseEvent<HTMLAnchorElement>) {
+    if (variant !== 'home') return;
+    event.preventDefault();
+    setOpen(false);
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-[rgba(58,42,38,0.08)] bg-[rgba(250,247,242,0.92)] backdrop-blur">
       <div className="container-page flex items-center justify-between gap-4 py-3">
-        <Link href="/" className="text-ink" aria-label={labels.home}>
-          <Wordmark />
-        </Link>
+        {/* An anchor either way, so it still works with no JavaScript. */}
+        {variant === 'home' ? (
+          <a href={home} onClick={toTop} className="text-ink" aria-label={labels.home}>
+            <Wordmark />
+          </a>
+        ) : (
+          <Link href="/" className="text-ink" aria-label={labels.home}>
+            <Wordmark />
+          </Link>
+        )}
 
         <nav aria-label={labels.primary} className="hidden items-center gap-6 text-sm lg:flex">
-          {variant === 'home' ? (
-            sections.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="text-ink-soft transition-colors hover:text-ink"
-              >
-                {item.label}
-              </a>
-            ))
-          ) : (
-            <>
-              <Link href="/" className="text-ink-soft transition-colors hover:text-ink">
-                {labels.home}
-              </Link>
-              <Link href="/reviews" className="text-ink-soft transition-colors hover:text-ink">
-                {labels.reviews}
-              </Link>
-            </>
-          )}
+          {sections.map((item) => (
+            <SectionLink
+              key={item.hash}
+              {...shared}
+              hash={item.hash}
+              className="text-ink-soft transition-colors hover:text-ink"
+            >
+              {item.label}
+            </SectionLink>
+          ))}
         </nav>
 
         <div className="flex items-center gap-2">
           <LanguageSwitcher label={labels.language} className="hidden sm:flex" />
-          {variant === 'home' ? (
-            <a href="#book" className="btn btn-primary hidden px-4 py-2 text-sm sm:inline-flex">
-              {labels.book}
-            </a>
-          ) : (
-            <Link href="/" className="btn btn-primary hidden px-4 py-2 text-sm sm:inline-flex">
-              {labels.book}
-            </Link>
-          )}
+          <SectionLink
+            {...shared}
+            hash="#book"
+            className="btn btn-primary hidden px-4 py-2 text-sm sm:inline-flex"
+          >
+            {labels.book}
+          </SectionLink>
 
           <button
             type="button"
@@ -135,55 +192,22 @@ export function Header({ labels }: Props) {
         className="border-t border-[rgba(58,42,38,0.08)] bg-cream lg:hidden"
       >
         <nav aria-label={labels.mobileMenu} className="container-page flex flex-col gap-1 py-4">
-          {variant === 'home' ? (
-            sections.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                onClick={() => setOpen(false)}
-                className="rounded-[var(--radius-card)] px-2 py-3 text-ink-soft hover:bg-sand hover:text-ink"
-              >
-                {item.label}
-              </a>
-            ))
-          ) : (
-            <>
-              <Link
-                href="/"
-                onClick={() => setOpen(false)}
-                className="rounded-[var(--radius-card)] px-2 py-3 text-ink-soft hover:bg-sand hover:text-ink"
-              >
-                {labels.home}
-              </Link>
-              <Link
-                href="/reviews"
-                onClick={() => setOpen(false)}
-                className="rounded-[var(--radius-card)] px-2 py-3 text-ink-soft hover:bg-sand hover:text-ink"
-              >
-                {labels.reviews}
-              </Link>
-            </>
-          )}
+          {sections.map((item) => (
+            <SectionLink
+              key={item.hash}
+              {...shared}
+              hash={item.hash}
+              className="rounded-[var(--radius-card)] px-2 py-3 text-ink-soft hover:bg-sand hover:text-ink"
+            >
+              {item.label}
+            </SectionLink>
+          ))}
 
           <div className="mt-2 flex items-center justify-between gap-3 border-t border-[rgba(58,42,38,0.08)] pt-4">
             <LanguageSwitcher label={labels.language} />
-            {variant === 'home' ? (
-              <a
-                href="#book"
-                onClick={() => setOpen(false)}
-                className="btn btn-primary px-4 py-2 text-sm"
-              >
-                {labels.book}
-              </a>
-            ) : (
-              <Link
-                href="/"
-                onClick={() => setOpen(false)}
-                className="btn btn-primary px-4 py-2 text-sm"
-              >
-                {labels.book}
-              </Link>
-            )}
+            <SectionLink {...shared} hash="#book" className="btn btn-primary px-4 py-2 text-sm">
+              {labels.book}
+            </SectionLink>
           </div>
         </nav>
       </div>

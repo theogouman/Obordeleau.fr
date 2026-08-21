@@ -1,7 +1,6 @@
 import { useLocale, useTranslations } from 'next-intl';
 import { AccentHeading } from '@/components/AccentHeading';
 import { BookingForm } from '@/components/BookingForm';
-import { ChannelLink } from '@/components/ChannelLink';
 import { Reveal } from '@/components/Reveal';
 import { Section } from '@/components/Section';
 import { getPathname } from '@/i18n/navigation';
@@ -12,8 +11,8 @@ import { channel, host, property } from '@/lib/content';
  * FR-013 to FR-015 and FR-103: one centred column, the calendar and nothing
  * else. The dates chosen here are written and blocked immediately, on the site
  * and, through the master feed, on Airbnb and Booking. No payment is taken yet
- * (Phase 3). The two platforms stay reachable underneath, as a plain line
- * rather than as cards competing with the direct path.
+ * (Phase 3). The two platforms stay reachable, inside the card and under its
+ * own call to action, behind a word about what they add to the bill.
  */
 export function Reservation() {
   const t = useTranslations('reservation');
@@ -40,39 +39,11 @@ export function Reservation() {
             maxGuests={property.capacity.maxGuests}
             privacyHref={privacyHref}
             whatsappNumber={host.contact.whatsappNumber}
+            airbnbUrl={airbnb?.url}
+            bookingUrl={booking?.url}
           />
         </div>
       </Reveal>
-
-      {airbnb?.url || booking?.url ? (
-        <Reveal delay={140}>
-          <div className="mx-auto mt-8 max-w-2xl text-center text-sm text-ink-soft">
-            <p>{t('channels.alsoOn')}</p>
-            <div className="mt-2 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-              {airbnb?.url ? (
-                <ChannelLink
-                  channel="airbnb"
-                  href={airbnb.url}
-                  locale={locale}
-                  label={t('channels.airbnb.cta')}
-                  externalHint={t('channels.airbnb.external')}
-                  className="text-raspberry-ink underline underline-offset-4"
-                />
-              ) : null}
-              {booking?.url ? (
-                <ChannelLink
-                  channel="booking"
-                  href={booking.url}
-                  locale={locale}
-                  label={t('channels.booking.cta')}
-                  externalHint={t('channels.booking.external')}
-                  className="text-raspberry-ink underline underline-offset-4"
-                />
-              ) : null}
-            </div>
-          </div>
-        </Reveal>
-      ) : null}
     </Section>
   );
 }

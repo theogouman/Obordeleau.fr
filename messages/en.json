@@ -8,7 +8,8 @@
     "close": "Close",
     "previous": "Previous",
     "next": "Next",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "retry": "Try again"
   },
   "meta": {
     "siteName": "Obordeleau",
@@ -227,7 +228,8 @@
     "paragraphs": [
       "I have been welcoming guests to this studio since 2021. My priority is to make your stay as pleasant as it can be, and to have you feel at home.",
       "The studio was designed for comfort and is prepared with care. I stay reachable throughout your stay if you need a tip about the area."
-    ]
+    ],
+    "superhostAlt": "Airbnb Superhost distinction"
   },
   "reviews": {
     "titleLead": "What our guests",
@@ -294,7 +296,16 @@
         "body": "The studio is also listed on Booking, with its 3-star classification.",
         "cta": "See the Booking listing",
         "external": "Opens the Booking website in a new tab"
-      }
+      },
+      "bookOn": "Book on {channel}",
+      "dialog": {
+        "title": "It will cost you more...",
+        "body": "{channel} charges you extra fees. Book directly on this site for a lower price and exactly the same welcome.",
+        "direct": "Book directly",
+        "external": "See on {channel}"
+      },
+      "airbnbName": "Airbnb",
+      "bookingName": "Booking"
     },
     "booking": {
       "noDatesYet": "Pick an arrival date, then a departure date.",
@@ -343,7 +354,8 @@
         "rateLimited": "Too many attempts from this device. Please try again in a few minutes.",
         "notConfigured": "Online booking is not live yet. You can go through Airbnb or Booking in the meantime.",
         "server": "The booking failed. You can try again, or go through Airbnb or Booking in the meantime."
-      }
+      },
+      "datesTooltip": "No dates are selected yet"
     },
     "calendar": {
       "arrival": "arrival",

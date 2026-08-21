@@ -77,7 +77,9 @@ export default async function ReviewsPage({ params }: { params: Promise<{ locale
 
           {hasReviews ? (
             <>
-              <ul className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {/* items-start, so opening one review grows that review and not
+                  the whole row it happens to sit in. */}
+              <ul className="mt-12 grid items-start gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {allReviews.map((review) => (
                   <li key={review.id}>
                     <ReviewCard review={review} labels={labels} />

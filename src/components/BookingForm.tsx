@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from 'react';
 import { BookingCalendar } from '@/components/BookingCalendar';
+import { ChannelChoice } from '@/components/ChannelChoice';
 import { Icon } from '@/components/Icon';
 import { PhoneField } from '@/components/PhoneField';
 import { localeTags, type Locale } from '@/i18n/routing';
@@ -39,6 +40,8 @@ type Props = {
   maxGuests: number;
   privacyHref: string;
   whatsappNumber: string;
+  airbnbUrl?: string;
+  bookingUrl?: string;
 };
 
 type Availability = {
@@ -70,7 +73,13 @@ const FRAME_INSET_Y = 8;
 
 const EMPTY_BLOCKED: ReadonlySet<string> = new Set<string>();
 
-export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
+export function BookingForm({
+  maxGuests,
+  privacyHref,
+  whatsappNumber,
+  airbnbUrl,
+  bookingUrl,
+}: Props) {
   const t = useTranslations('reservation.booking');
   const locale = useLocale() as Locale;
   const localeTag = localeTags[locale];
@@ -484,7 +493,13 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
     switch (step) {
       case 'dates':
         return (
-          <Step onNext={next} nextLabel={t('continue')} nextDisabled={nights < 1} error={stepError}>
+          <Step
+            onNext={next}
+            nextLabel={t('continue')}
+            nextDisabled={nights < 1}
+            nextHint={t('datesTooltip')}
+            error={stepError}
+          >
             <BookingCalendar
               blocked={blocked}
               firstArrival={firstArrival}
@@ -748,6 +763,13 @@ export function BookingForm({ maxGuests, privacyHref, whatsappNumber }: Props) {
       >
         <div ref={stageRef}>{stepContent()}</div>
       </div>
+
+      <ChannelChoice
+        locale={locale}
+        airbnbUrl={airbnbUrl}
+        bookingUrl={bookingUrl}
+        calendarId="booking-form"
+      />
     </div>
   );
 }
@@ -776,9 +798,11 @@ type StepProps = {
   onNext?: () => void;
   nextLabel?: string;
   nextDisabled?: boolean;
+  /** Shown on hover while the button is refusing, through tooltip (17). */
+  nextHint?: string;
 };
 
-function Step({ children, error, onNext, nextLabel, nextDisabled }: StepProps) {
+function Step({ children, error, onNext, nextLabel, nextDisabled, nextHint }: StepProps) {
   return (
     <div className={`t-input-wrap ${error ? 'is-error' : ''}`}>
       {children}
@@ -788,14 +812,23 @@ function Step({ children, error, onNext, nextLabel, nextDisabled }: StepProps) {
       </p>
 
       {onNext && nextLabel ? (
-        <button
-          type="button"
-          onClick={onNext}
-          disabled={nextDisabled}
-          className="btn btn-primary mt-4 w-full disabled:cursor-not-allowed disabled:opacity-45"
-        >
-          {nextLabel}
-        </button>
+        /* A disabled button dispatches no events of its own, so the reason it
+           is refusing is hung on the wrapper, which does. */
+        <div className={`t-tt-wrap mt-4 block w-full ${nextDisabled ? 'cursor-not-allowed' : ''}`}>
+          <button
+            type="button"
+            onClick={onNext}
+            disabled={nextDisabled}
+            className="btn btn-primary w-full disabled:pointer-events-none disabled:opacity-45"
+          >
+            {nextLabel}
+          </button>
+          {nextDisabled && nextHint ? (
+            <span role="tooltip" className="t-tt text-sm">
+              {nextHint}
+            </span>
+          ) : null}
+        </div>
       ) : null}
     </div>
   );

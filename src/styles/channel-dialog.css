@@ -1,0 +1,85 @@
+/*
+ * The dialog shown before a visitor leaves for Airbnb or Booking.
+ *
+ * The veil blurs the page rather than covering it: what is behind stays
+ * readable enough to be recognised, so the dialog reads as a step in the
+ * booking and not as a page of its own. It is fixed and rendered into <body>,
+ * so nothing can clip it and nothing has to fight it for a stacking context.
+ */
+
+@layer components {
+  .channel-veil {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    background-color: rgba(42, 30, 27, 0.32);
+    -webkit-backdrop-filter: blur(10px) saturate(115%);
+    backdrop-filter: blur(10px) saturate(115%);
+    opacity: 0;
+    transition: opacity var(--duration-base) var(--ease-out-quad);
+  }
+
+  .channel-veil.is-open {
+    opacity: 1;
+  }
+
+  .channel-dialog {
+    position: relative;
+    width: 100%;
+    max-width: 25rem;
+    padding: 2rem 1.5rem 1.5rem;
+    border-radius: var(--radius-card);
+    background-color: var(--color-shell);
+    box-shadow: var(--shadow-card-hover);
+    text-align: center;
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+    transition:
+      opacity var(--duration-base) var(--ease-out-quad),
+      transform var(--duration-base) var(--ease-out-expo);
+  }
+
+  .channel-veil.is-open .channel-dialog {
+    opacity: 1;
+    transform: none;
+  }
+
+  .channel-dialog__close {
+    position: absolute;
+    top: 0.625rem;
+    inset-inline-end: 0.625rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-pill);
+    color: var(--color-ink-soft);
+    transition:
+      background-color var(--duration-fast) var(--ease-out-quad),
+      color var(--duration-fast) var(--ease-out-quad);
+  }
+
+  .channel-dialog__close:hover {
+    background-color: var(--color-sand);
+    color: var(--color-ink);
+  }
+
+  .channel-dialog__mark {
+    display: block;
+    width: auto;
+    height: 2.25rem;
+    margin-inline: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .channel-veil,
+  .channel-dialog {
+    transition: none !important;
+  }
+}
