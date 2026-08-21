@@ -36,7 +36,7 @@
     "around": "Autour",
     "about": "L'hôte",
     "reviews": "Avis",
-    "location": "Situation",
+    "location": "Location",
     "book": "Réserver",
     "openMenu": "Ouvrir le menu",
     "closeMenu": "Fermer le menu",
@@ -109,10 +109,10 @@
     }
   },
   "amenities": {
-    "titleLead": "Tout ce qu'il",
-    "titleAccent": "faut",
+    "titleLead": "Tout est déjà",
+    "titleAccent": "sur place",
     "titleTail": "",
-    "intro": "Posez vos valises, tout est déjà sur place.",
+    "intro": "Posez vos valises et profitez de votre séjour. Tous les équipements que vous recherchez sont inclus.",
     "groups": {
       "comfort": "Confort",
       "practical": "Pratique",
@@ -120,7 +120,7 @@
     },
     "items": {
       "air-conditioning": {
-        "label": "Climatisation",
+        "label": "Climatisation réversible",
         "note": "Un vrai plus les jours de forte chaleur."
       },
       "private-garden-view": {
@@ -230,10 +230,9 @@
     ]
   },
   "reviews": {
-    "titleLead": "Ce qu'en disent les",
+    "titleLead": "L'avis de nos",
     "titleAccent": "voyageurs",
     "titleTail": "",
-    "intro": "Les avis viennent des séjours passés. Ils sont repris tels quels, dans leur langue d'origine.",
     "badge": {
       "ratingLabel": "{rating} sur 5",
       "countLabel": "{count} avis",
@@ -266,17 +265,15 @@
   },
   "map": {
     "titleLead": "Où se",
-    "titleAccent": "trouve",
-    "titleTail": "le studio",
-    "intro": "253 Av. Jean-Baptiste Mattei, aux Sablettes. La plage est derrière le parc, l'embarcadère du bateau-bus est au pied de la résidence.",
+    "titleAccent": "situe",
+    "titleTail": "le logement",
+    "intro": "Nous sommes au cœur des Sablettes, entre la plage et l'embarcadère pour se rendre à Toulon et les îles.",
     "addressLabel": "Adresse",
     "openExternal": "Ouvrir dans Google Maps",
     "openExternalHint": "Ouvre un nouvel onglet sur le site de Google.",
     "unavailable": "La carte n'est pas configurée pour le moment. L'adresse complète reste affichée ci-dessus.",
     "loadError": "La carte n'a pas pu se charger. L'adresse complète reste affichée à côté, et le lien ci-dessous ouvre le plan dans l'application de votre choix.",
-    "markerAlt": "Emplacement du studio Obordeleau",
-    "thirdPartyNotice": "La carte est fournie par Google Maps.",
-    "privacyLinkLabel": "En savoir plus"
+    "markerAlt": "Emplacement du studio Obordeleau"
   },
   "reservation": {
     "titleLead": "Quand souhaitez-vous",
@@ -430,7 +427,7 @@
       },
       "map": {
         "title": "La carte",
-        "body": "La carte de la section « Où se trouve le studio » est fournie par Google Maps et se charge dès l'ouverture de la page. Google reçoit donc votre adresse IP et peut déposer des cookies selon ses propres règles, sans action de votre part. Si vous préférez l'éviter, l'adresse complète est écrite en clair juste à côté de la carte et vous pouvez consulter le plan depuis l'application de votre choix."
+        "body": "La carte de la section « Où se situe le logement » est fournie par Google Maps et se charge dès l'ouverture de la page. Google reçoit donc votre adresse IP et peut déposer des cookies selon ses propres règles, sans action de votre part. Si vous préférez l'éviter, l'adresse complète est écrite en clair juste à côté de la carte et vous pouvez consulter le plan depuis l'application de votre choix."
       },
       "hosting": {
         "title": "Hébergement et journaux",

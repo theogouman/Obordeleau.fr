@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl';
 import { AccentHeading } from '@/components/AccentHeading';
+import { Icon } from '@/components/Icon';
 import { SmartImage } from '@/components/SmartImage';
 import { property } from '@/lib/content';
 
@@ -15,7 +16,11 @@ export function Hero() {
     <section className="relative overflow-hidden pb-4 pt-10 md:pt-16">
       <div className="container-page grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
         <div>
-          <p className="text-sm uppercase tracking-[0.2em] text-ink-soft">{t('eyebrow')}</p>
+          {/* The place comes first, in a small framed tag rather than a bare line. */}
+          <p className="inline-flex items-center gap-2 rounded-[var(--radius-pill)] border border-[rgba(58,42,38,0.14)] bg-shell px-3 py-1.5 text-xs uppercase tracking-[0.18em] text-ink-soft shadow-[var(--shadow-card)]">
+            <Icon name="location" className="h-3 w-auto shrink-0 text-raspberry" />
+            {t('eyebrow')}
+          </p>
 
           <AccentHeading
             as="h1"

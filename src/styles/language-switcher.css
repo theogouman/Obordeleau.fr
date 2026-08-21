@@ -1,0 +1,132 @@
+/*
+ * The language switcher: one track, one pill that slides.
+ *
+ * The pill is a single absolutely positioned element whose width and offset are
+ * measured from the active option, so it travels between languages instead of
+ * blinking from one background to the next. The page itself never reloads: the
+ * switch is a client navigation, and the pill leaves for the new language
+ * straight away while the content catches up.
+ *
+ * Two looks, because the content of an option is not always the same. With flag
+ * emoji the pill is a raised light chip, the way a segmented control behaves.
+ * Without them the option falls back to its language code and the pill is the
+ * solid ink of the original switcher.
+ *
+ * Motion is cancelled by the reduced-motion block in `_root.css`, which zeroes
+ * every duration token used here (constitution V).
+ */
+
+@layer components {
+  .lang-switch {
+    position: relative;
+    /* A plain declaration, so `hidden sm:flex` on the header instance still
+       wins: Tailwind utilities outrank this layer. */
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid rgba(58, 42, 38, 0.12);
+    border-radius: var(--radius-pill);
+    background-color: rgba(255, 255, 255, 0.55);
+  }
+
+  .lang-switch[data-tone='dark'] {
+    border-color: rgba(250, 247, 242, 0.18);
+    background-color: rgba(250, 247, 242, 0.06);
+  }
+
+  .lang-switch__pill {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 0;
+    width: var(--pill-w, 0);
+    transform: translateX(var(--pill-x, 0));
+    border-radius: var(--radius-pill);
+    background-color: var(--color-ink);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      transform var(--duration-base) var(--ease-spring),
+      width var(--duration-base) var(--ease-out-expo),
+      opacity var(--duration-fast) var(--ease-out-quad);
+    will-change: transform, width;
+  }
+
+  /* Nothing is drawn until the first measurement, so the pill never starts
+     from the left edge and slides across the whole track on load. */
+  .lang-switch[data-ready='true'] .lang-switch__pill {
+    opacity: 1;
+  }
+
+  .lang-switch[data-tone='dark'] .lang-switch__pill {
+    background-color: var(--color-cream);
+  }
+
+  .lang-switch[data-mode='flags'] .lang-switch__pill {
+    background-color: var(--color-shell);
+    box-shadow: var(--shadow-card);
+  }
+
+  .lang-switch__option {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.25rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.875rem;
+    line-height: 1.35;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-ink-soft);
+    transition: color var(--duration-base) var(--ease-out-quad);
+  }
+
+  .lang-switch__option:hover {
+    color: var(--color-ink);
+  }
+
+  .lang-switch[data-tone='dark'] .lang-switch__option {
+    color: rgba(250, 247, 242, 0.7);
+  }
+
+  .lang-switch[data-tone='dark'] .lang-switch__option:hover {
+    color: var(--color-cream);
+  }
+
+  .lang-switch__option[aria-current='true'] {
+    color: var(--color-cream);
+  }
+
+  .lang-switch[data-tone='dark'] .lang-switch__option[aria-current='true'] {
+    color: var(--color-night);
+  }
+
+  /* On the light chip the label sits on white, in both tones. */
+  .lang-switch[data-mode='flags'] .lang-switch__option[aria-current='true'] {
+    color: var(--color-ink);
+  }
+
+  .lang-switch__flag {
+    font-size: 1.125rem;
+    line-height: 1;
+    letter-spacing: 0;
+    text-transform: none;
+    opacity: 0.6;
+    transition:
+      opacity var(--duration-base) var(--ease-out-quad),
+      transform var(--duration-base) var(--ease-spring);
+  }
+
+  .lang-switch__option:hover .lang-switch__flag {
+    opacity: 0.85;
+  }
+
+  .lang-switch__option[aria-current='true'] .lang-switch__flag {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}

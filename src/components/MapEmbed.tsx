@@ -9,8 +9,6 @@ export type MapLabels = {
   loadError: string;
   markerAlt: string;
   loading: string;
-  thirdPartyNotice: string;
-  privacyLink: string;
 };
 
 type Props = {
@@ -21,15 +19,13 @@ type Props = {
   locale: string;
   labels: MapLabels;
   externalUrl: string;
-  privacyHref: string;
 };
 
 /**
  * The map loads on page load, at the owner's explicit request. Google therefore
  * receives the visitor's IP address without a prior click, which is a
  * deliberate departure from the consent gate described in constitution VI and
- * FR-012. The privacy policy states this plainly, and the notice below names
- * the third party in the interface itself.
+ * FR-012. The privacy policy states this plainly, on its own page.
  */
 export function MapEmbed({
   apiKey,
@@ -39,7 +35,6 @@ export function MapEmbed({
   locale,
   labels,
   externalUrl,
-  privacyHref,
 }: Props) {
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
   const containerRef = useRef<HTMLDivElement>(null);
@@ -161,40 +156,31 @@ export function MapEmbed({
   }
 
   return (
-    <div>
-      <div className={frame} style={frameStyle}>
-        <div
-          ref={containerRef}
-          className="absolute inset-0"
-          role="application"
-          aria-label={labels.markerAlt}
-        />
-        {status === 'loading' ? (
-          <p className="absolute inset-0 flex items-center justify-center text-ink-soft">
-            {labels.loading}
-          </p>
-        ) : null}
-        {status === 'error' ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-sand p-6 text-center">
-            <p className="text-ink-soft">{labels.loadError}</p>
-            <a
-              className="btn btn-secondary"
-              href={externalUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {labels.openExternal}
-            </a>
-          </div>
-        ) : null}
-      </div>
-
-      <p className="mt-3 text-sm text-ink-soft">
-        {labels.thirdPartyNotice}{' '}
-        <a className="text-raspberry-ink underline underline-offset-4" href={privacyHref}>
-          {labels.privacyLink}
-        </a>
-      </p>
+    <div className={frame} style={frameStyle}>
+      <div
+        ref={containerRef}
+        className="absolute inset-0"
+        role="application"
+        aria-label={labels.markerAlt}
+      />
+      {status === 'loading' ? (
+        <p className="absolute inset-0 flex items-center justify-center text-ink-soft">
+          {labels.loading}
+        </p>
+      ) : null}
+      {status === 'error' ? (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-sand p-6 text-center">
+          <p className="text-ink-soft">{labels.loadError}</p>
+          <a
+            className="btn btn-secondary"
+            href={externalUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {labels.openExternal}
+          </a>
+        </div>
+      ) : null}
     </div>
   );
 }

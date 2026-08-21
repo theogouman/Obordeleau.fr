@@ -3,7 +3,6 @@ import { AccentHeading } from '@/components/AccentHeading';
 import { MapEmbed } from '@/components/MapEmbed';
 import { Reveal } from '@/components/Reveal';
 import { Section } from '@/components/Section';
-import { getPathname } from '@/i18n/navigation';
 import type { Locale } from '@/i18n/routing';
 import { externalMapUrl, mapsApiKey, mapsMapId, property } from '@/lib/content';
 
@@ -42,7 +41,6 @@ export function MapSection() {
             longitude={property.geo.longitude}
             locale={locale}
             externalUrl={externalMapUrl}
-            privacyHref={getPathname({ href: '/privacy', locale })}
             labels={{
               openExternal: t('openExternal'),
               openExternalHint: t('openExternalHint'),
@@ -50,8 +48,6 @@ export function MapSection() {
               loadError: t('loadError'),
               markerAlt: t('markerAlt'),
               loading: common('loading'),
-              thirdPartyNotice: t('thirdPartyNotice'),
-              privacyLink: t('privacyLinkLabel'),
             }}
           />
         </Reveal>

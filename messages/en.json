@@ -109,10 +109,10 @@
     }
   },
   "amenities": {
-    "titleLead": "Everything you",
-    "titleAccent": "need",
+    "titleLead": "Everything is already",
+    "titleAccent": "here",
     "titleTail": "",
-    "intro": "Put down your suitcases, everything else is already here.",
+    "intro": "Drop your bags and start your holiday. Every comfort you are looking for is already included.",
     "groups": {
       "comfort": "Comfort",
       "practical": "Practical",
@@ -120,7 +120,7 @@
     },
     "items": {
       "air-conditioning": {
-        "label": "Air conditioning",
+        "label": "Air conditioning and heating",
         "note": "A real difference on the hottest days."
       },
       "private-garden-view": {
@@ -230,10 +230,9 @@
     ]
   },
   "reviews": {
-    "titleLead": "What guests",
+    "titleLead": "What our guests",
     "titleAccent": "say",
     "titleTail": "",
-    "intro": "These reviews come from past stays. They appear exactly as written, in their original language.",
     "badge": {
       "ratingLabel": "{rating} out of 5",
       "countLabel": "{count} reviews",
@@ -259,24 +258,22 @@
       "titleLead": "All",
       "titleAccent": "reviews",
       "titleTail": "",
-      "intro": "Here is every review received, newest first. We remove none of them, so the average stays are here too.",
+      "intro": "Here is every review received, newest first. We remove none of them, so the average ones are here too.",
       "count": "{count} reviews",
       "backHome": "Back to the home page"
     }
   },
   "map": {
-    "titleLead": "Where the",
-    "titleAccent": "studio",
-    "titleTail": "is",
-    "intro": "253 Av. Jean-Baptiste Mattei, at Les Sablettes. The beach is behind the park and the shuttle boat landing stage is at the foot of the building.",
+    "titleLead": "Where you will be",
+    "titleAccent": "staying",
+    "titleTail": "",
+    "intro": "We are right in the heart of Les Sablettes, between the beach and the landing stage for Toulon and the islands.",
     "addressLabel": "Address",
     "openExternal": "Open in Google Maps",
     "openExternalHint": "Opens a new tab on Google's website.",
     "unavailable": "The map is not configured yet. The full address is shown above.",
     "loadError": "The map could not load. The full address is shown alongside, and the link below opens the plan in the app of your choice.",
-    "markerAlt": "Location of the Obordeleau studio",
-    "thirdPartyNotice": "The map is provided by Google Maps.",
-    "privacyLinkLabel": "Learn more"
+    "markerAlt": "Location of the Obordeleau studio"
   },
   "reservation": {
     "titleLead": "When would you like to",
@@ -317,13 +314,13 @@
         "dialEmpty": "No country matches."
       },
       "placeholders": {
-        "name": "Ex: Corine PIERRET",
-        "email": "Ex: corinepierret@gmail.com",
+        "name": "e.g. Corine PIERRET",
+        "email": "e.g. corinepierret@gmail.com",
         "phone": "06 00 00 00 00"
       },
       "recapTitle": "Is all of this correct?",
       "submit": "Confirm the booking",
-      "submitting": "Booking",
+      "submitting": "Booking your stay",
       "noPayment": "No payment is taken on this site.",
       "consentNotice": "By continuing, you accept the <link>privacy policy</link>.",
       "honeypotLabel": "Leave this field empty",
@@ -430,7 +427,7 @@
       },
       "map": {
         "title": "The map",
-        "body": "The map in the \"Where the studio is\" section is provided by Google Maps and loads as soon as the page opens. Google therefore receives your IP address and may set cookies under its own rules, without any action from you. If you would rather avoid that, the full address is written out next to the map and you can look it up in the mapping application of your choice."
+        "body": "The map in the \"Where you will be staying\" section is provided by Google Maps and loads as soon as the page opens. Google therefore receives your IP address and may set cookies under its own rules, without any action from you. If you would rather avoid that, the full address is written out next to the map and you can look it up in the mapping application of your choice."
       },
       "hosting": {
         "title": "Hosting and logs",

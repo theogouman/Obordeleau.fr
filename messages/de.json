@@ -51,7 +51,7 @@
     "titleAccent": "70 Meter",
     "titleTail": "vom Strand entfernt",
     "subtitle": "Sie stellen das Auto ab und vergessen es. Der Sandstrand von Les Sablettes liegt zwei Gehminuten entfernt durch den Park, die Fähre nach Toulon legt direkt vor der Residenz ab, und Geschäfte und Restaurants sind im Viertel.",
-    "ctaPrimary": "Termine buchen",
+    "ctaPrimary": "Reisedaten buchen",
     "ctaSecondary": "Das Studio ansehen",
     "imageAlt": "Das Studio Obordeleau und der Strand von Les Sablettes in La Seyne-sur-Mer",
     "badge": "Als 3-Sterne-Ferienwohnung klassifiziert"
@@ -81,8 +81,8 @@
     }
   },
   "gallery": {
-    "titleLead": "Ihr",
-    "titleAccent": "Urlaubsort",
+    "titleLead": "Ihr Zuhause im",
+    "titleAccent": "Urlaub",
     "titleTail": "",
     "intro": "Ein heller Raum von 33 m² zum Garten hin, so eingerichtet, dass nichts fehlt: Schlafbereich, Essbereich, viel Stauraum und eine Klimaanlage für die heißen Tage.",
     "open": "Foto vergrößern",
@@ -109,10 +109,10 @@
     }
   },
   "amenities": {
-    "titleLead": "Alles, was Sie",
-    "titleAccent": "brauchen",
+    "titleLead": "Alles ist schon",
+    "titleAccent": "da",
     "titleTail": "",
-    "intro": "Stellen Sie die Koffer ab, alles andere ist schon da.",
+    "intro": "Koffer abstellen und den Urlaub beginnen. Die gesamte Ausstattung, die Sie suchen, ist inklusive.",
     "groups": {
       "comfort": "Komfort",
       "practical": "Praktisch",
@@ -120,7 +120,7 @@
     },
     "items": {
       "air-conditioning": {
-        "label": "Klimaanlage",
+        "label": "Klimaanlage mit Heizfunktion",
         "note": "An heißen Tagen macht sie den Unterschied."
       },
       "private-garden-view": {
@@ -185,7 +185,7 @@
     "titleLead": "Alles ist",
     "titleAccent": "in der Nähe",
     "titleTail": "",
-    "intro": "Alles ist zu Fuß erreichbar. Deshalb vergessen die meisten Gäste ihr Auto für den ganzen Aufenthalt.",
+    "intro": "Alles ist zu Fuß erreichbar. Deshalb bleibt das Auto bei den meisten Gästen den ganzen Aufenthalt über stehen.",
     "items": {
       "beach": {
         "label": "Sandstrand Les Sablettes",
@@ -194,11 +194,11 @@
       },
       "seaside-park": {
         "label": "Park am Meer",
-        "detail": "Einer der schönsten Parks im Var, bei Familien beliebt mit seinen Schildkröten, seinen Fröschen und vielem mehr."
+        "detail": "Einer der schönsten Parks im Var: Schildkröten, Frösche und viel Platz für Familien."
       },
       "boat-shuttle": {
         "label": "Fähre nach Toulon",
-        "detail": "Überqueren Sie die Straße und schiffen Sie ein nach Toulon und zu den Inseln."
+        "detail": "Einmal über die Straße, und das Boot bringt Sie nach Toulon und zu den Inseln."
       },
       "shops": {
         "label": "Geschäfte",
@@ -233,7 +233,6 @@
     "titleLead": "Das sagen unsere",
     "titleAccent": "Gäste",
     "titleTail": "",
-    "intro": "Die Bewertungen stammen von vergangenen Aufenthalten. Sie stehen unverändert hier, in ihrer Originalsprache.",
     "badge": {
       "ratingLabel": "{rating} von 5",
       "countLabel": "{count} Bewertungen",
@@ -265,18 +264,16 @@
     }
   },
   "map": {
-    "titleLead": "Wo das Studio",
-    "titleAccent": "liegt",
+    "titleLead": "Wo Sie",
+    "titleAccent": "wohnen",
     "titleTail": "",
-    "intro": "253 Av. Jean-Baptiste Mattei, in Les Sablettes. Der Strand liegt hinter dem Park, der Fähranleger direkt vor der Residenz.",
+    "intro": "Wir sind mitten in Les Sablettes, zwischen dem Strand und dem Anleger nach Toulon und zu den Inseln.",
     "addressLabel": "Adresse",
     "openExternal": "In Google Maps öffnen",
     "openExternalHint": "Öffnet einen neuen Tab auf der Website von Google.",
     "unavailable": "Die Karte ist noch nicht eingerichtet. Die vollständige Adresse steht oben.",
     "loadError": "Die Karte konnte nicht geladen werden. Die vollständige Adresse steht daneben, und der Link unten öffnet den Plan in der App Ihrer Wahl.",
-    "markerAlt": "Standort des Studios Obordeleau",
-    "thirdPartyNotice": "Die Karte stammt von Google Maps.",
-    "privacyLinkLabel": "Mehr erfahren"
+    "markerAlt": "Standort des Studios Obordeleau"
   },
   "reservation": {
     "titleLead": "Wann möchten Sie",
@@ -305,7 +302,7 @@
       "back": "Zurück",
       "edit": "Ändern",
       "questions": {
-        "dates": "Ihre Termine",
+        "dates": "Ihre Reisedaten",
         "name": "Ihr vollständiger Name",
         "email": "Ihre E-Mail",
         "phone": "Ihre Telefonnummer",
@@ -317,8 +314,8 @@
         "dialEmpty": "Kein Land gefunden."
       },
       "placeholders": {
-        "name": "Ex: Corine PIERRET",
-        "email": "Ex: corinepierret@gmail.com",
+        "name": "z. B. Corine PIERRET",
+        "email": "z. B. corinepierret@gmail.com",
         "phone": "06 00 00 00 00"
       },
       "recapTitle": "Stimmen diese Angaben?",
@@ -328,7 +325,7 @@
       "consentNotice": "Mit dem Fortfahren akzeptieren Sie die <link>Datenschutzerklärung</link>.",
       "honeypotLabel": "Dieses Feld bitte leer lassen",
       "successTitle": "Buchung bestätigt",
-      "successBody": "Ihre Termine sind reserviert und eine Bestätigung per E-Mail ist unterwegs. Corine meldet sich wegen Anreise und Bezahlung.",
+      "successBody": "Ihr Aufenthalt ist reserviert und die Bestätigung per E-Mail ist unterwegs. Corine meldet sich wegen Anreise und Bezahlung.",
       "successReference": "Referenz",
       "whatsappCta": "Corine über WhatsApp schreiben",
       "whatsappMessage": "Guten Tag Corine,\nwir haben soeben auf Ihrer Website eine Buchung vom {from} bis zum {to} vorgenommen.\n\nWir haben noch einige Fragen:\n\n",
@@ -337,9 +334,9 @@
         "email": "Diese E-Mail-Adresse sieht nicht gültig aus.",
         "phone": "Diese Nummer sieht nicht gültig aus.",
         "datesMissing": "Wählen Sie ein Anreisedatum und ein Abreisedatum.",
-        "datesRule": "Diese Termine sind nicht buchbar: ein Aufenthalt dauert mindestens eine Nacht, und die früheste Anreise ist morgen.",
+        "datesRule": "Dieser Zeitraum ist nicht buchbar: Ein Aufenthalt dauert mindestens eine Nacht, und die früheste Anreise ist morgen.",
         "guests": "Wählen Sie die Anzahl der Gäste.",
-        "unavailable": "Diese Termine wurden gerade vergeben. Der Kalender ist aktualisiert, bitte wählen Sie andere Termine.",
+        "unavailable": "Dieser Zeitraum wurde gerade vergeben. Der Kalender ist aktualisiert, bitte wählen Sie andere Reisedaten.",
         "rateLimited": "Zu viele Versuche von diesem Gerät. Bitte versuchen Sie es in einigen Minuten erneut.",
         "notConfigured": "Die Onlinebuchung ist noch nicht aktiv. Sie können solange über Airbnb oder Booking gehen.",
         "server": "Die Buchung hat nicht geklappt. Sie können es erneut versuchen oder solange über Airbnb oder Booking gehen."
@@ -352,7 +349,7 @@
       "nextMonth": "Nächster Monat",
       "chooseArrival": "Wählen Sie Ihre Anreise",
       "chooseDeparture": "Wählen Sie Ihre Abreise",
-      "clear": "Termine löschen",
+      "clear": "Auswahl löschen",
       "unavailable": "nicht verfügbar",
       "loading": "Verfügbarkeiten werden geladen",
       "loadError": "Die Verfügbarkeiten konnten nicht geladen werden. Sie können es erneut versuchen oder über Airbnb oder Booking gehen.",
@@ -430,7 +427,7 @@
       },
       "map": {
         "title": "Die Karte",
-        "body": "Die Karte im Abschnitt „Wo das Studio liegt“ stammt von Google Maps und wird schon beim Öffnen der Seite geladen. Google erhält damit Ihre IP-Adresse und kann nach eigenen Regeln Cookies setzen, ohne dass Sie etwas tun. Wenn Sie das vermeiden möchten: Die vollständige Adresse steht im Klartext neben der Karte, und Sie können den Plan in der Anwendung Ihrer Wahl aufrufen."
+        "body": "Die Karte im Abschnitt „Wo Sie wohnen“ stammt von Google Maps und wird schon beim Öffnen der Seite geladen. Google erhält damit Ihre IP-Adresse und kann nach eigenen Regeln Cookies setzen, ohne dass Sie etwas tun. Wenn Sie das vermeiden möchten: Die vollständige Adresse steht im Klartext neben der Karte, und Sie können den Plan in der Anwendung Ihrer Wahl aufrufen."
       },
       "hosting": {
         "title": "Hosting und Protokolle",
@@ -470,7 +467,7 @@
       "guest": {
         "subject": "Ihre Buchung ist bestätigt, {property}",
         "title": "Ihre Buchung ist bestätigt",
-        "intro": "Guten Tag {name}, Ihre Termine sind gebucht. Hier die Übersicht.",
+        "intro": "Guten Tag {name}, Ihr Aufenthalt ist gebucht. Hier die Übersicht.",
         "address": "Die Unterkunft: {address}",
         "noPayment": "Auf dieser Website wurde keine Zahlung erhoben. Corine meldet sich wegen Anreise und Bezahlung.",
         "changes": "Für Änderungen oder eine Stornierung antworten Sie einfach auf diese Nachricht.",
@@ -480,7 +477,7 @@
         "subject": "Neue Direktbuchung, {from} bis {to}",
         "title": "Neue Direktbuchung",
         "intro": "Soeben wurde über die Website eine Buchung erfasst.",
-        "blocked": "Die Termine sind bereits auf der Website und im Kalender für Airbnb und Booking gesperrt."
+        "blocked": "Die Reisedaten sind bereits auf der Website und im Kalender für Airbnb und Booking gesperrt."
       }
     }
   }

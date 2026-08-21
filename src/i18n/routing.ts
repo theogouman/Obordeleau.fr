@@ -38,6 +38,17 @@ export const localeNames: Record<Locale, string> = {
   de: 'Deutsch',
 };
 
+/**
+ * The flag shown in the language switcher. Systems without a flag font draw a
+ * regional indicator pair as two letter boxes, so the switcher checks at
+ * runtime and falls back to the language code when they are not painted.
+ */
+export const localeFlags: Record<Locale, string> = {
+  fr: '\u{1F1EB}\u{1F1F7}',
+  en: '\u{1F1EC}\u{1F1E7}',
+  de: '\u{1F1E9}\u{1F1EA}',
+};
+
 /** BCP 47 tags used for <html lang>, hreflang and Intl formatting. */
 export const localeTags: Record<Locale, string> = {
   fr: 'fr-FR',
