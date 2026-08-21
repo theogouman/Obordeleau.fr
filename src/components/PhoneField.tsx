@@ -312,7 +312,10 @@ export function PhoneField({
     ) : null;
 
   return (
-    <div ref={fieldRef} className={`phone-field ${invalid ? 'is-error' : ''}`}>
+    <div
+      ref={fieldRef}
+      className={`phone-field ${open ? 'is-open' : ''} ${invalid ? 'is-error' : ''}`}
+    >
       <button
         type="button"
         className={`phone-country ${open ? 'is-open' : ''}`}

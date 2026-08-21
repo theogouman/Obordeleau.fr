@@ -36,7 +36,8 @@
       background-color var(--duration-fast) var(--ease-out-quad);
   }
 
-  .phone-field:focus-within {
+  .phone-field:focus-within,
+  .phone-field.is-open {
     border-color: var(--color-raspberry);
     background-color: var(--color-shell);
     box-shadow: 0 0 0 4px rgba(206, 66, 87, 0.12);
