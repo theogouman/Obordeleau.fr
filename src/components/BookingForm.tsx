@@ -190,6 +190,7 @@ export function BookingForm({
   /* --- one step at a time, lifted away then risen into place -------------- */
 
   const stageRef = useRef<HTMLDivElement>(null);
+  const channelRef = useRef<HTMLDivElement>(null);
   const direction = useRef<1 | -1>(1);
   const animating = useRef(false);
   const navigated = useRef(false);
@@ -238,6 +239,63 @@ export function BookingForm({
     );
     return () => window.clearTimeout(timer);
   }, [stepIndex]);
+
+  /* --- the two platforms, opening and closing on card resize (01) --------- */
+
+  /*
+   * They belong to the calendar, and only to it: whatever dates are picked,
+   * they stay until the first question of the form, and from there they are
+   * gone. They do not vanish either. The block is held in a frame whose height
+   * is tweened between nought and what the content measures, on card resize
+   * (01), with the content fading on the same beat, so it folds away and
+   * unfolds back rather than being cut out of the card.
+   */
+  // No platform configured means no frame at all, not an empty one.
+  const hasChannels = Boolean(airbnbUrl || bookingUrl);
+  const wantChannels = stepIndex === 0;
+  const [channelsMounted, setChannelsMounted] = useState(true);
+  const [channelHeight, setChannelHeight] = useState<number | null>(null);
+  const channelsSettled = useRef(false);
+
+  useEffect(() => {
+    // The first pass is the initial paint, which has nothing to animate.
+    if (!channelsSettled.current) {
+      channelsSettled.current = true;
+      return;
+    }
+
+    if (reducedMotion()) {
+      setChannelHeight(null);
+      setChannelsMounted(wantChannels);
+      return;
+    }
+
+    if (wantChannels) {
+      // Mounted flat, then grown by the effect below once it can be measured.
+      setChannelHeight(0);
+      setChannelsMounted(true);
+      return;
+    }
+
+    const inner = channelRef.current;
+    if (!inner) {
+      setChannelsMounted(false);
+      return;
+    }
+
+    setChannelHeight(inner.offsetHeight);
+    const frame = requestAnimationFrame(() => setChannelHeight(0));
+    return () => cancelAnimationFrame(frame);
+  }, [wantChannels]);
+
+  useEffect(() => {
+    if (!channelsMounted || !wantChannels || channelHeight !== 0) return;
+    const inner = channelRef.current;
+    if (!inner) return;
+
+    const frame = requestAnimationFrame(() => setChannelHeight(inner.offsetHeight));
+    return () => cancelAnimationFrame(frame);
+  }, [channelsMounted, wantChannels, channelHeight]);
 
   /* --- navigation -------------------------------------------------------- */
 
@@ -797,15 +855,29 @@ export function BookingForm({
         <div ref={stageRef}>{stepContent()}</div>
       </div>
 
-      {/* Once a stay is picked the visitor is booking here: the two platforms
-          would only be a way out of a form they have started. */}
-      {nights < 1 ? (
-        <ChannelChoice
-          locale={locale}
-          airbnbUrl={airbnbUrl}
-          bookingUrl={bookingUrl}
-          calendarId="booking-form"
-        />
+      {hasChannels && channelsMounted ? (
+        <div
+          className="t-resize overflow-hidden"
+          style={channelHeight === null ? undefined : { height: `${channelHeight}px` }}
+          onTransitionEnd={(event) => {
+            if (event.propertyName !== 'height' || event.target !== event.currentTarget) return;
+            if (!wantChannels) setChannelsMounted(false);
+            setChannelHeight(null);
+          }}
+        >
+          <div
+            ref={channelRef}
+            className="pt-6 transition-opacity duration-200 ease-out"
+            style={{ opacity: channelHeight === 0 ? 0 : 1 }}
+          >
+            <ChannelChoice
+              locale={locale}
+              airbnbUrl={airbnbUrl}
+              bookingUrl={bookingUrl}
+              calendarId="booking-form"
+            />
+          </div>
+        </div>
       ) : null}
     </div>
   );

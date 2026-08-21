@@ -193,7 +193,7 @@ export function ChannelChoice({ locale, airbnbUrl, bookingUrl, calendarId }: Pro
     ) : null;
 
   return (
-    <div className="mt-6 border-t border-[rgba(58,42,38,0.12)] pt-5">
+    <div className="border-t border-[rgba(58,42,38,0.12)] pt-5">
       <p className="text-center text-xs uppercase tracking-[0.14em] text-ink-soft">{t('alsoOn')}</p>
 
       <div className={`mt-3 grid gap-3 ${offers.length === 2 ? 'grid-cols-2' : 'grid-cols-1'}`}>
