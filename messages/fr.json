@@ -195,7 +195,8 @@
       },
       "seaside-park": {
         "label": "Parc du bord de mer",
-        "detail": "Les familles adorent se balader dans ce parc dans lequel on peut observer des tortues et des oiseaux."
+        "detail": "Les familles adorent se balader dans ce parc dans lequel on peut observer des tortues et des oiseaux.",
+        "photoAlt": "Deux enfants accoudés à la rambarde regardent les tortues sur leur rocher, devant la Maison Pouillon et les palmiers du parc"
       },
       "boat-shuttle": {
         "label": "Bateau-bus pour Toulon",

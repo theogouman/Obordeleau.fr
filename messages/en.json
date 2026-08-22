@@ -195,7 +195,8 @@
       },
       "seaside-park": {
         "label": "Seaside park",
-        "detail": "Families love wandering through this park, where turtles and birds are part of the walk."
+        "detail": "Families love wandering through this park, where turtles and birds are part of the walk.",
+        "photoAlt": "Two children leaning on the railing watch the turtles on their rock, in front of the Maison Pouillon and the palm trees of the park"
       },
       "boat-shuttle": {
         "label": "Shuttle boat to Toulon",

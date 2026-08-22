@@ -195,7 +195,8 @@
       },
       "seaside-park": {
         "label": "Parco sul lungomare",
-        "detail": "Le famiglie adorano passeggiare in questo parco, dove si possono osservare tartarughe e uccelli."
+        "detail": "Le famiglie adorano passeggiare in questo parco, dove si possono osservare tartarughe e uccelli.",
+        "photoAlt": "Due bambini appoggiati alla ringhiera guardano le tartarughe sul loro scoglio, davanti alla Maison Pouillon e alle palme del parco"
       },
       "boat-shuttle": {
         "label": "Battello per Tolone",

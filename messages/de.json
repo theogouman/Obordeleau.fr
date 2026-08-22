@@ -195,7 +195,8 @@
       },
       "seaside-park": {
         "label": "Park am Meer",
-        "detail": "Familien spazieren hier besonders gern, denn im Park leben Schildkröten und viele Vögel."
+        "detail": "Familien spazieren hier besonders gern, denn im Park leben Schildkröten und viele Vögel.",
+        "photoAlt": "Zwei Kinder am Geländer beobachten die Schildkröten auf ihrem Felsen, vor der Maison Pouillon und den Palmen des Parks"
       },
       "boat-shuttle": {
         "label": "Fähre nach Toulon",
