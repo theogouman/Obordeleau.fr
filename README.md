@@ -44,7 +44,7 @@ Useful scripts:
 content/          property.json, host.json, reviews.json, reviews-curation.json
 messages/         fr.json (source of truth), en.json, de.json, it.json
 public/images/    hero, gallery, host, area, reviews  (see public/IMAGE-MANIFEST.md)
-src/app/          [locale] pages, api/{availability,stay,quote,reservations,calendar},
+src/app/          [locale] pages, api/{availability,stay,quote,checkout,calendar},
                   sitemap, robots, icon
 src/app/admin/    the owner's console: page, login, server actions
 src/components/   presentation, one file per section
@@ -187,9 +187,10 @@ Booking .ics ─┤ (rows in ical_sources)
 
 **The availability rule**, applied in the database and nowhere else: at least one night, arrival no
 earlier than tomorrow in Europe/Paris, and no overlap with a confirmed reservation, a manual block
-or an imported block. `POST /api/reservations` calls `create_direct_reservation`, which re-applies
-the rule and inserts in one statement; an exclusion constraint on `reservations` settles a race, so
-two submissions for the same free nights produce exactly one booking and one clean refusal.
+or an imported block. `POST /api/checkout` calls `create_direct_reservation`, which re-applies the
+rule and inserts in one statement; an exclusion constraint on `reservations` settles a race, so two
+attempts on the same free nights produce exactly one hold and one clean refusal. That hold becomes
+a booking only when the deposit clears.
 
 **Fail closed.** `sync-ical` deletes a platform's stale blocks only when every active source of
 that platform was fetched and parsed in this run. A feed that times out, 500s or answers with an
@@ -675,6 +676,38 @@ exempt, and the day the balance leaves explains how it was worked out. Both are
 tooltip (17) behind a mark that takes keyboard focus, and both put their text in
 the accessibility tree as the description of that mark, so a visitor who never
 sees a hover layer is told the same thing.
+
+## The deposit is the confirmation
+
+A stay is confirmed by its deposit and by nothing else. That was the intent of lot 4 and it is now
+also true of the code: the hold is the only insert, and the webhook settling a paid deposit is the
+only thing that turns it into `confirmed`.
+
+It was not true before. The card had a second path: when the site could not price the nights or
+could not see the Stripe keys, the terminal button called `POST /api/reservations`, which wrote a
+`confirmed` reservation with no payment attached. `startCheckout` carried the same fallback for a
+503 answer. So a base rate left NULL, or a build without the payment keys, turned an instant book
+site into one that gave nights away, and the visitor was told their booking was confirmed.
+
+Both fallbacks are gone and the endpoint behind them is deleted, not merely unreferenced. Removing
+it from the client would have closed the button and left the door: `/api/reservations` was public,
+and anything that can POST could still have written a free confirmed stay. The route was the hole,
+so the route went.
+
+**What a visitor sees instead.** No deposit possible means no reservation, said plainly: the card
+stops where the confirmation would have been and offers the three ways out the `noscript` block
+already offers, with the same words. WhatsApp first, carrying the dates and the party already
+written into the message, then Airbnb and Booking. The price is still shown when there is one,
+because someone writing to Corine may as well know what the stay costs.
+
+The two ways to reach that state are a stay the database will not price, which is a rate the owner
+has not set, and a build without the Stripe keys. Both are the owner's to fix, and neither is worth
+a free night while they are unfixed.
+
+A booking channel without payment, an enquiry routed to Corine and never confirmed, is a different
+feature and would need its own copy: the emails that used to go out on this path said the dates were
+blocked and no payment was due, which is exactly what must not be said. They are deleted with the
+route.
 
 ## Deploying
 

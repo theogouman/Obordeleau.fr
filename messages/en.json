@@ -343,13 +343,10 @@
         "phone": "06 00 00 00 00"
       },
       "recapTitle": "Is all of this correct?",
-      "submit": "Confirm the booking",
       "submitting": "Booking your stay",
-      "noPayment": "No payment is taken on this site.",
       "consentNotice": "By continuing, you accept the <link>privacy policy</link>.",
       "honeypotLabel": "Leave this field empty",
       "successTitle": "Booking confirmed",
-      "successBody": "Your dates are held and a confirmation email is on its way. Corine will write to you about arrival and payment.",
       "successReference": "Reference",
       "whatsappCta": "Message Corine on WhatsApp",
       "whatsappMessage": "Hello Corine,\nWe have just booked your studio from {from} to {to} on your website.\n\nWe have a few questions:\n\n",
@@ -448,7 +445,11 @@
       "getPrice": "Get the price",
       "yes": "Yes",
       "no": "No",
-      "confirmBooking": "Confirm my booking"
+      "confirmBooking": "Confirm my booking",
+      "blocked": {
+        "title": "Online booking is unavailable",
+        "body": "A stay is only confirmed once the deposit is paid, and the deposit cannot be taken at the moment. Write to Corine: she will check your dates and confirm the stay with you directly."
+      }
     },
     "calendar": {
       "arrival": "arrival",
@@ -553,35 +554,6 @@
     "cta": "Back to the home page"
   },
   "emails": {
-    "booking": {
-      "labels": {
-        "arrival": "Arrival",
-        "departure": "Departure",
-        "nights": "Nights",
-        "guests": "Guests",
-        "name": "Name",
-        "email": "Email",
-        "phone": "Phone",
-        "message": "Message",
-        "language": "Visitor language",
-        "reference": "Reference"
-      },
-      "guest": {
-        "subject": "Your booking is confirmed, {property}",
-        "title": "Your booking is confirmed",
-        "intro": "Hello {name}, your dates are booked. Here is the summary.",
-        "address": "The studio: {address}",
-        "noPayment": "No payment was taken on this site. Corine will write to you about arrival and payment.",
-        "changes": "To change or cancel, simply reply to this message.",
-        "signature": "See you soon, {host}"
-      },
-      "host": {
-        "subject": "New direct booking, {from} to {to}",
-        "title": "New direct booking",
-        "intro": "A booking has just been recorded from the website.",
-        "blocked": "The dates are already blocked on the site and in the calendar sent to Airbnb and Booking."
-      }
-    },
     "deposit": {
       "labels": {
         "arrival": "Arrival",

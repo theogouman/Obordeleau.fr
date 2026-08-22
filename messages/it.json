@@ -343,13 +343,10 @@
         "phone": "06 00 00 00 00"
       },
       "recapTitle": "Queste informazioni sono corrette?",
-      "submit": "Conferma la prenotazione",
       "submitting": "Prenotazione in corso",
-      "noPayment": "Su questo sito non viene richiesto alcun pagamento.",
       "consentNotice": "Continuando accetti l'<link>informativa sulla privacy</link>.",
       "honeypotLabel": "Lascia questo campo vuoto",
       "successTitle": "Prenotazione confermata",
-      "successBody": "Le tue date sono bloccate e l'email di conferma è appena partita. Corine ti scrive per l'arrivo e per il pagamento.",
       "successReference": "Riferimento",
       "whatsappCta": "Scrivi a Corine su WhatsApp",
       "whatsappMessage": "Buongiorno Corine,\nAbbiamo appena effettuato una prenotazione dal {from} al {to} sul tuo sito.\n\nAvremmo qualche domanda, per favore:\n\n",
@@ -448,7 +445,11 @@
       "getPrice": "Ottieni il prezzo",
       "yes": "Sì",
       "no": "No",
-      "confirmBooking": "Conferma la mia prenotazione"
+      "confirmBooking": "Conferma la mia prenotazione",
+      "blocked": {
+        "title": "La prenotazione online non è disponibile",
+        "body": "Un soggiorno è confermato solo dopo il pagamento dell'acconto, e al momento l'acconto non può essere incassato. Scriva a Corine: verificherà le sue date e le confermerà il soggiorno direttamente."
+      }
     },
     "calendar": {
       "arrival": "arrivo",
@@ -553,35 +554,6 @@
     "cta": "Torna alla home"
   },
   "emails": {
-    "booking": {
-      "labels": {
-        "arrival": "Arrivo",
-        "departure": "Partenza",
-        "nights": "Notti",
-        "guests": "Viaggiatori",
-        "name": "Nome",
-        "email": "Email",
-        "phone": "Telefono",
-        "message": "Messaggio",
-        "language": "Lingua del visitatore",
-        "reference": "Riferimento"
-      },
-      "guest": {
-        "subject": "La tua prenotazione è confermata, {property}",
-        "title": "La tua prenotazione è confermata",
-        "intro": "Buongiorno {name}, le tue date sono prenotate. Ecco il riepilogo.",
-        "address": "L'alloggio: {address}",
-        "noPayment": "Su questo sito non è stato preso nessun pagamento. Corine ti scrive per l'arrivo e per il pagamento.",
-        "changes": "Per modificare o annullare, rispondi semplicemente a questo messaggio.",
-        "signature": "A prestissimo, {host}"
-      },
-      "host": {
-        "subject": "Nuova prenotazione diretta, dal {from} al {to}",
-        "title": "Nuova prenotazione diretta",
-        "intro": "Una prenotazione è appena stata registrata dal sito.",
-        "blocked": "Le date sono già bloccate sul sito e nel calendario inviato ad Airbnb e a Booking."
-      }
-    },
     "deposit": {
       "labels": {
         "arrival": "Arrivo",

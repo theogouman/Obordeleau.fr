@@ -99,12 +99,17 @@ export type ReservationRequest = {
   notes: string | null;
   locale: string | null;
   /**
-   * Minutes to hold the nights for instead of confirming them outright. Null,
-   * the default, writes a confirmed booking, which is what the enquiry flow
-   * does when no payment is taken. The checkout passes a lifetime so the nights
-   * are taken before Stripe is called and given back if the card never clears.
+   * Minutes to hold the nights for. Required, and required on purpose.
+   *
+   * The database function still accepts no lifetime and still writes a
+   * confirmed booking when given none, because the hold was added to it
+   * without touching its callers. There is no longer a caller that wants
+   * that: a stay is confirmed by its deposit, so the only write the site makes
+   * is a hold, and the settlement of a paid deposit is what confirms it. Making
+   * this required means a future caller has to ask for a free confirmation out
+   * loud rather than get one by leaving an argument out.
    */
-  holdMinutes?: number | null;
+  holdMinutes: number;
 };
 
 export type ReservationOutcome =
@@ -140,11 +145,12 @@ export type ReservationOutcome =
     };
 
 /**
- * The one write path, for a booking and for a hold alike.
+ * The one write path, and it writes a hold.
  *
- * Lot 4 gave the database function a hold lifetime and changed nothing else:
- * called without one it still writes a confirmed booking, which is why the
- * enquiry route above did not have to be touched.
+ * Lot 4 gave the database function a hold lifetime and changed nothing else,
+ * so the enquiry route that confirmed outright did not have to be touched.
+ * That route is gone: a stay confirmed without its deposit is a night given
+ * away, and there is nothing left that wants one.
  */
 export async function reserve(request: ReservationRequest): Promise<ReservationOutcome> {
   const result = await callDatabase<{
@@ -168,7 +174,7 @@ export async function reserve(request: ReservationRequest): Promise<ReservationO
     p_notes: request.notes,
     p_locale: request.locale,
     p_minors: request.minors,
-    p_hold_minutes: request.holdMinutes ?? null,
+    p_hold_minutes: request.holdMinutes,
   });
 
   if (result.ok && result.id) {

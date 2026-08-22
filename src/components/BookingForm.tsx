@@ -215,9 +215,19 @@ export function BookingForm({
    */
   const [saveCard, setSaveCard] = useState(false);
   const [checkout, setCheckout] = useState<Checkout | null>(null);
-  const [booked, setBooked] = useState<
-    { reference: string; from: string; to: string; paid: boolean } | null
-  >(null);
+  /**
+   * A confirmed stay, which now only ever means a stay whose deposit cleared.
+   * There is no unpaid confirmation left to distinguish it from.
+   */
+  const [booked, setBooked] = useState<{ reference: string; from: string; to: string } | null>(
+    null,
+  );
+  /**
+   * Set when the server will not open a payment: no Stripe keys, or nights the
+   * database refuses to price. Nothing is written in either case. The flow
+   * stops here and hands the visitor the host instead.
+   */
+  const [blocked, setBlocked] = useState(false);
   const [stepError, setStepError] = useState<string | null>(null);
   const [shaking, setShaking] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -747,6 +757,9 @@ export function BookingForm({
     setReveal('loading');
     setGuaranteeUntil(null);
     setGuaranteeExpired(false);
+    // Different nights may well be priced, so a refusal does not outlive the
+    // stay it was about.
+    setBlocked(false);
 
     const load = async () => {
       try {
@@ -884,96 +897,21 @@ export function BookingForm({
     goBack(QUOTE);
   }
 
-  /* --- submission -------------------------------------------------------- */
-
-  async function submit() {
-    if (!arrival || !departure || guests === null) return;
-
-    setState('sending');
-    setFormError(null);
-
-    try {
-      const response = await fetch('/api/reservations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          from: arrival,
-          to: departure,
-          guests,
-          // The party, not a price. Lot 4 recomputes the amount server side
-          // from these dates and these people; a total sent up from a browser
-          // is never what gets charged.
-          minors,
-          name: name.trim(),
-          email: email.trim(),
-          phone: fullPhoneNumber(country, phone),
-          // Pressing the button is the consent, so there is no box to tick.
-          consent: true,
-          locale,
-          company: honeypot.current?.value ?? '',
-          elapsedMs: Date.now() - startedAt,
-        }),
-      });
-
-      if (response.status === 409) {
-        setFormError(t('errors.unavailable'));
-        setArrival(null);
-        setDeparture(null);
-        setState('editing');
-        setReturnTo(null);
-        goTo(0);
-        void loadAvailability();
-        return;
-      }
-
-      if (response.status === 429) {
-        setFormError(t('errors.rateLimited'));
-        setState('editing');
-        return;
-      }
-
-      if (response.status === 503) {
-        setFormError(t('errors.notConfigured'));
-        setState('editing');
-        return;
-      }
-
-      if (!response.ok) {
-        const body = (await response.json().catch(() => ({}))) as { error?: string };
-        // A stay rule the form should have caught is phrased by the same map
-        // the picker uses, so the visitor is told the same thing either way.
-        const ruled = [
-          'too_soon',
-          'min_nights',
-          'checkin_day',
-          'stay_multiple',
-        ].includes(body.error ?? '');
-
-        setFormError(ruled ? stayMessage(body.error) : t('errors.server'));
-        setState('editing');
-        return;
-      }
-
-      const confirmed = (await response.json()) as { reference?: string };
-
-      trackBookingConfirmed(locale);
-      setBooked({ reference: confirmed.reference ?? '', from: arrival, to: departure, paid: false });
-      setState('booked');
-    } catch {
-      setFormError(t('errors.server'));
-      setState('editing');
-    }
-  }
-
-
   /* --- the deposit -------------------------------------------------------- */
 
   /*
    * A card can be asked for only when the database produced a quote and the
-   * owner has set the Stripe keys. Otherwise the button stays what it was and
-   * the stay is recorded without a payment.
+   * owner has set the Stripe keys.
+   *
+   * When it cannot, nothing is written. A deposit paid is what confirms a stay
+   * here, so a confirmation without one would be a night given away, and that
+   * is exactly what used to happen: the button quietly fell back to writing the
+   * reservation for free. The flow is blocked instead and says why.
    */
   const canPay = paymentsEnabled && quoteState === 'ready' && quote !== null;
+
+  /** No card can be taken for this stay, and no stay is recorded without one. */
+  const cannotSell = blocked || !canPay;
 
   /*
    * The messages hold the quote's place until there is something to put there
@@ -1030,7 +968,6 @@ export function BookingForm({
           reference: body.reference ?? '',
           from: body.from ?? arrival ?? '',
           to: body.to ?? departure ?? '',
-          paid: true,
         });
         setState('booked');
         return;
@@ -1106,11 +1043,12 @@ export function BookingForm({
       };
 
       if (response.status === 503) {
-        // No card can be taken after all. Rather than stranding the visitor on
-        // a dead end, the stay is recorded the way it was before this lot and
-        // the amount is settled by email, which is what the success screen says.
+        // No card can be taken after all. This used to fall through to writing
+        // the reservation for free, which is a night given away every time the
+        // owner has not set a rate. The flow stops and hands over the host.
         if (body.error === 'payments_unavailable' || body.error === 'not_priced') {
-          await submit();
+          setBlocked(true);
+          setState('editing');
           return;
         }
 
@@ -1131,7 +1069,7 @@ export function BookingForm({
       if (body.alreadyPaid) {
         // The deposit went through on an earlier attempt at this same checkout.
         trackBookingConfirmed(locale);
-        setBooked({ reference: body.reference ?? '', from: arrival, to: departure, paid: true });
+        setBooked({ reference: body.reference ?? '', from: arrival, to: departure });
         setState('booked');
         return;
       }
@@ -1192,7 +1130,7 @@ export function BookingForm({
       <div className="card p-8 text-center" role="status" aria-live="polite">
         <SuccessCheck />
         <h3 className="mt-4 font-display text-2xl">{t('successTitle')}</h3>
-        <p className="mt-2 text-ink-soft">{t(booked.paid ? 'successBodyPaid' : 'successBody')}</p>
+        <p className="mt-2 text-ink-soft">{t('successBodyPaid')}</p>
         {booked.reference ? (
           <p className="mt-3 text-sm text-ink-soft">
             {t('successReference')}{' '}
@@ -1264,6 +1202,42 @@ export function BookingForm({
       </div>
     );
   }
+
+  /*
+   * The notch over the card, and the message it opens WhatsApp with. What the
+   * visitor has already told the form goes into the sentence, so nobody has to
+   * type their dates twice. The party only appears once the stay does, which
+   * costs nothing: the form asks for the stay first and the party after it.
+   */
+  const dotted = (isoDate: string) =>
+    `${isoDate.slice(8, 10)}.${isoDate.slice(5, 7)}.${isoDate.slice(0, 4)}`;
+
+  const notchMessage =
+    arrival && departure && guests !== null
+      ? t('notch.messageGuests', { guests, from: dotted(arrival), to: dotted(departure) })
+      : arrival && departure
+        ? t('notch.messageDates', { from: dotted(arrival), to: dotted(departure) })
+        : t('notch.message');
+
+  const notchHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(notchMessage)}`;
+
+  /*
+   * What the card shows instead of a call to action when no deposit can be
+   * taken. The same three ways out the noscript block offers, with the same
+   * words, because a visitor without JavaScript and a visitor the site cannot
+   * charge are in the same position: they need the host, not a form.
+   *
+   * The WhatsApp message is the notch's, so the dates and the party are
+   * already written into it and nobody has to type them twice.
+   */
+  const handover = {
+    title: t('blocked.title'),
+    body: t('blocked.body'),
+    whatsappHref: notchHref,
+    whatsappLabel: t('noscript.whatsapp'),
+    airbnb: airbnbUrl ? { url: airbnbUrl, label: t('noscript.airbnb') } : null,
+    booking: bookingUrl ? { url: bookingUrl, label: t('noscript.booking') } : null,
+  };
 
   /* --- the wizard --------------------------------------------------------- */
 
@@ -1482,33 +1456,23 @@ export function BookingForm({
        * over the button says how long the figure is held for.
        */
       case 'quote':
+        if (showLoader) return <QuoteLoader leaving={reveal === 'leaving'} />;
+
         return (
           <div>
-            {showLoader ? (
-              <QuoteLoader leaving={reveal === 'leaving'} />
-            ) : quoteState === 'ready' && quote ? (
-              <>
-                <QuotePanel quote={quote} reveal />
+            {/* The price is worth showing even when the stay cannot be taken
+                here: a visitor writing to Corine already knows what it costs. */}
+            {quoteState === 'ready' && quote ? <QuotePanel quote={quote} reveal /> : null}
 
-                <div className="q-notch-wrap mt-11">
-                  <GuaranteeNotch
-                    label={t('quote.guarantee')}
-                    clock={clockFace(guaranteeLeft)}
-                  />
-                  <button type="button" onClick={next} className="btn btn-primary w-full">
-                    {t('confirmBooking')}
-                  </button>
-                </div>
-              </>
+            {cannotSell ? (
+              <BlockedNotice {...handover} className={quote ? 'mt-6' : ''} />
             ) : (
-              <>
-                <p className="rounded-[var(--radius-card)] bg-sand p-4 text-center text-sm text-ink-soft">
-                  {t('quote.unavailable')}
-                </p>
-                <button type="button" onClick={next} className="btn btn-primary mt-6 w-full">
+              <div className="q-notch-wrap mt-11">
+                <GuaranteeNotch label={t('quote.guarantee')} clock={clockFace(guaranteeLeft)} />
+                <button type="button" onClick={next} className="btn btn-primary w-full">
                   {t('confirmBooking')}
                 </button>
-              </>
+              </div>
             )}
           </div>
         );
@@ -1558,8 +1522,7 @@ export function BookingForm({
               />
             </dl>
 
-            {/* Every figure below comes from get_quote. The panel is additive:
-                when no price can be produced the flow is exactly what it was. */}
+            {/* Every figure below comes from get_quote. */}
             {quoteState === 'ready' && quote ? (
               <div className="mt-6">
                 <QuotePanel quote={quote} />
@@ -1571,10 +1534,6 @@ export function BookingForm({
                 aria-live="polite"
               >
                 {t('quote.loading')}
-              </p>
-            ) : quoteState === 'unavailable' ? (
-              <p className="mt-6 rounded-[var(--radius-card)] bg-sand p-4 text-center text-sm text-ink-soft">
-                {t('quote.unavailable')}
               </p>
             ) : null}
 
@@ -1601,64 +1560,54 @@ export function BookingForm({
               </div>
             ) : null}
 
-            <button
-              type="button"
-              onClick={() => void (canPay ? startCheckout() : submit())}
-              disabled={state === 'sending'}
-              className="btn btn-primary mt-6 w-full"
-            >
-              {state === 'sending' ? (
-                <>
-                  <Spinner />
-                  {t('submitting')}
-                </>
-              ) : (
-                <>
-                  {canPay && quote
-                    ? t('payment.payDeposit', { amount: money.format(quote.depositAmount) })
-                    : t('submit')}
-                  <Icon name="checkCircle" className="h-[1.05em] w-auto" />
-                </>
-              )}
-            </button>
+            {/* The one button that can confirm a stay, and it opens a card
+                form. There is no second branch behind it any more. */}
+            {cannotSell || !quote ? (
+              <BlockedNotice {...handover} className="mt-6" />
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => void startCheckout()}
+                  disabled={state === 'sending'}
+                  className="btn btn-primary mt-6 w-full"
+                >
+                  {state === 'sending' ? (
+                    <>
+                      <Spinner />
+                      {t('submitting')}
+                    </>
+                  ) : (
+                    <>
+                      {t('payment.payDeposit', { amount: money.format(quote.depositAmount) })}
+                      <Icon name="checkCircle" className="h-[1.05em] w-auto" />
+                    </>
+                  )}
+                </button>
 
-            <p className="mt-3 text-center text-xs text-ink-soft">
-              {canPay && quote
-                ? t('payment.balanceNotice', { amount: money.format(quote.balanceAmount) })
-                : t('noPayment')}
-            </p>
+                <p className="mt-3 text-center text-xs text-ink-soft">
+                  {t('payment.balanceNotice', { amount: money.format(quote.balanceAmount) })}
+                </p>
 
-            <p className="mt-1 text-center text-xs text-ink-soft">
-              {t.rich('consentNotice', {
-                link: (chunks) => (
-                  <a className="text-raspberry-ink underline underline-offset-4" href={privacyHref}>
-                    {chunks}
-                  </a>
-                ),
-              })}
-            </p>
+                <p className="mt-1 text-center text-xs text-ink-soft">
+                  {t.rich('consentNotice', {
+                    link: (chunks) => (
+                      <a
+                        className="text-raspberry-ink underline underline-offset-4"
+                        href={privacyHref}
+                      >
+                        {chunks}
+                      </a>
+                    ),
+                  })}
+                </p>
+              </>
+            )}
           </div>
         );
     }
   }
 
-  /*
-   * The notch over the card, and the message it opens WhatsApp with. What the
-   * visitor has already told the form goes into the sentence, so nobody has to
-   * type their dates twice. The party only appears once the stay does, which
-   * costs nothing: the form asks for the stay first and the party after it.
-   */
-  const dotted = (isoDate: string) =>
-    `${isoDate.slice(8, 10)}.${isoDate.slice(5, 7)}.${isoDate.slice(0, 4)}`;
-
-  const notchMessage =
-    arrival && departure && guests !== null
-      ? t('notch.messageGuests', { guests, from: dotted(arrival), to: dotted(departure) })
-      : arrival && departure
-        ? t('notch.messageDates', { from: dotted(arrival), to: dotted(departure) })
-        : t('notch.message');
-
-  const notchHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(notchMessage)}`;
 
   return (
     <div className="booking-card card px-6 py-8 sm:px-8 sm:py-10">
@@ -1906,6 +1855,77 @@ function ChoiceGroup({
         ))}
       </div>
     </fieldset>
+  );
+}
+
+/**
+ * No deposit can be taken, so no stay is recorded.
+ *
+ * This is what stands where the confirmation button would be. It says plainly
+ * that the booking cannot be completed here and hands over the three ways of
+ * reaching the host that need nothing of this page to work. It never writes a
+ * line: a reservation confirmed without its deposit is a night given away.
+ */
+function BlockedNotice({
+  title,
+  body,
+  whatsappHref,
+  whatsappLabel,
+  airbnb,
+  booking,
+  className,
+}: {
+  title: string;
+  body: string;
+  whatsappHref: string;
+  whatsappLabel: string;
+  airbnb: { url: string; label: string } | null;
+  booking: { url: string; label: string } | null;
+  className?: string;
+}) {
+  return (
+    <div
+      role="status"
+      className={`rounded-[var(--radius-card)] bg-sand p-5 text-center ${className ?? ''}`}
+    >
+      <h4 className="font-display text-lg">{title}</h4>
+      <p className="mt-2 text-sm text-ink-soft">{body}</p>
+
+      <a
+        href={whatsappHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="btn btn-primary mt-5 inline-flex w-full"
+      >
+        <WhatsAppMark />
+        {whatsappLabel}
+      </a>
+
+      {airbnb || booking ? (
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-sm">
+          {airbnb ? (
+            <a
+              href={airbnb.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-raspberry-ink underline underline-offset-4"
+            >
+              {airbnb.label}
+            </a>
+          ) : null}
+          {booking ? (
+            <a
+              href={booking.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-raspberry-ink underline underline-offset-4"
+            >
+              {booking.label}
+            </a>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
   );
 }
 

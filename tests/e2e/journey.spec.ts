@@ -30,6 +30,22 @@ test.describe('P1 booking journey', () => {
     minNights: 1,
     blocked: ['2030-07-05'],
     country: 'FR',
+    paymentsEnabled: true,
+  };
+
+  /**
+   * The write that must not happen.
+   *
+   * A stay is confirmed by its deposit, so nothing in the card may reach an
+   * endpoint that records one without a payment. Every test in this block
+   * watches for it rather than trusting the button labels.
+   */
+  const watchForFreeWrites = (page: import('@playwright/test').Page) => {
+    const attempts: string[] = [];
+    page.on('request', (request) => {
+      if (/\/api\/reservations/.test(request.url())) attempts.push(request.url());
+    });
+    return attempts;
   };
 
   /** One step is mounted at a time, so the card itself is the active step. */
@@ -70,22 +86,22 @@ test.describe('P1 booking journey', () => {
     await onStep(page).getByRole('button', { name: /obtenir le prix/i }).click();
   };
 
-  test('a direct booking is written and confirmed to the visitor', async ({ page }) => {
+  test('no deposit taken, no reservation written', async ({ page }) => {
+    const freeWrites = watchForFreeWrites(page);
+
     await page.route('**/api/availability', async (route) => {
       await route.fulfill({ status: 200, json: AVAILABILITY });
     });
-
-    let submitted: Record<string, unknown> | null = null;
-    await page.route('**/api/reservations', async (route) => {
-      submitted = route.request().postDataJSON() as Record<string, unknown>;
-      await route.fulfill({
-        status: 200,
-        json: { ok: true, reference: 'AB12CD34', from: '2030-07-01', to: '2030-07-04', nights: 3 },
-      });
-    });
-
     await page.route('**/api/quote', async (route) => {
       await route.fulfill({ status: 200, json: { valid: true, quote: QUOTE } });
+    });
+
+    // The card cannot be opened after all. This is the case that used to fall
+    // through to writing the stay for free.
+    let checkoutCalls = 0;
+    await page.route('**/api/checkout', async (route) => {
+      checkoutCalls += 1;
+      await route.fulfill({ status: 503, json: { error: 'payments_unavailable' } });
     });
 
     await page.goto('/#book');
@@ -99,30 +115,45 @@ test.describe('P1 booking journey', () => {
 
     await onStep(page).getByLabel(/votre nom complet/i).fill('Test Voyageur');
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
-
     await onStep(page).getByLabel(/votre mail/i).fill('test@example.com');
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
-
     await onStep(page).locator('#booking-phone').fill('0612345678');
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
 
-    // The recap is the last thing between the visitor and a real reservation.
+    // The terminal button asks for a card and for nothing else.
     await expect(onStep(page).getByText(/ces informations sont-elles correctes/i)).toBeVisible();
-    await onStep(page).getByRole('button', { name: /confirmer la réservation/i }).click();
+    await onStep(page).getByRole('button', { name: /payer l'acompte/i }).click();
 
-    await expect(page.getByText(/réservation confirmée/i)).toBeVisible();
-    await expect(page.getByText('AB12CD34')).toBeVisible();
-    await expect(page.getByRole('link', { name: /whatsapp/i })).toHaveAttribute(
-      'href',
-      /wa\.me\/33601995558\?text=.*01\.07\.2030.*04\.07\.2030/,
-    );
-    expect(submitted).toMatchObject({
-      from: '2030-07-01',
-      to: '2030-07-04',
-      guests: 2,
-      phone: '+33 6 12 34 56 78',
-      consent: true,
+    await expect(onStep(page).getByText(/réservation en ligne est indisponible/i)).toBeVisible();
+    await expect(page.getByText(/réservation confirmée/i)).toHaveCount(0);
+
+    expect(checkoutCalls).toBe(1);
+    expect(freeWrites).toEqual([]);
+  });
+
+  test('a stay with no price is blocked rather than given away', async ({ page }) => {
+    const freeWrites = watchForFreeWrites(page);
+
+    await page.route('**/api/availability', async (route) => {
+      await route.fulfill({ status: 200, json: AVAILABILITY });
     });
+    // The owner has not set a rate for these nights.
+    await page.route('**/api/quote', async (route) => {
+      await route.fulfill({ status: 503, json: { error: 'not_priced' } });
+    });
+
+    await page.goto('/#book');
+
+    await pickDatesAndParty(page);
+
+    // The quote step is where it stops. There is no way on from here.
+    await expect(onStep(page).getByText(/réservation en ligne est indisponible/i)).toBeVisible();
+    await expect(onStep(page).getByRole('button', { name: /confirmer ma réservation/i })).toHaveCount(
+      0,
+    );
+    await expect(onStep(page).getByRole('link', { name: /whatsapp/i })).toBeVisible();
+
+    expect(freeWrites).toEqual([]);
   });
 
   test('a night taken elsewhere is refused and says why', async ({ page }) => {
@@ -144,16 +175,17 @@ test.describe('P1 booking journey', () => {
   });
 
   test('a range taken while the visitor answered is refused cleanly', async ({ page }) => {
+    const freeWrites = watchForFreeWrites(page);
+
     await page.route('**/api/availability', async (route) => {
       await route.fulfill({ status: 200, json: { ...AVAILABILITY, blocked: [] } });
     });
-    await page.route('**/api/reservations', async (route) => {
-      await route.fulfill({ status: 409, json: { error: 'unavailable' } });
-    });
-
-    // No price can be produced, so the flow is the enquiry it was before.
     await page.route('**/api/quote', async (route) => {
-      await route.fulfill({ status: 503, json: { error: 'not_priced' } });
+      await route.fulfill({ status: 200, json: { valid: true, quote: QUOTE } });
+    });
+    // The nights went while the visitor was answering, so the hold is refused.
+    await page.route('**/api/checkout', async (route) => {
+      await route.fulfill({ status: 409, json: { error: 'unavailable' } });
     });
 
     await page.goto('/#book');
@@ -167,9 +199,10 @@ test.describe('P1 booking journey', () => {
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
     await onStep(page).locator('#booking-phone').fill('0612345678');
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
-    await onStep(page).getByRole('button', { name: /confirmer la réservation/i }).click();
+    await onStep(page).getByRole('button', { name: /payer l'acompte/i }).click();
 
     await expect(page.getByRole('alert').first()).toContainText(/viennent d'être prises/i);
+    expect(freeWrites).toEqual([]);
   });
 });
 

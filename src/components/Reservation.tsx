@@ -9,10 +9,17 @@ import { channel, host, property } from '@/lib/content';
 
 /**
  * FR-013 to FR-015 and FR-103: one centred column, the calendar and nothing
- * else. The dates chosen here are written and blocked immediately, on the site
- * and, through the master feed, on Airbnb and Booking. No payment is taken yet
- * (Phase 3). The two platforms stay reachable, inside the card and under its
- * own call to action, behind a word about what they add to the bill.
+ * else.
+ *
+ * A stay is confirmed by its deposit and by nothing else. The card holds the
+ * nights while the deposit is taken, and only a cleared payment turns that hold
+ * into a booking that blocks the dates here and, through the master feed, on
+ * Airbnb and Booking. When no deposit can be taken, because the owner has not
+ * priced the nights or the payment keys are missing from the build, the card
+ * writes nothing at all and hands the visitor the host instead.
+ *
+ * The two platforms stay reachable, inside the card and under its own call to
+ * action, behind a word about what they add to the bill.
  */
 export function Reservation() {
   const t = useTranslations('reservation');
