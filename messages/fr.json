@@ -203,7 +203,8 @@
       },
       "shops": {
         "label": "Commerces & Restaurants",
-        "detail": "Vous avez tout à proximité : boulangerie, commerces et restaurants sont à quelques pas de la résidence."
+        "detail": "Vous avez tout à proximité : boulangerie, commerces et restaurants sont à quelques pas de la résidence.",
+        "photoAlt": "Les terrasses de restaurants du front de mer des Sablettes au coucher du soleil, entre la plage et les brasseries"
       }
     }
   },

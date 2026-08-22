@@ -203,7 +203,8 @@
       },
       "shops": {
         "label": "Geschäfte & Restaurants",
-        "detail": "Alles liegt in der Nähe: Bäckerei, Geschäfte und Restaurants sind wenige Schritte von der Residenz entfernt."
+        "detail": "Alles liegt in der Nähe: Bäckerei, Geschäfte und Restaurants sind wenige Schritte von der Residenz entfernt.",
+        "photoAlt": "Restaurantterrassen an der Strandpromenade von Les Sablettes bei Sonnenuntergang, zwischen Strand und Brasserien"
       }
     }
   },

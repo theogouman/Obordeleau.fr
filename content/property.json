@@ -266,6 +266,10 @@
     {
       "file": "sablettes-plage.jpg",
       "aroundId": "beach"
+    },
+    {
+      "file": "restaurants-les-sablettes.jpeg",
+      "aroundId": "shops"
     }
   ]
 }

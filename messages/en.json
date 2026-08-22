@@ -203,7 +203,8 @@
       },
       "shops": {
         "label": "Shops & restaurants",
-        "detail": "Everything is close by: the bakery, the shops and the restaurants are a few steps from the residence."
+        "detail": "Everything is close by: the bakery, the shops and the restaurants are a few steps from the residence.",
+        "photoAlt": "Restaurant terraces on the Les Sablettes seafront at sunset, between the beach and the brasseries"
       }
     }
   },
