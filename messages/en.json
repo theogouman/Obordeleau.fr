@@ -199,7 +199,8 @@
       },
       "boat-shuttle": {
         "label": "Shuttle boat to Toulon",
-        "detail": "Step aboard the shuttle boats right across from the residence and sail to Toulon and the islands."
+        "detail": "Step aboard the shuttle boats right across from the residence and sail to Toulon and the islands.",
+        "photoAlt": "The shuttle boat pulling away from Les Sablettes, its stern and its wake in front of the seafront and the hills of the Var"
       },
       "shops": {
         "label": "Shops & restaurants",

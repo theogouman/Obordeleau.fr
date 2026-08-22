@@ -19,11 +19,12 @@ import { aroundItems, property } from '@/lib/content';
  * its own sentence, and a badge repeating it in figures was one measurement
  * too many for a block whose point is that nothing here needs measuring.
  *
- * Only the beach has a photograph today. A card without one is not a hole: it
+ * Three of the four carry a photograph. A card without one is not a hole: it
  * is laid out for its words, on the sunset ground, with the place mark the
  * rest of the site uses. Dropping a file in public/images/area and naming it
  * in content/property.json under `area` is all it takes to turn any of them
- * into a photograph card.
+ * into a photograph card, and the only other thing it needs is a photoAlt in
+ * each of the four catalogues.
  */
 export function Around() {
   const t = useTranslations('around');

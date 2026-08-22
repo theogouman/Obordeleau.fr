@@ -199,7 +199,8 @@
       },
       "boat-shuttle": {
         "label": "Fähre nach Toulon",
-        "detail": "Direkt gegenüber der Residenz legen die Pendelboote nach Toulon und zu den Inseln ab."
+        "detail": "Direkt gegenüber der Residenz legen die Pendelboote nach Toulon und zu den Inseln ab.",
+        "photoAlt": "Die Fähre legt von Les Sablettes ab, Heck und Kielwasser vor der Uferpromenade und den Hügeln des Var"
       },
       "shops": {
         "label": "Geschäfte & Restaurants",

@@ -199,11 +199,13 @@
       },
       "boat-shuttle": {
         "label": "Battello per Tolone",
-        "detail": "Imbarcati per Tolone e per le isole con i battelli navetta che partono di fronte alla residenza."
+        "detail": "Imbarcati per Tolone e per le isole con i battelli navetta che partono di fronte alla residenza.",
+        "photoAlt": "Il battello si allontana da Les Sablettes, la poppa e la scia davanti al lungomare e alle colline del Var"
       },
       "shops": {
         "label": "Negozi e ristoranti",
-        "detail": "Hai tutto vicino: panetteria, negozi e ristoranti sono a pochi passi dalla residenza."
+        "detail": "Hai tutto vicino: panetteria, negozi e ristoranti sono a pochi passi dalla residenza.",
+        "photoAlt": "Le terrazze dei ristoranti sul lungomare delle Sablettes al tramonto, tra la spiaggia e le brasserie"
       }
     }
   },
