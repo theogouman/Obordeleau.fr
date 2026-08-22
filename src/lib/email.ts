@@ -13,12 +13,49 @@ import { host } from '@/lib/content';
 
 export type Detail = { label: string; value: string };
 
+/**
+ * A line at the foot of a message.
+ *
+ * A string is text and is escaped here. An object is HTML the caller has
+ * already made safe, for the one thing text cannot carry: a link. Its `text`
+ * is the same line for the plain text twin, and when it is left out the tags
+ * are simply stripped, so the twin is never HTML by accident.
+ */
+export type FooterLine = string | { html: string; text?: string };
+
 export function escapeHtml(value: string): string {
   return value
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+}
+
+/**
+ * Escaped first, then the newlines become breaks. The other order would let a
+ * line of text write markup, which is the whole reason this function exists as
+ * one step rather than two calls at the call site.
+ */
+function nl2br(value: string): string {
+  return escapeHtml(value).replace(/\n/g, '<br>');
+}
+
+/**
+ * A link inside a sentence. Both halves are escaped, so a label or an address
+ * that carries a quote cannot break out of the tag it is put in.
+ */
+export function link(label: string, href: string): string {
+  return (
+    `<a href="${escapeHtml(href)}" style="color:#a8253c;text-decoration:underline">` +
+    `${escapeHtml(label)}</a>`
+  );
+}
+
+/** What a footer line says once the markup is gone. */
+function footerText(line: FooterLine): string {
+  if (typeof line === 'string') return line;
+  if (line.text !== undefined) return line.text;
+  return line.html.replace(/<[^>]*>/g, '');
 }
 
 /** A calendar date written the way the reader's language writes it. */
@@ -41,7 +78,7 @@ export function renderEmail(
   title: string,
   intro: string,
   details: Detail[],
-  footer: string[],
+  footer: FooterLine[],
   action?: Action,
 ): { html: string; text: string } {
   const rows = details
@@ -63,10 +100,15 @@ export function renderEmail(
   const html =
     `<div style="font-family:system-ui,sans-serif;line-height:1.6;color:#3a2a26">` +
     `<h1 style="font-size:20px;margin:0 0 12px">${escapeHtml(title)}</h1>` +
-    `<p style="margin:0 0 16px">${escapeHtml(intro)}</p>` +
+    `<p style="margin:0 0 16px">${nl2br(intro)}</p>` +
     `<table style="border-collapse:collapse;margin:0 0 16px">${rows}</table>` +
     button +
-    footer.map((line) => `<p style="margin:0 0 8px">${escapeHtml(line)}</p>`).join('') +
+    footer
+      .map(
+        (line) =>
+          `<p style="margin:0 0 8px">${typeof line === 'string' ? nl2br(line) : line.html}</p>`,
+      )
+      .join('') +
     `</div>`;
 
   const text = [
@@ -77,7 +119,7 @@ export function renderEmail(
     ...details.map((detail) => `${detail.label}: ${detail.value}`),
     ...(action ? ['', action.label, action.url] : []),
     '',
-    ...footer,
+    ...footer.map(footerText),
   ].join('\n');
 
   return { html, text };
