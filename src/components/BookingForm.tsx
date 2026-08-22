@@ -227,7 +227,7 @@ export function BookingForm({
    * database refuses to price. Nothing is written in either case. The flow
    * stops here and hands the visitor the host instead.
    */
-  const [blocked, setBlocked] = useState(false);
+  const [paymentRefused, setPaymentRefused] = useState(false);
   const [stepError, setStepError] = useState<string | null>(null);
   const [shaking, setShaking] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -759,7 +759,7 @@ export function BookingForm({
     setGuaranteeExpired(false);
     // Different nights may well be priced, so a refusal does not outlive the
     // stay it was about.
-    setBlocked(false);
+    setPaymentRefused(false);
 
     const load = async () => {
       try {
@@ -911,7 +911,7 @@ export function BookingForm({
   const canPay = paymentsEnabled && quoteState === 'ready' && quote !== null;
 
   /** No card can be taken for this stay, and no stay is recorded without one. */
-  const cannotSell = blocked || !canPay;
+  const cannotSell = paymentRefused || !canPay;
 
   /*
    * The messages hold the quote's place until there is something to put there
@@ -1047,7 +1047,7 @@ export function BookingForm({
         // the reservation for free, which is a night given away every time the
         // owner has not set a rate. The flow stops and hands over the host.
         if (body.error === 'payments_unavailable' || body.error === 'not_priced') {
-          setBlocked(true);
+          setPaymentRefused(true);
           setState('editing');
           return;
         }
