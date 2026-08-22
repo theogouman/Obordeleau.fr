@@ -3,7 +3,15 @@ import { localeTags, routing, type Locale } from '@/i18n/routing';
 import type { DueBalance, SettledBalance } from '@/lib/balances';
 import { formattedAddress, host, property, siteUrl } from '@/lib/content';
 import { nightsBetween } from '@/lib/dates';
-import { formatEmailDate, hostInbox, renderEmail, sendEmail, type Detail } from '@/lib/email';
+import {
+  formatEmailDate,
+  hostInbox,
+  link,
+  renderEmail,
+  sendEmail,
+  withLinks,
+  type Detail,
+} from '@/lib/email';
 
 /**
  * The letters the balance sends.
@@ -99,18 +107,34 @@ export async function sendBalanceLinkEmail(input: {
     failed: copy('introFailed', { name: balance.guestName }),
   }[reason];
 
+  // What has been paid, then what is left. A letter that asks for money says
+  // both, or the figure it asks for looks like the whole of the stay.
   const details: Detail[] = [
     { label: labels('arrival'), value: formatEmailDate(balance.startDate, locale) },
     { label: labels('departure'), value: formatEmailDate(balance.endDate, locale) },
-    { label: labels('amount'), value: money(balance.balanceDue, balance.currency, locale) },
+    {
+      label: labels('depositPaid'),
+      value: money(balance.depositAmount, balance.currency, locale),
+    },
+    {
+      label: labels('balanceToPay'),
+      value: money(balance.balanceDue, balance.currency, locale),
+    },
     { label: labels('reference'), value: bookingReference(balance.reservationId) },
   ];
+
+  const questionLine = {
+    html: withLinks(copy('question', { phone: 'PHONE_LINK' }), {
+      PHONE_LINK: link(host.contact.phoneDisplay, `tel:+${host.contact.whatsappNumber}`),
+    }),
+    text: copy('question', { phone: host.contact.phoneDisplay }),
+  };
 
   const email = renderEmail(
     isReminder ? copy('titleReminder') : copy('title'),
     isReminder ? `${copy('reminder')} ${intro}` : intro,
     details,
-    [copy('secure'), copy('changes'), copy('signature', { host: host.firstName })],
+    [copy('secure'), questionLine, copy('signature', { host: host.firstName })],
     { label: copy('action', { amount: money(balance.balanceDue, balance.currency, locale) }), url },
   );
 

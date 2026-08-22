@@ -51,6 +51,23 @@ export function link(label: string, href: string): string {
   );
 }
 
+/**
+ * A translated sentence that carries links.
+ *
+ * The sentence is escaped first and the anchors are dropped in afterwards, at
+ * markers the caller passed to the translation in place of the real values.
+ * Building it the other way round, by translating with the anchors already in,
+ * would escape the anchors themselves or, worse, let a translator's ampersand
+ * decide how the markup ends.
+ */
+export function withLinks(sentence: string, anchors: Record<string, string>): string {
+  let html = escapeHtml(sentence).replace(/\n/g, '<br>');
+  for (const [marker, anchor] of Object.entries(anchors)) {
+    html = html.split(marker).join(anchor);
+  }
+  return html;
+}
+
 /** What a footer line says once the markup is gone. */
 function footerText(line: FooterLine): string {
   if (typeof line === 'string') return line;

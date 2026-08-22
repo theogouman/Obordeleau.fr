@@ -1,8 +1,16 @@
 import { getTranslations } from 'next-intl/server';
 import { localeTags, routing, type Locale } from '@/i18n/routing';
-import { formattedAddress, host, property } from '@/lib/content';
+import { externalMapUrl, formattedAddress, host, property } from '@/lib/content';
 import { nightsBetween } from '@/lib/dates';
-import { formatEmailDate, hostInbox, renderEmail, sendEmail, type Detail } from '@/lib/email';
+import {
+  formatEmailDate,
+  hostInbox,
+  link,
+  renderEmail,
+  sendEmail,
+  withLinks,
+  type Detail,
+} from '@/lib/email';
 import type { ConfirmedBooking } from '@/lib/payments';
 
 /**
@@ -82,19 +90,44 @@ export async function sendDepositEmails(
     { label: labels('reference'), value: code },
   ];
 
+  /*
+   * Two of the guest's lines carry links, so they are built twice: once as
+   * HTML with the anchors in, once as the same sentence in plain words. The
+   * markers below are what the translation is given in place of the values,
+   * and they survive escaping because they are plain letters.
+   */
+  const phoneHref = `tel:+${host.contact.whatsappNumber}`;
+  const mailLabel = guestCopy('mailLabel');
+
+  const contactLine = {
+    html: withLinks(guestCopy('contact', { phone: 'PHONE_LINK', mail: 'MAIL_LINK' }), {
+      PHONE_LINK: link(host.contact.phoneDisplay, phoneHref),
+      MAIL_LINK: link(mailLabel, `mailto:${host.contact.email}`),
+    }),
+    text: guestCopy('contact', { phone: host.contact.phoneDisplay, mail: mailLabel }),
+  };
+
+  const address = `${property.name}, ${formattedAddress}`;
+  const locationLine = {
+    html: withLinks(guestCopy('location', { address: 'ADDRESS_LINK' }), {
+      ADDRESS_LINK: link(address, externalMapUrl),
+    }),
+    text: guestCopy('location', { address }),
+  };
+
   const guestEmail = renderEmail(
     guestCopy('title'),
     guestCopy(paidInFull ? 'introFull' : 'intro', { name: booking.guestName }),
     guestDetails,
     [
-      guestCopy('address', { address: `${property.name}, ${formattedAddress}` }),
       paidInFull
         ? guestCopy('paidInFull')
         : automatic
           ? guestCopy('balanceAuto', { amount: balance, date: chargeDate })
           : guestCopy('balanceManual', { amount: balance }),
-      guestCopy('changes'),
-      guestCopy('signature', { host: host.firstName }),
+      contactLine,
+      locationLine,
+      guestCopy('signature', { host: host.fullName }),
     ],
   );
 
