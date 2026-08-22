@@ -49,13 +49,21 @@ export function ReviewsSection() {
           below the thing that says it with its name. */}
       <Reveal>
         <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-14">
-          <AccentHeading
-            id="reviews-title"
-            lead={t('titleLead')}
-            accent={t('titleAccent')}
-            tail={t('titleTail')}
-            className="max-w-2xl"
-          />
+          <div className="max-w-2xl">
+            <AccentHeading
+              id="reviews-title"
+              lead={t('titleLead')}
+              accent={t('titleAccent')}
+              tail={t('titleTail')}
+            />
+
+            {/* The same sentence the reviews page opens with, from the same
+                key: it is the same promise, and it should not be possible to
+                change it in one place and not the other. Two lines here, which
+                is the lead rule doing its work, and it is what squares the
+                block off against the distinction beside it. */}
+            <p className="lead mt-4 text-lg text-ink-soft">{t('page.intro')}</p>
+          </div>
 
           <GuestFavourite className="lg:shrink-0" />
         </div>
