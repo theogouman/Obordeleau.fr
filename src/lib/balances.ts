@@ -22,7 +22,12 @@ export const BALANCE_RETRY_DAYS = 3;
 /** A claim older than this belonged to a runner that is no longer running. */
 export const BALANCE_STALE_MINUTES = 30;
 
-export type BalanceStatus = 'pending' | 'paid' | 'action_required' | 'failed';
+/**
+ * `none` is the stay that was paid for in full at booking: there is no balance,
+ * so nothing here ever selects it. It is in the union because the column can
+ * hold it, not because this code has anything to do with it.
+ */
+export type BalanceStatus = 'pending' | 'paid' | 'action_required' | 'failed' | 'none';
 
 export type DueBalance = {
   reservationId: string;

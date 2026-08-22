@@ -406,7 +406,9 @@
           "body": "Votre prix était garanti trente minutes. Il a sûrement évolué depuis : relancez la recherche pour voir le tarif à jour. Toutes vos réponses sont conservées.",
           "action": "Actualiser le prix"
         },
-        "accommodationAt": "{count, plural, one {# nuit à {price}} other {# nuits à {price}}}"
+        "accommodationAt": "{count, plural, one {# nuit à {price}} other {# nuits à {price}}}",
+        "dueToday": "À régler aujourd'hui",
+        "nothingAfter": "Aucun autre prélèvement ne sera effectué."
       },
       "noscript": {
         "title": "Choisir vos dates",
@@ -432,7 +434,10 @@
         "errors": {
           "load": "Le formulaire de paiement n'a pas pu se charger. Réessayez dans un instant.",
           "card": "Le paiement n'a pas abouti. Vérifiez votre carte ou essayez-en une autre."
-        }
+        },
+        "summaryFull": "Séjour à régler maintenant : {amount}.",
+        "payStay": "Payer le séjour, {amount}",
+        "fullNotice": "Le séjour est réglé en une fois, aucun autre prélèvement."
       },
       "successBodyPaid": "Votre acompte est réglé, vos dates sont bloquées et un email de confirmation vient de partir. Corine vous écrit pour l'arrivée.",
       "notch": {
@@ -565,7 +570,8 @@
         "depositPaid": "Acompte réglé",
         "balance": "Solde",
         "balanceDate": "Débit du solde",
-        "reference": "Référence"
+        "reference": "Référence",
+        "stayPaid": "Séjour réglé"
       },
       "guest": {
         "subject": "Votre acompte est bien reçu, {property}",
@@ -575,14 +581,20 @@
         "balanceAuto": "Le solde de {amount} sera prélevé automatiquement le {date} sur la carte utilisée aujourd'hui.",
         "balanceManual": "Le solde de {amount} reste à régler avant l'arrivée. Corine vous écrit pour convenir du règlement.",
         "changes": "Pour modifier ou annuler, répondez simplement à ce message.",
-        "signature": "À très bientôt, {host}"
+        "signature": "À très bientôt, {host}",
+        "subjectFull": "Votre réservation est confirmée, {property}",
+        "introFull": "Bonjour {name}, votre paiement a bien été reçu et vos dates sont réservées.",
+        "paidInFull": "Le séjour est intégralement réglé. Aucun autre prélèvement ne sera effectué."
       },
       "host": {
         "subject": "Acompte reçu, réservation du {from} au {to}",
         "title": "Acompte reçu, réservation confirmée",
         "intro": "Un acompte vient d'être réglé sur le site et la réservation est confirmée.",
         "balanceManual": "À convenir, pas d'autorisation de prélèvement",
-        "blocked": "Les dates sont déjà bloquées sur le site et dans le calendrier envoyé à Airbnb et à Booking."
+        "blocked": "Les dates sont déjà bloquées sur le site et dans le calendrier envoyé à Airbnb et à Booking.",
+        "subjectFull": "Paiement reçu, réservation du {from} au {to}",
+        "titleFull": "Séjour réglé, réservation confirmée",
+        "introFull": "Le séjour vient d'être réglé intégralement sur le site et la réservation est confirmée."
       },
       "refunded": {
         "subject": "Acompte remboursé, du {from} au {to}",

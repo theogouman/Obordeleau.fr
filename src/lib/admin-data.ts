@@ -18,6 +18,10 @@ export type PricingConfigRow = {
   tourist_tax_per_adult_night: number;
   deposit_percentage: number;
   deposit_charge_days_before_arrival: number | null;
+  /** Above this many days before arrival, a deposit is offered. Strictly above. */
+  deposit_min_advance_days: number;
+  /** And above this total, cleaning and tax included. Strictly above. */
+  deposit_min_total: number;
   default_min_nights: number;
 };
 
@@ -116,6 +120,8 @@ export async function saveConfig(input: {
   touristTaxPerAdultNight: number;
   depositPercentage: number;
   depositChargeDaysBeforeArrival: number | null;
+  depositMinAdvanceDays: number;
+  depositMinTotal: number;
   defaultMinNights: number;
 }): Promise<WriteResult> {
   return callDatabase<WriteResult>('admin_save_pricing_config', {
@@ -124,6 +130,8 @@ export async function saveConfig(input: {
     p_tourist_tax_per_adult_night: input.touristTaxPerAdultNight,
     p_deposit_percentage: input.depositPercentage,
     p_deposit_charge_days_before_arrival: input.depositChargeDaysBeforeArrival,
+    p_deposit_min_advance_days: input.depositMinAdvanceDays,
+    p_deposit_min_total: input.depositMinTotal,
     p_default_min_nights: input.defaultMinNights,
   });
 }

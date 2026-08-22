@@ -21,6 +21,12 @@ import type { Quote } from '@/lib/pricing';
  * and the day the balance goes out. Neither explanation is worth a paragraph
  * under the panel, so both are hung on tooltip (17) behind a mark, reachable
  * by pointer and by keyboard alike.
+ *
+ * The foot of the panel has two shapes because the stay has two ways of being
+ * paid for. A deposit is only worth taking on a distant, dear stay; everything
+ * else is settled today. When it is settled today there is no balance line and
+ * no date, because there is no second payment to announce, and inventing a
+ * greyed out one would be the panel saying something that is not true.
  */
 
 type Props = {
@@ -70,6 +76,9 @@ export function QuotePanel({ quote, reveal = false }: Props) {
       timeZone: 'Europe/Paris',
     }).format(new Date(`${quote.balanceChargeOn}T12:00:00Z`));
   }, [localeTag, quote.balanceChargeOn]);
+
+  /** Nothing follows this payment: no balance, no date, no card kept. */
+  const paidInFull = quote.paymentMode === 'full';
 
   /** The blocks rise one behind the next, or simply are, when nothing moves. */
   const rising = reveal ? 'q-reveal' : '';
@@ -137,37 +146,50 @@ export function QuotePanel({ quote, reveal = false }: Props) {
         </div>
       </div>
 
-      <dl
-        className={`mt-4 space-y-2 rounded-[10px] bg-sand p-4 text-sm ${rising}`}
-        data-line={line(2)}
-      >
-        <div className="flex items-baseline justify-between gap-4">
-          <dt className="font-semibold">
-            {t('depositNow', { percent: Math.round(quote.depositPercentage) })}
-          </dt>
-          <dd className="font-semibold tabular-nums">{money.format(quote.depositAmount)}</dd>
-        </div>
+      <div className={`mt-4 rounded-[10px] bg-sand p-4 text-sm ${rising}`} data-line={line(2)}>
+        {paidInFull ? (
+          <>
+            <dl>
+              <div className="flex items-baseline justify-between gap-4">
+                <dt className="font-semibold">{t('dueToday')}</dt>
+                <dd className="font-semibold tabular-nums">
+                  {money.format(quote.depositAmount)}
+                </dd>
+              </div>
+            </dl>
+            <p className="mt-2 text-xs text-ink-soft">{t('nothingAfter')}</p>
+          </>
+        ) : (
+          <dl className="space-y-2">
+            <div className="flex items-baseline justify-between gap-4">
+              <dt className="font-semibold">
+                {t('depositNow', { percent: Math.round(quote.depositPercentage) })}
+              </dt>
+              <dd className="font-semibold tabular-nums">{money.format(quote.depositAmount)}</dd>
+            </div>
 
-        <div className="flex items-baseline justify-between gap-4">
-          <dt className="text-ink-soft">
-            {chargeDate && quote.balanceChargeDaysBeforeArrival !== null
-              ? t.rich('balanceOn', {
-                  date: chargeDate,
-                  when: (chunks) => (
-                    <Hinted
-                      text={t('balanceOnNote', {
-                        count: quote.balanceChargeDaysBeforeArrival ?? 0,
-                      })}
-                    >
-                      {chunks}
-                    </Hinted>
-                  ),
-                })
-              : t('balanceLater')}
-          </dt>
-          <dd className="tabular-nums">{money.format(quote.balanceAmount)}</dd>
-        </div>
-      </dl>
+            <div className="flex items-baseline justify-between gap-4">
+              <dt className="text-ink-soft">
+                {chargeDate && quote.balanceChargeDaysBeforeArrival !== null
+                  ? t.rich('balanceOn', {
+                      date: chargeDate,
+                      when: (chunks) => (
+                        <Hinted
+                          text={t('balanceOnNote', {
+                            count: quote.balanceChargeDaysBeforeArrival ?? 0,
+                          })}
+                        >
+                          {chunks}
+                        </Hinted>
+                      ),
+                    })
+                  : t('balanceLater')}
+              </dt>
+              <dd className="tabular-nums">{money.format(quote.balanceAmount)}</dd>
+            </div>
+          </dl>
+        )}
+      </div>
     </section>
   );
 }

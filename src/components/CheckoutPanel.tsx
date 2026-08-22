@@ -48,6 +48,12 @@ type Props = {
   publishableKey: string;
   /** Already formatted by the panel that read it off the quote. */
   amountLabel: string;
+  /**
+   * What the amount above is. A deposit has a balance behind it, so it is
+   * named as one; a stay taken in full has nothing behind it and must not be
+   * called an instalment of something.
+   */
+  paymentMode: 'deposit' | 'full';
   /** The one line of the mandate, when a card is being kept. Null otherwise. */
   mandate: string | null;
   holdExpiresAt: string | null;
@@ -67,6 +73,7 @@ export function CheckoutPanel({
   clientSecret,
   publishableKey,
   amountLabel,
+  paymentMode,
   mandate,
   holdExpiresAt,
   onPaid,
@@ -188,7 +195,11 @@ export function CheckoutPanel({
     <div>
       <h3 className="font-display text-xl">{t('title')}</h3>
 
-      <p className="mt-2 text-sm text-ink-soft">{t('summary', { amount: amountLabel })}</p>
+      <p className="mt-2 text-sm text-ink-soft">
+        {paymentMode === 'full'
+          ? t('summaryFull', { amount: amountLabel })
+          : t('summary', { amount: amountLabel })}
+      </p>
 
       {mandate ? (
         <p className="mt-3 rounded-[10px] bg-sand p-3 text-xs text-ink-soft">{mandate}</p>

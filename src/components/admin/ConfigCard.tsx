@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import { saveConfigAction } from '@/app/admin/actions';
 import { FormFeedback } from '@/components/admin/FormFeedback';
 import type { PricingConfigRow } from '@/lib/admin-data';
@@ -11,9 +11,25 @@ function value(input: number | null | undefined): string {
   return input === null || input === undefined ? '' : String(input);
 }
 
+/** What a field says right now, or a dash while it is empty. */
+function spoken(input: string): string {
+  const parsed = Number(input.replace(',', '.'));
+  return input.trim() === '' || !Number.isFinite(parsed) ? '...' : String(parsed);
+}
+
 export function ConfigCard({ config }: { config: PricingConfigRow | null }) {
   const [state, action, pending] = useActionState<ActionState, FormData>(saveConfigAction, IDLE);
   const baseMissing = config?.base_nightly_rate === null || config?.base_nightly_rate === undefined;
+
+  /*
+   * Three fields decide one rule between them, and the rule is not obvious from
+   * any of them alone. They are held here so the sentence under them is written
+   * out as they are typed, before anything is saved: the owner reads the policy
+   * rather than three numbers she has to combine in her head.
+   */
+  const [percentage, setPercentage] = useState(value(config?.deposit_percentage ?? 50));
+  const [minAdvance, setMinAdvance] = useState(value(config?.deposit_min_advance_days ?? 30));
+  const [minTotal, setMinTotal] = useState(value(config?.deposit_min_total ?? 500));
 
   return (
     <form action={action} className="admin-card">
@@ -87,7 +103,8 @@ export function ConfigCard({ config }: { config: PricingConfigRow | null }) {
               max="100"
               step="1"
               name="deposit_percentage"
-              defaultValue={value(config?.deposit_percentage ?? 50)}
+              value={percentage}
+              onChange={(event) => setPercentage(event.target.value)}
               className="admin-input"
             />
             <span aria-hidden="true">%</span>
@@ -113,11 +130,58 @@ export function ConfigCard({ config }: { config: PricingConfigRow | null }) {
             <span aria-hidden="true">jours avant</span>
           </span>
           <span className="admin-help">
-            Combien de jours avant l&rsquo;arrivée le solde est prélevé. Servira au paiement, pas
-            encore branché.
+            Combien de jours avant l&rsquo;arrivée le solde est prélevé sur la carte enregistrée.
           </span>
         </label>
       </div>
+
+      <div className="admin-field-row">
+        <label className="admin-field">
+          <span className="admin-label">Acompte si l&rsquo;arrivée est au-delà de</span>
+          <span className="admin-input-money">
+            <input
+              type="number"
+              min="0"
+              step="1"
+              name="deposit_min_advance_days"
+              value={minAdvance}
+              onChange={(event) => setMinAdvance(event.target.value)}
+              className="admin-input"
+            />
+            <span aria-hidden="true">jours avant</span>
+          </span>
+          <span className="admin-help">
+            Doit rester strictement supérieur au délai de débit du solde, sinon le solde tomberait
+            avant même la réservation.
+          </span>
+        </label>
+
+        <label className="admin-field">
+          <span className="admin-label">Acompte si le total dépasse</span>
+          <span className="admin-input-money">
+            <input
+              type="text"
+              inputMode="decimal"
+              name="deposit_min_total"
+              value={minTotal}
+              onChange={(event) => setMinTotal(event.target.value)}
+              className="admin-input"
+            />
+            <span aria-hidden="true">€</span>
+          </span>
+          <span className="admin-help">
+            Comparé au total du séjour, ménage et taxe de séjour compris.
+          </span>
+        </label>
+      </div>
+
+      <p className="admin-note">
+        Un acompte de {spoken(percentage)} % est demandé uniquement si l&rsquo;arrivée est à plus de{' '}
+        {spoken(minAdvance)} jours et si le total dépasse {spoken(minTotal)} €. Sinon, le séjour est
+        réglé intégralement à la réservation et aucune carte n&rsquo;est conservée. Les valeurs pile
+        (exactement {spoken(minAdvance)} jours, exactement {spoken(minTotal)} €) basculent en
+        paiement intégral.
+      </p>
 
       <label className="admin-field">
         <span className="admin-label">Minimum de nuits hors saison</span>

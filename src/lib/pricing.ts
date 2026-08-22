@@ -23,6 +23,16 @@ export type NightPrice = {
   layer: PriceLayer;
 };
 
+/**
+ * How the stay is collected.
+ *
+ * `deposit` takes a share today and the rest from a saved card before arrival.
+ * `full` takes the whole stay today, which is what a near arrival or a small
+ * total gets: there is nothing left to collect, so no card is kept and no
+ * balance is ever scheduled.
+ */
+export type PaymentMode = 'deposit' | 'full';
+
 export type Quote = {
   checkIn: string;
   checkOut: string;
@@ -36,16 +46,21 @@ export type Quote = {
   /** Per adult and per night. Minors under 18 are exempt. */
   touristTax: number;
   total: number;
+  paymentMode: PaymentMode;
   depositPercentage: number;
-  /** A share of the accommodation alone: cleaning and tax ride in the balance. */
+  /**
+   * What is taken today. A share of the accommodation alone in deposit mode,
+   * cleaning and tax riding in the balance; the whole total in full mode.
+   */
   depositAmount: number;
+  /** Zero in full mode: the stay is settled and nothing follows it. */
   balanceAmount: number;
-  /** Null while the owner has not said how many days before arrival. */
+  /** Null in full mode, and whenever no balance is scheduled. */
   balanceChargeDaysBeforeArrival: number | null;
   /**
    * The day the balance is taken from the saved card, check in minus that many
-   * days. Null when it has not been configured, and the balance is then
-   * arranged rather than charged.
+   * days. Null in full mode, and never a day that has already gone: the engine
+   * falls back to taking the whole stay rather than dating a charge in the past.
    */
   balanceChargeOn: string | null;
   currency: 'EUR';
@@ -64,6 +79,7 @@ type QuoteRow = {
   cleaning_fee: number;
   tourist_tax: number;
   total: number;
+  payment_mode: PaymentMode;
   deposit_percentage: number;
   deposit_amount: number;
   balance_amount: number;
@@ -127,6 +143,7 @@ export async function getQuote(
     cleaningFee: row.cleaning_fee,
     touristTax: row.tourist_tax,
     total: row.total,
+    paymentMode: row.payment_mode === 'deposit' ? 'deposit' : 'full',
     depositPercentage: row.deposit_percentage,
     depositAmount: row.deposit_amount,
     balanceAmount: row.balance_amount,

@@ -406,7 +406,9 @@
           "body": "Your price was held for thirty minutes. It has most likely moved since then: ask again to see the current rate. Everything you have answered is kept.",
           "action": "Refresh the price"
         },
-        "accommodationAt": "{count, plural, one {# night at {price}} other {# nights at {price}}}"
+        "accommodationAt": "{count, plural, one {# night at {price}} other {# nights at {price}}}",
+        "dueToday": "Due today",
+        "nothingAfter": "No further payment will be taken."
       },
       "noscript": {
         "title": "Choosing your dates",
@@ -432,7 +434,10 @@
         "errors": {
           "load": "The payment form could not load. Please try again in a moment.",
           "card": "The payment did not go through. Check your card, or try another one."
-        }
+        },
+        "summaryFull": "To pay now: {amount}.",
+        "payStay": "Pay for the stay, {amount}",
+        "fullNotice": "The stay is paid in one go, nothing further is taken."
       },
       "successBodyPaid": "Your deposit is paid, your dates are held and a confirmation email has just gone out. Corine will write to you about arrival.",
       "notch": {
@@ -565,7 +570,8 @@
         "depositPaid": "Deposit paid",
         "balance": "Balance",
         "balanceDate": "Balance taken on",
-        "reference": "Reference"
+        "reference": "Reference",
+        "stayPaid": "Stay paid"
       },
       "guest": {
         "subject": "Your deposit has arrived, {property}",
@@ -575,14 +581,20 @@
         "balanceAuto": "The balance of {amount} will be taken automatically on {date}, from the card you used today.",
         "balanceManual": "The balance of {amount} is still to be paid before arrival. Corine will write to you to arrange it.",
         "changes": "To change or cancel, simply reply to this message.",
-        "signature": "See you very soon, {host}"
+        "signature": "See you very soon, {host}",
+        "subjectFull": "Your booking is confirmed, {property}",
+        "introFull": "Hello {name}, your payment has arrived and your dates are booked.",
+        "paidInFull": "The stay is paid in full. No further payment will be taken."
       },
       "host": {
         "subject": "Deposit received, booking from {from} to {to}",
         "title": "Deposit received, booking confirmed",
         "intro": "A deposit has just been paid on the site and the booking is confirmed.",
         "balanceManual": "To be arranged, no authorisation to charge",
-        "blocked": "The dates are already blocked on the site and in the calendar sent to Airbnb and to Booking."
+        "blocked": "The dates are already blocked on the site and in the calendar sent to Airbnb and to Booking.",
+        "subjectFull": "Payment received, booking from {from} to {to}",
+        "titleFull": "Stay paid, booking confirmed",
+        "introFull": "A stay has just been paid in full on the site and the booking is confirmed."
       },
       "refunded": {
         "subject": "Deposit refunded, from {from} to {to}",

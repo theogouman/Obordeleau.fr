@@ -406,7 +406,9 @@
           "body": "Il tuo prezzo era garantito per trenta minuti. Da allora sarà sicuramente cambiato: rilancia la ricerca per vedere la tariffa aggiornata. Tutte le tue risposte restano salvate.",
           "action": "Aggiorna il prezzo"
         },
-        "accommodationAt": "{count, plural, one {# notte a {price}} other {# notti a {price}}}"
+        "accommodationAt": "{count, plural, one {# notte a {price}} other {# notti a {price}}}",
+        "dueToday": "Da pagare oggi",
+        "nothingAfter": "Nessun altro addebito sarà effettuato."
       },
       "noscript": {
         "title": "Scegliere le date",
@@ -432,7 +434,10 @@
         "errors": {
           "load": "Il modulo di pagamento non si è caricato. Riprova tra un istante.",
           "card": "Il pagamento non è andato a buon fine. Controlla la tua carta o provane un'altra."
-        }
+        },
+        "summaryFull": "Da pagare adesso: {amount}.",
+        "payStay": "Paga il soggiorno, {amount}",
+        "fullNotice": "Il soggiorno si paga in un'unica volta, nessun altro addebito."
       },
       "successBodyPaid": "Il tuo acconto è pagato, le tue date sono bloccate e l'email di conferma è appena partita. Corine ti scrive per l'arrivo.",
       "notch": {
@@ -565,7 +570,8 @@
         "depositPaid": "Acconto versato",
         "balance": "Saldo",
         "balanceDate": "Addebito del saldo",
-        "reference": "Riferimento"
+        "reference": "Riferimento",
+        "stayPaid": "Soggiorno pagato"
       },
       "guest": {
         "subject": "Il tuo acconto è stato ricevuto, {property}",
@@ -575,14 +581,20 @@
         "balanceAuto": "Il saldo di {amount} sarà addebitato automaticamente il {date} sulla carta usata oggi.",
         "balanceManual": "Il saldo di {amount} resta da versare prima dell'arrivo. Corine ti scrive per concordare il pagamento.",
         "changes": "Per modificare o annullare, rispondi semplicemente a questo messaggio.",
-        "signature": "A prestissimo, {host}"
+        "signature": "A prestissimo, {host}",
+        "subjectFull": "La tua prenotazione è confermata, {property}",
+        "introFull": "Buongiorno {name}, il pagamento è stato ricevuto e le tue date sono prenotate.",
+        "paidInFull": "Il soggiorno è interamente pagato. Nessun altro addebito sarà effettuato."
       },
       "host": {
         "subject": "Acconto ricevuto, prenotazione dal {from} al {to}",
         "title": "Acconto ricevuto, prenotazione confermata",
         "intro": "Un acconto è appena stato versato sul sito e la prenotazione è confermata.",
         "balanceManual": "Da concordare, nessuna autorizzazione di addebito",
-        "blocked": "Le date sono già bloccate sul sito e nel calendario inviato ad Airbnb e a Booking."
+        "blocked": "Le date sono già bloccate sul sito e nel calendario inviato ad Airbnb e a Booking.",
+        "subjectFull": "Pagamento ricevuto, prenotazione dal {from} al {to}",
+        "titleFull": "Soggiorno pagato, prenotazione confermata",
+        "introFull": "Un soggiorno è appena stato pagato per intero sul sito e la prenotazione è confermata."
       },
       "refunded": {
         "subject": "Acconto rimborsato, dal {from} al {to}",

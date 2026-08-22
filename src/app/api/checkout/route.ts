@@ -35,7 +35,8 @@ import { bookingStoreConfigured } from '@/lib/supabase';
  *   4. the nights are held, under the exclusion constraint, before Stripe is
  *      called at all. Two visitors reaching this route for the same week: the
  *      second is refused here, with no card touched and nothing to refund
- *   5. only then is a payment intent opened for the deposit
+ *   5. only then is a payment intent opened for what is due today, which is
+ *      the deposit on a distant, dear stay and the whole total on any other
  *
  * Coming back to an abandoned checkout reuses both the hold and the intent. A
  * second intent left open on the same nights could succeed later and be money
@@ -269,9 +270,19 @@ export async function POST(request: NextRequest) {
     }
 
     const amount = toMinorUnits(quote.depositAmount);
+
+    /*
+     * A card is kept only when there is something left to charge it for.
+     *
+     * A stay taken in full has no balance and no charge date, so keeping the
+     * card would be asking a guest to leave one for a payment that is never
+     * going to happen. The form does not offer the opt in in that case; this is
+     * the server refusing to act on it whatever a browser sends up.
+     */
+    const keepCard = saveCard && quote.balanceAmount > 0;
     // Null and not undefined: it is compared with what Stripe reports back,
     // which is null when no card is being kept.
-    const futureUsage: 'off_session' | null = saveCard ? 'off_session' : null;
+    const futureUsage: 'off_session' | null = keepCard ? 'off_session' : null;
 
     let intent: Stripe.PaymentIntent | null = null;
 
@@ -317,14 +328,14 @@ export async function POST(request: NextRequest) {
         },
       };
 
-      // The card is kept only when the guest agreed to it. Without this the
-      // payment method cannot be used again, which is exactly what no consent
-      // has to mean.
-      if (saveCard) params.setup_future_usage = 'off_session';
+      // The card is kept only when the guest agreed to it and a balance is
+      // actually coming. Without this the payment method cannot be used again,
+      // which is exactly what no consent has to mean.
+      if (keepCard) params.setup_future_usage = 'off_session';
 
       intent = await stripe().paymentIntents.create(params, {
         // Keyed on the hold and the amount, so a double click opens one payment.
-        idempotencyKey: `deposit-${reservationId}-${amount}-${saveCard ? 'save' : 'once'}`,
+        idempotencyKey: `deposit-${reservationId}-${amount}-${keepCard ? 'save' : 'once'}`,
       });
     }
 
@@ -335,7 +346,7 @@ export async function POST(request: NextRequest) {
       depositAmount: quote.depositAmount,
       balanceDue: quote.balanceAmount,
       balanceChargeOn: quote.balanceChargeOn,
-      saveCardConsent: saveCard,
+      saveCardConsent: keepCard,
       adults: guests - minors,
       minors,
       quote,

@@ -406,7 +406,9 @@
           "body": "Ihr Preis galt dreißig Minuten. Er hat sich seitdem wahrscheinlich geändert: fragen Sie erneut an, um den aktuellen Tarif zu sehen. Alle Ihre Angaben bleiben erhalten.",
           "action": "Preis aktualisieren"
         },
-        "accommodationAt": "{count, plural, one {# Nacht zu {price}} other {# Nächte zu {price}}}"
+        "accommodationAt": "{count, plural, one {# Nacht zu {price}} other {# Nächte zu {price}}}",
+        "dueToday": "Heute zu zahlen",
+        "nothingAfter": "Es wird kein weiterer Betrag abgebucht."
       },
       "noscript": {
         "title": "Ihre Daten wählen",
@@ -432,7 +434,10 @@
         "errors": {
           "load": "Das Zahlungsformular konnte nicht geladen werden. Bitte versuchen Sie es gleich noch einmal.",
           "card": "Die Zahlung war nicht erfolgreich. Prüfen Sie Ihre Karte oder nehmen Sie eine andere."
-        }
+        },
+        "summaryFull": "Jetzt zu zahlen: {amount}.",
+        "payStay": "Aufenthalt bezahlen, {amount}",
+        "fullNotice": "Der Aufenthalt wird auf einmal bezahlt, es folgt keine weitere Abbuchung."
       },
       "successBodyPaid": "Ihre Anzahlung ist bezahlt, Ihre Daten sind reserviert und eine Bestätigungsmail ist unterwegs. Corine meldet sich wegen der Anreise.",
       "notch": {
@@ -565,7 +570,8 @@
         "depositPaid": "Anzahlung bezahlt",
         "balance": "Restbetrag",
         "balanceDate": "Einzug des Restbetrags",
-        "reference": "Referenz"
+        "reference": "Referenz",
+        "stayPaid": "Aufenthalt bezahlt"
       },
       "guest": {
         "subject": "Ihre Anzahlung ist eingegangen, {property}",
@@ -575,14 +581,20 @@
         "balanceAuto": "Der Restbetrag von {amount} wird am {date} automatisch von der heute verwendeten Karte eingezogen.",
         "balanceManual": "Der Restbetrag von {amount} ist vor der Anreise zu zahlen. Corine meldet sich, um das zu vereinbaren.",
         "changes": "Für Änderungen oder eine Stornierung antworten Sie einfach auf diese Nachricht.",
-        "signature": "Bis ganz bald, {host}"
+        "signature": "Bis ganz bald, {host}",
+        "subjectFull": "Ihre Buchung ist bestätigt, {property}",
+        "introFull": "Guten Tag {name}, Ihre Zahlung ist eingegangen und Ihre Termine sind reserviert.",
+        "paidInFull": "Der Aufenthalt ist vollständig bezahlt. Es wird kein weiterer Betrag abgebucht."
       },
       "host": {
         "subject": "Anzahlung erhalten, Buchung vom {from} bis {to}",
         "title": "Anzahlung erhalten, Buchung bestätigt",
         "intro": "Auf der Website wurde soeben eine Anzahlung gezahlt und die Buchung ist bestätigt.",
         "balanceManual": "Zu vereinbaren, keine Einzugsermächtigung",
-        "blocked": "Die Daten sind auf der Website und im Kalender für Airbnb und Booking bereits blockiert."
+        "blocked": "Die Daten sind auf der Website und im Kalender für Airbnb und Booking bereits blockiert.",
+        "subjectFull": "Zahlung erhalten, Buchung vom {from} bis {to}",
+        "titleFull": "Aufenthalt bezahlt, Buchung bestätigt",
+        "introFull": "Ein Aufenthalt wurde soeben vollständig auf der Website bezahlt und die Buchung ist bestätigt."
       },
       "refunded": {
         "subject": "Anzahlung erstattet, vom {from} bis {to}",

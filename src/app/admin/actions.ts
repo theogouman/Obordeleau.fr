@@ -51,6 +51,9 @@ const FIELD_LABELS: Record<string, string> = {
   tourist_tax_per_adult_night: 'la taxe de séjour',
   deposit_percentage: "le pourcentage d'acompte",
   deposit_charge_days_before_arrival: "le délai de débit du solde",
+  deposit_min_advance_days: "le délai minimum pour un acompte",
+  deposit_min_total: "le montant minimum pour un acompte",
+  deposit_window: "le délai minimum pour un acompte, qui doit rester supérieur au délai de débit du solde",
   default_min_nights: 'le minimum de nuits hors saison',
   window_days: 'la fenêtre en jours',
   discounted_price: 'le prix remisé',
@@ -185,6 +188,8 @@ export async function saveConfigAction(
   const touristTax = amount(formData.get('tourist_tax_per_adult_night'));
   const depositPercentage = amount(formData.get('deposit_percentage'));
   const chargeDays = whole(formData.get('deposit_charge_days_before_arrival'));
+  const minAdvance = whole(formData.get('deposit_min_advance_days'));
+  const minTotal = amount(formData.get('deposit_min_total'));
   const minNights = whole(formData.get('default_min_nights'));
 
   if (
@@ -193,15 +198,32 @@ export async function saveConfigAction(
     touristTax === undefined ||
     depositPercentage === undefined ||
     chargeDays === undefined ||
+    minAdvance === undefined ||
+    minTotal === undefined ||
     minNights === undefined
   ) {
     return { status: 'error', message: 'Un des champs ne contient pas un nombre valide.' };
   }
-  if (cleaningFee === null || touristTax === null || depositPercentage === null || minNights === null) {
+  if (
+    cleaningFee === null ||
+    touristTax === null ||
+    depositPercentage === null ||
+    minAdvance === null ||
+    minTotal === null ||
+    minNights === null
+  ) {
     return {
       status: 'error',
       message:
-        'Les frais de ménage, la taxe de séjour, le pourcentage d’acompte et le minimum de nuits sont obligatoires.',
+        'Les frais de ménage, la taxe de séjour, le pourcentage d’acompte, les seuils d’acompte et le minimum de nuits sont obligatoires.',
+    };
+  }
+  // Caught here as well as in the database, so the message names the two fields
+  // rather than the constraint. The other order dates a solde in the past.
+  if (chargeDays !== null && minAdvance <= chargeDays) {
+    return {
+      status: 'error',
+      message: `Le délai minimum pour un acompte (${minAdvance} jours) doit être strictement supérieur au délai de débit du solde (${chargeDays} jours), sinon le solde serait prélevé avant la réservation.`,
     };
   }
 
@@ -211,6 +233,8 @@ export async function saveConfigAction(
     touristTaxPerAdultNight: touristTax,
     depositPercentage,
     depositChargeDaysBeforeArrival: chargeDays,
+    depositMinAdvanceDays: minAdvance,
+    depositMinTotal: minTotal,
     defaultMinNights: minNights,
   });
 

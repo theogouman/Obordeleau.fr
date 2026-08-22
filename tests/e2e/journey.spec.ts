@@ -63,6 +63,9 @@ test.describe('P1 booking journey', () => {
     cleaningFee: 0,
     touristTax: 9.9,
     total: 459.9,
+    // Far off and dear enough to be collected in two parts, so this fixture is
+    // the deposit branch: the copy asserted below is the deposit copy.
+    paymentMode: 'deposit',
     depositPercentage: 50,
     depositAmount: 225,
     balanceAmount: 234.9,
@@ -199,7 +202,9 @@ test.describe('P1 booking journey', () => {
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
     await onStep(page).locator('#booking-phone').fill('0612345678');
     await onStep(page).getByRole('button', { name: /^continuer$/i }).click();
-    await onStep(page).getByRole('button', { name: /payer l'acompte/i }).click();
+    // No fixture here: the engine decides the branch, and the button is named
+    // after whichever one it chose.
+    await onStep(page).getByRole('button', { name: /payer (l'acompte|le séjour)/i }).click();
 
     await expect(page.getByRole('alert').first()).toContainText(/viennent d'être prises/i);
     expect(freeWrites).toEqual([]);

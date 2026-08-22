@@ -923,11 +923,13 @@ export function BookingForm({
     (quoteState !== 'ready' && quoteState !== 'unavailable') || reveal !== 'shown';
 
   /*
-   * And the balance can only be promised as automatic when the config says how
-   * many days before arrival it is taken. Without that date there is nothing to
-   * put in front of the guest, so no card is kept.
+   * And a card is only kept when a balance is actually coming: the engine says
+   * so by returning an amount and a date to take it on. A stay settled in full
+   * today has neither, so the opt in is not shown, no mandate is displayed and
+   * nothing is charged again.
    */
-  const canAutoCharge = canPay && quote !== null && quote.balanceChargeOn !== null;
+  const canAutoCharge =
+    canPay && quote !== null && quote.balanceChargeOn !== null && quote.balanceAmount > 0;
 
   /** The day the balance is taken, written the way the visitor's language does. */
   function balanceChargeLabel(isoDate: string | null): string {
@@ -1167,6 +1169,7 @@ export function BookingForm({
           clientSecret={checkout.clientSecret}
           publishableKey={checkout.publishableKey}
           amountLabel={money.format(quote.depositAmount)}
+          paymentMode={quote.paymentMode}
           mandate={
             saveCard && chargeDate
               ? t('payment.mandate', {
@@ -1579,14 +1582,21 @@ export function BookingForm({
                     </>
                   ) : (
                     <>
-                      {t('payment.payDeposit', { amount: money.format(quote.depositAmount) })}
+                      {quote.paymentMode === 'full'
+                        ? t('payment.payStay', { amount: money.format(quote.depositAmount) })
+                        : t('payment.payDeposit', { amount: money.format(quote.depositAmount) })}
                       <Icon name="checkCircle" className="h-[1.05em] w-auto" />
                     </>
                   )}
                 </button>
 
+                {/* One says what is still to come, the other says that nothing
+                    is. Neither is a detail: it is the difference between a
+                    stay half paid for and a stay paid for. */}
                 <p className="mt-3 text-center text-xs text-ink-soft">
-                  {t('payment.balanceNotice', { amount: money.format(quote.balanceAmount) })}
+                  {quote.paymentMode === 'full'
+                    ? t('payment.fullNotice')
+                    : t('payment.balanceNotice', { amount: money.format(quote.balanceAmount) })}
                 </p>
 
                 <p className="mt-1 text-center text-xs text-ink-soft">

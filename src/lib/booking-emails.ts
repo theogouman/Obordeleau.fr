@@ -15,6 +15,12 @@ import type { ConfirmedBooking } from '@/lib/payments';
  *
  * The guest reads their own language; Corine reads French whatever the guest
  * chose.
+ *
+ * Two stays are being written about here. One paid a deposit and owes a balance
+ * that will be taken before arrival; the other paid for the whole stay at
+ * booking and owes nothing. A letter that announced a balance of zero, or a
+ * date to take it on, would be worse than silent, so the lines about it are
+ * simply not there when there is no balance.
  */
 
 function asLocale(value: string | null): Locale {
@@ -58,29 +64,39 @@ export async function sendDepositEmails(
   const balance = money(booking.balanceDue, booking.currency, locale);
   const chargeDate = booking.balanceChargeOn ? formatEmailDate(booking.balanceChargeOn, locale) : '';
 
+  /** Nothing is owed after this letter, so nothing in it may say otherwise. */
+  const paidInFull = booking.balanceDue <= 0;
+
   // The balance is only announced as automatic when the guest actually agreed
   // to it and a date exists to charge it on. Otherwise it is arranged.
-  const automatic = booking.saveCardConsent && booking.balanceChargeOn !== null;
+  const automatic = !paidInFull && booking.saveCardConsent && booking.balanceChargeOn !== null;
 
   const guestDetails: Detail[] = [
     { label: labels('arrival'), value: formatEmailDate(booking.startDate, locale) },
     { label: labels('departure'), value: formatEmailDate(booking.endDate, locale) },
     { label: labels('nights'), value: String(nights) },
     { label: labels('guests'), value: String(booking.partySize ?? booking.adults + booking.minors) },
-    { label: labels('depositPaid'), value: deposit },
-    { label: labels('balance'), value: balance },
+    { label: paidInFull ? labels('stayPaid') : labels('depositPaid'), value: deposit },
+    ...(paidInFull ? [] : [{ label: labels('balance'), value: balance }]),
     ...(automatic ? [{ label: labels('balanceDate'), value: chargeDate }] : []),
     { label: labels('reference'), value: code },
   ];
 
-  const guestEmail = renderEmail(guestCopy('title'), guestCopy('intro', { name: booking.guestName }), guestDetails, [
-    guestCopy('address', { address: `${property.name}, ${formattedAddress}` }),
-    automatic
-      ? guestCopy('balanceAuto', { amount: balance, date: chargeDate })
-      : guestCopy('balanceManual', { amount: balance }),
-    guestCopy('changes'),
-    guestCopy('signature', { host: host.firstName }),
-  ]);
+  const guestEmail = renderEmail(
+    guestCopy('title'),
+    guestCopy(paidInFull ? 'introFull' : 'intro', { name: booking.guestName }),
+    guestDetails,
+    [
+      guestCopy('address', { address: `${property.name}, ${formattedAddress}` }),
+      paidInFull
+        ? guestCopy('paidInFull')
+        : automatic
+          ? guestCopy('balanceAuto', { amount: balance, date: chargeDate })
+          : guestCopy('balanceManual', { amount: balance }),
+      guestCopy('changes'),
+      guestCopy('signature', { host: host.firstName }),
+    ],
+  );
 
   const hostDetails: Detail[] = [
     { label: hostLabels('arrival'), value: formatEmailDate(booking.startDate, routing.defaultLocale) },
@@ -97,32 +113,42 @@ export async function sendDepositEmails(
     { label: hostLabels('name'), value: booking.guestName },
     { label: hostLabels('email'), value: booking.guestEmail },
     {
-      label: hostLabels('depositPaid'),
+      label: paidInFull ? hostLabels('stayPaid') : hostLabels('depositPaid'),
       value: money(booking.depositAmount, booking.currency, routing.defaultLocale),
     },
-    {
-      label: hostLabels('balance'),
-      value: money(booking.balanceDue, booking.currency, routing.defaultLocale),
-    },
-    {
-      label: hostLabels('balanceDate'),
-      value: automatic
-        ? formatEmailDate(booking.balanceChargeOn as string, routing.defaultLocale)
-        : hostCopy('balanceManual'),
-    },
+    ...(paidInFull
+      ? []
+      : [
+          {
+            label: hostLabels('balance'),
+            value: money(booking.balanceDue, booking.currency, routing.defaultLocale),
+          },
+          {
+            label: hostLabels('balanceDate'),
+            value: automatic
+              ? formatEmailDate(booking.balanceChargeOn as string, routing.defaultLocale)
+              : hostCopy('balanceManual'),
+          },
+        ]),
     { label: hostLabels('reference'), value: code },
   ];
 
-  const hostEmail = renderEmail(hostCopy('title'), hostCopy('intro'), hostDetails, [
-    hostCopy('blocked'),
-  ]);
+  const hostEmail = renderEmail(
+    hostCopy(paidInFull ? 'titleFull' : 'title'),
+    hostCopy(paidInFull ? 'introFull' : 'intro'),
+    hostDetails,
+    [hostCopy('blocked')],
+  );
 
   const [hostDelivered, guestDelivered] = await Promise.all([
     inbox
       ? sendEmail(
           {
             to: [inbox],
-            subject: hostCopy('subject', { from: booking.startDate, to: booking.endDate }),
+            subject: hostCopy(paidInFull ? 'subjectFull' : 'subject', {
+              from: booking.startDate,
+              to: booking.endDate,
+            }),
             reply_to: booking.guestEmail,
             ...hostEmail,
           },
@@ -132,7 +158,7 @@ export async function sendDepositEmails(
     sendEmail(
       {
         to: [booking.guestEmail],
-        subject: guestCopy('subject', { property: property.name }),
+        subject: guestCopy(paidInFull ? 'subjectFull' : 'subject', { property: property.name }),
         ...(inbox ? { reply_to: inbox } : {}),
         ...guestEmail,
       },
