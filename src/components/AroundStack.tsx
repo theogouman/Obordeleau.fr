@@ -50,6 +50,18 @@ const OFF_SCREEN = 32;
 /** The gap under the heading, matching the stylesheet. */
 const HEAD_GAP = 24;
 const RESIZE_SETTLE_MS = 150;
+/**
+ * How much the viewport height may move before it counts as a real resize.
+ *
+ * A mobile browser hides and shows its address bar as the page is scrolled,
+ * and every one of those is a resize event carrying a new innerHeight. Card
+ * heights are worked out from that number, and the photograph on a card fills
+ * whatever its text leaves, so re-measuring in the middle of a scroll crops
+ * the picture again: the image on a card that is not moving appears to change
+ * size, a fraction of a second after the finger has stopped. No address bar
+ * comes near this figure, and a change that clears it is a real one.
+ */
+const CHROME_SLACK = 160;
 
 export function AroundStack({ header, children }: { header: ReactNode; children: ReactNode }) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -89,7 +101,13 @@ export function AroundStack({ header, children }: { header: ReactNode; children:
 
     let resizeTimer = 0;
 
-    const layout = () => {
+    /*
+     * `sizeCards` is the half that is worth protecting from a passing address
+     * bar. The rest is measured every time: where a card waits is a distance
+     * to the fold, so it has to follow the fold, and it costs nothing to be
+     * wrong about it for one frame since a waiting card is hidden anyway.
+     */
+    const layout = (sizeCards = true) => {
       scroll.style.height = `${cards.length * 100}vh`;
 
       const isDesktop = window.innerWidth >= 768;
@@ -107,6 +125,9 @@ export function AroundStack({ header, children }: { header: ReactNode; children:
       // down. Asking for that much room is what makes the section close on the
       // bottom of the pile rather than on the bottom of the top card.
       area.style.paddingBottom = `${landing}px`;
+
+      if (!sizeCards) return;
+
       const height = Math.max(
         CARD_MIN,
         Math.min(room, isDesktop ? CARD_MAX_DESKTOP : CARD_MAX_MOBILE),
@@ -117,9 +138,26 @@ export function AroundStack({ header, children }: { header: ReactNode; children:
 
     layout();
 
+    // The window as the cards were last measured against it.
+    let sizedWidth = window.innerWidth;
+    let sizedHeight = window.innerHeight;
+
     const onResize = () => {
       window.clearTimeout(resizeTimer);
-      resizeTimer = window.setTimeout(layout, RESIZE_SETTLE_MS);
+      resizeTimer = window.setTimeout(() => {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        // A different width is always real. A different height only when it
+        // has moved further than an address bar can account for.
+        const real = width !== sizedWidth || Math.abs(height - sizedHeight) >= CHROME_SLACK;
+
+        if (real) {
+          sizedWidth = width;
+          sizedHeight = height;
+        }
+
+        layout(real);
+      }, RESIZE_SETTLE_MS);
     };
     window.addEventListener('resize', onResize);
 

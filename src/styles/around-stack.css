@@ -281,23 +281,26 @@
       0 0 12px rgba(255, 255, 255, 0.85);
   }
 
+  /*
+   * The arrow comes off the end of the writing and drops to the roof, so it is
+   * a tall narrow thing and it is measured by its height. That is the reason
+   * for the height rather than a width: a box given a share of the pane's
+   * width changes height by as much as the pane's own ratio does, which is
+   * more than twice over between a tall phone pane and a shallow desktop one,
+   * and this arrow is almost all height. Sized this way the drop is the same
+   * everywhere and only the bow varies, which is what a hand would do anyway.
+   *
+   * The point sits at 26 percent down, on the roof or just above it whatever
+   * the crop, and a little under 29 percent across.
+   */
   .around-note__arrow {
     position: absolute;
-    /* The box's bottom right corner, and with it the point of the arrow. */
-    right: 71%;
-    bottom: 72.5%;
-    width: 18%;
-    aspect-ratio: 5 / 3;
+    left: 26%;
+    top: 10%;
+    width: auto;
+    height: 17%;
+    aspect-ratio: 6 / 13;
     overflow: visible;
-  }
-
-  /* On one column the pane is narrower than it is tall, so the same share of
-     its width draws a much smaller arrow. It takes a larger share instead,
-     which moves the point by half a percent and is not worth correcting. */
-  @media (max-width: 767px) {
-    .around-note__arrow {
-      width: 27%;
-    }
   }
 
   /*

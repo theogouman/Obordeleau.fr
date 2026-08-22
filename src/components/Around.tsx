@@ -86,16 +86,16 @@ export function Around() {
                         <p className="around-note__label">{t(`items.${item.id}.photoNote`)}</p>
                         <svg
                           className="around-note__arrow"
-                          viewBox="0 0 100 60"
+                          viewBox="0 0 60 130"
                           fill="none"
                           aria-hidden="true"
                           focusable="false"
                         >
                           <path
                             pathLength="100"
-                            d="M4 9C22 8 44 14 62 26C74 34 85 44 94 54M91 38l3 16l-15-4"
+                            d="M44 8C55 30 56 60 46 86C40 102 33 112 29 124M48 109L29 124L23 101"
                             stroke="currentColor"
-                            strokeWidth="3.2"
+                            strokeWidth="7.5"
                             strokeLinecap="round"
                             strokeLinejoin="round"
                           />
