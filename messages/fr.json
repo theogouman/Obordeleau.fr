@@ -236,14 +236,14 @@
       "ratingAria": "{rating} étoiles sur 5",
       "readMore": "Lire plus",
       "readLess": "Réduire",
-      "originalLanguage": "Avis rédigé en {language}",
-      "stayTooltip": "{name} a laissé une note de {rating}/5 sur {source} suite à son séjour en {month}"
-    },
-    "languages": {
-      "fr": "français",
-      "en": "anglais",
-      "de": "allemand",
-      "other": "langue d'origine"
+      "stayTooltip": "{name} a laissé une note de {rating}/5 sur {source} suite à son séjour en {month}",
+      "translatedFrom": {
+        "fr": "Traduit du français",
+        "en": "Traduit de l'anglais",
+        "de": "Traduit de l'allemand",
+        "it": "Traduit de l'italien",
+        "other": "Traduit"
+      }
     },
     "favourite": {
       "title": "Coup de cœur voyageurs",

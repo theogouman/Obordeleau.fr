@@ -504,3 +504,22 @@
     transform: none !important;
   }
 }
+
+/*
+ * The line that says a card is not showing the words the guest typed.
+ *
+ * It has to be read only if it is looked for: a reader who wants to know where
+ * the sentence came from finds it, and nobody else is distracted by it on
+ * every card of a wall. So it is small, it is the soft ink rather than the
+ * full one, and it sits at the end of the footer where the two letter language
+ * chip used to be.
+ */
+@layer components {
+  .review-translated {
+    flex: none;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    color: var(--color-ink-soft);
+    opacity: 0.75;
+  }
+}

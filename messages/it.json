@@ -236,14 +236,14 @@
       "ratingAria": "{rating} stelle su 5",
       "readMore": "Leggi tutto",
       "readLess": "Riduci",
-      "originalLanguage": "Recensione scritta in {language}",
-      "stayTooltip": "{name} ha lasciato un voto di {rating}/5 su {source} dopo il soggiorno di {month}"
-    },
-    "languages": {
-      "fr": "francese",
-      "en": "inglese",
-      "de": "tedesco",
-      "other": "lingua originale"
+      "stayTooltip": "{name} ha lasciato un voto di {rating}/5 su {source} dopo il soggiorno di {month}",
+      "translatedFrom": {
+        "fr": "Tradotto dal francese",
+        "en": "Tradotto dall'inglese",
+        "de": "Tradotto dal tedesco",
+        "it": "Tradotto dall'italiano",
+        "other": "Tradotto"
+      }
     },
     "favourite": {
       "title": "Preferita dagli ospiti",

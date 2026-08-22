@@ -3,10 +3,18 @@
   "title": "Obordeleau reviews export",
   "description": "Shape expected at content/reviews.json. Validated by scripts/check-reviews.mjs.",
   "type": "object",
-  "required": ["reviews"],
+  "required": [
+    "reviews"
+  ],
   "properties": {
-    "listing_id": { "type": "string", "description": "Airbnb listing the export was taken from." },
-    "source_url": { "type": "string", "description": "Public page the export was taken from." },
+    "listing_id": {
+      "type": "string",
+      "description": "Airbnb listing the export was taken from."
+    },
+    "source_url": {
+      "type": "string",
+      "description": "Public page the export was taken from."
+    },
     "extracted_at": {
       "type": "string",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
@@ -25,7 +33,13 @@
       "description": "The entries themselves. This is the key src/lib/reviews.ts reads and the one scripts/check-reviews.mjs validates.",
       "items": {
         "type": "object",
-        "required": ["id", "reviewer_name", "rating", "date_iso", "review_fr"],
+        "required": [
+          "id",
+          "reviewer_name",
+          "rating",
+          "date_iso",
+          "review_fr"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -36,7 +50,11 @@
             "type": "string",
             "description": "Only the first token is displayed (RGPD data minimisation, constitution VI)."
           },
-          "rating": { "type": "number", "minimum": 1, "maximum": 5 },
+          "rating": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 5
+          },
           "date": {
             "type": "string",
             "description": "Human readable month + year as exported. Optional if date_iso is present."
@@ -48,18 +66,45 @@
           },
           "review_fr": {
             "type": "string",
-            "description": "Original review text. Despite the field name some entries are EN or DE. Never machine retranslated."
+            "description": "The words the guest typed. Despite the field name some entries are EN, DE or IT. Never overwritten: a reader of its own language is shown this and nothing else."
           },
           "lang": {
             "type": "string",
-            "enum": ["fr", "en", "de", "other"],
-            "description": "Optional. Detected at load time when absent."
+            "enum": [
+              "fr",
+              "en",
+              "de",
+              "it",
+              "other"
+            ],
+            "description": "The language review_fr is written in. Detected at load time when absent."
           },
           "image_filename": {
             "type": "string",
             "description": "Avatar file under public/images/reviews/, for example 033.jpg."
           },
-          "has_custom_photo": { "type": "boolean" }
+          "has_custom_photo": {
+            "type": "boolean"
+          },
+          "translations": {
+            "type": "object",
+            "description": "A reading of review_fr in each of the other site languages, written as an adaptation rather than word for word. The key matching `lang` is not needed and is ignored. A missing reading falls back to review_fr, unmarked.",
+            "properties": {
+              "fr": {
+                "type": "string"
+              },
+              "en": {
+                "type": "string"
+              },
+              "de": {
+                "type": "string"
+              },
+              "it": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
         }
       }
     }

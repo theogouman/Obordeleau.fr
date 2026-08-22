@@ -5,7 +5,7 @@ import { Icon, type IconName } from '@/components/Icon';
 import { ReviewCard, type ReviewCardLabels } from '@/components/ReviewCard';
 import { ReviewsSourceMenu, type SourceMenuLabels } from '@/components/ReviewsSourceMenu';
 import { ReviewsWall, type WallItem } from '@/components/ReviewsWall';
-import type { Review, ReviewSource } from '@/lib/reviews';
+import type { LocalizedReview, ReviewSource } from '@/lib/reviews';
 
 /*
  * Filtering rearranges, it does not blink (interior.dev, filter grid). The
@@ -60,7 +60,7 @@ function monthsAgo(months: number): string {
 }
 
 type Props = {
-  reviews: Review[];
+  reviews: LocalizedReview[];
   labels: ReviewCardLabels;
   filters: ReviewFilterLabels;
 };
@@ -90,7 +90,7 @@ export function ReviewsBrowser({ reviews, labels, filters }: Props) {
   }, [reviews, mode, source]);
 
   // What is on screen, which lags the selection by the length of the fade out.
-  const [shown, setShown] = useState<Review[]>(selected);
+  const [shown, setShown] = useState<LocalizedReview[]>(selected);
   const [leaving, setLeaving] = useState<string[]>([]);
   const rects = useRef<Map<string, DOMRect> | null>(null);
   const wallRef = useRef<HTMLDivElement>(null);

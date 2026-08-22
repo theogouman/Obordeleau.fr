@@ -236,14 +236,14 @@
       "ratingAria": "{rating} stars out of 5",
       "readMore": "Read more",
       "readLess": "Show less",
-      "originalLanguage": "Review written in {language}",
-      "stayTooltip": "{name} gave {rating}/5 on {source} after a stay in {month}"
-    },
-    "languages": {
-      "fr": "French",
-      "en": "English",
-      "de": "German",
-      "other": "its original language"
+      "stayTooltip": "{name} gave {rating}/5 on {source} after a stay in {month}",
+      "translatedFrom": {
+        "fr": "Translated from French",
+        "en": "Translated from English",
+        "de": "Translated from German",
+        "it": "Translated from Italian",
+        "other": "Translated"
+      }
     },
     "favourite": {
       "title": "Guest favourite",

@@ -1,11 +1,12 @@
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { AccentHeading } from '@/components/AccentHeading';
 import { GuestFavourite } from '@/components/GuestFavourite';
 import { ReviewCard, type ReviewCardLabels } from '@/components/ReviewCard';
 import { Reveal } from '@/components/Reveal';
 import { ReviewsCta } from '@/components/ReviewsCta';
 import { Section } from '@/components/Section';
-import { curatedReviews, hasReviews } from '@/lib/reviews';
+import type { Locale } from '@/i18n/routing';
+import { curatedReviews, hasReviews, localizeAll } from '@/lib/reviews';
 
 export function useReviewCardLabels(): ReviewCardLabels {
   const t = useTranslations('reviews');
@@ -13,12 +14,12 @@ export function useReviewCardLabels(): ReviewCardLabels {
     ratingAria: t('card.ratingAria', { rating: '{rating}' }),
     readMore: t('card.readMore'),
     readLess: t('card.readLess'),
-    originalLanguage: t('card.originalLanguage', { language: '{language}' }),
-    languageNames: {
-      fr: t('languages.fr'),
-      en: t('languages.en'),
-      de: t('languages.de'),
-      other: t('languages.other'),
+    translatedFrom: {
+      fr: t('card.translatedFrom.fr'),
+      en: t('card.translatedFrom.en'),
+      de: t('card.translatedFrom.de'),
+      it: t('card.translatedFrom.it'),
+      other: t('card.translatedFrom.other'),
     },
     stayTooltip: t('card.stayTooltip', {
       name: '{name}',
@@ -36,10 +37,12 @@ export function useReviewCardLabels(): ReviewCardLabels {
 /** FR-008: the distinction, then the curated, location forward selection. */
 export function ReviewsSection() {
   const t = useTranslations('reviews');
+  const locale = useLocale() as Locale;
   const labels = useReviewCardLabels();
   // More than the wall can show at any width: the cut has to land inside the
-  // cards, never past the end of a column.
-  const reviews = curatedReviews(12);
+  // cards, never past the end of a column. Read in the page's language here,
+  // on the server, so a card is handed one reading and not four.
+  const reviews = localizeAll(curatedReviews(12), locale);
 
   return (
     <Section id="reviews" labelledBy="reviews-title">

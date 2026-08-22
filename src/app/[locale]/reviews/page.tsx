@@ -8,7 +8,7 @@ import { ReviewsBrowser, type ReviewFilterLabels } from '@/components/ReviewsBro
 import { Section } from '@/components/Section';
 import { Link } from '@/i18n/navigation';
 import type { Locale } from '@/i18n/routing';
-import { allReviews, hasReviews, reviewCount } from '@/lib/reviews';
+import { allReviews, hasReviews, localizeAll, reviewCount } from '@/lib/reviews';
 import { buildMetadata } from '@/lib/seo';
 import { breadcrumbJsonLd } from '@/lib/structured-data';
 
@@ -42,12 +42,12 @@ export default async function ReviewsPage({ params }: { params: Promise<{ locale
     ratingAria: t('card.ratingAria', { rating: '{rating}' }),
     readMore: t('card.readMore'),
     readLess: t('card.readLess'),
-    originalLanguage: t('card.originalLanguage', { language: '{language}' }),
-    languageNames: {
-      fr: t('languages.fr'),
-      en: t('languages.en'),
-      de: t('languages.de'),
-      other: t('languages.other'),
+    translatedFrom: {
+      fr: t('card.translatedFrom.fr'),
+      en: t('card.translatedFrom.en'),
+      de: t('card.translatedFrom.de'),
+      it: t('card.translatedFrom.it'),
+      other: t('card.translatedFrom.other'),
     },
     stayTooltip: t('card.stayTooltip', {
       name: '{name}',
@@ -112,7 +112,7 @@ export default async function ReviewsPage({ params }: { params: Promise<{ locale
                pushes down the ones under it in that column, and leaves both
                the other columns untouched. The filters, the order and the move
                from one order to the next belong to the browser. */
-            <ReviewsBrowser reviews={allReviews} labels={labels} filters={filters} />
+            <ReviewsBrowser reviews={localizeAll(allReviews, locale)} labels={labels} filters={filters} />
           ) : (
             <p className="mt-8 rounded-[var(--radius-card)] border border-dashed border-[rgba(58,42,38,0.25)] p-6 text-ink-soft">
               {t('empty')}

@@ -51,7 +51,11 @@ export function About() {
           </Reveal>
         ) : null}
 
-        <Reveal delay={80}>
+        {/* On one column the portrait is capped at the same width the words are
+            given here, so the block reads as one centred column rather than as
+            a picture floating inside a wider paragraph. Two columns take the
+            cap off: there the words have a column of their own. */}
+        <Reveal delay={80} className="mx-auto w-full max-w-xs md:max-w-none">
           <AccentHeading
             id="about-title"
             lead={t('titleLead')}

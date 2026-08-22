@@ -1,18 +1,28 @@
 import curation from '@content/reviews-curation.json';
 import rawReviews from '@content/reviews.json';
+import { routing, type Locale } from '@/i18n/routing';
 
 /**
  * Reviews are a one-time export owned by content/reviews.json. Rules come from
  * specs/001-obordeleau-site/reviews-curation.md:
  *  - display the first name only (constitution VI, data minimisation)
- *  - keep the original language, never machine retranslate (FR-007)
  *  - avatars served locally (FR-010), initials fallback when absent
+ *
+ * FR-007 used to say the original language was kept and never retranslated,
+ * which left an English or a German reader in front of a wall of French: most
+ * of these were written in French, and a review nobody can read is not
+ * evidence of anything. Every review now carries a reading in each of the four
+ * languages, written as an adaptation rather than word for word, and the
+ * original is still the one shown to a reader of its own language. What is
+ * kept from the old rule is that nothing is passed off as original: a reading
+ * that is not the words the guest typed says so on the card.
  */
 
-export type ReviewLanguage = 'fr' | 'en' | 'de' | 'other';
+export type ReviewLanguage = 'fr' | 'en' | 'de' | 'it' | 'other';
 
 type RawReview = {
   id?: string | number;
+  translations?: Record<string, string>;
   reviewer_name?: string;
   rating?: number | string;
   date?: string;
@@ -35,10 +45,26 @@ export type Review = {
   rating: number;
   dateLabel: string;
   dateIso: string;
+  /** The words the guest typed, in the language they typed them in. */
   text: string;
   language: ReviewLanguage;
+  /** A reading in each of the other languages. Server side only. */
+  translations: Partial<Record<Locale, string>>;
   avatar: string | null;
   source: ReviewSource;
+};
+
+/**
+ * What a card is given: one reading, already chosen for the page's language,
+ * and the language it was written in when that reading is a translation.
+ *
+ * The choosing happens on the server on purpose. The reviews page hands its
+ * cards to a client component, so everything on this object is serialised into
+ * the document; carrying four readings of every review would put four times
+ * the text on the wire to show one of them.
+ */
+export type LocalizedReview = Omit<Review, 'translations'> & {
+  translatedFrom: ReviewLanguage | null;
 };
 
 const GERMAN_MARKERS =
@@ -47,6 +73,8 @@ const ENGLISH_MARKERS =
   /\b(the|and|was|were|very|beach|apartment|studio|clean|great|walk|stay|we|nice|would|everything)\b/gi;
 const FRENCH_MARKERS =
   /\b(et|le|la|les|nous|très|tres|plage|studio|propre|séjour|sejour|bien|accueil|tout|est|à pied|a pied)\b/gi;
+const ITALIAN_MARKERS =
+  /\b(e|il|la|gli|molto|abbiamo|siamo|spiaggia|appartamento|monolocale|pulito|soggiorno|bene|tutto|posto|casa|a piedi|ottimo|consigliato)\b/gi;
 
 function countMatches(text: string, pattern: RegExp): number {
   const matches = text.match(pattern);
@@ -59,6 +87,7 @@ export function detectLanguage(text: string): ReviewLanguage {
     ['de', countMatches(text, GERMAN_MARKERS)],
     ['en', countMatches(text, ENGLISH_MARKERS)],
     ['fr', countMatches(text, FRENCH_MARKERS)],
+    ['it', countMatches(text, ITALIAN_MARKERS)],
   ];
 
   scores.sort((a, b) => b[1] - a[1]);
@@ -100,6 +129,12 @@ function normalize(raw: RawReview, index: number): Review | null {
   const hasPhoto = raw.has_custom_photo !== false && Boolean(raw.image_filename);
   const declared = raw.lang as ReviewLanguage | undefined;
 
+  const translations: Partial<Record<Locale, string>> = {};
+  for (const locale of routing.locales) {
+    const reading = raw.translations?.[locale]?.trim();
+    if (reading) translations[locale] = reading;
+  }
+
   return {
     id,
     firstName: firstNameOf(fullName) || id,
@@ -109,7 +144,10 @@ function normalize(raw: RawReview, index: number): Review | null {
     dateIso: (raw.date_iso ?? '').trim(),
     text,
     language:
-      declared && ['fr', 'en', 'de', 'other'].includes(declared) ? declared : detectLanguage(text),
+      declared && ['fr', 'en', 'de', 'it', 'other'].includes(declared)
+        ? declared
+        : detectLanguage(text),
+    translations,
     avatar: hasPhoto ? `/images/reviews/${raw.image_filename}` : null,
     source: (raw.source ?? '').trim().toLowerCase() === 'booking' ? 'booking' : 'airbnb',
   };
@@ -178,6 +216,29 @@ export function heroQuotes(limit = curation.heroQuoteMax): Review[] {
     .map((id) => byId.get(id))
     .filter((review): review is Review => Boolean(review))
     .slice(0, limit);
+}
+
+/**
+ * One review, read in one language.
+ *
+ * A reader of the review's own language gets the words as they were written
+ * and no mention: there is nothing to disclose. Everyone else gets the reading
+ * in their language and is told what it was written in. A missing reading
+ * falls back to the original rather than to nothing, and stays unmarked,
+ * because the mention has to mean "these are not their words" and would be a
+ * lie over the words themselves.
+ */
+export function localize(review: Review, locale: Locale): LocalizedReview {
+  const { translations, ...rest } = review;
+  const reading = review.language === locale ? undefined : translations[locale];
+
+  if (!reading) return { ...rest, translatedFrom: null };
+
+  return { ...rest, text: reading, translatedFrom: review.language };
+}
+
+export function localizeAll(reviews: Review[], locale: Locale): LocalizedReview[] {
+  return reviews.map((review) => localize(review, locale));
 }
 
 export const curationRules = curation;

@@ -5,21 +5,21 @@ import { useLocale } from 'next-intl';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Stars } from '@/components/Stars';
 import { localeTags, type Locale } from '@/i18n/routing';
-import type { Review } from '@/lib/reviews';
+import type { LocalizedReview } from '@/lib/reviews';
 
 export type ReviewCardLabels = {
   ratingAria: string;
   readMore: string;
   readLess: string;
-  originalLanguage: string;
-  languageNames: Record<string, string>;
+  /** One finished sentence per source language, keyed by it. */
+  translatedFrom: Record<string, string>;
   /** {name} {rating} {source} {month}, the sentence the header carries. */
   stayTooltip: string;
   sourceNames: Record<string, string>;
 };
 
 type Props = {
-  review: Review;
+  review: LocalizedReview;
   labels: ReviewCardLabels;
   /** Reviews longer than this get the accordion toggle. */
   clampThreshold?: number;
@@ -29,13 +29,6 @@ type Props = {
    * the keyboard should not be able to reach either.
    */
   teaser?: boolean;
-};
-
-const LOCALE_TAGS: Record<string, string> = {
-  fr: 'fr-FR',
-  en: 'en-GB',
-  de: 'de-DE',
-  other: 'fr-FR',
 };
 
 /** The month of the stay, in the language of the page rather than of the export. */
@@ -97,8 +90,6 @@ export function ReviewCard({ review, labels, clampThreshold = 260, teaser = fals
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expanded]);
 
-  const languageName = labels.languageNames[review.language] ?? labels.languageNames.other;
-
   /*
    * The whole header is one hover target, because the name, the face, the date
    * and the stars are four halves of the same sentence: who wrote it, where,
@@ -112,10 +103,10 @@ export function ReviewCard({ review, labels, clampThreshold = 260, teaser = fals
     .replace('{source}', labels.sourceNames[review.source] ?? review.source)
     .replace('{month}', stayMonth(review.dateIso, review.dateLabel, pageTag));
 
-  // The marker only earns its place when the review is not in the language the
-  // visitor is already reading. On the French page, "FR" on a French review
-  // says nothing.
-  const showLanguage = review.language !== 'other' && review.language !== locale;
+  // Said only when the words on the card are not the ones the guest typed.
+  const translated = review.translatedFrom
+    ? (labels.translatedFrom[review.translatedFrom] ?? labels.translatedFrom.other)
+    : null;
 
   return (
     <article className="card flex h-full flex-col p-5">
@@ -171,7 +162,7 @@ export function ReviewCard({ review, labels, clampThreshold = 260, teaser = fals
         <p
           ref={textRef}
           id={textId}
-          lang={review.language === 'other' ? undefined : review.language}
+          lang={review.translatedFrom ? locale : review.language === 'other' ? undefined : review.language}
           className={clamped ? 'clamp-lines' : undefined}
           style={clamped ? { WebkitLineClamp: 5 } : undefined}
         >
@@ -194,19 +185,7 @@ export function ReviewCard({ review, labels, clampThreshold = 260, teaser = fals
           <span />
         )}
 
-        {showLanguage ? (
-          <span
-            className="text-ink-soft"
-            title={labels.originalLanguage.replace('{language}', languageName)}
-          >
-            <span className="visually-hidden">
-              {labels.originalLanguage.replace('{language}', languageName)}
-            </span>
-            <span aria-hidden="true" lang={LOCALE_TAGS[review.language]}>
-              {review.language.toUpperCase()}
-            </span>
-          </span>
-        ) : null}
+        {translated ? <span className="review-translated">{translated}</span> : null}
       </footer>
     </article>
   );
