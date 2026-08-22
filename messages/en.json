@@ -578,15 +578,18 @@
       "guest": {
         "subject": "Your deposit has arrived, {property}",
         "title": "Your booking is confirmed",
-        "intro": "Hello {name}, your deposit has arrived and your dates are held.",
+        "intro": "Hello {name},\nThank you for choosing our place for your stay!\nWe confirm that we have received the deposit for the booking below:",
         "address": "The studio: {address}",
         "balanceAuto": "The balance of {amount} will be taken automatically on {date}, from the card you used today.",
         "balanceManual": "The balance of {amount} is still to be paid before arrival. Corine will write to you to arrange it.",
         "changes": "To change or cancel, simply reply to this message.",
-        "signature": "See you very soon, {host}",
+        "signature": "See you very soon,\n{host}",
         "subjectFull": "Your booking is confirmed, {property}",
-        "introFull": "Hello {name}, your payment has arrived and your dates are booked.",
-        "paidInFull": "The stay is paid in full. No further payment will be taken."
+        "introFull": "Hello {name},\nThank you for choosing our place for your stay!\nWe confirm that we have received payment for the booking below:",
+        "paidInFull": "The stay is paid in full. No further payment will be taken.",
+        "contact": "If you have any questions, I am available on {phone} or by {mail}.",
+        "mailLabel": "email",
+        "location": "The place is at {address}"
       },
       "host": {
         "subject": "Deposit received, booking from {from} to {to}",
@@ -614,7 +617,9 @@
         "reference": "Reference",
         "guest": "Guest",
         "email": "Email",
-        "attempts": "Attempts"
+        "attempts": "Attempts",
+        "depositPaid": "Deposit already paid",
+        "balanceToPay": "Balance to pay"
       },
       "receipt": {
         "subject": "Your balance is paid, {property}",
@@ -625,18 +630,19 @@
         "signature": "See you very soon, {host}"
       },
       "link": {
-        "subject": "The balance of your stay, {property}",
-        "subjectReminder": "Reminder, the balance of your stay, {property}",
+        "subject": "RE: Action required",
+        "subjectReminder": "RE: Action required (reminder)",
         "title": "The balance is still to be paid",
         "titleReminder": "The balance of your stay is still waiting",
         "reminder": "A quick reminder.",
-        "introAuthentication": "Hello {name}, your bank wants to see you before it approves this payment, so it could not go through on its own.",
-        "introNoCard": "Hello {name}, no card was kept for your stay, so the balance is to be paid online.",
-        "introFailed": "Hello {name}, the balance could not be taken from the card on file.",
+        "introAuthentication": "Hello {name}, your bank wants to see you before it approves this payment, so it could not go through on its own.\n\nBefore you arrive, the balance has to be settled for your booking to stay confirmed. Please pay it as soon as you can.",
+        "introNoCard": "Hello {name},\nYour holiday in Les Sablettes is coming up!\nWe hope your journey goes smoothly.\n\nBefore you arrive, the balance has to be settled for your booking to stay confirmed. Please pay it as soon as you can.",
+        "introFailed": "Hello {name}, the balance could not be taken from the card on file.\n\nBefore you arrive, the balance has to be settled for your booking to stay confirmed. Please pay it as soon as you can.",
         "action": "Pay {amount}",
-        "secure": "The payment happens on Stripe's secure page. Your card is never kept by this site.",
+        "secure": "The payment happens on our own site with Stripe, our secure payment provider.",
         "changes": "A question about this amount? Simply reply to this message.",
-        "signature": "See you very soon, {host}"
+        "signature": "See you very soon,\n{host}",
+        "question": "Have a question?\nReply to this email or call me on {phone}"
       },
       "host": {
         "subjectFailed": "Balance failed, from {from} to {to}",

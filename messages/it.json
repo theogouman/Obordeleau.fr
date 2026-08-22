@@ -578,15 +578,18 @@
       "guest": {
         "subject": "Il tuo acconto è stato ricevuto, {property}",
         "title": "La tua prenotazione è confermata",
-        "intro": "Buongiorno {name}, il tuo acconto è stato ricevuto e le tue date sono prenotate.",
+        "intro": "Buongiorno {name},\nGrazie di aver scelto il nostro alloggio per il tuo soggiorno!\nTi confermiamo di aver ricevuto l'acconto per la prenotazione qui sotto:",
         "address": "L'alloggio: {address}",
         "balanceAuto": "Il saldo di {amount} sarà addebitato automaticamente il {date} sulla carta usata oggi.",
         "balanceManual": "Il saldo di {amount} resta da versare prima dell'arrivo. Corine ti scrive per concordare il pagamento.",
         "changes": "Per modificare o annullare, rispondi semplicemente a questo messaggio.",
-        "signature": "A prestissimo, {host}",
+        "signature": "A prestissimo,\n{host}",
         "subjectFull": "La tua prenotazione è confermata, {property}",
-        "introFull": "Buongiorno {name}, il pagamento è stato ricevuto e le tue date sono prenotate.",
-        "paidInFull": "Il soggiorno è interamente pagato. Nessun altro addebito sarà effettuato."
+        "introFull": "Buongiorno {name},\nGrazie di aver scelto il nostro alloggio per il tuo soggiorno!\nTi confermiamo di aver ricevuto il pagamento della prenotazione qui sotto:",
+        "paidInFull": "Il soggiorno è interamente pagato. Nessun altro addebito sarà effettuato.",
+        "contact": "Per qualsiasi domanda resto a disposizione al {phone} o via {mail}.",
+        "mailLabel": "email",
+        "location": "L'alloggio si trova in {address}"
       },
       "host": {
         "subject": "Acconto ricevuto, prenotazione dal {from} al {to}",
@@ -614,7 +617,9 @@
         "reference": "Riferimento",
         "guest": "Viaggiatore",
         "email": "Email",
-        "attempts": "Tentativi"
+        "attempts": "Tentativi",
+        "depositPaid": "Acconto già versato",
+        "balanceToPay": "Saldo da pagare"
       },
       "receipt": {
         "subject": "Il tuo saldo è stato pagato, {property}",
@@ -625,18 +630,19 @@
         "signature": "A prestissimo, {host}"
       },
       "link": {
-        "subject": "Il saldo del tuo soggiorno, {property}",
-        "subjectReminder": "Promemoria, il saldo del tuo soggiorno, {property}",
+        "subject": "RE: Azione richiesta",
+        "subjectReminder": "RE: Azione richiesta (promemoria)",
         "title": "Resta il saldo da pagare",
         "titleReminder": "Il saldo del tuo soggiorno è ancora in attesa",
         "reminder": "Un piccolo promemoria.",
-        "introAuthentication": "Buongiorno {name}, la tua banca chiede una conferma da parte tua per convalidare questo pagamento, quindi l'addebito non è potuto avvenire da solo.",
-        "introNoCard": "Buongiorno {name}, per il tuo soggiorno non era stata registrata nessuna carta, quindi il saldo va pagato online.",
-        "introFailed": "Buongiorno {name}, l'addebito del saldo non è andato a buon fine sulla carta registrata.",
+        "introAuthentication": "Buongiorno {name}, la tua banca chiede una conferma da parte tua per convalidare questo pagamento, quindi l'addebito non è potuto avvenire da solo.\n\nPrima del tuo arrivo è indispensabile saldare il pagamento perché la prenotazione resti confermata. Ti chiediamo di farlo il prima possibile.",
+        "introNoCard": "Buongiorno {name},\nLe tue vacanze a Les Sablettes si avvicinano!\nSperiamo che il viaggio vada per il meglio.\n\nPrima del tuo arrivo è indispensabile saldare il pagamento perché la prenotazione resti confermata. Ti chiediamo di farlo il prima possibile.",
+        "introFailed": "Buongiorno {name}, l'addebito del saldo non è andato a buon fine sulla carta registrata.\n\nPrima del tuo arrivo è indispensabile saldare il pagamento perché la prenotazione resti confermata. Ti chiediamo di farlo il prima possibile.",
         "action": "Paga {amount}",
-        "secure": "Il pagamento avviene sulla pagina sicura di Stripe. La tua carta non viene mai conservata da questo sito.",
+        "secure": "Il pagamento avviene sul nostro sito con Stripe, fornitore di pagamenti sicuri.",
         "changes": "Hai una domanda su questo importo? Rispondi semplicemente a questo messaggio.",
-        "signature": "A prestissimo, {host}"
+        "signature": "A prestissimo,\n{host}",
+        "question": "Hai una domanda?\nRispondi a questa email o chiamami al {phone}"
       },
       "host": {
         "subjectFailed": "Saldo non riuscito, dal {from} al {to}",

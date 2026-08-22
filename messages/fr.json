@@ -578,15 +578,18 @@
       "guest": {
         "subject": "Votre acompte est bien reçu, {property}",
         "title": "Votre réservation est confirmée",
-        "intro": "Bonjour {name}, votre acompte a bien été reçu et vos dates sont réservées.",
+        "intro": "Bonjour {name},\nMerci d'avoir choisi notre logement pour votre séjour !\nNous vous confirmons avoir bien reçu l'acompte pour la réservation suivante :",
         "address": "Le logement : {address}",
         "balanceAuto": "Le solde de {amount} sera prélevé automatiquement le {date} sur la carte utilisée aujourd'hui.",
         "balanceManual": "Le solde de {amount} reste à régler avant l'arrivée. Corine vous écrit pour convenir du règlement.",
         "changes": "Pour modifier ou annuler, répondez simplement à ce message.",
-        "signature": "À très bientôt, {host}",
+        "signature": "À très bientôt,\n{host}",
         "subjectFull": "Votre réservation est confirmée, {property}",
-        "introFull": "Bonjour {name}, votre paiement a bien été reçu et vos dates sont réservées.",
-        "paidInFull": "Le séjour est intégralement réglé. Aucun autre prélèvement ne sera effectué."
+        "introFull": "Bonjour {name},\nMerci d'avoir choisi notre logement pour votre séjour !\nNous vous confirmons avoir bien reçu le paiement de la réservation suivante :",
+        "paidInFull": "Le séjour est intégralement réglé. Aucun autre prélèvement ne sera effectué.",
+        "contact": "Si vous avez des questions, je reste disponible au {phone} ou par {mail}.",
+        "mailLabel": "mail",
+        "location": "Le logement est situé au {address}"
       },
       "host": {
         "subject": "Acompte reçu, réservation du {from} au {to}",
@@ -614,7 +617,9 @@
         "reference": "Référence",
         "guest": "Voyageur",
         "email": "Email",
-        "attempts": "Tentatives"
+        "attempts": "Tentatives",
+        "depositPaid": "Acompte déjà réglé",
+        "balanceToPay": "Solde à régler"
       },
       "receipt": {
         "subject": "Votre solde est réglé, {property}",
@@ -625,18 +630,19 @@
         "signature": "À très bientôt, {host}"
       },
       "link": {
-        "subject": "Le solde de votre séjour, {property}",
-        "subjectReminder": "Rappel, le solde de votre séjour, {property}",
+        "subject": "RE : Action requise",
+        "subjectReminder": "RE : Action requise (rappel)",
         "title": "Il reste le solde à régler",
         "titleReminder": "Le solde de votre séjour attend toujours",
         "reminder": "Petit rappel.",
-        "introAuthentication": "Bonjour {name}, votre banque demande à vous voir pour valider ce paiement, le prélèvement n'a donc pas pu se faire tout seul.",
-        "introNoCard": "Bonjour {name}, aucune carte n'avait été enregistrée pour votre séjour, le solde est donc à régler en ligne.",
-        "introFailed": "Bonjour {name}, le prélèvement du solde n'a pas abouti sur la carte enregistrée.",
+        "introAuthentication": "Bonjour {name}, votre banque demande à vous voir pour valider ce paiement, le prélèvement n'a donc pas pu se faire tout seul.\n\nEn attendant votre arrivée, le règlement du solde est impératif pour maintenir votre réservation confirmée. Merci de le régler dès que possible.",
+        "introNoCard": "Bonjour {name},\nVos vacances approchent aux Sablettes !\nNous espérons que votre trajet se passera pour le mieux.\n\nEn attendant votre arrivée, le règlement du solde est impératif pour maintenir votre réservation confirmée. Merci de le régler dès que possible.",
+        "introFailed": "Bonjour {name}, le prélèvement du solde n'a pas abouti sur la carte enregistrée.\n\nEn attendant votre arrivée, le règlement du solde est impératif pour maintenir votre réservation confirmée. Merci de le régler dès que possible.",
         "action": "Régler {amount}",
-        "secure": "Le paiement se fait sur la page sécurisée de Stripe. Votre carte n'est jamais conservée par ce site.",
+        "secure": "Le paiement se fait sur notre site avec Stripe, prestataire de paiement sécurisé.",
         "changes": "Une question sur ce montant ? Répondez simplement à ce message.",
-        "signature": "À très bientôt, {host}"
+        "signature": "À très bientôt,\n{host}",
+        "question": "Vous avez une question ?\nRépondez à cet email ou appelez-moi au {phone}"
       },
       "host": {
         "subjectFailed": "Solde en échec, du {from} au {to}",

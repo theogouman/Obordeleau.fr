@@ -578,15 +578,18 @@
       "guest": {
         "subject": "Ihre Anzahlung ist eingegangen, {property}",
         "title": "Ihre Buchung ist bestätigt",
-        "intro": "Guten Tag {name}, Ihre Anzahlung ist eingegangen und Ihre Daten sind reserviert.",
+        "intro": "Guten Tag {name},\nvielen Dank, dass Sie sich für unsere Wohnung entschieden haben!\nWir bestätigen den Eingang der Anzahlung für die folgende Buchung:",
         "address": "Die Unterkunft: {address}",
         "balanceAuto": "Der Restbetrag von {amount} wird am {date} automatisch von der heute verwendeten Karte eingezogen.",
         "balanceManual": "Der Restbetrag von {amount} ist vor der Anreise zu zahlen. Corine meldet sich, um das zu vereinbaren.",
         "changes": "Für Änderungen oder eine Stornierung antworten Sie einfach auf diese Nachricht.",
-        "signature": "Bis ganz bald, {host}",
+        "signature": "Bis ganz bald,\n{host}",
         "subjectFull": "Ihre Buchung ist bestätigt, {property}",
-        "introFull": "Guten Tag {name}, Ihre Zahlung ist eingegangen und Ihre Termine sind reserviert.",
-        "paidInFull": "Der Aufenthalt ist vollständig bezahlt. Es wird kein weiterer Betrag abgebucht."
+        "introFull": "Guten Tag {name},\nvielen Dank, dass Sie sich für unsere Wohnung entschieden haben!\nWir bestätigen den Eingang der Zahlung für die folgende Buchung:",
+        "paidInFull": "Der Aufenthalt ist vollständig bezahlt. Es wird kein weiterer Betrag abgebucht.",
+        "contact": "Bei Fragen erreichen Sie mich unter {phone} oder per {mail}.",
+        "mailLabel": "E-Mail",
+        "location": "Die Wohnung befindet sich in {address}"
       },
       "host": {
         "subject": "Anzahlung erhalten, Buchung vom {from} bis {to}",
@@ -614,7 +617,9 @@
         "reference": "Referenz",
         "guest": "Gast",
         "email": "E-Mail",
-        "attempts": "Versuche"
+        "attempts": "Versuche",
+        "depositPaid": "Bereits gezahlte Anzahlung",
+        "balanceToPay": "Offener Restbetrag"
       },
       "receipt": {
         "subject": "Ihr Restbetrag ist bezahlt, {property}",
@@ -625,18 +630,19 @@
         "signature": "Bis ganz bald, {host}"
       },
       "link": {
-        "subject": "Der Restbetrag Ihres Aufenthalts, {property}",
-        "subjectReminder": "Erinnerung, der Restbetrag Ihres Aufenthalts, {property}",
+        "subject": "RE: Aktion erforderlich",
+        "subjectReminder": "RE: Aktion erforderlich (Erinnerung)",
         "title": "Der Restbetrag ist noch offen",
         "titleReminder": "Der Restbetrag Ihres Aufenthalts wartet noch",
         "reminder": "Eine kurze Erinnerung.",
-        "introAuthentication": "Guten Tag {name}, Ihre Bank möchte Sie sehen, bevor sie diese Zahlung freigibt, der Einzug konnte daher nicht von allein erfolgen.",
-        "introNoCard": "Guten Tag {name}, für Ihren Aufenthalt wurde keine Karte gespeichert, der Restbetrag ist daher online zu zahlen.",
-        "introFailed": "Guten Tag {name}, der Restbetrag konnte nicht von der hinterlegten Karte eingezogen werden.",
+        "introAuthentication": "Guten Tag {name}, Ihre Bank möchte Sie sehen, bevor sie diese Zahlung freigibt, der Einzug konnte daher nicht von allein erfolgen.\n\nBis zu Ihrer Ankunft muss der Restbetrag beglichen werden, damit Ihre Buchung bestätigt bleibt. Bitte zahlen Sie ihn so bald wie möglich.",
+        "introNoCard": "Guten Tag {name},\nIhr Urlaub in Les Sablettes rückt näher!\nWir hoffen, dass Ihre Anreise gut verläuft.\n\nBis zu Ihrer Ankunft muss der Restbetrag beglichen werden, damit Ihre Buchung bestätigt bleibt. Bitte zahlen Sie ihn so bald wie möglich.",
+        "introFailed": "Guten Tag {name}, der Restbetrag konnte nicht von der hinterlegten Karte eingezogen werden.\n\nBis zu Ihrer Ankunft muss der Restbetrag beglichen werden, damit Ihre Buchung bestätigt bleibt. Bitte zahlen Sie ihn so bald wie möglich.",
         "action": "{amount} zahlen",
-        "secure": "Die Zahlung läuft über die gesicherte Seite von Stripe. Ihre Karte wird niemals von dieser Website gespeichert.",
+        "secure": "Die Zahlung erfolgt auf unserer Website über Stripe, unseren gesicherten Zahlungsdienstleister.",
         "changes": "Eine Frage zu diesem Betrag? Antworten Sie einfach auf diese Nachricht.",
-        "signature": "Bis ganz bald, {host}"
+        "signature": "Bis ganz bald,\n{host}",
+        "question": "Haben Sie eine Frage?\nAntworten Sie auf diese E-Mail oder rufen Sie mich an unter {phone}"
       },
       "host": {
         "subjectFailed": "Restbetrag fehlgeschlagen, vom {from} bis {to}",
