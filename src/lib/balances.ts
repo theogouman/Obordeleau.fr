@@ -39,6 +39,8 @@ export type DueBalance = {
   partySize: number | null;
   adults: number;
   minors: number;
+  /** What the guest has already paid, for the letter that asks for the rest. */
+  depositAmount: number;
   /** Frozen at confirmation. Read, never recomputed. */
   balanceDue: number;
   balanceStatus: BalanceStatus;
@@ -62,6 +64,7 @@ type DueRow = {
   party_size: number | null;
   adults: number;
   minors: number;
+  deposit_amount: number;
   balance_due: number;
   balance_status: string;
   balance_charge_on: string | null;
@@ -85,6 +88,7 @@ function asDueBalance(row: DueRow): DueBalance {
     partySize: row.party_size,
     adults: Number(row.adults ?? 0),
     minors: Number(row.minors ?? 0),
+    depositAmount: Number(row.deposit_amount ?? 0),
     balanceDue: Number(row.balance_due),
     balanceStatus: row.balance_status as BalanceStatus,
     balanceChargeOn: row.balance_charge_on,
