@@ -226,3 +226,109 @@
     height: auto !important;
   }
 }
+
+/*
+ * The note written over the shuttle boat photograph.
+ *
+ * Everything here is a percentage of the visible pane rather than of the
+ * photograph, and that is the whole trick. The picture is laid in with
+ * object-fit cover, so how much of it is on screen changes with the shape of
+ * the pane, and the pane changes shape: its height is worked out from the
+ * viewport by AroundStack and its width from the column. A note pinned to the
+ * photograph's own coordinates would be cropped away on a short window. Pinned
+ * to the pane, it stays where the eye expects it.
+ *
+ * The building the arrow points at survives every one of those crops, because
+ * cover crops from the centre outwards and the building sits just above the
+ * middle. Read off the picture as rendered: its roof lands between a quarter
+ * and a third of the way down the pane, and a little under a third across.
+ * The arrow's point is parked at 28 percent across and 26 percent down, which
+ * is on the roof or just above it for every shape the pane takes.
+ *
+ * The point is parked by anchoring the arrow's box to its bottom right corner,
+ * so the box grows up and to the left from the target as the pane changes and
+ * the tip does not move. The box keeps its own ratio, which is why the curve
+ * and the head are never stretched.
+ */
+
+@layer components {
+  .around-note {
+    position: absolute;
+    inset: 0;
+    /* Never in the way of anything, and never a second thing to click. */
+    pointer-events: none;
+    color: var(--color-ink);
+  }
+
+  .around-note__label {
+    position: absolute;
+    left: 5%;
+    top: 4%;
+    width: 46%;
+    font-family: var(--font-hand);
+    font-size: clamp(1.05rem, 2.8vw, 1.75rem);
+    line-height: 1.15;
+    /* Written by a hand, so not quite square to the frame. */
+    transform: rotate(-4deg);
+    transform-origin: left center;
+    /*
+     * A halo rather than a box. The note sits on sky, where ink reads on its
+     * own, but a short pane crops the sky away and slides the roof up under
+     * the words: the glow is what keeps them legible when that happens.
+     */
+    text-shadow:
+      0 0 3px rgba(255, 255, 255, 0.9),
+      0 0 12px rgba(255, 255, 255, 0.85);
+  }
+
+  .around-note__arrow {
+    position: absolute;
+    /* The box's bottom right corner, and with it the point of the arrow. */
+    right: 71%;
+    bottom: 72.5%;
+    width: 18%;
+    aspect-ratio: 5 / 3;
+    overflow: visible;
+  }
+
+  /* On one column the pane is narrower than it is tall, so the same share of
+     its width draws a much smaller arrow. It takes a larger share instead,
+     which moves the point by half a percent and is not worth correcting. */
+  @media (max-width: 767px) {
+    .around-note__arrow {
+      width: 27%;
+    }
+  }
+
+  /*
+   * Drawn, not faded. The stroke is normalised to a hundred units by
+   * pathLength, so the dash figures are the same whatever the curve measures.
+   * The resting state is the finished arrow: with no JavaScript, and under
+   * reduced motion, Reveal never marks the note as shown and the arrow is
+   * simply there, complete.
+   */
+  .around-note__arrow path {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 0;
+  }
+
+  .around-note[data-reveal='shown'] .around-note__arrow path {
+    animation: around-note-draw 720ms var(--ease-out-expo) 180ms both;
+  }
+}
+
+@keyframes around-note-draw {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .around-note__arrow path {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+}

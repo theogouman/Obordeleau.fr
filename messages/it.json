@@ -201,7 +201,8 @@
       "boat-shuttle": {
         "label": "Battello per Tolone",
         "detail": "Imbarcati per Tolone e per le isole con i battelli navetta che partono di fronte alla residenza.",
-        "photoAlt": "Il battello si allontana da Les Sablettes, la poppa e la scia davanti al lungomare e alle colline del Var"
+        "photoAlt": "Il battello si allontana da Les Sablettes, la poppa e la scia davanti al lungomare e alle colline del Var",
+        "photoNote": "Il monolocale è qui"
       },
       "shops": {
         "label": "Negozi e ristoranti",

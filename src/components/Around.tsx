@@ -31,6 +31,9 @@ export function Around() {
   const t = useTranslations('around');
 
   const photos = new Map(property.area.map((image) => [image.aroundId, image.file]));
+  // Which photograph carries a written note over it. One does today, and the
+  // arrow that comes with it is drawn for that photograph and no other.
+  const notes = new Set(property.area.filter((image) => image.note).map((i) => i.aroundId));
 
   return (
     <Section id="around" labelledBy="around-title">
@@ -77,6 +80,28 @@ export function Around() {
                       sizes="(min-width: 768px) 45vw, 100vw"
                       className="object-cover"
                     />
+
+                    {notes.has(item.id) ? (
+                      <Reveal className="around-note">
+                        <p className="around-note__label">{t(`items.${item.id}.photoNote`)}</p>
+                        <svg
+                          className="around-note__arrow"
+                          viewBox="0 0 100 60"
+                          fill="none"
+                          aria-hidden="true"
+                          focusable="false"
+                        >
+                          <path
+                            pathLength="100"
+                            d="M4 9C22 8 44 14 62 26C74 34 85 44 94 54M91 38l3 16l-15-4"
+                            stroke="currentColor"
+                            strokeWidth="3.2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </Reveal>
+                    ) : null}
                   </div>
                 ) : null}
               </div>

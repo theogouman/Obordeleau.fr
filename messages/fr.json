@@ -201,7 +201,8 @@
       "boat-shuttle": {
         "label": "Bateau-bus pour Toulon",
         "detail": "Embarquez pour Toulon et les îles avec les bateaux navettes situés en face de la résidence.",
-        "photoAlt": "Le bateau-bus s'éloigne des Sablettes, sa poupe et son sillage devant le front de mer et les collines du Var"
+        "photoAlt": "Le bateau-bus s'éloigne des Sablettes, sa poupe et son sillage devant le front de mer et les collines du Var",
+        "photoNote": "Le logement est ici"
       },
       "shops": {
         "label": "Commerces & Restaurants",

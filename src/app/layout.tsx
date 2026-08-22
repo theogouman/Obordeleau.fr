@@ -1,5 +1,5 @@
 import type { Viewport } from 'next';
-import { Fraunces, Inter } from 'next/font/google';
+import { Caveat, Fraunces, Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { ReactNode } from 'react';
@@ -37,6 +37,20 @@ const body = Inter({
   variable: '--font-inter',
 });
 
+/*
+ * The hand, for the one annotation written over a photograph. Self hosted by
+ * next/font like the other two, so nothing is fetched from a third party at
+ * runtime (constitution VI), and the latin subset alone is a few kilobytes.
+ * Bold rather than regular: a marker pen holds up over a photograph where a
+ * thin hand would not.
+ */
+const hand = Caveat({
+  subsets: ['latin'],
+  weight: '700',
+  display: 'swap',
+  variable: '--font-caveat',
+});
+
 export const viewport: Viewport = {
   themeColor: '#faf7f2',
   colorScheme: 'light',
@@ -60,7 +74,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html
       lang={localeTags[routing.defaultLocale]}
       dir="ltr"
-      className={`${display.variable} ${body.variable}`}
+      className={`${display.variable} ${body.variable} ${hand.variable}`}
       suppressHydrationWarning
     >
       <body className="min-h-dvh bg-cream text-ink antialiased">

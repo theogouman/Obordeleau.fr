@@ -265,19 +265,23 @@
   "area": [
     {
       "file": "sablettes-plage.jpg",
-      "aroundId": "beach"
+      "aroundId": "beach",
+      "note": false
     },
     {
       "file": "parc-pouillon.jpeg",
-      "aroundId": "seaside-park"
+      "aroundId": "seaside-park",
+      "note": false
     },
     {
       "file": "bateau-les-sablettes.jpeg",
-      "aroundId": "boat-shuttle"
+      "aroundId": "boat-shuttle",
+      "note": true
     },
     {
       "file": "restaurants-les-sablettes.jpeg",
-      "aroundId": "shops"
+      "aroundId": "shops",
+      "note": false
     }
   ]
 }
