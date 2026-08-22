@@ -29,7 +29,8 @@ export function Footer({ year }: { year: number }) {
   )}`;
   const mailHref = `mailto:${host.contact.email}?subject=${encodeURIComponent(t('emailSubject'))}`;
 
-  const logo = `/images/area/${host.classificationLogo}`;
+  // annexes, where the file is. It read `area` and so quietly never rendered.
+  const logo = `/images/annexes/${host.classificationLogo}`;
   const hasLogo = assetExists(logo);
 
   return (
@@ -52,15 +53,17 @@ export function Footer({ year }: { year: number }) {
             <Image
               src={logo}
               alt={t('classificationAlt')}
-              width={88}
-              height={88}
-              className="mt-6 h-auto w-[88px] rounded-lg bg-cream/95 p-1.5"
-              sizes="88px"
+              width={1254}
+              height={1254}
+              className="mt-6 h-auto w-[104px] rounded-lg bg-cream/95 p-2"
+              sizes="104px"
             />
           ) : null}
         </div>
 
-        <div>
+        {/* Centred in its own column, which is the space between the mark and
+            the ways to book. */}
+        <div className="lg:justify-self-center">
           <h2 className="font-display text-lg">{t('contactTitle')}</h2>
           <ul className="mt-3 space-y-2 text-cream/80">
             <li>

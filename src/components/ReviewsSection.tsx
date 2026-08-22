@@ -1,6 +1,6 @@
 import { useTranslations } from 'next-intl';
 import { AccentHeading } from '@/components/AccentHeading';
-import { RatingBadge } from '@/components/RatingBadge';
+import { GuestFavourite } from '@/components/GuestFavourite';
 import { ReviewCard, type ReviewCardLabels } from '@/components/ReviewCard';
 import { Reveal } from '@/components/Reveal';
 import { ReviewsCta } from '@/components/ReviewsCta';
@@ -33,7 +33,7 @@ export function useReviewCardLabels(): ReviewCardLabels {
   };
 }
 
-/** FR-008: rating badge plus the curated, location forward selection. */
+/** FR-008: the distinction, then the curated, location forward selection. */
 export function ReviewsSection() {
   const t = useTranslations('reviews');
   const labels = useReviewCardLabels();
@@ -43,14 +43,22 @@ export function ReviewsSection() {
 
   return (
     <Section id="reviews" labelledBy="reviews-title">
-      <Reveal className="max-w-2xl">
-        <AccentHeading
-          id="reviews-title"
-          lead={t('titleLead')}
-          accent={t('titleAccent')}
-          tail={t('titleTail')}
-        />
-        <RatingBadge className="mt-6" />
+      {/* The heading and the distinction share one line on a wide screen,
+          centred on each other, and stack on a narrow one. The rating pill that
+          used to sit under the heading said the same thing in figures, one line
+          below the thing that says it with its name. */}
+      <Reveal>
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-14">
+          <AccentHeading
+            id="reviews-title"
+            lead={t('titleLead')}
+            accent={t('titleAccent')}
+            tail={t('titleTail')}
+            className="max-w-2xl"
+          />
+
+          <GuestFavourite className="lg:shrink-0" />
+        </div>
       </Reveal>
 
       {hasReviews ? (
