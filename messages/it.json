@@ -13,6 +13,7 @@
   },
   "meta": {
     "siteName": "Obordeleau",
+    "ogTagline": "Casa vacanze",
     "home": {
       "title": "Obordeleau, monolocale climatizzato a Les Sablettes a 70 m dalla spiaggia | La Seyne-sur-Mer",
       "description": "Monolocale 3 stelle a Les Sablettes, spiaggia a due minuti a piedi, battello per Tolone ai piedi della residenza. Si fa tutto senza auto. Prenota direttamente."
@@ -446,6 +447,7 @@
         "holdExpired": "Il tempo a disposizione è scaduto e le tue date sono state liberate.",
         "loading": "Caricamento del modulo di pagamento...",
         "pay": "Paga {amount}",
+        "securedBy": "Pagamento sicuro tramite Stripe",
         "paying": "Pagamento in corso...",
         "back": "Torna al riepilogo",
         "mandate": "Il saldo di {amount} sarà addebitato il {date} su questa carta.",

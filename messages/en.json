@@ -13,6 +13,7 @@
   },
   "meta": {
     "siteName": "Obordeleau",
+    "ogTagline": "Holiday rental",
     "home": {
       "title": "Obordeleau, air-conditioned studio at Les Sablettes, 70 m from the beach",
       "description": "A 3-star studio at Les Sablettes near Toulon. Beach on foot in 2 minutes, shuttle boat to Toulon at the door, no car needed. Book direct."
@@ -446,6 +447,7 @@
         "holdExpired": "The time ran out and your dates have been released.",
         "loading": "Loading the payment form...",
         "pay": "Pay {amount}",
+        "securedBy": "Secure payment by Stripe",
         "paying": "Payment in progress...",
         "back": "Back to the summary",
         "mandate": "The balance of {amount} will be taken from this card on {date}.",

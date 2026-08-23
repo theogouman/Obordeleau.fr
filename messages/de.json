@@ -13,6 +13,7 @@
   },
   "meta": {
     "siteName": "Obordeleau",
+    "ogTagline": "Ferienwohnung",
     "home": {
       "title": "Obordeleau, klimatisiertes Studio in Les Sablettes, 70 m zum Strand",
       "description": "3-Sterne-Studio in Les Sablettes bei Toulon. Strand in 2 Minuten zu Fuß, Fähre nach Toulon direkt vor der Tür, kein Auto nötig. Direkt buchen."
@@ -446,6 +447,7 @@
         "holdExpired": "Die Zeit ist abgelaufen und Ihre Daten wurden freigegeben.",
         "loading": "Das Zahlungsformular wird geladen...",
         "pay": "{amount} zahlen",
+        "securedBy": "Sichere Zahlung über Stripe",
         "paying": "Zahlung läuft...",
         "back": "Zurück zur Übersicht",
         "mandate": "Der Restbetrag von {amount} wird am {date} von dieser Karte eingezogen.",

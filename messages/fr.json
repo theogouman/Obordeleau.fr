@@ -13,6 +13,7 @@
   },
   "meta": {
     "siteName": "Obordeleau",
+    "ogTagline": "Logement de vacances",
     "home": {
       "title": "Obordeleau, studio climatisé aux Sablettes à 70 m de la plage | La Seyne-sur-Mer",
       "description": "Studio 3 étoiles aux Sablettes, plage à pied en 2 minutes, bateau-bus pour Toulon au pied de la résidence. Tout se fait sans voiture. Réservez en direct."
@@ -446,6 +447,7 @@
         "holdExpired": "Le temps imparti est écoulé et vos dates ont été libérées.",
         "loading": "Chargement du formulaire de paiement...",
         "pay": "Payer {amount}",
+        "securedBy": "Paiement sécurisé par Stripe",
         "paying": "Paiement en cours...",
         "back": "Revenir au récapitulatif",
         "mandate": "Le solde de {amount} sera prélevé le {date} sur cette carte.",

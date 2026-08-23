@@ -24,6 +24,16 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
  *                   (analytics and speed insights; same-origin on Vercel, these
  *                   cover the direct hosts they occasionally fall back to)
  * Fonts are self-hosted by next/font, so no font host is allowed.
+ *
+ * The Maps hosts in img-src and connect-src are the allowlist Google publishes
+ * for the JavaScript API, and it is wider than the two hosts the SDK is loaded
+ * from. It has to be: once the first view is drawn, panning and zooming fetch
+ * their tiles from other hosts under *.googleapis.com and *.google.com, and the
+ * policy named maps.googleapis.com alone. Those requests were refused, so the
+ * map kept the frame it had arrived with and never drew another: zooming out
+ * gave a still picture surrounded by nothing. Scripts stay pinned to the two
+ * hosts they actually come from, and frames to Stripe; only the data these two
+ * directives cover is widened.
  */
 const CONTENT_SECURITY_POLICY = [
   "default-src 'self'",
@@ -33,10 +43,10 @@ const CONTENT_SECURITY_POLICY = [
   "form-action 'self'",
   "script-src 'self' 'unsafe-inline' https://js.stripe.com https://maps.googleapis.com https://maps.gstatic.com https://va.vercel-scripts.com",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://*.stripe.com https://maps.googleapis.com https://maps.gstatic.com https://*.googleapis.com https://*.gstatic.com https://*.ggpht.com https://*.googleusercontent.com",
+  "img-src 'self' data: blob: https://*.stripe.com https://*.googleapis.com https://*.gstatic.com https://*.google.com https://*.ggpht.com https://*.googleusercontent.com",
   "font-src 'self' data:",
   'frame-src https://js.stripe.com https://hooks.stripe.com',
-  "connect-src 'self' https://api.stripe.com https://r.stripe.com https://maps.googleapis.com https://va.vercel-scripts.com https://vitals.vercel-insights.com",
+  "connect-src 'self' data: blob: https://api.stripe.com https://r.stripe.com https://*.googleapis.com https://*.gstatic.com https://*.google.com https://va.vercel-scripts.com https://vitals.vercel-insights.com",
   "worker-src 'self' blob:",
   "manifest-src 'self'",
   'upgrade-insecure-requests',

@@ -235,6 +235,30 @@ export function CheckoutPanel({
         {paying ? null : <Icon name="checkCircle" className="h-[1.05em] w-auto" />}
       </button>
 
+      {/* Who is holding the card, said quietly under the one button that asks
+          for it. It is the answer to the question every visitor has at this
+          exact moment, and it costs a line. */}
+      <p className="mt-2 flex items-center justify-center gap-1.5 text-center text-xs text-ink-soft">
+        <svg
+          viewBox="0 0 24 24"
+          width="12"
+          height="12"
+          aria-hidden="true"
+          focusable="false"
+          className="shrink-0"
+        >
+          <path
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M7 10V7a5 5 0 0 1 10 0v3M5.5 10h13v10h-13z"
+          />
+        </svg>
+        {t('securedBy')}
+      </p>
+
       <button
         type="button"
         onClick={onBack}

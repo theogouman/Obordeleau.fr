@@ -96,6 +96,9 @@ type Checkout = {
  * the visitor is. Nobody should have to hand over a name and a number to find
  * out a price: the quote is a simulation, and it comes before the form.
  */
+/** What /api/stay answers: a ruling, and the reason when it refuses. */
+type StayVerdict = { valid?: boolean; reason?: StayRefusal | string | null };
+
 type StepId = 'dates' | 'guests' | 'quote' | 'name' | 'email' | 'phone' | 'recap';
 
 const STEPS: readonly StepId[] = [
@@ -146,6 +149,17 @@ function shortDate(isoDate: string | null): string {
  * of a second one, so the block leaves while a sentence is standing still
  * rather than halfway through its arrival.
  */
+/**
+ * How long a ruling on a stay is worth reusing.
+ *
+ * A night can be taken while the visitor is reading, so a yes is not kept for
+ * the length of a visit. A minute covers the walk from the last date picked to
+ * the button, which is all this is for, and a stay taken in the meantime is
+ * still caught twice over: by this asking again, and by the write itself, which
+ * refuses the nights and sends the visitor back to the calendar.
+ */
+const STAY_ANSWER_MS = 60_000;
+
 const MIN_LOADER_MS = 2600;
 /** The exit of mask-reveal-up, so the messages are gone before the quote lands. */
 const LOADER_OUT_MS = 520;
@@ -377,6 +391,26 @@ export function BookingForm({
     return () => observer.disconnect();
   }, [stepIndex, state]);
 
+  /*
+   * The card form rises into place like a question does. It is not a step of
+   * the wizard, so the effect below, which watches the step, never sees it
+   * arrive: this one watches the state instead and plays the same entry.
+   */
+  useEffect(() => {
+    if (state !== 'paying') return;
+    const stage = stageRef.current;
+    if (!stage || reducedMotion()) return;
+
+    stage.getAnimations().forEach((animation) => animation.cancel());
+    stage.animate(
+      [
+        { transform: `translateY(${STEP_SHIFT}px)`, opacity: 0 },
+        { transform: 'translateY(0)', opacity: 1 },
+      ],
+      { duration: STEP_IN_MS, easing: STEP_EASE, fill: 'both' },
+    );
+  }, [state]);
+
   // Entry of the new question, then the focus, once the old one has gone.
   useEffect(() => {
     if (!navigated.current) return;
@@ -546,23 +580,11 @@ export function BookingForm({
     setCheckingStay(true);
 
     try {
-      const response = await fetch('/api/stay', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ from: arrival, to: departure }),
-      });
-
-      if (response.ok) {
-        const verdict = (await response.json()) as { valid?: boolean; reason?: string | null };
-        if (verdict.valid === false) {
-          refuse(stayMessage(verdict.reason));
-          return;
-        }
+      const verdict = await askStay(arrival, departure);
+      if (verdict.valid === false) {
+        refuse(stayMessage(verdict.reason));
+        return;
       }
-      // A store that cannot be reached is not a refusal. The write path checks
-      // again and settles it there rather than stopping the visitor here.
-    } catch {
-      // Same: carry on and let the submission be the one that decides.
     } finally {
       setCheckingStay(false);
     }
@@ -712,11 +734,55 @@ export function BookingForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stepIndex]);
 
+  /*
+   * The server's ruling on a stay, asked for the moment the stay is complete
+   * rather than when the button is pressed.
+   *
+   * The wait the visitor used to sit through was one round trip to a database
+   * on another continent, started on the click and finished before anything
+   * could move. Nothing about it needs the click: the range is known as soon as
+   * the second date is picked, and several seconds pass before anyone reaches
+   * the button. The answer is therefore already in hand by the time it is
+   * wanted, and the button only ever waits when someone is faster than the
+   * network. One request per range, kept by the range it is about, so paging
+   * the calendar or coming back to the same dates asks nothing again.
+   */
+  const stayAsked = useRef<{ key: string; at: number; answer: Promise<StayVerdict> } | null>(null);
+
+  function askStay(from: string, to: string): Promise<StayVerdict> {
+    const key = `${from}|${to}`;
+    const kept = stayAsked.current;
+    if (kept?.key === key && Date.now() - kept.at < STAY_ANSWER_MS) return kept.answer;
+
+    const answer = fetch('/api/stay', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from, to }),
+    })
+      .then(async (response) => {
+        if (!response.ok) return {} as StayVerdict;
+        return (await response.json()) as StayVerdict;
+      })
+      // A store that cannot be reached is not a refusal. The write path checks
+      // again and settles it there rather than stopping the visitor here.
+      .catch(() => ({}) as StayVerdict);
+
+    stayAsked.current = { key, at: Date.now(), answer };
+    return answer;
+  }
+
   function onRangeChange(nextArrival: string | null, nextDeparture: string | null) {
     setArrival(nextArrival);
     setDeparture(nextDeparture);
     setStepError(null);
     setFormError(null);
+
+    // Ask now, so the button has nothing left to wait for. Only for a range the
+    // mirrored rule already accepts: a stay the browser knows is refused is
+    // refused without troubling the server.
+    if (nextArrival && nextDeparture && !refusalFor(rules, nextArrival, nextDeparture)) {
+      void askStay(nextArrival, nextDeparture);
+    }
   }
 
   /* --- the quote ---------------------------------------------------------- */
@@ -1155,7 +1221,19 @@ export function BookingForm({
 
   /* --- the card ----------------------------------------------------------- */
 
-  if (state === 'paying' && checkout && quote) {
+  /**
+   * The card form, which is a step of the wizard and not a page of its own.
+   *
+   * It used to be returned above everything else, in a card with its own
+   * padding: the whole block was torn down and another one built in its place,
+   * so the panel changed height and position in a single frame, under a
+   * visitor who had just pressed pay. It now renders in the same measured
+   * frame as every question, so the card tweens from the recap to the card
+   * form on card resize (01), exactly as it does between two questions.
+   */
+  function checkoutStep() {
+    if (!checkout || !quote) return null;
+
     const chargeDate = quote.balanceChargeOn
       ? new Intl.DateTimeFormat(localeTags[locale as Locale], {
           dateStyle: 'long',
@@ -1164,7 +1242,7 @@ export function BookingForm({
       : null;
 
     return (
-      <div className="card p-6 sm:p-8">
+      <>
         <CheckoutPanel
           clientSecret={checkout.clientSecret}
           publishableKey={checkout.publishableKey}
@@ -1202,7 +1280,7 @@ export function BookingForm({
             setState('editing');
           }}
         />
-      </div>
+      </>
     );
   }
 
@@ -1245,6 +1323,9 @@ export function BookingForm({
   /* --- the wizard --------------------------------------------------------- */
 
   function stepContent() {
+    // The card form is a step like the others, so the frame tweens into it.
+    if (state === 'paying') return checkoutStep();
+
     switch (step) {
       case 'dates':
         return (
@@ -1486,7 +1567,7 @@ export function BookingForm({
           <div>
             <h3 className="font-display text-xl">{t('recapTitle')}</h3>
 
-            <dl className="mt-4 space-y-2.5">
+            <dl className="mt-4 space-y-1.5">
               <RecapRow
                 label={t('questions.dates')}
                 value={`${readableRange}, ${t('nights', { count: nights })}`}
@@ -1656,12 +1737,26 @@ export function BookingForm({
           question they left. */}
       {stepIndex > 0 ? (
         <div className="mb-6 flex items-stretch justify-between gap-3">
-          <button type="button" onClick={back} className={CHIP}>
+          {/* While the card is on screen, back means leave the payment, not
+              step back inside a form nobody is filling in any more. */}
+          <button
+            type="button"
+            onClick={
+              state === 'paying'
+                ? () => {
+                    // The hold is left standing: coming back picks it up again.
+                    setCheckout(null);
+                    setState('editing');
+                  }
+                : back
+            }
+            className={CHIP}
+          >
             <Icon name="returnArrow" className="h-3 w-auto shrink-0" />
             {t('back')}
           </button>
 
-          {nights > 0 ? (
+          {nights > 0 && state !== 'paying' ? (
             <button
               type="button"
               onClick={() => correct(0)}
@@ -1969,6 +2064,16 @@ function Question({
  * rule, then the answer underneath with the control that reopens it on the
  * same line, so the eye reads the answer and the way to change it together.
  */
+/**
+ * One answer, its label and the pencil that reopens it.
+ *
+ * Nothing here is ever cut. The value used to be held to one line and
+ * truncated, and the one line that matters, the stay, is the longest of the
+ * five: a reader on a telephone was shown "Du 1 septembre 2026 au 16 septem"
+ * and had to take the rest on trust. It wraps instead, at a size chosen so
+ * that the whole of it fits, and the row is built as a grid rather than as a
+ * band above a band so the five together take a third less room than they did.
+ */
 function RecapRow({
   label,
   value,
@@ -1981,22 +2086,22 @@ function RecapRow({
   editLabel: string;
 }) {
   return (
-    <div className="overflow-hidden rounded-[var(--radius-card)] border border-[rgba(58,42,38,0.14)]">
-      <dt className="bg-sand px-4 py-2 text-xs uppercase tracking-[0.14em] text-ink-soft">
+    <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 rounded-[var(--radius-card)] border border-[rgba(58,42,38,0.14)] bg-[rgba(241,234,224,0.35)] px-3 py-2 sm:px-4">
+      <dt className="col-start-1 text-[0.625rem] uppercase leading-none tracking-[0.12em] text-ink-soft">
         {label}
       </dt>
-      <dd className="flex items-center justify-between gap-3 border-t border-[rgba(58,42,38,0.12)] py-2 pe-2 ps-4">
-        <span className="min-w-0 truncate font-medium">{value}</span>
-        <button
-          type="button"
-          onClick={onEdit}
-          aria-label={`${editLabel} : ${label}`}
-          title={editLabel}
-          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] border border-[rgba(58,42,38,0.18)] bg-sand text-ink-soft transition-colors hover:border-ink hover:text-ink"
-        >
-          <Icon name="pencilSquare" className="h-4 w-auto" />
-        </button>
+      <dd className="col-start-1 mt-1 break-words text-[0.8125rem] font-medium leading-snug sm:text-sm">
+        {value}
       </dd>
+      <button
+        type="button"
+        onClick={onEdit}
+        aria-label={`${editLabel} : ${label}`}
+        title={editLabel}
+        className="col-start-2 row-span-2 row-start-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] border border-[rgba(58,42,38,0.18)] bg-shell text-ink-soft transition-colors hover:border-ink hover:text-ink"
+      >
+        <Icon name="pencilSquare" className="h-[0.9rem] w-auto" />
+      </button>
     </div>
   );
 }

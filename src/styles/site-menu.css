@@ -52,6 +52,12 @@
  * Le verre est une couleur de la marque a peine transparente, pas un blanc
  * pur: le fond de page est creme, et une pilule blanche dessus se verrait
  * comme une piece rapportee. La saturation compense ce que le flou lave.
+ *
+ * Elle ne rogne rien. Elle l'a fait, et la liste des langues ouverte depuis la
+ * rangee du haut etait coupee net au bord inferieur de la pilule: cent
+ * quatre-vingts pixels de panneau dans une barre qui en fait cinquante. C'est
+ * le panneau du menu qui porte la coupe, avec le rayon du bas de la pilule,
+ * puisque c'est lui seul qui avait besoin d'etre contenu.
  */
 .site-nav-pill {
   pointer-events: auto;
@@ -60,7 +66,6 @@
   width: 100%;
   max-width: 78rem;
   margin: 0 auto;
-  overflow: hidden;
   text-align: initial;
   background: rgba(250, 247, 242, 0.82);
   /* Non prefixe, et rien d'autre: le prefixe est ajoute a la compilation.
@@ -98,7 +103,7 @@
  * ancres s'arretent au meme endroit.
  */
 html {
-  scroll-padding-top: calc(var(--site-nav-h) + 8px);
+  scroll-padding-top: var(--site-nav-h);
 }
 
 #main {
@@ -144,6 +149,37 @@ html {
   }
 }
 
+/*
+ * Une section visee par une ancre s'arrete sur son titre, pas sur son bord.
+ *
+ * Le bord est quatre rems au-dessus du titre, six sur grand ecran, et
+ * s'arreter dessus posait un ecran de sable vide avant que quoi que ce soit ne
+ * se lise: on cliquait sur Les photos et la galerie etait encore plus bas. La
+ * marge de defilement remonte donc le point d'arret de ce rembourrage, moins
+ * l'air qu'on garde au-dessus du titre.
+ *
+ * Trois valeurs parce que ce qu'il y a a eviter change deux fois: la pilule
+ * fixe et un rembourrage de quatre rems, puis la meme pilule et six rems, puis
+ * six rems et plus de pilule du tout, celle-ci etant dans le flux au-dessus du
+ * point de bascule. Chacune pose le titre a une vingtaine de pixels de ce qui
+ * le precede.
+ */
+.section {
+  scroll-margin-top: calc(16px - 4rem);
+}
+
+@media (min-width: 768px) {
+  .section {
+    scroll-margin-top: calc(18px - 6rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .section {
+    scroll-margin-top: calc(24px - 6rem);
+  }
+}
+
 .menu-scrim {
   position: fixed;
   inset: 0;
@@ -169,10 +205,13 @@ html {
 /* Panneau */
 
 /* Aucune ombre propre, aucun fond: le panneau est l'interieur de la pilule,
-   c'est elle qui porte le verre et l'ombre. */
+   c'est elle qui porte le verre et l'ombre. Il reprend en revanche le rayon
+   bas de la pilule, qui ne rogne plus elle-meme. */
 .menu-panel {
   max-height: 0;
   overflow: hidden;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
   opacity: 0;
   will-change: max-height, opacity;
   transform: translateZ(0);
