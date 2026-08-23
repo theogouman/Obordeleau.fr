@@ -310,9 +310,18 @@ export async function POST(request: NextRequest) {
         amount,
         currency: quote.currency.toLowerCase(),
         customer: customerId,
-        // Cards only. The balance has to go on the same card, off session and
-        // months later, which is not something every method can do.
-        payment_method_types: ['card'],
+        /*
+         * Stripe decides what to show, which is how the wallets get in: a card,
+         * Apple Pay on an Apple device, Google Pay on Chrome. Redirects stay
+         * shut off, so every method offered here confirms on the page and none
+         * of them needs somewhere to come back to.
+         *
+         * On a stay that keeps a card the setup_future_usage below narrows the
+         * list again, down to what can still be charged off session months
+         * later. That is the balance staying collectable, and it is why this
+         * cannot be a plain list of methods.
+         */
+        automatic_payment_methods: { enabled: true, allow_redirects: 'never' },
         description: `${property.name} ${from} ${to}`,
         receipt_email: email,
         metadata: {
