@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent }
 import { Icon, type IconName } from '@/components/Icon';
 import { ROOM_ORDER, type RoomId } from '@/lib/rooms';
 import { GalleryPanel } from './GalleryPanel';
-import { SPRING, SPRING_EPSILON, SURFACE_H, surfacePath } from './liquid-path';
+import { RESIZE_MS, SPRING, SPRING_EPSILON, SURFACE_H, surfacePath } from './liquid-path';
 import { usePrefersReducedMotion } from './use-reduced-motion';
 import type { GalleryLabels, PhotoView } from './types';
 
@@ -45,6 +45,7 @@ export function GalleryTabs({ photos, labels }: { photos: PhotoView[]; labels: G
 
   const frameRef = useRef<HTMLDivElement>(null);
   const railRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
   const tabRefs = useRef<Array<HTMLAnchorElement | null>>([]);
   const activeRef = useRef(activeIndex);
@@ -182,30 +183,94 @@ export function GalleryTabs({ photos, labels }: { photos: PhotoView[]; labels: G
     [],
   );
 
+  /**
+   * Rooms hold two, three or four photographs, so the panel is not the same
+   * height from one to the next and it used to snap. The height is locked to
+   * what is on screen before the state changes, which is what leaves the
+   * transition something to tween from: nothing is ever painted at the new
+   * height without having travelled to it.
+   */
+  const chooseRoom = useCallback(
+    (room: RoomId) => {
+      // The room already on screen is not a change: locking the height for it
+      // would leave a height nothing ever comes to release.
+      if (ROOM_ORDER[activeRef.current] === room) return;
+
+      const body = bodyRef.current;
+      if (body && !reduce) {
+        body.style.height = `${body.offsetHeight}px`;
+        body.dataset.resizing = 'true';
+      }
+      setActive(room);
+    },
+    [reduce],
+  );
+
+  useEffect(() => {
+    const body = bodyRef.current;
+    if (!body || body.dataset.resizing !== 'true') return;
+
+    const release = () => {
+      body.style.height = '';
+      delete body.dataset.resizing;
+    };
+
+    /*
+     * The height it wants is read by letting it have it for one measurement,
+     * then giving it back the one it had. `scrollHeight` cannot answer this:
+     * it never returns less than the box it is asked about, so a room with
+     * fewer photographs measured exactly as tall as the one it replaced and
+     * nothing ever travelled.
+     */
+    const from = parseFloat(body.style.height || '0');
+    body.style.height = 'auto';
+    const to = body.offsetHeight;
+    body.style.height = `${from}px`;
+
+    if (Math.abs(to - from) < 1) {
+      release();
+      return;
+    }
+
+    // Reading it back commits the start value, so the two writes are not
+    // collapsed into one frame.
+    void body.offsetHeight;
+    body.style.height = `${to}px`;
+
+    /*
+     * Only the timer is cleaned up. Releasing here would undo the lock the
+     * next click has already put in place, since a click sets the height
+     * before the state changes and React tears the previous effect down after
+     * that: one room change out of two arrived unlocked and snapped.
+     */
+    const timer = window.setTimeout(release, RESIZE_MS + 40);
+    return () => window.clearTimeout(timer);
+  }, [activeIndex]);
+
   const onTabKey = (event: KeyboardEvent<HTMLAnchorElement>) => {
     const direction = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
     if (direction === 0) return;
     event.preventDefault();
     const next = (activeIndex + direction + ROOM_ORDER.length) % ROOM_ORDER.length;
-    setActive(ROOM_ORDER[next]);
+    chooseRoom(ROOM_ORDER[next]);
     tabRefs.current[next]?.focus();
   };
 
   const openAt = useCallback(
     (index: number) => {
-      setActive(photos[index].room);
+      chooseRoom(photos[index].room);
       setOpen(index);
     },
-    [photos],
+    [chooseRoom, photos],
   );
 
   const goTo = useCallback(
     (index: number) => {
       const wrapped = (index + photos.length) % photos.length;
-      setActive(photos[wrapped].room);
+      chooseRoom(photos[wrapped].room);
       setOpen(wrapped);
     },
-    [photos],
+    [chooseRoom, photos],
   );
 
   return (
@@ -243,7 +308,7 @@ export function GalleryTabs({ photos, labels }: { photos: PhotoView[]; labels: G
               onClick={(event) => {
                 if (!interactive) return;
                 event.preventDefault();
-                setActive(room);
+                chooseRoom(room);
               }}
             >
               <span className="gallery-tab__hl" aria-hidden="true" />
@@ -255,7 +320,7 @@ export function GalleryTabs({ photos, labels }: { photos: PhotoView[]; labels: G
           ))}
         </div>
 
-        <div className="gallery-body">
+        <div className="gallery-body t-resize" ref={bodyRef}>
           {ROOM_ORDER.map((room) => (
             <GalleryPanel
               key={room}

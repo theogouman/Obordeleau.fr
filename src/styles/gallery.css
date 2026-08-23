@@ -185,6 +185,12 @@
   border-radius: var(--panel-radius) var(--panel-radius) 20px 20px;
 }
 
+/* Le temps du redimensionnement, ce qui depasse est coupe: sans cela la piece
+   qui arrive deborderait du blanc pendant les 300 ms du trajet. */
+.gallery-body[data-resizing='true'] {
+  overflow: hidden;
+}
+
 /* Sans JavaScript les cinq panneaux sont empiles, donc ils ont besoin d'air. */
 .gallery-panel + .gallery-panel {
   margin-top: 22px;

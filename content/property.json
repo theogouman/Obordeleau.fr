@@ -198,13 +198,6 @@
       "height": 1536
     },
     {
-      "file": "gallery-12.jpg",
-      "room": "living",
-      "altKey": "gallery.alt.12",
-      "width": 2048,
-      "height": 1536
-    },
-    {
       "file": "gallery-05.jpg",
       "room": "living",
       "altKey": "gallery.alt.05",
@@ -254,20 +247,6 @@
       "height": 1536
     },
     {
-      "file": "gallery-04.jpg",
-      "room": "bed",
-      "altKey": "gallery.alt.04",
-      "width": 2048,
-      "height": 1536
-    },
-    {
-      "file": "gallery-19.jpg",
-      "room": "bed",
-      "altKey": "gallery.alt.19",
-      "width": 2048,
-      "height": 1536
-    },
-    {
       "file": "gallery-11.jpg",
       "room": "bed",
       "altKey": "gallery.alt.11",
@@ -292,13 +271,6 @@
       "file": "gallery-14.jpg",
       "room": "overview",
       "altKey": "gallery.alt.14",
-      "width": 2048,
-      "height": 1536
-    },
-    {
-      "file": "gallery-09.jpg",
-      "room": "overview",
-      "altKey": "gallery.alt.09",
       "width": 2048,
       "height": 1536
     },

@@ -60,27 +60,21 @@
   "quickFacts": {
     "title": "In breve",
     "beach": {
-      "label": "Distanza dalla spiaggia",
-      "detail": "dalla spiaggia, a piedi"
+      "text": "A {value} {unit} dalla spiaggia, a piedi"
     },
     "size": {
-      "label": "Superficie",
-      "detail": "abitabili, climatizzati"
+      "text": "{value} {unit} abitabili e climatizzati"
     },
     "guests": {
-      "label": "Capienza",
-      "lead": "Da 1 a 4",
-      "detail": "viaggiatori"
+      "text": "Da 1 a 4 viaggiatori"
+    },
+    "equipped": {
+      "text": "Tutto attrezzato"
     },
     "unit": {
       "m": "m",
       "m2": "m²",
       "min": "min"
-    },
-    "equipped": {
-      "label": "Dotazione",
-      "lead": "Tutto attrezzato",
-      "detail": ""
     }
   },
   "gallery": {
@@ -114,22 +108,18 @@
       "01": "Il soggiorno visto dal bancone, il divano, la panca sotto la vetrata e il mobile TV",
       "02": "La cucina attrezzata: frigorifero, piano cottura, lavello e lavatrice",
       "03": "Il letto matrimoniale della zona notte, nella sua nicchia, sotto le mensole della testata",
-      "04": "Il letto matrimoniale della zona notte, sotto la parete decorata e le sue mensole",
       "05": "Il soggiorno aperto sul bancone, i due sgabelli alti e l'ingresso della zona notte",
       "06": "La stanza principale, il letto aperto, il cassettone e il bancone in fondo",
       "07": "Il soggiorno, il divano e il grande specchio, davanti alla vetrata sul giardino",
       "08": "Tutta la lunghezza del monolocale, dal bancone con il tavolo al letto davanti alla vetrata",
-      "09": "L'angolo salotto, il tavolino e la televisione, davanti al verde del giardino",
       "10": "Il monolocale da un capo all'altro: il mobile TV, il bancone e l'ingresso della zona notte",
       "11": "Il letto aperto nella stanza principale, il grande specchio e il cassettone",
-      "12": "Il divano letto del soggiorno, il grande specchio e, in fondo, il bancone con gli sgabelli",
       "13": "La cucina, il lavello e la lavatrice, aperta sulla zona notte in fondo",
       "14": "Il monolocale per il lungo, dal bancone al soggiorno e alla vetrata, la cucina a destra",
       "15": "La doccia piastrellata del bagno, il lavabo e il grande specchio",
       "16": "Il bancone con gli sgabelli alti, il microonde, il bollitore e la mensola dei bicchieri",
       "17": "L'angolo televisione, il lungo mobile basso e la panca sotto la vetrata",
       "18": "Il bagno: la doccia, il lavabo, lo specchio e le mensole in legno",
-      "19": "Il divano letto aperto in matrimoniale, davanti alla vetrata e alla panca",
       "20": "L'angolo bar: il microonde, il bollitore, la macchina del caffè e i bicchieri sopra"
     }
   },

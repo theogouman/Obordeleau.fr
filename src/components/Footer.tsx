@@ -61,9 +61,10 @@ export function Footer({ year }: { year: number }) {
           ) : null}
         </div>
 
-        {/* Centred in its own column, which is the space between the mark and
-            the ways to book. */}
-        <div className="lg:justify-self-center">
+        {/* Centred in its own column, heading and links alike, so the block
+            reads as the middle of the three rather than as a column that
+            drifted right of the mark. */}
+        <div className="lg:justify-self-center lg:text-center">
           <h2 className="font-display text-lg">{t('contactTitle')}</h2>
           <ul className="mt-3 space-y-2 text-cream/80">
             <li>

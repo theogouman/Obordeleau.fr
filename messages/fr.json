@@ -60,27 +60,21 @@
   "quickFacts": {
     "title": "En un coup d'œil",
     "beach": {
-      "label": "Distance de la plage",
-      "detail": "de la plage, à pied"
+      "text": "À {value} {unit} de la plage, à pied"
     },
     "size": {
-      "label": "Surface",
-      "detail": "habitables, climatisés"
+      "text": "{value} {unit} habitables et climatisés"
     },
     "guests": {
-      "label": "Capacité",
-      "lead": "1 à 4",
-      "detail": "voyageurs"
+      "text": "1 à 4 voyageurs"
+    },
+    "equipped": {
+      "text": "Tout équipé"
     },
     "unit": {
       "m": "m",
       "m2": "m²",
       "min": "min"
-    },
-    "equipped": {
-      "label": "Équipement",
-      "lead": "Tout équipé",
-      "detail": ""
     }
   },
   "gallery": {
@@ -114,22 +108,18 @@
       "01": "Le séjour vu depuis le bar, le canapé, la banquette sous la baie vitrée et le meuble télé",
       "02": "La cuisine équipée : réfrigérateur, plaques de cuisson, évier et lave-linge",
       "03": "Le lit double du coin nuit, dans son alcôve, sous les étagères de la tête de lit",
-      "04": "Le lit double du coin nuit, sous le mur décoré et ses étagères",
       "05": "Le séjour ouvert sur le bar, ses deux tabourets hauts et l'entrée du coin nuit",
       "06": "La pièce principale, le couchage ouvert, la commode et le bar au fond",
       "07": "Le séjour, son canapé et son grand miroir, face à la baie vitrée ouverte sur le jardin",
       "08": "L'enfilade, du bar et sa table jusqu'au couchage ouvert face à la baie vitrée",
-      "09": "Le coin salon, sa table basse et la télévision, face à la verdure du jardin",
       "10": "Le studio d'un bout à l'autre : le meuble télé, le bar et l'entrée du coin nuit",
       "11": "Le couchage ouvert dans la pièce principale, le grand miroir et la commode",
-      "12": "Le canapé-lit du séjour, le grand miroir et, au fond, le bar et ses tabourets",
       "13": "La cuisine, son évier et son lave-linge, ouverte sur le coin nuit au fond",
       "14": "Le studio dans sa longueur, du bar au séjour et à la baie vitrée, la cuisine à droite",
       "15": "La douche carrelée de la salle d'eau, le lavabo et son grand miroir",
       "16": "Le bar et ses tabourets hauts, le micro-ondes, la bouilloire et l'étagère à verres",
       "17": "Le coin télévision, son long meuble bas et la banquette sous la baie vitrée",
       "18": "La salle d'eau : la douche, le lavabo, son miroir et les étagères en bois",
-      "19": "Le canapé-lit ouvert en lit double, face à la baie vitrée et à la banquette",
       "20": "Le coin bar : le micro-ondes, la bouilloire, la machine à café et les verres au-dessus"
     }
   },

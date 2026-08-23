@@ -60,27 +60,21 @@
   "quickFacts": {
     "title": "Auf einen Blick",
     "beach": {
-      "label": "Entfernung zum Strand",
-      "detail": "zum Strand, zu Fuß"
+      "text": "{value} {unit} zum Strand, zu Fuß"
     },
     "size": {
-      "label": "Wohnfläche",
-      "detail": "Wohnfläche, klimatisiert"
+      "text": "{value} {unit} Wohnfläche, klimatisiert"
     },
     "guests": {
-      "label": "Belegung",
-      "lead": "1 bis 4",
-      "detail": "Gäste"
+      "text": "1 bis 4 Gäste"
+    },
+    "equipped": {
+      "text": "Voll ausgestattet"
     },
     "unit": {
       "m": "m",
       "m2": "m²",
       "min": "Min."
-    },
-    "equipped": {
-      "label": "Ausstattung",
-      "lead": "Voll ausgestattet",
-      "detail": ""
     }
   },
   "gallery": {
@@ -114,22 +108,18 @@
       "01": "Der Wohnbereich vom Tresen aus, das Sofa, die Bank unter der Fensterfront und das Fernsehmöbel",
       "02": "Die Küchenzeile: Kühlschrank, Kochfeld, Spüle und Waschmaschine",
       "03": "Das Doppelbett des Schlafbereichs, in seiner Nische, unter den Regalen am Kopfende",
-      "04": "Das Doppelbett des Schlafbereichs, unter der dekorierten Wand und ihren Regalen",
       "05": "Der Wohnbereich zum Tresen hin, mit zwei Barhockern und dem Zugang zum Schlafbereich",
       "06": "Der Hauptraum, das ausgezogene Bett, die Kommode und der Tresen im Hintergrund",
       "07": "Der Wohnbereich mit seinem Sofa und seinem großen Spiegel, vor der Fensterfront zum Garten",
       "08": "Die ganze Länge des Studios, vom Tresen mit seinem Tisch bis zum Bett vor der Fensterfront",
-      "09": "Die Sitzecke mit ihrem Couchtisch und dem Fernseher, vor dem Grün des Gartens",
       "10": "Das Studio von einem Ende zum anderen: das Fernsehmöbel, der Tresen und der Zugang zum Schlafbereich",
       "11": "Das ausgezogene Bett im Hauptraum, der große Spiegel und die Kommode",
-      "12": "Das Schlafsofa des Wohnbereichs, der große Spiegel und hinten der Tresen mit seinen Hockern",
       "13": "Die Küche mit ihrer Spüle und ihrer Waschmaschine, offen zum Schlafbereich im Hintergrund",
       "14": "Das Studio der Länge nach, vom Tresen über den Wohnbereich zur Fensterfront, rechts die Küche",
       "15": "Die geflieste Dusche im Bad, das Waschbecken und der große Spiegel",
       "16": "Der Tresen mit seinen Barhockern, die Mikrowelle, der Wasserkocher und das Glasregal",
       "17": "Die Fernsehecke mit ihrem langen Sideboard und der Bank unter der Fensterfront",
       "18": "Das Bad: die Dusche, das Waschbecken, sein Spiegel und die Holzregale",
-      "19": "Das zum Doppelbett ausgezogene Schlafsofa, vor der Fensterfront und der Bank",
       "20": "Die Barecke: die Mikrowelle, der Wasserkocher, die Kaffeemaschine und darüber die Gläser"
     }
   },

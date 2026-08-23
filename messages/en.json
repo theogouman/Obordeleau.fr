@@ -60,27 +60,21 @@
   "quickFacts": {
     "title": "At a glance",
     "beach": {
-      "label": "Distance to the beach",
-      "detail": "to the beach, on foot"
+      "text": "{value} {unit} to the beach, on foot"
     },
     "size": {
-      "label": "Floor area",
-      "detail": "of living space, air conditioned"
+      "text": "{value} {unit} of living space, air conditioned"
     },
     "guests": {
-      "label": "Capacity",
-      "lead": "1 to 4",
-      "detail": "guests"
+      "text": "1 to 4 guests"
+    },
+    "equipped": {
+      "text": "Fully equipped"
     },
     "unit": {
       "m": "m",
       "m2": "m²",
       "min": "min"
-    },
-    "equipped": {
-      "label": "Equipment",
-      "lead": "Fully equipped",
-      "detail": ""
     }
   },
   "gallery": {
@@ -114,22 +108,18 @@
       "01": "The living room seen from the bar, the sofa, the bench under the picture window and the TV unit",
       "02": "The fitted kitchen: fridge, hob, sink and washing machine",
       "03": "The double bed of the sleeping area, in its alcove, under the headboard shelves",
-      "04": "The double bed of the sleeping area, under the decorated wall and its shelves",
       "05": "The living room opening onto the bar, its two high stools and the way into the sleeping area",
       "06": "The main room, the bed made up, the chest of drawers and the bar at the back",
       "07": "The living room, its sofa and its large mirror, facing the picture window onto the garden",
       "08": "The full length of the studio, from the bar and its table to the bed facing the picture window",
-      "09": "The sitting area, its coffee table and the television, facing the greenery of the garden",
       "10": "The studio end to end: the TV unit, the bar and the way into the sleeping area",
       "11": "The bed made up in the main room, the large mirror and the chest of drawers",
-      "12": "The sofa bed of the living room, the large mirror and, at the back, the bar and its stools",
       "13": "The kitchen, its sink and its washing machine, opening onto the sleeping area at the back",
       "14": "The studio lengthways, from the bar to the living room and the picture window, kitchen on the right",
       "15": "The tiled shower of the bathroom, the basin and its large mirror",
       "16": "The bar and its high stools, the microwave, the kettle and the glass shelf",
       "17": "The television corner, its long low unit and the bench under the picture window",
       "18": "The bathroom: the shower, the basin, its mirror and the wooden shelves",
-      "19": "The sofa bed opened out into a double, facing the picture window and the bench",
       "20": "The bar corner: the microwave, the kettle, the coffee machine and the glasses above"
     }
   },

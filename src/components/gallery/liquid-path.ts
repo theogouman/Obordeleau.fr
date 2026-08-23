@@ -25,6 +25,9 @@ export const PR = 22;
 /** Height the surface is traced at: the rail, plus the panel's corners. */
 export const SURFACE_H = RAIL_H + PR;
 
+/** Mirrors `--resize-dur`, so the JavaScript releases the height once the CSS is done. */
+export const RESIZE_MS = 300;
+
 /** Overdamped: it settles, it never bounces. */
 export const SPRING = { k: 700, c: 50, m: 0.5 } as const;
 /** Below this, in px and px/s, the spring is called home. */

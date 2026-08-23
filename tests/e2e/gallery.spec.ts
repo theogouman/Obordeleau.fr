@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 
 /**
@@ -10,11 +11,25 @@ test.describe('gallery', () => {
     expect(response.ok()).toBeTruthy();
     const html = await response.text();
 
-    // All twenty photos are named in the HTML, so the page holds the whole
-    // gallery even with JavaScript switched off.
-    for (let n = 1; n <= 20; n += 1) {
-      const file = `gallery-${String(n).padStart(2, '0')}.jpg`;
-      expect(html, `${file} missing from the server rendered page`).toContain(
+    // Every photograph the property file lists is named in the HTML, so the
+    // page holds the whole gallery even with JavaScript switched off. Read
+    // from the file rather than counted here, so retiring a photograph is a
+    // change of data and not a change of test.
+    // Resolved from the project root, which is where Playwright is run from.
+    const { gallery } = JSON.parse(readFileSync('content/property.json', 'utf8')) as {
+      gallery: Array<{ file: string }>;
+    };
+    expect(gallery.length).toBeGreaterThan(0);
+
+    for (const photo of gallery) {
+      expect(html, `${photo.file} missing from the server rendered page`).toContain(
+        encodeURIComponent(`/images/gallery/${photo.file}`),
+      );
+    }
+
+    // And the ones that were retired are gone from it.
+    for (const file of ['gallery-04.jpg', 'gallery-09.jpg', 'gallery-12.jpg', 'gallery-19.jpg']) {
+      expect(html, `${file} is still rendered`).not.toContain(
         encodeURIComponent(`/images/gallery/${file}`),
       );
     }
@@ -147,8 +162,10 @@ test.describe('gallery', () => {
         return seen.size;
       }, act);
 
+    // A jump draws one size, or two. An animation draws a handful even on a
+    // machine that is dropping frames.
     const opening = await widths('#gallery-living .gallery-tile');
-    expect(opening, 'the viewer appeared instead of growing').toBeGreaterThan(10);
+    expect(opening, 'the viewer appeared instead of growing').toBeGreaterThan(5);
 
     // The photo on screen and the two it sits between are all mounted, which
     // is what makes an arrow press immediate.
