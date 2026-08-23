@@ -58,13 +58,52 @@
     transition: opacity var(--duration-base) var(--ease-out-quad);
   }
 
-  /* A language change is a client navigation, so the page it is leaving stays
-     on screen while the next one is fetched. Dimming it says the switch was
-     heard, and turns the swap into one movement instead of a jump cut. The
-     switcher sets the flag, DocumentLocale clears it when the new language is
-     painted, and the duration token is already zero under reduced motion. */
+  /*
+   * A language change moves nothing but the words.
+   *
+   * It is a client navigation, so the document is never reloaded, and
+   * src/lib/locale-switch.ts puts the scroll position and the focus back on
+   * the frame the new language is painted: the reader stays on the paragraph
+   * they were reading. All that is left to show is the sentence itself
+   * changing, so the page fades a little while the new language is fetched and
+   * comes back as it lands. Out is quicker than in, so the wait reads as brief
+   * and the arrival as an arrival.
+   *
+   * The switcher sets the first flag, DocumentLocale swaps it for the second.
+   * Both durations are stopped by the reduced-motion block in _root.css, which
+   * caps every animation and transition on the page.
+   */
   html[data-locale-switching] body {
-    opacity: 0.45;
+    opacity: 0.5;
+    transition: opacity 140ms var(--ease-out-quad);
+    /*
+     * Scroll anchoring off for the length of the swap, and this is the line
+     * that stops the page twitching.
+     *
+     * Replacing the whole subtree changes the height of everything above the
+     * fold at once, and the browser answers by moving the scroll to keep its
+     * chosen anchor still. There is no anchor worth keeping when every node on
+     * the page has just been replaced by another one, so it moved the reader
+     * by the better part of three thousand pixels for a frame before
+     * locale-switch.ts put them back. Measured: the same switch from three
+     * different depths moved by exactly the same amount every time, which is
+     * what a compensation looks like and not what a clamp looks like. With
+     * this the position does not move at all.
+     */
+    overflow-anchor: none;
+  }
+
+  html[data-locale-arrived] body {
+    animation: locale-arrive 300ms var(--ease-out-quad) both;
+  }
+
+  @keyframes locale-arrive {
+    from {
+      opacity: 0.5;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   h1,

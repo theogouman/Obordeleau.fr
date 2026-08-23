@@ -142,6 +142,12 @@ export function BookingCalendar({
     () => new Intl.DateTimeFormat(localeTag, { dateStyle: 'full', timeZone: 'UTC' }),
     [localeTag],
   );
+  // The month without its year, because the sentence reads "we are full in
+  // August" and not "in August 2026".
+  const monthAlone = useMemo(
+    () => new Intl.DateTimeFormat(localeTag, { month: 'long', timeZone: 'UTC' }),
+    [localeTag],
+  );
 
   const weekdays = useMemo(() => {
     const short = new Intl.DateTimeFormat(localeTag, { weekday: 'short', timeZone: 'UTC' });
@@ -223,6 +229,25 @@ export function BookingCalendar({
     return seasonOf(rules, date)?.checkinConstraint === 'saturday'
       ? t('saturdayOnly')
       : null;
+  }
+
+  /**
+   * Whether a month holds one date a stay could start on.
+   *
+   * Deliberately about arrivals and nothing else. `isSelectable` answers a
+   * different question halfway through a choice, when the free nights left are
+   * the ones that fit the stay already begun, and a month full of those is not
+   * a month we are booked out of.
+   */
+  function hasArrival(monthStart: string): boolean {
+    const end = addMonths(monthStart, 1);
+    let date = monthStart > firstArrival ? monthStart : firstArrival;
+
+    while (date < end && date < windowEnd) {
+      if (!blocked.has(date) && isValidArrival(rules, date)) return true;
+      date = addDays(date, 1);
+    }
+    return false;
   }
 
   function select(date: string) {
@@ -360,6 +385,29 @@ export function BookingCalendar({
   const canGoBack = visibleMonth > startOfMonth(firstArrival);
   const canGoForward = addMonths(visibleMonth, 1) < windowEnd;
 
+  /*
+   * A month with nothing left in it says so, instead of handing over a grid of
+   * greyed squares and letting the visitor work it out.
+   *
+   * Only while an arrival is being chosen: once one is picked, the squares that
+   * go dark are the ones the stay rules refuse, which is a different thing and
+   * already has its own tooltip. And only once the real availability is in, so
+   * a calendar that is still loading never claims to be full.
+   */
+  const emptyMonths = months.map(
+    (month) => status === 'ready' && !pickingDeparture && !hasArrival(month),
+  );
+
+  /** How many months ahead the next free arrival is, or 0 if there is none. */
+  function offsetToNextFree(): number {
+    for (let offset = 1; addMonths(visibleMonth, offset) < windowEnd; offset += 1) {
+      if (hasArrival(addMonths(visibleMonth, offset))) return offset;
+    }
+    return 0;
+  }
+
+  const nextFree = emptyMonths[0] ? offsetToNextFree() : 0;
+
   function dayState(date: string) {
     const isArrival = date === arrival;
     const isDeparture = date === departure;
@@ -440,7 +488,28 @@ export function BookingCalendar({
         className="grid gap-6 @[30rem]/cal:grid-cols-2"
         aria-busy={status === 'loading'}
       >
-        {months.map((month, index) => (
+        {months.map((month, index) => {
+          if (emptyMonths[index]) {
+            return (
+              <FullMonth
+                key={month}
+                heading={monthName.format(new Date(`${month}T00:00:00Z`))}
+                sentence={t('fullMonth', {
+                  month: monthAlone.format(new Date(`${month}T00:00:00Z`)),
+                })}
+                link={index === 0 && nextFree > 0 ? t('nextAvailable') : null}
+                /* The link is pointless when the month it would bring in is the
+                   one already on the right, so it is dropped at the width where
+                   that second month is on screen. Under it, the second month is
+                   hidden and the link is the only way through. */
+                linkHiddenWide={nextFree === 1}
+                onFollow={() => goToMonth(nextFree)}
+                second={index === 1}
+              />
+            );
+          }
+
+          return (
           <table
             key={month}
             className={`w-full border-collapse ${index === 1 ? 'hidden @[30rem]/cal:table' : ''}`}
@@ -484,7 +553,8 @@ export function BookingCalendar({
               ))}
             </tbody>
           </table>
-        ))}
+          );
+        })}
       </div>
       </div>
 
@@ -497,6 +567,60 @@ export function BookingCalendar({
             className="ms-auto text-raspberry-ink underline underline-offset-4"
           >
             {t('clear')}
+          </button>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * A month we are booked out of, in place of its grid.
+ *
+ * Thirty greyed squares are a puzzle, not an answer: they say nothing about
+ * whether the next month is any better, and the only way to find out was to
+ * press the arrow and look. So the month says what it is, and offers the one
+ * move worth making. Following it is the same movement the arrows make, page
+ * side by side (transitions.dev, 08), however many months it has to cross:
+ * this one leaves in the direction of travel while it fades and blurs, and the
+ * month with dates in it arrives from the other side once it is gone.
+ */
+function FullMonth({
+  heading,
+  sentence,
+  link,
+  linkHiddenWide,
+  onFollow,
+  second,
+}: {
+  heading: string;
+  sentence: string;
+  link: string | null;
+  linkHiddenWide: boolean;
+  onFollow: () => void;
+  second: boolean;
+}) {
+  return (
+    <div className={`flex flex-col ${second ? 'hidden @[30rem]/cal:flex' : ''}`}>
+      <p className="mb-2 font-display text-lg capitalize">{heading}</p>
+
+      <div className="flex flex-1 flex-col items-center justify-center gap-3 rounded-[var(--radius-card)] bg-sand px-4 py-10 text-center">
+        <p className="font-display text-lg text-ink">{sentence}</p>
+
+        {/* The link is inline rather than a flex row: on a narrow calendar the
+            label takes two lines, and a row kept the arrow up on the first one,
+            stranded against the right edge. Held to the last word by a non
+            breaking space, it stays where the sentence ends. */}
+        {link ? (
+          <button
+            type="button"
+            onClick={onFollow}
+            className={`max-w-full text-balance text-sm font-medium text-raspberry-ink underline underline-offset-4 ${
+              linkHiddenWide ? '@[30rem]/cal:hidden' : ''
+            }`}
+          >
+            {link}
+            <span aria-hidden="true">&#160;&#8594;</span>
           </button>
         ) : null}
       </div>

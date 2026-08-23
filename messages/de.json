@@ -48,11 +48,11 @@
   },
   "hero": {
     "eyebrow": "Les Sablettes, La Seyne-sur-Mer",
-    "titleLead": "Ein klimatisiertes Studio,",
-    "titleAccent": "70 Meter",
-    "titleTail": "vom Strand entfernt",
+    "titleLead": "Hier ist alles, was einen guten Urlaub ausmacht,",
+    "titleAccent": "zwei Minuten",
+    "titleTail": "zu Fuß entfernt.",
     "subtitle": "Sie stellen das Auto ab und vergessen es. Der Sandstrand von Les Sablettes liegt zwei Gehminuten entfernt durch den Park, die Fähre nach Toulon legt direkt vor der Residenz ab, und Geschäfte und Restaurants sind im Viertel.",
-    "ctaPrimary": "Reisedaten buchen",
+    "ctaPrimary": "Verfügbarkeiten ansehen",
     "ctaSecondary": "Das Studio ansehen",
     "imageAlt": "Das Studio Obordeleau und der Strand von Les Sablettes in La Seyne-sur-Mer",
     "badge": "Als 3-Sterne-Ferienwohnung klassifiziert"
@@ -493,7 +493,9 @@
       "taken": "Bereits gebucht",
       "minNights": "{count, plural, one {Mindestens # Nacht} other {Mindestens # Nächte}}",
       "multipleNights": "{count, plural, =7 {Nur ganze Wochen} other {In Vielfachen von # Nächten}}",
-      "saturdayOnly": "Anreise samstags"
+      "saturdayOnly": "Anreise samstags",
+      "fullMonth": "Im {month} sind wir ausgebucht",
+      "nextAvailable": "Nächste freie Termine ansehen"
     }
   },
   "footer": {

@@ -48,11 +48,11 @@
   },
   "hero": {
     "eyebrow": "Les Sablettes, La Seyne-sur-Mer",
-    "titleLead": "Un monolocale climatizzato a",
-    "titleAccent": "70 metri",
-    "titleTail": "dalla spiaggia",
+    "titleLead": "Qui, tutto ciò che rende una bella vacanza è a",
+    "titleAccent": "due minuti",
+    "titleTail": "a piedi.",
     "subtitle": "Parcheggi l'auto e te ne dimentichi. La spiaggia delle Sablettes è a due minuti a piedi attraverso il parco, il battello per Tolone parte ai piedi della residenza, negozi e ristoranti sono nel quartiere.",
-    "ctaPrimary": "Prenota le mie date",
+    "ctaPrimary": "Vedi le disponibilità",
     "ctaSecondary": "Guarda il monolocale",
     "imageAlt": "Il monolocale Obordeleau e la spiaggia delle Sablettes a La Seyne-sur-Mer",
     "badge": "Alloggio turistico 3 stelle"
@@ -493,7 +493,9 @@
       "taken": "Già prenotato",
       "minNights": "{count, plural, one {Minimo # notte} other {Minimo # notti}}",
       "multipleNights": "{count, plural, =7 {Per settimane intere} other {A multipli di # notti}}",
-      "saturdayOnly": "Arrivo di sabato"
+      "saturdayOnly": "Arrivo di sabato",
+      "fullMonth": "Nel mese di {month} siamo al completo",
+      "nextAvailable": "Vedi le prossime disponibilità"
     }
   },
   "footer": {

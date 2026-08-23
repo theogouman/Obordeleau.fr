@@ -10,7 +10,9 @@ import {
 } from 'react';
 import { useLocale } from 'next-intl';
 import { knownFlagSupport, supportsFlagEmoji } from '@/components/flag-emoji';
-import { Link, usePathname, useRouter } from '@/i18n/navigation';
+import { beginLocaleSwitch } from '@/lib/locale-switch';
+import { useRouter } from 'next/navigation';
+import { Link, getPathname, usePathname } from '@/i18n/navigation';
 import { localeFlags, localeNames, routing, type Locale } from '@/i18n/routing';
 
 type Props = {
@@ -108,14 +110,40 @@ export function LanguageSwitcher({ label, className = '', tone = 'light' }: Prop
     event.preventDefault();
     if (locale === active) return;
 
-    const root = document.documentElement;
-    root.setAttribute('data-locale-switching', '');
-    // DocumentLocale clears the flag when the new language is painted. This is
-    // only the safety net for a navigation that never lands.
-    window.setTimeout(() => root.removeAttribute('data-locale-switching'), 4000);
+    /*
+     * The click has just put the focus on this link, and this link is inside
+     * the subtree the switch replaces. Left alone, the browser loses the focus
+     * with the element and scrolls the reader to the top of the page. The
+     * selector is what the same option is called in the tree that arrives, so
+     * DocumentLocale can hand the focus straight back to it; the whole story is
+     * in src/lib/locale-switch.ts.
+     */
+    beginLocaleSwitch(
+      `.lang-switch[data-tone="${tone}"] .lang-switch__option[data-locale="${locale}"]`,
+    );
 
+    /*
+     * The href is worked out here and handed to Next's own router rather than
+     * left to next intl's, and that is the difference between a switch and a
+     * reload.
+     *
+     * next intl's `useRouter` forces the locale prefix on every language
+     * change, deliberately: one blanket rule instead of a check it calls
+     * expensive. French is the unprefixed default here, so choosing it asked
+     * for /fr, the middleware answered 307 to /, and the App Router cannot
+     * follow a redirect that moves the URL under it. It gave up and loaded the
+     * document again: white flash, every script parsed a second time, the
+     * reader back at the top. Measured on the built site, switching to French
+     * fired a real load event and switching to the other three did not.
+     *
+     * The forced prefix guards the case where an unprefixed path could be read
+     * as another language. It cannot be here: `localeDetection` is off and no
+     * cookie takes part in the routing, so / is French and nothing else.
+     * `getPathname` returns the path the middleware would have settled on, so
+     * there is no redirect left to follow.
+     */
     startTransition(() => {
-      router.replace(pathname, { locale, scroll: false });
+      router.replace(getPathname({ href: pathname, locale }), { scroll: false });
     });
   };
 

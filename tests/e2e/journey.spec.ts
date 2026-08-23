@@ -7,9 +7,11 @@ test.describe('P1 booking journey', () => {
 
     const h1 = page.getByRole('heading', { level: 1 });
     await expect(h1).toBeVisible();
-    await expect(h1).toContainText('70');
+    // The promise is the walk, not the measurement: the distance in metres is
+    // still on the page, in the facts bar and in the paragraph under the title.
+    await expect(h1).toContainText(/deux minutes/i);
 
-    await expect(page.getByRole('link', { name: /réserver mes dates/i }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /voir les disponibilités/i }).first()).toBeVisible();
   });
 
   test('the three channels are present and point at the real listings', async ({ page }) => {
@@ -211,6 +213,56 @@ test.describe('P1 booking journey', () => {
   });
 });
 
+/**
+ * A month with nothing left in it says so, and offers the way out.
+ *
+ * Thirty struck through squares are not an answer: they say nothing about
+ * whether the next month is any better. July and August are taken here and
+ * September is open, which is the shape of a real summer.
+ */
+test.describe('a month we are booked out of', () => {
+  const FULL_SUMMER = {
+    from: '2030-07-01',
+    to: '2031-06-30',
+    firstArrival: '2030-07-01',
+    minNights: 1,
+    country: 'FR',
+    paymentsEnabled: false,
+    blocked: (() => {
+      const nights: string[] = [];
+      for (const [month, days] of [
+        ['07', 31],
+        ['08', 31],
+      ] as const) {
+        for (let day = 1; day <= days; day += 1) {
+          nights.push(`2030-${month}-${String(day).padStart(2, '0')}`);
+        }
+      }
+      return nights;
+    })(),
+  };
+
+  test('it says so, and one press lands on the month that is open', async ({ page }) => {
+    await page.route('**/api/availability', async (route) => {
+      await route.fulfill({ status: 200, json: FULL_SUMMER });
+    });
+
+    await page.goto('/#book');
+
+    await expect(page.getByText(/complet en juillet/i)).toBeVisible();
+    // And no grid of dead squares behind the sentence.
+    await expect(page.locator('[data-date^="2030-07-"]')).toHaveCount(0);
+
+    await page.getByRole('button', { name: /prochaines disponibilités/i }).click();
+
+    // September is the first month with a night to take, and its squares are
+    // live rather than struck through.
+    const september = page.locator('[data-date^="2030-09-"]').first();
+    await expect(september).toBeVisible();
+    await expect(september).not.toHaveAttribute('aria-disabled', 'true');
+  });
+});
+
 /** FR-012: nothing reaches Google before consent. */
 test.describe('map consent gate', () => {
   test('no Google request is made before the visitor accepts', async ({ page }) => {
@@ -230,11 +282,13 @@ test.describe('map consent gate', () => {
 
 /** User story 3: multilingual reach and local SEO. */
 test.describe('internationalisation', () => {
+  // A word of the heading that only exists in that language, so the test can
+  // tell a translated page from a page that merely changed its URL.
   for (const [locale, path, marker] of [
-    ['fr', '/', 'plage'],
-    ['en', '/en', 'beach'],
-    ['de', '/de', 'Strand'],
-    ['it', '/it', 'spiaggia'],
+    ['fr', '/', 'vacances'],
+    ['en', '/en', 'holiday'],
+    ['de', '/de', 'Urlaub'],
+    ['it', '/it', 'vacanza'],
   ] as const) {
     test(`${locale} renders localized content and metadata`, async ({ page }) => {
       await page.goto(path);
@@ -253,6 +307,56 @@ test.describe('internationalisation', () => {
       expect(jsonLd).toContain('VacationRental');
     });
   }
+
+  /**
+   * The reader does not move, and the document is not loaded again.
+   *
+   * Both used to happen, for two separate reasons. Choosing French asked for
+   * /fr, which the middleware redirects to /, and the App Router answers a
+   * redirect it cannot follow with a full document load. And any language
+   * clicked with a real pointer left the focus on a link that the switch was
+   * about to remove, which sends the browser to the top of the page. So the
+   * test clicks the way a visitor does, from halfway down, and watches the
+   * load event as well as the position.
+   */
+  test('a language change moves neither the page nor the reader', async ({ page }) => {
+    await page.goto('/');
+
+    let loads = 0;
+    page.on('load', () => {
+      loads += 1;
+    });
+
+    for (const [locale, expected] of [
+      ['en', /\/en$/],
+      ['fr', /\/$/],
+    ] as const) {
+      // focus() then click(), which is what a pointer does and what a scripted
+      // click on its own does not: the focus is the whole of the problem. The
+      // position is read between the two, because focusing something off screen
+      // brings it into view, and a real pointer can only press what is already
+      // there.
+      const before = await page.evaluate((code) => {
+        window.scrollTo({ top: 1500, behavior: 'instant' });
+        document
+          .querySelector<HTMLElement>(`footer .lang-switch__option[data-locale="${code}"]`)
+          ?.focus();
+        return Math.round(window.scrollY);
+      }, locale);
+
+      await page.evaluate((code) => {
+        document
+          .querySelector<HTMLElement>(`footer .lang-switch__option[data-locale="${code}"]`)
+          ?.click();
+      }, locale);
+
+      await expect(page).toHaveURL(expected);
+      await expect(page.locator('html')).toHaveAttribute('lang', new RegExp(`^${locale}`));
+      expect(Math.round(await page.evaluate(() => window.scrollY))).toBe(before);
+    }
+
+    expect(loads, 'the document was loaded again instead of being updated').toBe(0);
+  });
 
   /* The footer keeps the pill, where the four languages are on show at once. */
   test('the footer switcher keeps the visitor on the same page', async ({ page }) => {

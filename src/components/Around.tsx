@@ -1,9 +1,9 @@
-import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { AccentHeading } from '@/components/AccentHeading';
 import { AroundStack } from '@/components/AroundStack';
 import { Icon } from '@/components/Icon';
 import { Reveal } from '@/components/Reveal';
+import { ResilientImage } from '@/components/ResilientImage';
 import { Section } from '@/components/Section';
 import { assetExists } from '@/lib/assets';
 import { aroundItems, property } from '@/lib/content';
@@ -26,9 +26,15 @@ import { aroundItems, property } from '@/lib/content';
  * naming it in content/property.json under `area` is all it takes to turn any
  * of them into a photograph card, and the only other thing it needs is a
  * photoAlt in each of the four catalogues.
+ *
+ * The photograph itself is a ResilientImage rather than a plain one: a request
+ * that is lost once used to leave the alt text on the card for the rest of the
+ * visit, since a browser never retries a URL it has already failed on. See the
+ * note in that file for what the investigation found.
  */
 export function Around() {
   const t = useTranslations('around');
+  const gallery = useTranslations('gallery');
 
   const photos = new Map(property.area.map((image) => [image.aroundId, image.file]));
   // Which photograph carries a written note over it. One does today, and the
@@ -73,12 +79,11 @@ export function Around() {
 
                 {photo ? (
                   <div className="around-card__visual">
-                    <Image
+                    <ResilientImage
                       src={photo}
                       alt={t(`items.${item.id}.photoAlt`)}
-                      fill
                       sizes="(min-width: 768px) 45vw, 100vw"
-                      className="object-cover"
+                      missingLabel={gallery('missing')}
                     />
 
                     {notes.has(item.id) ? (

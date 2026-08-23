@@ -48,11 +48,11 @@
   },
   "hero": {
     "eyebrow": "Les Sablettes, La Seyne-sur-Mer",
-    "titleLead": "Un studio climatisé à",
-    "titleAccent": "70 mètres",
-    "titleTail": "de la plage",
+    "titleLead": "Ici, tout ce qui fait de bonnes vacances est à",
+    "titleAccent": "deux minutes",
+    "titleTail": "à pied.",
     "subtitle": "Vous posez la voiture et vous l'oubliez. La plage des Sablettes est à deux minutes à pied par le parc, le bateau-bus pour Toulon part au pied de la résidence, les commerces et les restaurants sont dans le quartier.",
-    "ctaPrimary": "Réserver mes dates",
+    "ctaPrimary": "Voir les disponibilités",
     "ctaSecondary": "Voir le studio",
     "imageAlt": "Le studio Obordeleau et la plage des Sablettes à La Seyne-sur-Mer",
     "badge": "Meublé de tourisme 3 étoiles"
@@ -493,7 +493,9 @@
       "taken": "Déjà réservé",
       "minNights": "{count, plural, one {Minimum # nuit} other {Minimum # nuits}}",
       "multipleNights": "{count, plural, =7 {Par semaines entières} other {Par multiples de # nuits}}",
-      "saturdayOnly": "Arrivée le samedi"
+      "saturdayOnly": "Arrivée le samedi",
+      "fullMonth": "On est complet en {month}",
+      "nextAvailable": "Voir les prochaines disponibilités"
     }
   },
   "footer": {

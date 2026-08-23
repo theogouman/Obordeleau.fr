@@ -55,7 +55,7 @@ export function Footer({ year }: { year: number }) {
               alt={t('classificationAlt')}
               width={1254}
               height={1254}
-              className="mt-6 h-auto w-[104px] rounded-lg bg-cream/95 p-2"
+              className="mt-6 h-auto w-[104px]"
               sizes="104px"
             />
           ) : null}
@@ -150,7 +150,11 @@ export function Footer({ year }: { year: number }) {
       </div>
 
       <div className="border-t border-cream/15">
-        <div className="container-page flex flex-col gap-4 py-6 text-sm text-cream/70 md:flex-row md:items-center md:justify-between">
+        {/* items-start, because a column flex container stretches its children
+            across the cross axis: the language track is an inline-flex of four
+            flags and it was being pulled to the full width of the page, so the
+            control read as a bar with its content floating at one end. */}
+        <div className="container-page flex flex-col items-start gap-4 py-6 text-sm text-cream/70 md:flex-row md:items-center md:justify-between">
           <p>{t('copyright', { year })}</p>
           <LanguageSwitcher label={nav('language')} tone="dark" />
         </div>

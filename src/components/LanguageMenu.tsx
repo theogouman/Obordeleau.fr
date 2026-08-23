@@ -9,7 +9,9 @@ import {
 } from 'react';
 import { useLocale } from 'next-intl';
 import { knownFlagSupport, supportsFlagEmoji } from '@/components/flag-emoji';
-import { Link, usePathname, useRouter } from '@/i18n/navigation';
+import { beginLocaleSwitch } from '@/lib/locale-switch';
+import { useRouter } from 'next/navigation';
+import { Link, getPathname, usePathname } from '@/i18n/navigation';
 import { localeFlags, localeNames, routing, type Locale } from '@/i18n/routing';
 
 /** Matches --morph-close-dur: the language lands once the panel has closed. */
@@ -123,14 +125,22 @@ export function LanguageMenu({ label, switchLabel, align = 'end', className = ''
   );
 
   function go(locale: Locale) {
-    const root = document.documentElement;
-    root.setAttribute('data-locale-switching', '');
-    // DocumentLocale clears the flag when the new language is painted. This is
-    // only the safety net for a navigation that never lands.
-    window.setTimeout(() => root.removeAttribute('data-locale-switching'), 4000);
+    /*
+     * Choosing sends the focus back to the key, and the key is inside the
+     * subtree the switch replaces: without this the browser would lose the
+     * focus with it and scroll the reader to the top of the page. The selector
+     * is what this same key is called in the tree that arrives, and `align` is
+     * what tells the header one apart from the one in the mobile menu. The
+     * reasoning is in src/lib/locale-switch.ts.
+     */
+    beginLocaleSwitch(`.lang-key[data-align="${align}"] .lang-key__trigger`);
 
+    // Next's own router, on the path the middleware would have settled on:
+    // next intl's forces the /fr prefix, which redirects, which the App Router
+    // can only answer with a full document load. The long version is in
+    // LanguageSwitcher.
     startTransition(() => {
-      router.replace(pathname, { locale, scroll: false });
+      router.replace(getPathname({ href: pathname, locale }), { scroll: false });
     });
   }
 

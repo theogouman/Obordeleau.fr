@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 /**
  * The places nearby, stacking as the section is scrolled through.
@@ -31,6 +31,27 @@ import { useEffect, useRef, type ReactNode } from 'react';
  */
 
 const easeOut = (t: number) => 1 - (1 - t) ** 3;
+
+/**
+ * The shape the pile had when the last instance of this component was on
+ * screen.
+ *
+ * A language change replaces the whole locale subtree, so this section
+ * remounts, and the height that makes the pile work is an inline style written
+ * by the effect below. The new container therefore starts at its unstacked
+ * height, the document loses three viewports, the browser clamps the scroll to
+ * whatever is left, and the effect puts the height back a frame later. Net
+ * result: the reader is exactly where they were, having watched the page jump
+ * and come back.
+ *
+ * Cached here so the container can be rendered at its full height straight
+ * away and the document never shrinks at all. Module scope, so it lives as
+ * long as the JavaScript context does, which is precisely as long as there is
+ * no full page load. It is never written on the server: only the effect writes
+ * it, and effects do not run there, so the first render still matches the
+ * markup that was sent.
+ */
+let lastLayout: { height: string; padding: string } | null = null;
 
 /** How much lower each card lands than the one under it. */
 const LAND_STEP = 12;
@@ -64,6 +85,9 @@ const RESIZE_SETTLE_MS = 150;
 const CHROME_SLACK = 160;
 
 export function AroundStack({ header, children }: { header: ReactNode; children: ReactNode }) {
+  // Read once, at mount: what the pile looked like before this instance
+  // replaced the last one, or nothing at all on a first load.
+  const [restored] = useState(() => lastLayout);
   const scrollRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
   const headRef = useRef<HTMLDivElement>(null);
@@ -125,6 +149,7 @@ export function AroundStack({ header, children }: { header: ReactNode; children:
       // down. Asking for that much room is what makes the section close on the
       // bottom of the pile rather than on the bottom of the top card.
       area.style.paddingBottom = `${landing}px`;
+      lastLayout = { height: scroll.style.height, padding: area.style.paddingBottom };
 
       if (!sizeCards) return;
 
@@ -227,13 +252,25 @@ export function AroundStack({ header, children }: { header: ReactNode; children:
   }, []);
 
   return (
-    <div ref={scrollRef} className="around-stack">
+    <div
+      ref={scrollRef}
+      className="around-stack"
+      // Both together or neither: the attribute is what turns the frame sticky
+      // and lays the cards over one another, and the height without it would
+      // be three viewports of nothing under a plain list.
+      data-stack={restored ? 'on' : undefined}
+      style={restored ? { height: restored.height } : undefined}
+    >
       <div ref={frameRef} className="around-stack__sticky">
         <div ref={headRef} className="around-stack__head">
           {header}
         </div>
 
-        <div ref={cardsRef} className="around-stack__cards">
+        <div
+          ref={cardsRef}
+          className="around-stack__cards"
+          style={restored ? { paddingBottom: restored.padding } : undefined}
+        >
           {children}
         </div>
       </div>
