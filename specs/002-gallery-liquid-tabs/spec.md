@@ -228,3 +228,28 @@ Aucune dérogation demandée.
 7. Passe reduced-motion, test e2e, `npm run check` et build sur Vercel.
 
 Un commit par étape, sur `feat/gallery-liquid-tabs`.
+
+## 11. Reprise sur la maquette `galerie-mvp-v9` (2026-08-23)
+
+Une maquette HTML de reference est arrivee apres coup, `galerie-mvp-v9.html`,
+et fait foi pour la presentation. Le composant a ete realigne dessus trait pour
+trait : geometrie du trace, durees, courbes, cadre sable a coins de 26 px,
+panneau unique portant le titre de piece sur une ligne, tuiles ombrees qui se
+soulevent, visionneuse creme a bandeau de vignettes.
+
+Deux points de la section 3 tombent avec elle.
+
+1. **Le rail ne defile plus.** La maquette redonne au trace la queue qu'il avait
+   perdue : la bosse et le bord superieur du panneau, coins compris, sont de
+   nouveau un seul geste. Un rail qui defile emporterait ces coins hors du
+   cadre, donc les cinq onglets tiennent toujours entre les deux bords. Ce qui
+   cede quand la place manque est le libelle : abrege sous 720 px, et sous
+   600 px l'icone reste seule, le libelle restant dans le document pour les
+   lecteurs d'ecran. La maquette, elle, coupait le cinquieme onglet.
+2. **`framer-motion` sort du projet.** La maquette anime le ressort de la bosse
+   a la main et le morph de la photo avec l'API Web Animations. Les deux sont
+   repris tels quels, plus rien n'importe la bibliotheque, et les 34 Ko
+   budgetes en section 7 quittent le chemin critique.
+
+Le classement des photos, l'ordre des pieces et les textes ne bougent pas : la
+maquette porte un autre jeu de photos, elle n'a ete lue que pour la forme.

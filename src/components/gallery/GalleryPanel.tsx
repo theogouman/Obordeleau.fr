@@ -7,7 +7,7 @@ import { GalleryTile } from './GalleryTile';
 import type { GalleryLabels, PhotoView } from './types';
 
 /**
- * One room: its heading, and its photos cut into rows of 2 or 3.
+ * One room: its heading on one line, and its photos cut into rows of 2 or 3.
  *
  * Rendered for every room on the server, so the page without JavaScript is a
  * plain gallery in five labelled sections rather than an empty frame.
@@ -40,8 +40,12 @@ export function GalleryPanel({
       aria-labelledby={interactive ? `gallery-tab-${room}` : undefined}
       tabIndex={interactive ? -1 : undefined}
     >
-      <h3 className="gallery-panel__title">{labels.rooms[room]}</h3>
-      <p className="gallery-panel__sub">{labels.roomSub[room]}</p>
+      <div className="gallery-panel__head">
+        <h3 className="gallery-panel__title">{labels.rooms[room]}</h3>
+        <p className="gallery-panel__sub">
+          {labels.roomSub[room]} &middot; {labels.roomCount[room]}
+        </p>
+      </div>
 
       <div className="gallery-rows">
         {rows.map((row) => (

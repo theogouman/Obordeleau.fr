@@ -88,6 +88,7 @@
     "intro": "One bright 33 m² room opening onto the garden, arranged so that nothing is missing: sleeping corner, dining corner, plenty of storage, and air conditioning for the hot days.",
     "open": "Enlarge photo",
     "counter": "Photo {current} of {total}",
+    "photoCount": "{count, plural, one {# photo} other {# photos}}",
     "missing": "Photo coming soon",
     "viewAll": "See all photos",
     "rooms": {

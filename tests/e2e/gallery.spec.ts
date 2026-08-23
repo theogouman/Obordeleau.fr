@@ -64,18 +64,25 @@ test.describe('gallery', () => {
     await expect(dialog).toBeHidden();
   });
 
-  test('the rail scrolls rather than truncating when the tabs do not fit', async ({ page }) => {
-    await page.setViewportSize({ width: 380, height: 800 });
+  test('the five tabs share the rail, at every width, and the bump follows', async ({ page }) => {
     await page.goto('/');
 
-    const scroller = page.locator('.gallery-rail__scroller');
-    const overflows = await scroller.evaluate(
-      (node) => node.scrollWidth > node.clientWidth + 1,
-    );
-    expect(overflows).toBeTruthy();
+    const rail = page.locator('.gallery-rail');
+    const surface = page.locator('.gallery-frame__surface path');
 
-    // Overflowing means a fade, and a full label rather than a bare icon.
-    await expect(scroller).toHaveAttribute('data-overflow', /right|both/);
+    // The rail never scrolls: the bump and the panel are a single traced
+    // surface, so the five tabs always fit between the two edges of the frame.
+    for (const width of [1280, 380]) {
+      await page.setViewportSize({ width, height: 800 });
+      const fits = await rail.evaluate((node) => node.scrollWidth <= node.clientWidth + 1);
+      expect(fits, `the rail overflows at ${width}px`).toBeTruthy();
+    }
+
     await expect(page.getByRole('tab').first()).not.toBeEmpty();
+
+    // And the surface is redrawn under whichever tab is the active one.
+    const first = await surface.getAttribute('d');
+    await page.getByRole('tab').nth(3).click();
+    await expect.poll(() => surface.getAttribute('d')).not.toBe(first);
   });
 });

@@ -39,11 +39,16 @@ export function Gallery() {
     close: common('close'),
     previous: common('previous'),
     next: common('next'),
-    counter: t('counter'),
-    roomCounter: t('lightbox.roomCounter'),
+    // Raw: these two are filled in the browser, photo after photo, so they
+    // have to cross as templates rather than be formatted here and now.
+    counter: t.raw('counter'),
+    roomCounter: t.raw('lightbox.roomCounter'),
     missing: t('missing'),
     rooms: byRoom((room) => t(`rooms.${room}`)),
     roomSub: byRoom((room) => t(`roomSub.${room}`)),
+    roomCount: byRoom((room) =>
+      t('photoCount', { count: photos.filter((photo) => photo.room === room).length }),
+    ),
   };
 
   return (
@@ -58,7 +63,7 @@ export function Gallery() {
         <p className="lead mt-4 text-lg text-ink-soft">{t('intro')}</p>
       </Reveal>
 
-      <div className="mt-10">
+      <div className="mt-8">
         <GalleryTabs photos={photos} labels={labels} />
       </div>
     </Section>

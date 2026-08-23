@@ -88,6 +88,7 @@
     "intro": "Une pièce claire de 33 m² ouverte sur le jardin, pensée pour que rien ne manque : coin nuit, coin repas, rangements, et la climatisation pour les journées chaudes.",
     "open": "Agrandir la photo",
     "counter": "Photo {current} sur {total}",
+    "photoCount": "{count, plural, one {# photo} other {# photos}}",
     "missing": "Photo à venir",
     "viewAll": "Voir toutes les photos",
     "rooms": {

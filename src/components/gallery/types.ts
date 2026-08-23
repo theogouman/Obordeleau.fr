@@ -24,6 +24,8 @@ export type GalleryLabels = {
   missing: string;
   rooms: Record<RoomId, string>;
   roomSub: Record<RoomId, string>;
+  /** "5 photos", already pluralised for the locale. */
+  roomCount: Record<RoomId, string>;
 };
 
 export function fillTemplate(template: string, values: Record<string, string | number>): string {

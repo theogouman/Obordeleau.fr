@@ -88,6 +88,7 @@
     "intro": "Un ambiente luminoso di 33 m² affacciato sul giardino, pensato perché non manchi nulla: zona notte, zona pranzo, spazi per riporre le cose e l'aria condizionata per le giornate calde.",
     "open": "Ingrandisci la foto",
     "counter": "Foto {current} di {total}",
+    "photoCount": "{count, plural, one {# foto} other {# foto}}",
     "missing": "Foto in arrivo",
     "viewAll": "Guarda tutte le foto",
     "rooms": {

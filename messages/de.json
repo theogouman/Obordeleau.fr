@@ -88,6 +88,7 @@
     "intro": "Ein heller Raum von 33 m² zum Garten hin, so eingerichtet, dass nichts fehlt: Schlafbereich, Essbereich, viel Stauraum und eine Klimaanlage für die heißen Tage.",
     "open": "Foto vergrößern",
     "counter": "Foto {current} von {total}",
+    "photoCount": "{count, plural, one {# Foto} other {# Fotos}}",
     "missing": "Foto folgt",
     "viewAll": "Alle Fotos ansehen",
     "rooms": {
