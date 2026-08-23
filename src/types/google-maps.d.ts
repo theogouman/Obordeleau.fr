@@ -9,6 +9,11 @@ declare global {
      * signal; everything else it reports goes to the console only.
      */
     gm_authFailure?: () => void;
+    /**
+     * Handed to the bootstrap as its `callback`, and called by Google once
+     * `google.maps` is actually usable. See `MapEmbed`.
+     */
+    __obordeleauMapsReady?: () => void;
   }
 }
 

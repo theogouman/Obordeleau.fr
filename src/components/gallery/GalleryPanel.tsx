@@ -1,6 +1,6 @@
 'use client';
 
-import type { CSSProperties } from 'react';
+import { memo, type CSSProperties } from 'react';
 import type { RoomId } from '@/lib/rooms';
 import { chunkIntoRows } from './gallery-layout';
 import { GalleryTile } from './GalleryTile';
@@ -12,7 +12,7 @@ import type { GalleryLabels, PhotoView } from './types';
  * Rendered for every room on the server, so the page without JavaScript is a
  * plain gallery in five labelled sections rather than an empty frame.
  */
-export function GalleryPanel({
+export const GalleryPanel = memo(function GalleryPanel({
   room,
   photos,
   labels,
@@ -68,4 +68,4 @@ export function GalleryPanel({
       </div>
     </section>
   );
-}
+});

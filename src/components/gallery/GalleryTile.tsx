@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { memo } from 'react';
 import type { PhotoView } from './types';
 
 /**
@@ -10,7 +11,7 @@ import type { PhotoView } from './types';
  * Tile and viewer are both 4:3, so the morph is a uniform scale: the cover crop
  * is identical at both ends and the photo never squashes on the way.
  */
-export function GalleryTile({
+export const GalleryTile = memo(function GalleryTile({
   photo,
   openLabel,
   missingLabel,
@@ -43,4 +44,4 @@ export function GalleryTile({
       )}
     </button>
   );
-}
+});

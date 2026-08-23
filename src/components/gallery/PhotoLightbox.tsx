@@ -1,33 +1,77 @@
 'use client';
 
 import Image from 'next/image';
-import { useCallback, useEffect, useRef } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import { ROOM_ORDER } from '@/lib/rooms';
 import { fillTemplate, type GalleryLabels, type PhotoView } from './types';
 import { usePrefersReducedMotion } from './use-reduced-motion';
 
 /**
- * Matched geometry, the way iOS does it: the photo does not fade out here and
- * fade in there, it travels. The tile's box is read at the moment of opening
- * and the large image is animated from it, so a photo grows out of its own
- * place in the grid and shrinks back into it.
+ * Matched geometry, the way iOS does it: the viewer does not appear, it grows
+ * out of the tile that was clicked and shrinks back into it.
  *
- * The chrome around it, backdrop, surface, caption and strip, only ever cross
- * fades. Nothing but the photograph moves.
+ * What travels is the whole card, not the photograph alone. Animating the
+ * photograph inside its own frame meant animating it inside a box that clips,
+ * so the picture slid out from under a black rectangle that stayed put. The
+ * card carries its header, its picture and its strip along with it.
+ *
+ * Every step here is a Web Animations call rather than a CSS transition.
+ * A transition needs its starting state to have been painted at least once,
+ * and on a cold visit, with the main thread busy, that first paint is not
+ * guaranteed to happen before the class flips: the viewer then appeared with
+ * no animation at all. An animation is told both ends and owes nothing to
+ * what was painted before.
  */
 const OPEN_MS = 380;
 const CLOSE_MS = 320;
 const OPEN_EASE = 'cubic-bezier(0.22,1,0.36,1)';
 const CLOSE_EASE = 'cubic-bezier(0.5,0,0.75,0)';
-/** Long enough for the cross fade when there is no photo to travel back to. */
-const FADE_OUT_MS = 120;
-/** Radius of the tile, and radius of the viewer: the morph goes from one to the other. */
-const TILE_RADIUS = '16px';
-const MEDIA_RADIUS = '14px';
+const BACKDROP_MS = 400;
 
 function tileImage(id: string): HTMLElement | null {
   return document.querySelector<HTMLElement>(`#gallery-tile-${id} img`);
 }
+
+/**
+ * The strip holds twenty thumbnails and does not change when the photo does,
+ * so it is kept out of the re-render and its current mark is moved by hand.
+ */
+const Strip = memo(function Strip({
+  photos,
+  labels,
+  onGoTo,
+}: {
+  photos: PhotoView[];
+  labels: GalleryLabels;
+  onGoTo: (index: number) => void;
+}) {
+  return (
+    <>
+      {photos.map((item, position) => {
+        const previous = photos[position - 1];
+        const roomChanges =
+          previous !== undefined &&
+          ROOM_ORDER.indexOf(previous.room) !== ROOM_ORDER.indexOf(item.room);
+
+        return (
+          <div key={item.id} style={{ display: 'contents' }}>
+            {roomChanges ? <span className="lightbox__sep" aria-hidden="true" /> : null}
+            <button
+              type="button"
+              className="lightbox__thumb"
+              data-position={position}
+              aria-label={item.alt}
+              title={labels.rooms[item.room]}
+              onClick={() => onGoTo(position)}
+            >
+              {item.available ? <Image src={item.src} alt="" fill sizes="70px" /> : null}
+            </button>
+          </div>
+        );
+      })}
+    </>
+  );
+});
 
 export function PhotoLightbox({
   photos,
@@ -47,33 +91,48 @@ export function PhotoLightbox({
 
   const overlayRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
-  const mediaRef = useRef<HTMLDivElement>(null);
+  const backdropRef = useRef<HTMLDivElement>(null);
   const stripRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
 
   const restoreTo = useRef<HTMLElement | null>(null);
-  /** The tile the photo came out of, hidden while its photo is elsewhere. */
+  /** The tile the viewer came out of, hidden while its photo is elsewhere. */
   const hiddenTile = useRef<HTMLElement | null>(null);
   const morph = useRef<Animation | null>(null);
   const closing = useRef(false);
   const seen = useRef(current.id);
   seen.current = current.id;
 
-  const photo = useCallback(() => mediaRef.current?.querySelector<HTMLElement>('img') ?? null, []);
-
   const step = useCallback((direction: 1 | -1) => onGoTo(index + direction), [index, onGoTo]);
 
-  /** The photo travels back into its tile, and only then does the viewer go. */
+  /**
+   * The photo on screen, and the two it sits between, all three mounted.
+   *
+   * Keeping the neighbours in the document is what makes an arrow press
+   * immediate: the next photograph is already fetched and already decoded, so
+   * the press swaps two opacities instead of starting a download.
+   */
+  const around = useMemo(() => {
+    const total = photos.length;
+    const wanted = [(index - 1 + total) % total, index, (index + 1) % total];
+    return [...new Set(wanted)].map((position) => photos[position]);
+  }, [index, photos]);
+
+  /** Places the card exactly over its tile, as a transform. */
+  const overTile = useCallback((tile: DOMRect, frame: DOMRect) => {
+    const sx = tile.width / frame.width;
+    const sy = tile.height / frame.height;
+    return `translate(${tile.left - frame.left}px,${tile.top - frame.top}px) scale(${sx},${sy})`;
+  }, []);
+
   const close = useCallback(() => {
     if (closing.current) return;
     closing.current = true;
 
-    const image = photo();
-    if (morph.current) {
-      morph.current.cancel();
-      morph.current = null;
-    }
-    if (image) image.style.transform = '';
+    const frame = frameRef.current;
+    const backdrop = backdropRef.current;
+    morph.current?.cancel();
+    morph.current = null;
 
     const done = () => {
       if (hiddenTile.current) {
@@ -83,83 +142,96 @@ export function PhotoLightbox({
       onClose();
     };
 
-    overlayRef.current?.removeAttribute('data-shown');
-
     const tile = tileImage(seen.current);
-    if (reduce || !tile || !image) {
-      window.setTimeout(done, FADE_OUT_MS);
+    if (reduce || !tile || !frame) {
+      backdrop?.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 120, fill: 'forwards' });
+      window.setTimeout(done, reduce ? 0 : 120);
       return;
     }
 
-    const from = image.getBoundingClientRect();
     const to = tile.getBoundingClientRect();
+    const from = frame.getBoundingClientRect();
     if (hiddenTile.current && hiddenTile.current !== tile) hiddenTile.current.style.visibility = '';
     tile.style.visibility = 'hidden';
     hiddenTile.current = tile;
 
-    image.style.transformOrigin = 'top left';
-    const back = image.animate(
+    backdrop?.animate([{ opacity: 1 }, { opacity: 0 }], {
+      duration: CLOSE_MS,
+      easing: CLOSE_EASE,
+      fill: 'forwards',
+    });
+
+    const back = frame.animate(
       [
-        { transform: 'translate(0,0) scale(1,1)', borderRadius: MEDIA_RADIUS },
-        {
-          transform: `translate(${to.left - from.left}px,${to.top - from.top}px) scale(${to.width / from.width},${to.height / from.height})`,
-          borderRadius: TILE_RADIUS,
-        },
+        { transform: 'translate(0,0) scale(1,1)', opacity: 1 },
+        { transform: overTile(to, from), opacity: 0, offset: 1 },
       ],
-      { duration: CLOSE_MS, easing: CLOSE_EASE },
+      { duration: CLOSE_MS, easing: CLOSE_EASE, fill: 'forwards' },
     );
     back.onfinish = done;
     back.oncancel = done;
-  }, [onClose, photo, reduce]);
+  }, [onClose, overTile, reduce]);
 
-  // The photo grows out of its tile. Read after the first paint, so the boxes
-  // measured are the ones on screen.
+  // The card grows out of its tile. The tile is measured before the viewer is
+  // painted, so the box read is the one that is on screen.
   useEffect(() => {
     restoreTo.current = document.activeElement as HTMLElement | null;
 
     const tile = tileImage(seen.current);
-    const rect = tile?.getBoundingClientRect() ?? null;
+    const to = tile?.getBoundingClientRect() ?? null;
+    const frame = frameRef.current;
+    const backdrop = backdropRef.current;
 
-    const frame = requestAnimationFrame(() => {
-      overlayRef.current?.setAttribute('data-shown', 'true');
-      closeRef.current?.focus();
+    /*
+     * Anything still running is cancelled before the card is measured.
+     *
+     * Without this the effect running a second time, which is what React does
+     * in development and what a remount does anywhere, read the card while the
+     * first animation already had it shrunk onto the tile. The travel computed
+     * from that box went from the tile to the tile, so the second animation,
+     * the one that wins, moved nothing and the viewer appeared flat.
+     */
+    morph.current?.cancel();
+    morph.current = null;
 
-      const image = photo();
-      if (reduce || !rect || !image) return;
+    closeRef.current?.focus({ preventScroll: true });
 
-      const from = image.getBoundingClientRect();
-      if (tile) {
-        tile.style.visibility = 'hidden';
-        hiddenTile.current = tile;
-      }
+    backdrop?.animate([{ opacity: 0 }, { opacity: 1 }], {
+      duration: reduce ? 0 : BACKDROP_MS,
+      easing: OPEN_EASE,
+      fill: 'forwards',
+    });
 
-      image.style.transformOrigin = 'top left';
-      morph.current = image.animate(
+    if (!reduce && to && frame) {
+      const from = frame.getBoundingClientRect();
+      tile!.style.visibility = 'hidden';
+      hiddenTile.current = tile!;
+
+      morph.current = frame.animate(
         [
-          {
-            transform: `translate(${rect.left - from.left}px,${rect.top - from.top}px) scale(${rect.width / from.width},${rect.height / from.height})`,
-            borderRadius: TILE_RADIUS,
-          },
-          { transform: 'translate(0,0) scale(1,1)', borderRadius: MEDIA_RADIUS },
+          { transform: overTile(to, from), opacity: 0 },
+          { transform: 'translate(0,0) scale(1,1)', opacity: 1 },
         ],
         { duration: OPEN_MS, easing: OPEN_EASE },
       );
       morph.current.onfinish = () => {
-        image.style.transform = '';
         morph.current = null;
       };
-    });
+    }
 
     return () => {
-      cancelAnimationFrame(frame);
+      morph.current?.cancel();
+      morph.current = null;
       if (hiddenTile.current) {
         hiddenTile.current.style.visibility = '';
         hiddenTile.current = null;
       }
       const tileBack = tileImage(seen.current);
-      (tileBack?.closest<HTMLElement>('button') ?? restoreTo.current)?.focus();
+      (tileBack?.closest<HTMLElement>('button') ?? restoreTo.current)?.focus({
+        preventScroll: true,
+      });
     };
-  }, [photo, reduce]);
+  }, [overTile, reduce]);
 
   // Scroll lock, restored exactly as it was found.
   useEffect(() => {
@@ -169,19 +241,6 @@ export function PhotoLightbox({
       document.body.style.overflow = previous;
     };
   }, []);
-
-  // One photo replacing another is a cross fade in place, never a second morph.
-  const first = useRef(true);
-  useEffect(() => {
-    if (first.current) {
-      first.current = false;
-      return;
-    }
-    const image = photo();
-    if (!image || reduce) return;
-    image.style.transform = '';
-    image.animate([{ opacity: 0.4 }, { opacity: 1 }], { duration: 180, easing: 'ease-out' });
-  }, [index, photo, reduce]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -223,11 +282,16 @@ export function PhotoLightbox({
     return () => document.removeEventListener('keydown', onKey);
   }, [close, step]);
 
-  // The strip follows the photo, so the current thumbnail is always in sight.
+  // The strip's current mark and its scroll are moved on the nodes themselves,
+  // so walking the gallery never re-renders twenty thumbnails.
   useEffect(() => {
     const strip = stripRef.current;
-    const thumb = strip?.querySelector<HTMLElement>('[aria-current="true"]');
-    if (!strip || !thumb) return;
+    if (!strip) return;
+
+    strip.querySelector('[aria-current="true"]')?.removeAttribute('aria-current');
+    const thumb = strip.querySelector<HTMLElement>(`[data-position="${index}"]`);
+    if (!thumb) return;
+    thumb.setAttribute('aria-current', 'true');
     strip.scrollTo({
       left: thumb.offsetLeft - (strip.clientWidth - thumb.offsetWidth) / 2,
       behavior: reduce ? 'auto' : 'smooth',
@@ -250,7 +314,7 @@ export function PhotoLightbox({
         if (!frameRef.current?.contains(event.target as Node)) close();
       }}
     >
-      <div className="lightbox__backdrop" aria-hidden="true" />
+      <div className="lightbox__backdrop" ref={backdropRef} aria-hidden="true" />
 
       <div
         className="lightbox__frame"
@@ -259,8 +323,6 @@ export function PhotoLightbox({
         aria-modal="true"
         aria-label={current.alt}
       >
-        <div className="lightbox__surface" aria-hidden="true" />
-
         <div className="lightbox__top">
           <p className="lightbox__title">
             <span className="lightbox__room">{labels.rooms[current.room]}</span>
@@ -272,7 +334,26 @@ export function PhotoLightbox({
           </span>
         </div>
 
-        <div className="lightbox__media" ref={mediaRef}>
+        <div className="lightbox__media">
+          {around.map((item) => (
+            <span
+              key={item.id}
+              className="lightbox__slide"
+              data-current={item.id === current.id ? 'true' : undefined}
+              aria-hidden={item.id === current.id ? undefined : 'true'}
+            >
+              <Image
+                src={item.src}
+                alt={item.id === current.id ? current.alt : ''}
+                fill
+                sizes="(min-width: 1024px) 58rem, 94vw"
+                className="lightbox__img"
+                priority={item.id === current.id}
+                loading={item.id === current.id ? undefined : 'eager'}
+              />
+            </span>
+          ))}
+
           <button
             type="button"
             className="lightbox__nav lightbox__nav--prev"
@@ -281,14 +362,6 @@ export function PhotoLightbox({
           >
             <span aria-hidden="true">&#8249;</span>
           </button>
-          <Image
-            src={current.src}
-            alt={current.alt}
-            fill
-            sizes="(min-width: 1024px) 58rem, 94vw"
-            className="lightbox__img"
-            priority
-          />
           <button
             type="button"
             className="lightbox__nav lightbox__nav--next"
@@ -301,28 +374,7 @@ export function PhotoLightbox({
 
         <div className="lightbox__bottom">
           <div className="lightbox__strip" ref={stripRef}>
-            {photos.map((item, position) => {
-              const previous = photos[position - 1];
-              const roomChanges =
-                previous !== undefined &&
-                ROOM_ORDER.indexOf(previous.room) !== ROOM_ORDER.indexOf(item.room);
-
-              return (
-                <div key={item.id} style={{ display: 'contents' }}>
-                  {roomChanges ? <span className="lightbox__sep" aria-hidden="true" /> : null}
-                  <button
-                    type="button"
-                    className="lightbox__thumb"
-                    aria-current={position === index ? 'true' : undefined}
-                    aria-label={item.alt}
-                    title={labels.rooms[item.room]}
-                    onClick={() => onGoTo(position)}
-                  >
-                    {item.available ? <Image src={item.src} alt="" fill sizes="70px" /> : null}
-                  </button>
-                </div>
-              );
-            })}
+            <Strip photos={photos} labels={labels} onGoTo={onGoTo} />
           </div>
         </div>
       </div>

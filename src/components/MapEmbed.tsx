@@ -47,6 +47,9 @@ const BACKOFF_MS = 600;
  */
 let loader: Promise<void> | null = null;
 
+/** Google calls this once `google.maps` is initialised, not merely downloaded. */
+const READY_CALLBACK = '__obordeleauMapsReady';
+
 function mapsReady(): boolean {
   return typeof window !== 'undefined' && typeof window.google?.maps?.importLibrary === 'function';
 }
@@ -63,6 +66,13 @@ function loadMapsScript(apiKey: string, locale: string): Promise<void> {
     const done = () => {
       settled = true;
       window.clearTimeout(timer);
+      delete window[READY_CALLBACK];
+    };
+
+    const succeed = () => {
+      if (settled) return;
+      done();
+      resolve();
     };
 
     const fail = (reason: string) => {
@@ -77,10 +87,25 @@ function loadMapsScript(apiKey: string, locale: string): Promise<void> {
 
     const timer = window.setTimeout(() => fail('maps script timed out'), SCRIPT_TIMEOUT_MS);
 
+    /*
+     * The bootstrap is asked for a callback, and the promise waits for it
+     * rather than for the script's own load event.
+     *
+     * With `loading=async` the two are not the same moment: the file finishes
+     * downloading, `load` fires, and `google.maps.importLibrary` is still not
+     * defined, because the bootstrap goes on initialising afterwards. Resolving
+     * on `load` therefore called `importLibrary` a beat too early and the first
+     * attempt always threw "importLibrary is not a function". The retry, 600 ms
+     * later, then found it in place, so the map did appear and the failure was
+     * only ever a line in the console. This is the documented pairing for an
+     * asynchronous bootstrap, and it removes the wasted attempt.
+     */
+    window[READY_CALLBACK] = succeed;
+
+    // Kept as a safety net for a script that was already there and already
+    // initialised, whose callback will never fire a second time.
     script.addEventListener('load', () => {
-      if (settled) return;
-      done();
-      resolve();
+      if (mapsReady()) succeed();
     });
     script.addEventListener('error', () => fail('maps script failed'));
 
@@ -92,6 +117,7 @@ function loadMapsScript(apiKey: string, locale: string): Promise<void> {
         language: locale,
         region: 'FR',
         loading: 'async',
+        callback: READY_CALLBACK,
       });
       script.src = `https://maps.googleapis.com/maps/api/js?${params.toString()}`;
       script.async = true;
@@ -99,8 +125,7 @@ function loadMapsScript(apiKey: string, locale: string): Promise<void> {
       document.head.appendChild(script);
     } else if (mapsReady()) {
       // It arrived between the two checks above.
-      done();
-      resolve();
+      succeed();
     }
   });
 

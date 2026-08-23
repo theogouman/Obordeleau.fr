@@ -218,21 +218,44 @@
   gap: 14px;
 }
 
-/* La grille entre, elle ne glisse pas: le titre de la piece, lui, est deja la. */
+/* La grille entre, elle ne glisse pas: le titre de la piece, lui, est deja la.
+   Opacite et translation seulement: elles sont composees, donc gratuites, et
+   la grille change de piece en meme temps que la bosse glisse. */
 .gallery-panel[data-active='true'] .gallery-rows {
   animation: gallery-rows-in var(--gallery-dur-slow) var(--gallery-ease) both;
+  will-change: transform, opacity;
 }
 
 @keyframes gallery-rows-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
-    filter: blur(2px);
+    transform: translate3d(0, 8px, 0);
   }
   to {
     opacity: 1;
     transform: none;
-    filter: blur(0);
+  }
+}
+
+/* Le flou de la maquette est garde la ou il ne coute rien. Sur un telephone,
+   flouter chaque image d'une grille a chaque image de l'animation est la
+   depense qui rendait le changement d'onglet saccade. */
+@media (min-width: 720px) {
+  @keyframes gallery-rows-in-blur {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 8px, 0);
+      filter: blur(2px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+      filter: blur(0);
+    }
+  }
+
+  .gallery-panel[data-active='true'] .gallery-rows {
+    animation-name: gallery-rows-in-blur;
   }
 }
 
@@ -310,6 +333,9 @@
   position: fixed;
   inset: 0;
   z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .lightbox__backdrop {
@@ -319,51 +345,27 @@
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   opacity: 0;
-  transition: opacity var(--gallery-dur-slow) var(--gallery-ease);
 }
 
+/*
+ * The card is what travels, so it is one painted box rather than a transparent
+ * shell over a separate surface: it carries the cream, the corners and the
+ * shadow itself, and the morph scales the lot. It is centred by the flex
+ * parent and not by a transform of its own, which leaves `transform` free for
+ * the animation to use.
+ */
 .lightbox__frame {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
   width: min(94vw, 58rem);
   max-height: 94vh;
   display: flex;
   flex-direction: column;
   gap: 12px;
   padding: 14px;
-}
-
-.lightbox__surface {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
   background-color: var(--color-cream);
   border-radius: 22px;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
-  opacity: 0;
-  transition: opacity var(--gallery-dur-fast) var(--gallery-ease);
-}
-
-.lightbox__top,
-.lightbox__media,
-.lightbox__bottom {
-  position: relative;
-  z-index: 1;
-}
-
-.lightbox__top,
-.lightbox__bottom {
-  opacity: 0;
-  transition: opacity var(--gallery-dur-fast) var(--gallery-ease);
-}
-
-.lightbox[data-shown='true'] .lightbox__backdrop,
-.lightbox[data-shown='true'] .lightbox__surface,
-.lightbox[data-shown='true'] .lightbox__top,
-.lightbox[data-shown='true'] .lightbox__bottom {
-  opacity: 1;
+  transform-origin: top left;
 }
 
 .lightbox__top {
@@ -406,6 +408,7 @@
 }
 
 .lightbox__media {
+  position: relative;
   width: 100%;
   aspect-ratio: 4 / 3;
   max-height: 64vh;
@@ -416,10 +419,23 @@
   align-self: center;
 }
 
+/* La photo affichee, celle d'avant et celle d'apres sont toutes les trois
+   posees la, l'une sur l'autre. Une fleche ne fait donc qu'echanger deux
+   opacites: l'image suivante est deja chargee et deja decodee. */
+.lightbox__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 140ms linear;
+}
+
+.lightbox__slide[data-current='true'] {
+  opacity: 1;
+}
+
 .lightbox__img {
   object-fit: cover;
   border-radius: 14px;
-  will-change: transform;
 }
 
 .lightbox__nav {

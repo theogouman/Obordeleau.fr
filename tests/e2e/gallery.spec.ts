@@ -118,4 +118,46 @@ test.describe('gallery', () => {
     // A jump draws two: where it was, where it landed. A spring draws dozens.
     expect(traced, 'the surface was placed instead of animated').toBeGreaterThan(10);
   });
+
+  /**
+   * What travels is the card, not the photograph inside it. Measured on the
+   * width of the card itself, which carries the transform: it leaves the tile
+   * at the tile's size and arrives at its own.
+   */
+  test('the viewer grows out of its tile as one card, and shrinks back into it', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/');
+    await page.locator('.gallery-frame').scrollIntoViewIfNeeded();
+
+    const widths = async (act: string) =>
+      page.evaluate(async (selector) => {
+        const seen = new Set<number>();
+        let running = true;
+        const tick = () => {
+          const card = document.querySelector('.lightbox__frame');
+          if (card) seen.add(Math.round(card.getBoundingClientRect().width));
+          if (running) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+        document.querySelector<HTMLElement>(selector)?.click();
+        await new Promise((resolve) => setTimeout(resolve, 700));
+        running = false;
+        return seen.size;
+      }, act);
+
+    const opening = await widths('#gallery-living .gallery-tile');
+    expect(opening, 'the viewer appeared instead of growing').toBeGreaterThan(10);
+
+    // The photo on screen and the two it sits between are all mounted, which
+    // is what makes an arrow press immediate.
+    await expect(page.locator('.lightbox__slide')).toHaveCount(3);
+
+    const closing = await widths('.lightbox__close');
+    expect(closing, 'the viewer vanished instead of shrinking').toBeGreaterThan(5);
+
+    await expect(page.locator('.lightbox')).toHaveCount(0);
+    await expect(page.locator('.gallery-tile img[style*="hidden"]')).toHaveCount(0);
+  });
 });
