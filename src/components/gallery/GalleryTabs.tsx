@@ -59,9 +59,10 @@ export function GalleryTabs({ photos, labels }: { photos: PhotoView[]; labels: G
   const smooth = useSpring(left, SPRING);
   const widthValue = useMotionValue(0);
   const tabValue = useMotionValue(0);
-  const path = useTransform([smooth, widthValue, tabValue], ([x, w, t]) =>
-    w > 0 && t > 0 ? surfacePath(x as number, w as number, t as number) : '',
-  );
+  const path = useTransform([smooth, widthValue, tabValue], (values: number[]) => {
+    const [x, w, t] = values;
+    return w > 0 && t > 0 ? surfacePath(x, w, t) : '';
+  });
 
   useEffect(() => {
     setInteractive(true);
