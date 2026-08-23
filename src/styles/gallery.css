@@ -77,6 +77,19 @@
   transition: color var(--gallery-dur-fast) var(--gallery-ease);
 }
 
+/*
+ * Le temps du glissement seulement.
+ *
+ * Les cinq libelles sont poses sur la surface qui est redessinee a chaque
+ * image. Sans couche a eux, chaque image du trace entraine un rendu du texte
+ * par dessus, ce qui est le poste le plus cher de l'animation sur Windows, ou
+ * le texte est rendu avec un lissage sous pixel. L'attribut est pose par
+ * GalleryTabs quand le ressort demarre et retire quand il s'arrete.
+ */
+.gallery-frame[data-gliding='true'] .gallery-rail {
+  will-change: transform;
+}
+
 .gallery-tab__hl {
   position: absolute;
   inset: 9px 6px;
@@ -185,10 +198,17 @@
   border-radius: var(--panel-radius) var(--panel-radius) 20px 20px;
 }
 
-/* Le temps du redimensionnement, ce qui depasse est coupe: sans cela la piece
-   qui arrive deborderait du blanc pendant les 300 ms du trajet. */
+/*
+ * Le temps du redimensionnement, ce qui depasse est coupe: sans cela la piece
+ * qui arrive deborderait du blanc pendant les 300 ms du trajet.
+ *
+ * Et `contain` avec la coupe: une hauteur qui change est un calcul de mise en
+ * page a chaque image, et sans confinement ce calcul remonte a toute la page.
+ * Confine, il s'arrete au panneau.
+ */
 .gallery-body[data-resizing='true'] {
   overflow: hidden;
+  contain: layout paint;
 }
 
 /* Sans JavaScript les cinq panneaux sont empiles, donc ils ont besoin d'air. */
@@ -224,12 +244,24 @@
   gap: 14px;
 }
 
-/* La grille entre, elle ne glisse pas: le titre de la piece, lui, est deja la.
-   Opacite et translation seulement: elles sont composees, donc gratuites, et
-   la grille change de piece en meme temps que la bosse glisse. */
+/*
+ * La grille entre, elle ne glisse pas: le titre de la piece, lui, est deja la.
+ * Opacite et translation seulement, les deux seules proprietes qu'un
+ * navigateur anime sans repeindre.
+ *
+ * Le flou de la maquette a ete retire, y compris sur grand ecran ou il avait
+ * survecu. Flouter une grille d'images est un rendu complet de la grille a
+ * chaque image de l'animation, et cette animation tourne pendant que la bosse
+ * glisse et que le panneau change de hauteur: sur une machine sans carte
+ * graphique dediee, c'etait la depense qui faisait saccader le changement
+ * d'onglet. Ce qui reste est compose, donc a peu pres gratuit.
+ *
+ * Pas de `will-change` ici: un navigateur promeut de lui meme ce qu'il est en
+ * train d'animer, et une declaration permanente garderait une couche de la
+ * taille de la grille pour les minutes ou rien ne bouge.
+ */
 .gallery-panel[data-active='true'] .gallery-rows {
   animation: gallery-rows-in var(--gallery-dur-slow) var(--gallery-ease) both;
-  will-change: transform, opacity;
 }
 
 @keyframes gallery-rows-in {
@@ -240,28 +272,6 @@
   to {
     opacity: 1;
     transform: none;
-  }
-}
-
-/* Le flou de la maquette est garde la ou il ne coute rien. Sur un telephone,
-   flouter chaque image d'une grille a chaque image de l'animation est la
-   depense qui rendait le changement d'onglet saccade. */
-@media (min-width: 720px) {
-  @keyframes gallery-rows-in-blur {
-    from {
-      opacity: 0;
-      transform: translate3d(0, 8px, 0);
-      filter: blur(2px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-      filter: blur(0);
-    }
-  }
-
-  .gallery-panel[data-active='true'] .gallery-rows {
-    animation-name: gallery-rows-in-blur;
   }
 }
 
@@ -307,6 +317,24 @@
  */
 .gallery-tile .t-skel-skeleton {
   --pulse-count: infinite;
+}
+
+/*
+ * Le fondu croise de la tuile garde son fondu et perd son flou.
+ *
+ * Une photographie qui arrive est revelee par une opacite et un `filter:
+ * blur()` menes ensemble. L'opacite est composee, le flou non: il fait
+ * reconstruire l'image entiere a chaque image de l'animation, et quatre
+ * photographies se revelent en meme temps, juste apres un changement d'onglet,
+ * pendant que la bosse glisse et que le panneau change de hauteur. Mesure sur
+ * vingt changements d'onglet, galerie froide: cinq images de plus de 32 ms en
+ * moyenne avec le flou, une et demie sans, et la pire passe de 47 a 33 ms.
+ *
+ * Le fondu reste, la duree reste, et le jeton n'est change qu'ici: les autres
+ * squelettes du site gardent le leur.
+ */
+.gallery-tile.t-skel {
+  --reveal-blur: 0px;
 }
 
 .gallery-tile__skeleton {

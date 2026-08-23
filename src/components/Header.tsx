@@ -250,16 +250,23 @@ export function Header({ labels }: Props) {
               ))}
             </div>
 
+            {/*
+             * La cle et le bouton apparaissent exactement la ou le burger
+             * disparait, pas un pixel avant. Ils arrivaient au petit point de
+             * bascule alors que le burger reste jusqu'au grand: toutes les
+             * largeurs intermediaires montraient les deux, et ouvrir le
+             * panneau donnait une seconde fois les deux memes commandes.
+             */}
             <div className="flex items-center gap-2">
               <LanguageMenu
                 label={labels.language}
                 switchLabel={labels.languageSwitch}
-                className="hidden sm:block"
+                className="hidden lg:block"
               />
               <SectionLink
                 {...shared}
                 hash="#book"
-                className="btn btn-primary hidden px-4 py-2 text-sm sm:inline-flex"
+                className="btn btn-primary hidden px-4 py-2 text-sm lg:inline-flex"
               >
                 {labels.book}
               </SectionLink>

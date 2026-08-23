@@ -34,6 +34,38 @@ export const SPRING = { k: 700, c: 50, m: 0.5 } as const;
 export const SPRING_EPSILON = 0.25;
 
 /**
+ * The spring is integrated in steps of this length, in milliseconds, however
+ * long the frames turn out to be.
+ *
+ * A quarter of a sixtieth of a second. Small enough that explicit integration
+ * of a stiff spring stays accurate, large enough that the worst case, a stall
+ * caught up to the cap below, is a couple of dozen multiplications.
+ */
+export const SPRING_STEP_MS = 1000 / 240;
+
+/**
+ * The most time a single frame may be asked to catch up on.
+ *
+ * A tab left in the background, or a garbage collection at the wrong moment,
+ * hands the next frame a gap of hundreds of milliseconds. Integrating all of
+ * it would land the bump on its mark in one jump; four frames' worth is enough
+ * to absorb a hiccup and short enough that a real stall simply resumes.
+ */
+export const SPRING_CATCHUP_MS = 64;
+
+/**
+ * A tenth of a pixel, which is finer than any screen and far shorter to write.
+ *
+ * The path is rewritten on every frame of the glide and the browser parses it
+ * again each time, so the difference between `2.7755575615628914e-17` and `0`
+ * is paid sixty times a second. Rounding also makes the last frames of the
+ * glide repeat, which lets the caller skip the write altogether.
+ */
+function r(value: number): number {
+  return Math.round(value * 10) / 10;
+}
+
+/**
  * `left` and `tabW` place the bump, `W` is the width of the frame the surface
  * is traced across.
  */
@@ -41,16 +73,16 @@ export function surfacePath(left: number, tabW: number, W: number): string {
   const pl = INSET;
   const pr = W - INSET;
   const l = Math.max(pl, Math.min(pr - tabW, left));
-  const r = l + tabW;
+  const right = l + tabW;
   const top = RAIL_H - TAB_H;
   const base = RAIL_H;
 
   // The joins shorten on their own when the bump reaches an edge, so the first
   // and last tabs merge straight into the base line instead of overshooting.
   const lj = Math.max(pl, l - JOIN);
-  const rj = Math.min(pr, r + JOIN);
+  const rj = Math.min(pr, right + JOIN);
   const ld = Math.min(JOIN, l - lj);
-  const rd = Math.min(JOIN, rj - r);
+  const rd = Math.min(JOIN, rj - right);
   const lc = ld * 0.55;
   const rc = rd * 0.55;
 
@@ -59,21 +91,23 @@ export function surfacePath(left: number, tabW: number, W: number): string {
   const lpr = Math.min(PR, lj - pl);
   const rpr = Math.min(PR, pr - rj);
 
-  return [
-    `M${pl} ${base + PR}`,
-    `V${base + lpr}`,
-    `Q${pl} ${base} ${pl + lpr} ${base}`,
-    `H${lj}`,
-    `C${lj + lc} ${base} ${l} ${base - ld + lc} ${l} ${base - ld}`,
-    `V${top + R}`,
-    `Q${l} ${top} ${l + R} ${top}`,
-    `H${r - R}`,
-    `Q${r} ${top} ${r} ${top + R}`,
-    `V${base - rd}`,
-    `C${r} ${base - rd + rc} ${rj - rc} ${base} ${rj} ${base}`,
-    `H${pr - rpr}`,
-    `Q${pr} ${base} ${pr} ${base + rpr}`,
-    `V${base + PR}`,
-    'Z',
-  ].join(' ');
+  // One template literal rather than an array of fifteen strings joined: same
+  // trace, one allocation instead of sixteen, on every frame of every glide.
+  return (
+    `M${r(pl)} ${r(base + PR)}` +
+    ` V${r(base + lpr)}` +
+    ` Q${r(pl)} ${r(base)} ${r(pl + lpr)} ${r(base)}` +
+    ` H${r(lj)}` +
+    ` C${r(lj + lc)} ${r(base)} ${r(l)} ${r(base - ld + lc)} ${r(l)} ${r(base - ld)}` +
+    ` V${r(top + R)}` +
+    ` Q${r(l)} ${r(top)} ${r(l + R)} ${r(top)}` +
+    ` H${r(right - R)}` +
+    ` Q${r(right)} ${r(top)} ${r(right)} ${r(top + R)}` +
+    ` V${r(base - rd)}` +
+    ` C${r(right)} ${r(base - rd + rc)} ${r(rj - rc)} ${r(base)} ${r(rj)} ${r(base)}` +
+    ` H${r(pr - rpr)}` +
+    ` Q${r(pr)} ${r(base)} ${r(pr)} ${r(base + rpr)}` +
+    ` V${r(base + PR)}` +
+    ' Z'
+  );
 }

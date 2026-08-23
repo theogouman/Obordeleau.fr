@@ -214,6 +214,70 @@ test.describe('P1 booking journey', () => {
 });
 
 /**
+ * The bar at the top of every page, and the two rules it has to keep: the
+ * burger and the controls it hides are never on screen together, and on a wide
+ * screen the bar is the top of the page rather than something that follows the
+ * reader down it.
+ *
+ * The first is worth a test because of how quietly it broke. The controls
+ * appeared at the small breakpoint while the burger stays until the large one,
+ * so a whole band of ordinary laptop widths drew both, and opening the panel
+ * showed the same pair a second time.
+ */
+test.describe('the header bar', () => {
+  // The first child of the pill is the row itself; the second is the panel it
+  // opens, which holds the same two controls under different classes.
+  const ROW = 'header .site-nav-pill > div:first-child';
+  const inBar = (page: import('@playwright/test').Page) => ({
+    burger: page.locator(`${ROW} .menu-toggle`),
+    key: page.locator(`${ROW} .lang-key`),
+    book: page.locator(`${ROW} a.btn-primary`),
+  });
+
+  test('narrow: the burger alone, and one of each inside it', async ({ page }) => {
+    // Between the two breakpoints, which is where both used to be drawn.
+    await page.setViewportSize({ width: 900, height: 800 });
+    await page.goto('/');
+
+    const bar = inBar(page);
+    await expect(bar.burger).toBeVisible();
+    await expect(bar.key).toBeHidden();
+    await expect(bar.book).toBeHidden();
+
+    await bar.burger.click();
+    await expect(page.locator('header .lang-key').filter({ visible: true })).toHaveCount(1);
+    await expect(page.locator('header a.btn-primary').filter({ visible: true })).toHaveCount(1);
+  });
+
+  test('wide: the two controls, no burger, and the bar stays at the top of the page', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/');
+
+    const bar = inBar(page);
+    await expect(bar.burger).toBeHidden();
+    await expect(bar.key).toBeVisible();
+    await expect(bar.book).toBeVisible();
+
+    // In the flow, so scrolling past it leaves it behind rather than carrying
+    // it along. And no backdrop filter, which has nothing left to filter.
+    const after = await page.evaluate(async () => {
+      window.scrollTo({ top: 1800, behavior: 'instant' });
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+      const pill = document.querySelector('.site-nav-pill')!;
+      return {
+        top: document.querySelector('header')!.getBoundingClientRect().top,
+        filter: getComputedStyle(pill).backdropFilter,
+      };
+    });
+    expect(after.top).toBeLessThan(-100);
+    expect(after.filter).toBe('none');
+  });
+});
+
+/**
  * A month with nothing left in it says so, and offers the way out.
  *
  * Thirty struck through squares are not an answer: they say nothing about
@@ -352,7 +416,12 @@ test.describe('internationalisation', () => {
 
       await expect(page).toHaveURL(expected);
       await expect(page.locator('html')).toHaveAttribute('lang', new RegExp(`^${locale}`));
-      expect(Math.round(await page.evaluate(() => window.scrollY))).toBe(before);
+      // Polled rather than read once: the position is put back over the few
+      // frames the arriving tree takes to finish sizing itself, and on a
+      // machine running four of these at a time those frames are not instant.
+      await expect
+        .poll(async () => Math.round(await page.evaluate(() => window.scrollY)), { timeout: 3000 })
+        .toBe(before);
     }
 
     expect(loads, 'the document was loaded again instead of being updated').toBe(0);

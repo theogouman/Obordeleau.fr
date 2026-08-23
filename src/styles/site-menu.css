@@ -105,6 +105,45 @@ html {
   padding-top: var(--site-nav-h);
 }
 
+/*
+ * Sur grand ecran la pilule ne flotte pas: elle est le haut de la page.
+ *
+ * Elle suivait le lecteur partout, ce qui prend une bande de chaque ecran et
+ * se pose sur la section vers laquelle une ancre vient de sauter. Sous le
+ * point de bascule elle reste fixe, parce que c'est la seule facon d'avoir le
+ * burger sous le pouce; au-dessus, les cinq liens sont dans la pilule et il
+ * n'y a plus rien a garder a portee.
+ *
+ * Remise dans le flux, elle occupe de nouveau sa propre hauteur, donc la
+ * reservation faite plus haut est reprise: sinon la page commencerait une
+ * pilule plus bas. Les ancres n'ont plus rien a eviter non plus.
+ *
+ * Le verre part avec le reste. Un flou d'arriere-plan est une couche
+ * recomposee a chaque image de defilement, et derriere une barre qui ne bouge
+ * pas il n'y a que la creme de la page: on paie un rendu continu pour une
+ * difference que personne ne voit. C'est aussi la depense la plus lourde de
+ * l'en-tete sur une machine sans carte graphique dediee.
+ */
+@media (min-width: 1024px) {
+  .site-nav-wrapper {
+    position: relative;
+  }
+
+  .site-nav-pill {
+    background: var(--color-cream);
+    backdrop-filter: none;
+    will-change: auto;
+  }
+
+  html {
+    scroll-padding-top: 8px;
+  }
+
+  #main {
+    padding-top: 0;
+  }
+}
+
 .menu-scrim {
   position: fixed;
   inset: 0;

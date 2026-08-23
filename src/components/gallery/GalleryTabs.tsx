@@ -5,7 +5,15 @@ import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent }
 import { Icon, type IconName } from '@/components/Icon';
 import { ROOM_ORDER, type RoomId } from '@/lib/rooms';
 import { GalleryPanel } from './GalleryPanel';
-import { RESIZE_MS, SPRING, SPRING_EPSILON, SURFACE_H, surfacePath } from './liquid-path';
+import {
+  RESIZE_MS,
+  SPRING,
+  SPRING_CATCHUP_MS,
+  SPRING_EPSILON,
+  SPRING_STEP_MS,
+  SURFACE_H,
+  surfacePath,
+} from './liquid-path';
 import { usePrefersReducedMotion } from './use-reduced-motion';
 import type { GalleryLabels, PhotoView } from './types';
 
@@ -59,6 +67,11 @@ export function GalleryTabs({ photos, labels }: { photos: PhotoView[]; labels: G
   const vel = useRef(0);
   const target = useRef(0);
   const raf = useRef<number | null>(null);
+  /** When the previous frame ran, and the time it left unintegrated. */
+  const clock = useRef(0);
+  const carry = useRef(0);
+  /** The trace as it was last written, so an unchanged frame writes nothing. */
+  const drawn = useRef('');
   /** The first placement jumps, so nothing slides across the rail on load. */
   const settled = useRef(false);
   /** Last width the rail was measured at, to tell a real resize from a taller panel. */
@@ -68,43 +81,89 @@ export function GalleryTabs({ photos, labels }: { photos: PhotoView[]; labels: G
     const path = pathRef.current;
     const { width, tab } = geometry.current;
     if (!path || width === 0 || tab === 0) return;
-    path.setAttribute('d', surfacePath(cur.current, tab, width));
+
+    const d = surfacePath(cur.current, tab, width);
+    // Rounded to a tenth of a pixel, the trace repeats from one frame to the
+    // next whenever the bump is barely moving, which is most of the tail of an
+    // overdamped glide. Writing it again would cost a parse and a raster of
+    // the whole surface for a picture that does not change.
+    if (d === drawn.current) return;
+    drawn.current = d;
+    path.setAttribute('d', d);
   }, []);
 
-  const step = useCallback(() => {
-    const dt = 1 / 60;
-    const a = (-SPRING.k * (cur.current - target.current) - SPRING.c * vel.current) / SPRING.m;
-    vel.current += a * dt;
-    cur.current += vel.current * dt;
-    draw();
+  /**
+   * The spring, integrated against the clock rather than against the frames.
+   *
+   * It used to advance one sixtieth of a second per frame, which is only the
+   * truth on a display that runs at sixty hertz and never misses. On a hundred
+   * and forty four hertz monitor, which is an ordinary Windows machine, the
+   * same glide ran two and a half times too fast; on a machine that drops
+   * frames it ran slow, and unevenly, which is what reads as stutter. Real
+   * elapsed time, in fixed sub steps so the result is identical everywhere and
+   * the stiffness never destabilises the integration, with the backlog capped
+   * so a stalled tab resumes rather than teleporting.
+   */
+  const step = useCallback(
+    (now: number) => {
+      let pending = Math.min(now - clock.current, SPRING_CATCHUP_MS) + carry.current;
+      clock.current = now;
 
-    if (
-      Math.abs(cur.current - target.current) > SPRING_EPSILON ||
-      Math.abs(vel.current) > SPRING_EPSILON
-    ) {
-      raf.current = requestAnimationFrame(step);
-      return;
-    }
+      const dt = SPRING_STEP_MS / 1000;
+      while (pending >= SPRING_STEP_MS) {
+        const a = (-SPRING.k * (cur.current - target.current) - SPRING.c * vel.current) / SPRING.m;
+        vel.current += a * dt;
+        cur.current += vel.current * dt;
+        pending -= SPRING_STEP_MS;
+      }
+      carry.current = pending;
 
-    cur.current = target.current;
-    vel.current = 0;
-    draw();
-    raf.current = null;
-  }, [draw]);
+      draw();
+
+      if (
+        Math.abs(cur.current - target.current) > SPRING_EPSILON ||
+        Math.abs(vel.current) > SPRING_EPSILON
+      ) {
+        raf.current = requestAnimationFrame(step);
+        return;
+      }
+
+      cur.current = target.current;
+      vel.current = 0;
+      draw();
+      raf.current = null;
+      frameRef.current?.removeAttribute('data-gliding');
+    },
+    [draw],
+  );
 
   const glideTo = useCallback(
     (left: number, animate: boolean) => {
       target.current = left;
+
       if (animate && !reduce) {
-        if (raf.current === null) raf.current = requestAnimationFrame(step);
+        if (raf.current === null) {
+          clock.current = performance.now();
+          carry.current = 0;
+          // The five labels sit over the surface being redrawn. Given a layer
+          // of their own for the length of the glide they are rasterised once
+          // instead of on every frame, which is the difference between a
+          // repaint of the rail and a composite of it. Dropped on the way out,
+          // because a layer that is never going to change again is memory the
+          // page has no use for.
+          frameRef.current?.setAttribute('data-gliding', 'true');
+          raf.current = requestAnimationFrame(step);
+        }
         return;
       }
+
       cur.current = left;
       vel.current = 0;
       if (raf.current !== null) {
         cancelAnimationFrame(raf.current);
         raf.current = null;
       }
+      frameRef.current?.removeAttribute('data-gliding');
       draw();
     },
     [draw, reduce, step],
