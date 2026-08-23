@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { isIsoDate } from '@/lib/dates';
 import { validateStay } from '@/lib/pricing';
+import { LIMITS, clientIp, rateLimit, tooManyRequests } from '@/lib/rate-limit';
 import { bookingStoreConfigured } from '@/lib/supabase';
 
 /**
@@ -20,6 +21,9 @@ export const dynamic = 'force-dynamic';
 const NO_STORE = { headers: { 'Cache-Control': 'no-store' } };
 
 export async function POST(request: NextRequest) {
+  const throttle = await rateLimit('stay', clientIp(request), LIMITS.stay);
+  if (throttle.limited) return tooManyRequests(throttle.retryAfterSeconds);
+
   let payload: { from?: string; to?: string };
 
   try {

@@ -15,14 +15,15 @@
     "check:reviews": "node scripts/check-reviews.mjs",
     "check": "npm run lint:copy && npm run check:reviews && npm run lint",
     "test:e2e": "playwright test",
-    "test:sql": "npm run test:sql:pricing && npm run test:sql:admin && npm run test:sql:stay && npm run test:sql:payments && npm run test:sql:balance && npm run test:sql:login",
+    "test:sql": "npm run test:sql:pricing && npm run test:sql:admin && npm run test:sql:stay && npm run test:sql:payments && npm run test:sql:balance && npm run test:sql:login && npm run test:sql:abuse",
     "test:sql:pricing": "psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f supabase/tests/pricing.test.sql",
     "test:sql:admin": "psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f supabase/tests/pricing-admin.test.sql",
     "test:sql:stay": "psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f supabase/tests/stay-rules.test.sql",
     "test:e2e:install": "playwright install --with-deps chromium",
     "test:sql:payments": "psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f supabase/tests/payments.test.sql",
     "test:sql:balance": "psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f supabase/tests/balance.test.sql",
-    "test:sql:login": "psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f supabase/tests/admin-login.test.sql"
+    "test:sql:login": "psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f supabase/tests/admin-login.test.sql",
+    "test:sql:abuse": "psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f supabase/tests/abuse-hardening.test.sql"
   },
   "dependencies": {
     "@stripe/stripe-js": "^7.9.0",

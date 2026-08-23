@@ -9,6 +9,7 @@ import {
 } from '@/lib/availability';
 import { addDays, isIsoDate, todayInParis } from '@/lib/dates';
 import { stayRules } from '@/lib/pricing';
+import { LIMITS, clientIp, rateLimit, tooManyRequests } from '@/lib/rate-limit';
 import { paymentsConfigured } from '@/lib/stripe';
 import { bookingStoreConfigured } from '@/lib/supabase';
 
@@ -24,6 +25,9 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
+  const throttle = await rateLimit('availability', clientIp(request), LIMITS.availability);
+  if (throttle.limited) return tooManyRequests(throttle.retryAfterSeconds);
+
   const params = request.nextUrl.searchParams;
   const today = todayInParis();
 

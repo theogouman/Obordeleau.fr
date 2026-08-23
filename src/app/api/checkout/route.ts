@@ -12,6 +12,7 @@ import {
   releaseHold,
 } from '@/lib/payments';
 import { getQuote, isPricingNotConfigured, validateStay, type Quote } from '@/lib/pricing';
+import { LIMITS, MAX_ACTIVE_HOLDS, clientIp, rateLimit, tooManyRequests } from '@/lib/rate-limit';
 import {
   isReusableIntentStatus,
   paymentsConfigured,
@@ -68,26 +69,6 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const MAX_FIELD = 2000;
 const MIN_FILL_MS = 2500;
 
-const WINDOW_MS = 10 * 60 * 1000;
-const MAX_PER_WINDOW = 6;
-const hits = new Map<string, number[]>();
-
-function rateLimited(key: string): boolean {
-  const now = Date.now();
-  const recent = (hits.get(key) ?? []).filter((time) => now - time < WINDOW_MS);
-  recent.push(now);
-  hits.set(key, recent);
-
-  if (hits.size > 5000) hits.clear();
-
-  return recent.length > MAX_PER_WINDOW;
-}
-
-function clientKey(request: NextRequest): string {
-  const forwarded = request.headers.get('x-forwarded-for');
-  return (forwarded?.split(',')[0] ?? 'unknown').trim();
-}
-
 function clean(value: unknown): string {
   if (typeof value !== 'string') return '';
   return value.replace(/\s+/g, ' ').trim().slice(0, MAX_FIELD);
@@ -135,8 +116,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true, ignored: true }, NO_STORE);
   }
 
-  if (rateLimited(clientKey(request))) {
-    return NextResponse.json({ error: 'rate_limited' }, { status: 429, ...NO_STORE });
+  // Shared across every instance and keyed on the address the platform saw, so
+  // it cannot be reset by landing on a fresh instance or by forging a header.
+  const ip = clientIp(request);
+  const throttle = await rateLimit('checkout', ip, LIMITS.checkout);
+
+  if (throttle.limited) {
+    return tooManyRequests(throttle.retryAfterSeconds);
   }
 
   const name = clean(payload.name);
@@ -238,9 +224,21 @@ export async function POST(request: NextRequest) {
           [phone ? `Tel: ${phone}` : null, message || null].filter(Boolean).join(' | ') || null,
         locale,
         holdMinutes: HOLD_MINUTES,
+        // The address and the cap that stops one actor freezing the calendar
+        // with holds they never pay for. Enforced in the write path under a
+        // per-address lock, so the count is exact even under a burst.
+        holdIp: ip,
+        maxActiveHolds: MAX_ACTIVE_HOLDS,
       });
 
       if (!outcome.ok) {
+        // Too many live holds is an abuse signal, not a fault in the stay. It is
+        // answered like the rate limit above so the visitor is asked to wait
+        // rather than told the nights are gone.
+        if (outcome.reason === 'too_many_holds') {
+          return tooManyRequests(LIMITS.checkout.windowSeconds);
+        }
+
         return NextResponse.json(
           {
             error: outcome.reason,

@@ -3,6 +3,7 @@ import type Stripe from 'stripe';
 import { routing, type Locale } from '@/i18n/routing';
 import { balanceByLinkToken, recordBalanceSession } from '@/lib/balances';
 import { property } from '@/lib/content';
+import { LIMITS, clientIp, rateLimit } from '@/lib/rate-limit';
 import { localizedUrl } from '@/lib/seo';
 import { paymentsConfigured, stripe, toMinorUnits } from '@/lib/stripe';
 import { bookingStoreConfigured } from '@/lib/supabase';
@@ -35,12 +36,21 @@ function balancePage(locale: Locale, status: Outcome): string {
 }
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ token: string }> },
 ) {
   const { token } = await params;
 
   if (!bookingStoreConfigured || !paymentsConfigured) {
+    return NextResponse.redirect(balancePage(routing.defaultLocale, 'unavailable'), 303);
+  }
+
+  // A click on this link mints a Stripe Checkout session, so it is throttled
+  // like everything else that costs something. Over budget is answered as
+  // "temporarily unavailable" rather than a bare 429, because the guest lands
+  // on a page, not on an API.
+  const throttle = await rateLimit('balanceLink', clientIp(request), LIMITS.balanceLink);
+  if (throttle.limited) {
     return NextResponse.redirect(balancePage(routing.defaultLocale, 'unavailable'), 303);
   }
 

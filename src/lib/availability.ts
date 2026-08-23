@@ -110,6 +110,16 @@ export type ReservationRequest = {
    * loud rather than get one by leaving an argument out.
    */
   holdMinutes: number;
+  /**
+   * The address placing the hold, and how many live holds it may keep at once.
+   *
+   * Both feed the cap the write path enforces under a per-address lock: it is
+   * what stops a script from freezing the calendar with holds it never pays
+   * for. Left out, no cap is applied, which is the right default for a
+   * confirmed write that takes no hold at all.
+   */
+  holdIp?: string | null;
+  maxActiveHolds?: number | null;
 };
 
 export type ReservationOutcome =
@@ -137,7 +147,8 @@ export type ReservationOutcome =
         | 'checkin_day'
         | 'stay_multiple'
         | 'minors'
-        | 'invalid_hold';
+        | 'invalid_hold'
+        | 'too_many_holds';
       minArrival?: string;
       minNights?: number;
       requiredCheckinDay?: string;
@@ -175,6 +186,8 @@ export async function reserve(request: ReservationRequest): Promise<ReservationO
     p_locale: request.locale,
     p_minors: request.minors,
     p_hold_minutes: request.holdMinutes,
+    p_hold_ip: request.holdIp ?? null,
+    p_max_active_holds: request.maxActiveHolds ?? null,
   });
 
   if (result.ok && result.id) {
@@ -196,6 +209,7 @@ export async function reserve(request: ReservationRequest): Promise<ReservationO
     'stay_multiple',
     'minors',
     'invalid_hold',
+    'too_many_holds',
   ] as const;
 
   const reason = result.reason ?? 'unavailable';

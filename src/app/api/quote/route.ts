@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { property } from '@/lib/content';
 import { isIsoDate } from '@/lib/dates';
 import { getQuote, isPricingNotConfigured, validateStay } from '@/lib/pricing';
+import { LIMITS, clientIp, rateLimit, tooManyRequests } from '@/lib/rate-limit';
 import { bookingStoreConfigured } from '@/lib/supabase';
 
 /**
@@ -37,6 +38,9 @@ function whole(value: unknown, min: number, max: number): number | null {
 }
 
 export async function POST(request: NextRequest) {
+  const throttle = await rateLimit('quote', clientIp(request), LIMITS.quote);
+  if (throttle.limited) return tooManyRequests(throttle.retryAfterSeconds);
+
   let payload: QuotePayload;
 
   try {
