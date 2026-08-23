@@ -60,6 +60,7 @@ export const GalleryPanel = memo(function GalleryPanel({
                 photo={photo}
                 openLabel={labels.open}
                 missingLabel={labels.missing}
+                interactive={interactive}
                 onOpen={onOpen}
               />
             ))}

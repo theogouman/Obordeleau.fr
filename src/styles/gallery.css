@@ -296,6 +296,32 @@
     transform var(--gallery-dur-fast) var(--gallery-ease);
 }
 
+/*
+ * Le squelette, sous la photographie qui arrive.
+ *
+ * Il bat tant qu'il attend, et une attente dont on ignore la duree ne peut pas
+ * battre un nombre de fois decide d'avance: le battement est donc continu ici,
+ * la ou le snippet en compte un seul. Sa lumiere est un degrade tres doux de
+ * sable a coquille, incline comme la lumiere d'une piece, et non un gris: la
+ * case vide reste de la couleur du site.
+ */
+.gallery-tile .t-skel-skeleton {
+  --pulse-count: infinite;
+}
+
+.gallery-tile__skeleton {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(
+    115deg,
+    var(--color-sand) 0%,
+    var(--color-cream) 46%,
+    var(--color-shell) 62%,
+    var(--color-sand) 100%
+  );
+}
+
 .gallery-tile:disabled {
   cursor: default;
 }

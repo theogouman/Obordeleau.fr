@@ -3,10 +3,11 @@
  *
  * Five are used by the booking flow: card resize (01), number pop in (02),
  * error state shake (12), shimmer text (15) and tooltip (17). Menu dropdown
- * (05) lives beside the phone field it belongs to, and plus to menu morph (20)
- * is the platform filter on the reviews page. The em dashes of the original
- * comments are gone, because the copy lint that guards constitution VII reads
- * source files too.
+ * (05) lives beside the phone field it belongs to, plus to menu morph (20) is
+ * the platform filter on the reviews page, and skeleton loader and reveal (14)
+ * is what a photograph of the gallery stands on until it has arrived. The em
+ * dashes of the original comments are gone, because the copy lint that guards
+ * constitution VII reads source files too.
  *
  * The movement from one question to the next is not a snippet from here: it is
  * vertical and sequential, the answered question lifting away before the next
@@ -66,6 +67,21 @@
   --morph-rotate: 45deg;
   --morph-scale: 0.97;
   --morph-blur: 2px;
+
+  /*
+   * 14 Skeleton loader and reveal. Ce qui remplace une photographie de la
+   * galerie tant qu'elle n'est pas arrivee: le squelette respire, puis les
+   * deux couches se croisent, l'une s'efface en floutant, l'autre arrive en se
+   * defloutant. Valeurs du snippet, sauf le nombre de battements, regle par
+   * l'appelant: une attente dont on ne connait pas la duree ne peut pas battre
+   * un nombre de fois decide d'avance.
+   */
+  --pulse-dur: 1000ms;
+  --pulse-count: 1;
+  --pulse-min: 0.5;
+  --reveal-dur: 400ms;
+  --reveal-blur: 2px;
+  --reveal-ease: ease-in-out;
 
   /* 17 Tooltip */
   --tt-in-dur: 150ms;
@@ -297,6 +313,58 @@
     transition-timing-function: var(--tt-in-ease);
     transition-delay: var(--tt-delay);
   }
+
+  /*
+   * 14 Skeleton loader and reveal.
+   *
+   * Les deux couches occupent la meme case, donc l'echange ne deplace rien. Le
+   * squelette porte le battement et la sortie du fondu, le contenu porte
+   * l'entree, et les deux partagent duree et courbe pour que le passage se
+   * lise comme un seul mouvement.
+   */
+  .t-skel {
+    position: relative;
+  }
+
+  .t-skel-skeleton,
+  .t-skel-content {
+    position: absolute;
+    inset: 0;
+  }
+
+  .t-skel-skeleton {
+    z-index: 1;
+    opacity: 1;
+    filter: blur(0);
+    transition:
+      opacity var(--reveal-dur) var(--reveal-ease),
+      filter var(--reveal-dur) var(--reveal-ease);
+  }
+
+  .t-skel-content {
+    z-index: 2;
+    opacity: 0;
+    filter: blur(var(--reveal-blur));
+    transition:
+      opacity var(--reveal-dur) var(--reveal-ease),
+      filter var(--reveal-dur) var(--reveal-ease);
+  }
+
+  .t-skel.is-revealed .t-skel-skeleton {
+    opacity: 0;
+    filter: blur(var(--reveal-blur));
+  }
+
+  .t-skel.is-revealed .t-skel-content {
+    opacity: 1;
+    filter: blur(0);
+  }
+
+  /* Le battement est pose sur l'enfant, pas sur le squelette lui-meme, dont
+     l'opacite et le filtre appartiennent au fondu croise. */
+  .t-skel-skeleton.is-pulsing > * {
+    animation: t-skel-pulse var(--pulse-dur) ease-in-out var(--pulse-count);
+  }
 }
 
 @keyframes t-digit-pop-in {
@@ -321,6 +389,16 @@
   }
   100% {
     background-position: 0% 0;
+  }
+}
+
+@keyframes t-skel-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: var(--pulse-min);
   }
 }
 
@@ -372,5 +450,14 @@
   .t-morph-plus,
   .t-morph-menu {
     transition: none !important;
+  }
+
+  .t-skel-skeleton,
+  .t-skel-content {
+    transition: none !important;
+  }
+
+  .t-skel-skeleton.is-pulsing > * {
+    animation: none !important;
   }
 }

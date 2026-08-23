@@ -55,16 +55,17 @@ export function Footer({ year }: { year: number }) {
               alt={t('classificationAlt')}
               width={1254}
               height={1254}
-              className="mt-6 h-auto w-[104px]"
+              className="mt-6 h-auto w-[104px] rounded-[0.625rem]"
               sizes="104px"
             />
           ) : null}
         </div>
 
-        {/* Centred in its own column, heading and links alike, so the block
-            reads as the middle of the three rather than as a column that
-            drifted right of the mark. */}
-        <div className="lg:justify-self-center lg:text-center">
+        {/* Le bloc est place au milieu des trois, mais ses lignes restent
+            alignees a gauche les unes sous les autres: centrees, deux entrees
+            de longueurs differentes ne commencaient pas au meme endroit et le
+            titre flottait au-dessus d'elles. */}
+        <div className="lg:justify-self-center">
           <h2 className="font-display text-lg">{t('contactTitle')}</h2>
           <ul className="mt-3 space-y-2 text-cream/80">
             <li>

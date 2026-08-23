@@ -106,9 +106,18 @@
     grid-template-rows: auto 1fr;
   }
 
+  /*
+   * La photographie prend la plus grande part de la carte.
+   *
+   * Les deux colonnes etaient a egalite, et le texte n'en remplissait jamais
+   * la sienne: trois lignes tenues a 34 caracteres laissaient une bande de
+   * blanc entre la derniere lettre et le bord de l'image. La colonne du texte
+   * est desormais reglee sur ce que le texte demande vraiment, et tout ce qui
+   * reste va a la photographie.
+   */
   @media (min-width: 768px) {
     .around-card--photo .around-card__grid {
-      grid-template-columns: 1.05fr 1fr;
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
       grid-template-rows: 1fr;
     }
   }

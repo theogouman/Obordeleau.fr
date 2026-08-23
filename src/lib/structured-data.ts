@@ -26,7 +26,7 @@ export function lodgingJsonLd(locale: Locale, labels: Labels) {
     url,
     inLanguage: localeTags[locale],
     description: labels.description,
-    image: [`${siteUrl}/images/hero/${property.hero.image}`],
+    image: [`${siteUrl}/images/gallery/${property.hero.image}`],
     address: {
       '@type': 'PostalAddress',
       streetAddress: property.address.street,

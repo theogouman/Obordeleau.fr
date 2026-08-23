@@ -198,10 +198,12 @@ export function Header({ labels }: Props) {
   return (
     <>
       {/*
-       * Outside the header, deliberately. The header carries a backdrop blur,
-       * and a blurred box becomes the containing block of anything fixed
-       * inside it: the veil was being held to the height of the bar instead of
-       * covering the page, and it painted over the panel rather than under it.
+       * Outside the pill, deliberately. The pill carries a backdrop blur, and a
+       * blurred box becomes the containing block of anything fixed inside it:
+       * the veil was being held to the height of the bar instead of covering
+       * the page, and it painted over the panel rather than under it. The pill
+       * clips its content too, which would cut the veil to a rounded rectangle
+       * at the top of the screen.
        */}
       <div
         className="menu-scrim lg:hidden"
@@ -210,110 +212,121 @@ export function Header({ labels }: Props) {
         onClick={closeMenu}
       />
 
-      <header className="sticky top-0 z-40 border-b border-[rgba(58,42,38,0.08)] bg-[rgba(250,247,242,0.92)] backdrop-blur">
-        <div className="container-page flex items-center justify-between gap-4 py-3">
-          {/* An anchor either way, so it still works with no JavaScript. */}
-          {variant === "home" ? (
-            <a
-              href={home}
-              onClick={toTop}
-              className="text-ink"
-              aria-label={labels.home}
-            >
-              <Wordmark />
-            </a>
-          ) : (
-            <Link href="/" className="text-ink" aria-label={labels.home}>
-              <Wordmark />
-            </Link>
-          )}
-
-          <nav
-            aria-label={labels.primary}
-            className="hidden items-center gap-6 text-sm lg:flex"
-          >
-            {sections.map((item) => (
-              <SectionLink
-                key={item.hash}
-                {...shared}
-                hash={item.hash}
-                className="text-ink-soft transition-colors hover:text-ink"
-              >
-                {item.label}
-              </SectionLink>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-2">
-            <LanguageMenu
-              label={labels.language}
-              switchLabel={labels.languageSwitch}
-              className="hidden sm:block"
-            />
-            <SectionLink
-              {...shared}
-              hash="#book"
-              className="btn btn-primary hidden px-4 py-2 text-sm sm:inline-flex"
-            >
-              {labels.book}
-            </SectionLink>
-
-            <button
-              type="button"
-              onClick={() => (menu === "open" ? closeMenu() : setMenu("open"))}
-              aria-expanded={menu === "open"}
-              aria-controls="mobile-menu"
-              data-state={menu}
-              className="menu-toggle lg:hidden"
-            >
-              <span className="visually-hidden">
-                {open ? labels.closeMenu : labels.openMenu}
-              </span>
-              <span className="menu-bar menu-bar--top" aria-hidden="true" />
-              <span className="menu-bar menu-bar--middle" aria-hidden="true" />
-              <span className="menu-bar menu-bar--bottom" aria-hidden="true" />
-            </button>
-          </div>
-        </div>
-
-        <div
-          id="mobile-menu"
-          ref={panelRef}
-          hidden={menu === "closed"}
+      {/* Toujours un <header>: c'est le repere de banniere de la page, et une
+          pilule dans un div anonyme le faisait disparaitre de l'arbre. */}
+      <header className="site-nav-wrapper">
+        <nav
+          className="site-nav-pill"
+          aria-label={labels.primary}
           data-state={menu}
-          className="menu-panel relative z-10 border-t border-[rgba(58,42,38,0.08)] bg-cream lg:hidden"
         >
-          <nav
-            aria-label={labels.mobileMenu}
-            className="container-page flex flex-col gap-1 py-4"
-          >
-            {sections.map((item) => (
-              <SectionLink
-                key={item.hash}
-                {...shared}
-                hash={item.hash}
-                className="menu-item rounded-[var(--radius-card)] px-2 py-3 text-ink-soft hover:bg-sand hover:text-ink"
+          <div className="flex items-center justify-between gap-4 py-2 pl-4 pr-3 lg:gap-7 lg:py-2 lg:pl-6 lg:pr-4">
+            {/* An anchor either way, so it still works with no JavaScript. */}
+            {variant === "home" ? (
+              <a
+                href={home}
+                onClick={toTop}
+                className="text-ink"
+                aria-label={labels.home}
               >
-                {item.label}
-              </SectionLink>
-            ))}
+                <Wordmark />
+              </a>
+            ) : (
+              <Link href="/" className="text-ink" aria-label={labels.home}>
+                <Wordmark />
+              </Link>
+            )}
 
-            <div className="menu-item mt-2 flex items-center justify-between gap-3 border-t border-[rgba(58,42,38,0.08)] pt-4">
+            <div className="hidden items-center gap-6 text-sm lg:flex">
+              {sections.map((item) => (
+                <SectionLink
+                  key={item.hash}
+                  {...shared}
+                  hash={item.hash}
+                  className="text-ink-soft transition-colors hover:text-ink"
+                >
+                  {item.label}
+                </SectionLink>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-2">
               <LanguageMenu
                 label={labels.language}
                 switchLabel={labels.languageSwitch}
-                align="start"
+                className="hidden sm:block"
               />
               <SectionLink
                 {...shared}
                 hash="#book"
-                className="btn btn-primary px-4 py-2 text-sm"
+                className="btn btn-primary hidden px-4 py-2 text-sm sm:inline-flex"
               >
                 {labels.book}
               </SectionLink>
+
+              <button
+                type="button"
+                onClick={() => (menu === "open" ? closeMenu() : setMenu("open"))}
+                aria-expanded={menu === "open"}
+                aria-controls="mobile-menu"
+                data-state={menu}
+                className="menu-toggle lg:hidden"
+              >
+                <span className="visually-hidden">
+                  {open ? labels.closeMenu : labels.openMenu}
+                </span>
+                <span className="menu-bar menu-bar--top" aria-hidden="true" />
+                <span className="menu-bar menu-bar--middle" aria-hidden="true" />
+                <span className="menu-bar menu-bar--bottom" aria-hidden="true" />
+              </button>
             </div>
-          </nav>
-        </div>
+          </div>
+
+          {/* Inside the pill now, which is what makes the pill itself grow
+              when the menu unfolds instead of a second surface appearing under
+              it. The panel carries no ground of its own: the glass is the
+              pill's, and a second one over it would fog the page twice. */}
+          <div
+            id="mobile-menu"
+            ref={panelRef}
+            hidden={menu === "closed"}
+            data-state={menu}
+            className="menu-panel lg:hidden"
+          >
+            <div className="menu-panel__rule" aria-hidden="true" />
+
+            <nav
+              aria-label={labels.mobileMenu}
+              className="flex flex-col gap-1 px-2 pb-2 pt-2"
+            >
+              {sections.map((item) => (
+                <SectionLink
+                  key={item.hash}
+                  {...shared}
+                  hash={item.hash}
+                  className="menu-item rounded-[var(--radius-card)] px-3 py-3 text-ink-soft hover:bg-[rgba(58,42,38,0.05)] hover:text-ink"
+                >
+                  {item.label}
+                </SectionLink>
+              ))}
+
+              <div className="menu-item mt-1 flex items-center justify-between gap-3 border-t border-[rgba(58,42,38,0.08)] px-1 pt-3">
+                <LanguageMenu
+                  label={labels.language}
+                  switchLabel={labels.languageSwitch}
+                  align="start"
+                />
+                <SectionLink
+                  {...shared}
+                  hash="#book"
+                  className="btn btn-primary px-4 py-2 text-sm"
+                >
+                  {labels.book}
+                </SectionLink>
+              </div>
+            </nav>
+          </div>
+        </nav>
       </header>
     </>
   );

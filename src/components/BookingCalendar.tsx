@@ -494,6 +494,8 @@ export function BookingCalendar({
               <FullMonth
                 key={month}
                 heading={monthName.format(new Date(`${month}T00:00:00Z`))}
+                weekdays={weekdays}
+                weeks={weeksOf(month)}
                 sentence={t('fullMonth', {
                   month: monthAlone.format(new Date(`${month}T00:00:00Z`)),
                 })}
@@ -587,6 +589,8 @@ export function BookingCalendar({
  */
 function FullMonth({
   heading,
+  weekdays,
+  weeks,
   sentence,
   link,
   linkHiddenWide,
@@ -594,6 +598,8 @@ function FullMonth({
   second,
 }: {
   heading: string;
+  weekdays: { short: string; long: string }[];
+  weeks: (string | null)[][];
   sentence: string;
   link: string | null;
   linkHiddenWide: boolean;
@@ -601,28 +607,69 @@ function FullMonth({
   second: boolean;
 }) {
   return (
-    <div className={`flex flex-col ${second ? 'hidden @[30rem]/cal:flex' : ''}`}>
+    <div className={second ? 'hidden @[30rem]/cal:block' : ''}>
       <p className="mb-2 font-display text-lg capitalize">{heading}</p>
 
-      <div className="flex flex-1 flex-col items-center justify-center gap-3 rounded-[var(--radius-card)] bg-sand px-4 py-10 text-center">
-        <p className="font-display text-lg text-ink">{sentence}</p>
+      <div className="relative">
+        {/*
+         * The month is still drawn, faded, behind the answer.
+         *
+         * A full month used to be a sand box with a sentence in it, and the
+         * calendar disappeared under it: the reader lost the shape they were
+         * reading, and with it the sense that anything was there at all. The
+         * grid stays, greyed, and the sentence sits over it on a card. It is a
+         * copy with no buttons in it, on purpose: every square of a full month
+         * refuses the click anyway, and a screen reader is told the month is
+         * full once rather than thirty times.
+         */}
+        <table className="w-full border-collapse select-none opacity-45" aria-hidden="true">
+          <thead>
+            <tr>
+              {weekdays.map((weekday) => (
+                <th key={weekday.long} className="pb-1 text-xs font-medium text-ink-soft">
+                  {weekday.short}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {weeks.map((week) => (
+              <tr key={String(week.find(Boolean))}>
+                {week.map((date, cell) => (
+                  <td key={date ?? `empty-${cell}`} className="p-0.5 text-center">
+                    <span className="flex h-10 w-full items-center justify-center text-sm text-ink-soft/55">
+                      {date ? Number(date.slice(8, 10)) : ''}
+                    </span>
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
-        {/* The link is inline rather than a flex row: on a narrow calendar the
-            label takes two lines, and a row kept the arrow up on the first one,
-            stranded against the right edge. Held to the last word by a non
-            breaking space, it stays where the sentence ends. */}
-        {link ? (
-          <button
-            type="button"
-            onClick={onFollow}
-            className={`max-w-full text-balance text-sm font-medium text-raspberry-ink underline underline-offset-4 ${
-              linkHiddenWide ? '@[30rem]/cal:hidden' : ''
-            }`}
-          >
-            {link}
-            <span aria-hidden="true">&#160;&#8594;</span>
-          </button>
-        ) : null}
+        {/* The answer itself, floating over the month it is about. */}
+        <div className="pointer-events-none absolute inset-x-1 top-1/2 flex -translate-y-1/2 justify-center">
+          <div className="pointer-events-auto flex max-w-full flex-col items-center gap-1 rounded-[var(--radius-pill)] border border-[rgba(58,42,38,0.10)] bg-[rgba(255,255,255,0.94)] px-5 py-4 text-center shadow-[var(--shadow-card-hover)] backdrop-blur-[6px]">
+            <p className="text-balance font-display text-base leading-snug text-ink">{sentence}</p>
+
+            {/* The link is inline rather than a flex row: on a narrow calendar the
+                label takes two lines, and a row kept the arrow up on the first one,
+                stranded against the right edge. Held to the last word by a non
+                breaking space, it stays where the sentence ends. */}
+            {link ? (
+              <button
+                type="button"
+                onClick={onFollow}
+                className={`max-w-full text-sm font-medium text-raspberry-ink underline underline-offset-4 ${
+                  linkHiddenWide ? '@[30rem]/cal:hidden' : ''
+                }`}
+              >
+                {link}
+                <span aria-hidden="true">&#160;&#8594;</span>
+              </button>
+            ) : null}
+          </div>
+        </div>
       </div>
     </div>
   );

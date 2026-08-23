@@ -1,0 +1,220 @@
+/*
+ * Le hero: une photographie vue a travers trois arches.
+ *
+ * La photographie du studio est large, et une seule ouverture en cloche la
+ * recadrait par les cotes jusqu'a n'en garder qu'une bande. Elle est donc
+ * laissee entiere et c'est le cadre qui se decoupe: trois panneaux en arche,
+ * poses cote a cote, a travers lesquels on voit une seule et meme image. Rien
+ * n'est repete et rien n'est coupe, l'image traverse les trois ouvertures sans
+ * se rompre, exactement comme une vue prise depuis trois fenetres voisines.
+ *
+ * La forme n'est pas decorative: la marque est une arche posee sur une ligne
+ * d'eau, c'est le dessin du logo. Le panneau du milieu monte plus haut que ses
+ * deux voisins, comme un triptyque, ce qui donne au bloc son centre sans avoir
+ * a l'ecrire.
+ *
+ * Toute la geometrie tient dans deux nombres, l'ecart entre les panneaux et le
+ * decalage des deux lateraux. L'image, elle, est posee dans les coordonnees du
+ * bloc entier et non dans celles de son panneau: c'est ce qui la garde
+ * continue d'une arche a l'autre.
+ */
+
+.hero {
+  position: relative;
+  padding-block: 1.5rem 3rem;
+}
+
+@media (min-width: 768px) {
+  .hero {
+    padding-block: 2.5rem 4rem;
+  }
+}
+
+/*
+ * Le premier ecran est a lui. Le titre de la section suivante se voyait depuis
+ * le hero, donc son entree au defilement etait jouee avant meme qu'on ait
+ * defile: il commence maintenant sous la ligne de flottaison.
+ */
+@media (min-width: 1024px) {
+  .hero {
+    display: flex;
+    align-items: center;
+    min-height: calc(100svh - var(--site-nav-h));
+  }
+}
+
+.hero__grid {
+  display: grid;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+@media (min-width: 1024px) {
+  .hero__grid {
+    grid-template-columns: 0.95fr 1.05fr;
+    gap: 3.5rem;
+  }
+}
+
+/* La lumiere derriere les arches, dans les tons du couchant de la marque. */
+.hero__glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(38rem 30rem at 78% 32%, rgba(255, 155, 84, 0.16), transparent 68%),
+    radial-gradient(28rem 24rem at 90% 78%, rgba(206, 66, 87, 0.08), transparent 70%);
+}
+
+/* --- le triptyque -------------------------------------------------------- */
+
+.hero-triptych {
+  --hero-gap: 10px;
+  --hero-stagger: 24px;
+
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--hero-gap);
+  aspect-ratio: 6 / 5;
+  width: 100%;
+  max-width: 34rem;
+  /* Les deux panneaux lateraux descendent plus bas que le milieu, et rien ne
+     doit venir les couper. */
+  margin-inline: auto;
+  margin-bottom: var(--hero-stagger);
+}
+
+@media (max-width: 639px) {
+  .hero-triptych {
+    --hero-gap: 8px;
+    --hero-stagger: 16px;
+    max-width: 26rem;
+  }
+}
+
+/*
+ * L'arche. Le rayon du haut est donne en pourcentages, un pour la largeur et
+ * un pour la hauteur, donc la courbe garde la meme allure quelle que soit la
+ * taille du panneau: un demi-cercle sur un panneau haut de deux fois sa
+ * largeur serait un couvercle, pas une arche.
+ */
+.hero-triptych__pane {
+  --dy: 0px;
+
+  position: relative;
+  overflow: hidden;
+  border-radius: 50% 50% 16px 16px / 26% 26% 16px 16px;
+  background-color: var(--color-sand);
+  transform: translateY(var(--dy));
+  box-shadow:
+    0 20px 44px rgba(58, 42, 38, 0.16),
+    0 2px 8px rgba(58, 42, 38, 0.06),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.hero-triptych__pane[data-pane='0'],
+.hero-triptych__pane[data-pane='2'] {
+  --dy: var(--hero-stagger);
+}
+
+/*
+ * L'image est posee dans les coordonnees du triptyque entier, pas dans celles
+ * de son panneau: meme largeur, meme hauteur et meme cadrage pour les trois,
+ * seule l'origine change. C'est la condition pour que la photographie traverse
+ * les trois arches sans decrochement.
+ *
+ * La hauteur porte le decalage en plus, sinon le panneau descendu montrerait
+ * du vide sous le bas de l'image.
+ */
+.hero-triptych__frame {
+  position: absolute;
+  top: calc(-1 * var(--dy));
+  left: 0;
+  width: calc(300% + 2 * var(--hero-gap));
+  height: calc(100% + var(--hero-stagger));
+}
+
+.hero-triptych__pane[data-pane='1'] .hero-triptych__frame {
+  left: calc(-100% - var(--hero-gap));
+}
+
+.hero-triptych__pane[data-pane='2'] .hero-triptych__frame {
+  left: calc(-200% - 2 * var(--hero-gap));
+}
+
+.hero-triptych__img {
+  object-fit: cover;
+}
+
+.hero-triptych__missing {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--color-ink-soft);
+}
+
+/* --- l'arrivee ----------------------------------------------------------- */
+
+/*
+ * Les trois arches se levent l'une apres l'autre. Elles arrivent de plus bas
+ * que leur place et un peu ecrasees, comme un volet qu'on releve, et la
+ * cascade va de gauche a droite.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-triptych__pane {
+    animation: hero-pane-rise 900ms var(--ease-out-expo) both;
+    transform-origin: 50% 100%;
+  }
+
+  .hero-triptych__pane[data-pane='1'] {
+    animation-delay: 110ms;
+  }
+
+  .hero-triptych__pane[data-pane='2'] {
+    animation-delay: 220ms;
+  }
+}
+
+@keyframes hero-pane-rise {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--dy) + 42px)) scaleY(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(var(--dy)) scaleY(1);
+  }
+}
+
+/*
+ * La photographie glisse derriere les arches quand la page defile, de la meme
+ * quantite dans les trois, donc elle reste d'un seul tenant. Le calendrier de
+ * defilement n'existe pas partout: la ou il manque, la regle entiere est
+ * ignoree et le hero garde des arches fixes, ce qui est un hero parfaitement
+ * normal.
+ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
+    .hero-triptych__frame {
+      height: calc(100% + var(--hero-stagger) + 28px);
+      animation: hero-photo-drift linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+  }
+}
+
+@keyframes hero-photo-drift {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-28px);
+  }
+}

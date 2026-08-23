@@ -1,16 +1,109 @@
 /*
- * Menu mobile: le panneau se deplie sous la barre, par-dessus la page.
+ * La navigation: une pilule flottante en verre, et le menu mobile qui se
+ * deplie dedans.
  *
- * Repris de l'animation ecrite par le proprietaire pour un autre de ses sites:
- * meme deroule, memes durees, memes courbes. Le panneau ouvre sur sa hauteur
- * mesuree, les entrees arrivent l'une apres l'autre, et la page passe sous un
- * voile pendant que l'ombre du panneau dit qu'il est au-dessus d'elle. A la
- * fermeture le sens s'inverse: les entrees partent d'abord, la hauteur se
- * referme ensuite.
+ * La barre ne colle plus au haut de la page, elle flotte au-dessus d'elle. Le
+ * cadre exterieur est fixe et ne capte aucun clic, la pilule capte les siens,
+ * et le panneau mobile vit a l'interieur de la pilule: c'est la pilule qui
+ * grandit a l'ouverture, pas une seconde surface qui apparait dessous.
+ *
+ * L'animation du panneau est celle ecrite par le proprietaire pour un autre de
+ * ses sites: meme deroule, memes durees, memes courbes. Le panneau ouvre sur sa
+ * hauteur mesuree, les entrees arrivent l'une apres l'autre, et la page passe
+ * sous un voile. A la fermeture le sens s'inverse: les entrees partent d'abord,
+ * la hauteur se referme ensuite.
  *
  * Les durees sont ecrites ici plutot que prises aux jetons du site, parce que
  * ce sont celles de l'animation d'origine.
  */
+
+:root {
+  /*
+   * La hauteur que la pilule occupe en haut de la page. Fixe, elle ne prend
+   * plus de place dans le flux, donc c'est ce nombre qui la reserve: en marge
+   * haute du contenu et en marge de defilement pour les ancres.
+   */
+  --site-nav-h: 88px;
+}
+
+@media (max-width: 1023px) {
+  :root {
+    --site-nav-h: 76px;
+  }
+}
+
+.site-nav-wrapper {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 40;
+  padding: 16px 24px;
+  pointer-events: none;
+  text-align: center;
+  transform: translateZ(0);
+}
+
+@media (max-width: 1023px) {
+  .site-nav-wrapper {
+    padding: 12px 16px;
+  }
+}
+
+/*
+ * Le verre est une couleur de la marque a peine transparente, pas un blanc
+ * pur: le fond de page est creme, et une pilule blanche dessus se verrait
+ * comme une piece rapportee. La saturation compense ce que le flou lave.
+ */
+.site-nav-pill {
+  pointer-events: auto;
+  display: inline-flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 78rem;
+  margin: 0 auto;
+  overflow: hidden;
+  text-align: initial;
+  background: rgba(250, 247, 242, 0.82);
+  /* Non prefixe, et rien d'autre: le prefixe est ajoute a la compilation.
+     Ecrit a la main apres la propriete standard, il la faisait supprimer par
+     le minifieur, et Chromium ne reconnait plus l'alias prefixe: le verre ne
+     floutait alors rien du tout. Les autres feuilles du site ecrivent le
+     prefixe avant, ce qui les met a l'abri, mais le plus sur est de n'en
+     ecrire aucun. */
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(58, 42, 38, 0.08);
+  box-shadow:
+    0 4px 24px rgba(58, 42, 38, 0.06),
+    0 1px 2px rgba(58, 42, 38, 0.04);
+  border-radius: var(--radius-pill);
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/*
+ * Sous le point de bascule la pilule doit pouvoir grandir: un rayon de pilule
+ * sur une boite haute de trois cents pixels donne deux demi-cercles, donc le
+ * coin redevient un coin des que le panneau est dedans.
+ */
+@media (max-width: 1023px) {
+  .site-nav-pill {
+    display: block;
+    max-width: 720px;
+    border-radius: 24px;
+  }
+}
+
+/*
+ * Le contenu passe sous la pilule au defilement, mais il ne commence pas
+ * dessous: la hauteur qu'elle occupait dans le flux lui est rendue ici, et les
+ * ancres s'arretent au meme endroit.
+ */
+html {
+  scroll-padding-top: calc(var(--site-nav-h) + 8px);
+}
+
+#main {
+  padding-top: var(--site-nav-h);
+}
 
 .menu-scrim {
   position: fixed;
@@ -36,15 +129,14 @@
 
 /* Panneau */
 
+/* Aucune ombre propre, aucun fond: le panneau est l'interieur de la pilule,
+   c'est elle qui porte le verre et l'ombre. */
 .menu-panel {
   max-height: 0;
   overflow: hidden;
   opacity: 0;
   will-change: max-height, opacity;
   transform: translateZ(0);
-  box-shadow:
-    0 18px 40px rgba(58, 42, 38, 0.16),
-    0 2px 8px rgba(58, 42, 38, 0.06);
   transition:
     max-height 360ms cubic-bezier(0.16, 1, 0.3, 1),
     opacity 300ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -52,6 +144,28 @@
 
 .menu-panel[data-state='open'] {
   opacity: 1;
+}
+
+/* Le trait qui separe la rangee du haut du panneau, en retrait des bords pour
+   ne pas venir toucher le verre. */
+.menu-panel__rule {
+  height: 1px;
+  margin-inline: 16px;
+  background-color: rgba(58, 42, 38, 0.08);
+}
+
+/*
+ * La liste des langues monte au lieu de descendre.
+ *
+ * Elle est ancree au coin de la cle et fait pres de deux cents pixels: ouverte
+ * vers le bas depuis la derniere rangee du panneau, elle sortait de la pilule,
+ * qui rogne ce qui deborde, et la moitie de la liste disparaissait. Ancree par
+ * le bas elle grandit vers le haut, par-dessus les entrees du menu, et reste
+ * entiere.
+ */
+.menu-panel .lang-key__morph,
+.menu-panel .lang-key__trigger {
+  inset: auto auto 0 0;
 }
 
 .menu-panel[data-state='closing'] {
@@ -175,6 +289,18 @@
   color: var(--color-ink);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+}
+
+/*
+ * `display` est declare ici et cette feuille est chargee apres les utilitaires
+ * Tailwind, donc `lg:hidden` sur le bouton perdait a egalite de specificite et
+ * le burger restait visible sur desktop, a cote des cinq liens qu'il aurait
+ * ouverts. La regle porte donc elle-meme son point de bascule.
+ */
+@media (min-width: 1024px) {
+  .menu-toggle {
+    display: none;
+  }
 }
 
 .menu-bar {
