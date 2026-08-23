@@ -10,6 +10,7 @@
 @import './channel-dialog.css';
 @import './host-portrait.css';
 @import './quote.css';
+@import './gallery.css';
 
 @theme {
   --color-cream: #faf7f2;

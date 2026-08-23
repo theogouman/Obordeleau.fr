@@ -1,0 +1,476 @@
+/*
+ * Galerie: rail d'onglets a surface liquide, grille par piece, visionneuse.
+ *
+ * Le panneau porte son propre fond blanc et ses coins hauts. La surface SVG ne
+ * dessine que la bosse et se pose dessus en la recouvrant de 2px, ce qui rend
+ * la jointure invisible et laisse le rail defiler sans emporter les coins du
+ * panneau hors de l'ecran.
+ */
+
+.gallery-frame {
+  --rail-h: 66px;
+  --frame-inset: 16px;
+  --panel-radius: 22px;
+
+  background-color: var(--color-sand);
+  border-radius: calc(var(--panel-radius) + var(--frame-inset));
+  padding-bottom: var(--frame-inset);
+}
+
+/* Rail */
+
+.gallery-rail {
+  position: relative;
+  height: var(--rail-h);
+}
+
+.gallery-rail__scroller {
+  position: absolute;
+  inset: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.gallery-rail__scroller::-webkit-scrollbar {
+  display: none;
+}
+
+/* Le fondu n'est pose que du cote qui deborde vraiment, sinon un onglet de
+   bout de rail serait grise sans raison. */
+.gallery-rail__scroller[data-overflow='right'] {
+  mask-image: linear-gradient(to right, #000 calc(100% - 44px), transparent 100%);
+}
+
+.gallery-rail__scroller[data-overflow='left'] {
+  mask-image: linear-gradient(to right, transparent 0, #000 44px);
+}
+
+.gallery-rail__scroller[data-overflow='both'] {
+  mask-image: linear-gradient(to right, transparent 0, #000 44px, #000 calc(100% - 44px), transparent 100%);
+}
+
+.gallery-rail__track {
+  position: relative;
+  height: 100%;
+  min-width: 100%;
+}
+
+.gallery-rail__surface {
+  position: absolute;
+  inset: 0 auto auto 0;
+  height: calc(var(--rail-h) + 2px);
+  color: var(--color-shell);
+  pointer-events: none;
+}
+
+.gallery-rail__tabs {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding-inline: var(--frame-inset);
+  margin: 0;
+  list-style: none;
+}
+
+.gallery-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 54px;
+  padding-inline: 1rem;
+  border: 0;
+  background: none;
+  color: var(--color-ink-soft);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 18px 18px 0 0;
+  transition:
+    color var(--duration-fast) var(--ease-out-quad),
+    background-color var(--duration-fast) var(--ease-out-quad);
+}
+
+.gallery-tab__icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex: none;
+}
+
+.gallery-tab:hover {
+  color: var(--color-ink);
+  background-color: rgba(58, 42, 38, 0.05);
+}
+
+.gallery-tab[aria-selected='true'],
+.gallery-tab[data-active='true'] {
+  color: var(--color-ink);
+  background-color: transparent;
+}
+
+.gallery-tab:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--color-raspberry-ink);
+}
+
+/* Le rail de secours, sans mesure et sans JavaScript: des ancres, rien de plus. */
+.gallery-rail__measure {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  gap: 8px;
+  visibility: hidden;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Panneaux */
+
+.gallery-panel {
+  position: relative;
+  z-index: 1;
+  margin-inline: var(--frame-inset);
+  padding: 1.25rem 1rem 1.25rem;
+  background-color: var(--color-shell);
+  border-radius: var(--panel-radius) var(--panel-radius) 16px 16px;
+}
+
+/* Sans JavaScript les cinq panneaux sont empiles, donc ils ont besoin d'air. */
+.gallery-panel + .gallery-panel {
+  margin-top: 0.75rem;
+}
+
+.gallery-panel[data-active='true'] {
+  animation: gallery-panel-reveal var(--duration-slow) var(--ease-out-expo) both;
+}
+
+@keyframes gallery-panel-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+.gallery-panel__title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  line-height: 1.2;
+  color: var(--color-ink);
+  padding-inline: 1rem;
+}
+
+.gallery-panel__sub {
+  margin-top: 0.25rem;
+  margin-bottom: 1rem;
+  font-size: 0.9375rem;
+  color: var(--color-ink-soft);
+  padding-inline: 1rem;
+}
+
+.gallery-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.gallery-row {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(var(--row-cols), minmax(0, 1fr));
+}
+
+@media (max-width: 719px) {
+  .gallery-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Tuiles */
+
+.gallery-tile {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+
+.gallery-tile:disabled {
+  cursor: default;
+}
+
+.gallery-tile__frame {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background-color: var(--color-sand);
+  border-radius: var(--radius-card);
+}
+
+.gallery-tile__img {
+  object-fit: cover;
+  transition: transform var(--duration-base) var(--ease-out-quad);
+}
+
+.gallery-tile:hover .gallery-tile__img {
+  transform: scale(1.03);
+}
+
+.gallery-tile:focus-visible .gallery-tile__frame {
+  outline: 2px solid var(--color-raspberry-ink);
+  outline-offset: 2px;
+}
+
+.gallery-tile__missing {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--color-ink-soft);
+}
+
+/* Visionneuse */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0.75rem, 3vw, 2rem);
+}
+
+.lightbox__backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(42, 30, 27, 0.62);
+  backdrop-filter: blur(8px);
+  border: 0;
+  padding: 0;
+  cursor: zoom-out;
+}
+
+.lightbox__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  width: min(72rem, 100%);
+  max-height: 100%;
+  padding: clamp(0.875rem, 2vw, 1.25rem);
+  background-color: var(--color-cream);
+  border-radius: calc(var(--radius-card) + 0.5rem);
+  box-shadow: var(--shadow-card-hover);
+  overflow: hidden;
+}
+
+.lightbox__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.lightbox__room {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  color: var(--color-raspberry-ink);
+}
+
+.lightbox__caption {
+  margin-top: 0.125rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--color-ink-soft);
+  max-width: 46ch;
+}
+
+.lightbox__meta {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.lightbox__counts {
+  text-align: right;
+}
+
+.lightbox__counter {
+  font-size: 0.875rem;
+  color: var(--color-ink);
+}
+
+.lightbox__roomcounter {
+  font-size: 0.75rem;
+  color: var(--color-ink-soft);
+}
+
+.lightbox__stage {
+  position: relative;
+  width: 100%;
+}
+
+.lightbox__frame {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  max-width: min(100%, calc(62vh * 4 / 3));
+  margin-inline: auto;
+  overflow: hidden;
+  background-color: var(--color-sand);
+  border-radius: var(--radius-card);
+}
+
+.lightbox__img {
+  object-fit: cover;
+}
+
+.lightbox__nav {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background-color: rgba(250, 247, 242, 0.92);
+  box-shadow: var(--shadow-card);
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-out-quad);
+}
+
+.lightbox__nav:hover {
+  transform: translateY(calc(-1 * var(--lift-sm)));
+}
+
+.lightbox__nav--prev {
+  left: 0.75rem;
+}
+
+.lightbox__nav--next {
+  right: 0.75rem;
+}
+
+.lightbox__close {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: 0.625rem;
+  background-color: var(--color-shell);
+  box-shadow:
+    inset 0 0 0 1px rgba(58, 42, 38, 0.18),
+    var(--shadow-card);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.lightbox__nav:focus-visible,
+.lightbox__close:focus-visible,
+.lightbox__thumb:focus-visible {
+  outline: 2px solid var(--color-raspberry-ink);
+  outline-offset: 2px;
+}
+
+.lightbox__strip {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 0.125rem;
+}
+
+.lightbox__strip::-webkit-scrollbar {
+  display: none;
+}
+
+.lightbox__sep {
+  flex: none;
+  width: 1px;
+  height: 1.75rem;
+  margin-inline: 0.25rem;
+  background-color: rgba(58, 42, 38, 0.18);
+}
+
+.lightbox__thumb {
+  position: relative;
+  flex: none;
+  width: 4rem;
+  aspect-ratio: 4 / 3;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background-color: var(--color-sand);
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity var(--duration-fast) var(--ease-out-quad);
+}
+
+.lightbox__thumb:hover {
+  opacity: 0.85;
+}
+
+.lightbox__thumb[aria-current='true'] {
+  opacity: 1;
+  box-shadow: inset 0 0 0 2px var(--color-raspberry);
+}
+
+.lightbox__thumb img {
+  object-fit: cover;
+}
+
+@media (max-width: 639px) {
+  .lightbox__strip {
+    display: none;
+  }
+
+  .lightbox__caption {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-rail__scroller {
+    scroll-behavior: auto;
+  }
+
+  .gallery-panel[data-active='true'] {
+    animation: none;
+  }
+
+  .gallery-tile:hover .gallery-tile__img,
+  .lightbox__nav:hover {
+    transform: none;
+  }
+}
