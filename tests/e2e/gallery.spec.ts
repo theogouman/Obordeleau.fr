@@ -85,4 +85,37 @@ test.describe('gallery', () => {
     await page.getByRole('tab').nth(3).click();
     await expect.poll(() => surface.getAttribute('d')).not.toBe(first);
   });
+
+  /**
+   * The bump glides, it never teleports. It is worth a test of its own because
+   * the way it breaks is silent: anything that replaces the geometry while the
+   * spring runs, a resize observer that also hears the panel growing taller for
+   * instance, lands the bump on its mark in a single frame and nothing else
+   * looks wrong. Living to bathroom is the telling pair, five photos against
+   * two, so the panel changes height as the rooms change.
+   */
+  test('the bump glides from room to room rather than jumping', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/');
+    await page.locator('.gallery-frame').scrollIntoViewIfNeeded();
+    await expect(page.locator('.gallery-frame__surface path')).toHaveAttribute('d', /./);
+
+    const traced = await page.evaluate(async () => {
+      const path = document.querySelector('.gallery-frame__surface path');
+      const seen = new Set();
+      let running = true;
+      const sample = () => {
+        seen.add(path?.getAttribute('d'));
+        if (running) requestAnimationFrame(sample);
+      };
+      requestAnimationFrame(sample);
+      document.querySelectorAll('.gallery-tab')[3].click();
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      running = false;
+      return seen.size;
+    });
+
+    // A jump draws two: where it was, where it landed. A spring draws dozens.
+    expect(traced, 'the surface was placed instead of animated').toBeGreaterThan(10);
+  });
 });

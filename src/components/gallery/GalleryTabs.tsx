@@ -44,6 +44,7 @@ export function GalleryTabs({ photos, labels }: { photos: PhotoView[]; labels: G
   const activeIndex = ROOM_ORDER.indexOf(active);
 
   const frameRef = useRef<HTMLDivElement>(null);
+  const railRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
   const tabRefs = useRef<Array<HTMLAnchorElement | null>>([]);
   const activeRef = useRef(activeIndex);
@@ -59,6 +60,8 @@ export function GalleryTabs({ photos, labels }: { photos: PhotoView[]; labels: G
   const raf = useRef<number | null>(null);
   /** The first placement jumps, so nothing slides across the rail on load. */
   const settled = useRef(false);
+  /** Last width the rail was measured at, to tell a real resize from a taller panel. */
+  const lastWidth = useRef(0);
 
   const draw = useCallback(() => {
     const path = pathRef.current;
@@ -135,16 +138,27 @@ export function GalleryTabs({ photos, labels }: { photos: PhotoView[]; labels: G
   }, []);
 
   // A resize replaces the geometry rather than animating to it, and so does a
-  // font finally arriving and changing the height of a label.
+  // font finally arriving and changing the width of a label.
+  //
+  // Only a change of WIDTH counts. The rail is watched rather than the frame,
+  // and the width is compared before anything is done, because the frame also
+  // changes height every time a room with a different number of rows becomes
+  // the active one. Treating that as a resize placed the bump instantly and
+  // killed the spring in mid flight, one room change out of three.
   useEffect(() => {
-    const frame = frameRef.current;
-    if (!frame) return;
+    const rail = railRef.current;
+    if (!rail) return;
 
-    const relayout = () => measure(false);
+    const relayout = () => {
+      const width = frameRef.current?.clientWidth ?? 0;
+      if (width === 0 || width === lastWidth.current) return;
+      lastWidth.current = width;
+      measure(false);
+    };
     relayout();
 
     const observer = new ResizeObserver(relayout);
-    observer.observe(frame);
+    observer.observe(rail);
     if (document.fonts?.ready) void document.fonts.ready.then(relayout);
     return () => observer.disconnect();
   }, [measure]);
@@ -210,7 +224,7 @@ export function GalleryTabs({ photos, labels }: { photos: PhotoView[]; labels: G
           </svg>
         ) : null}
 
-        <div className="gallery-rail" role={interactive ? 'tablist' : undefined}>
+        <div className="gallery-rail" ref={railRef} role={interactive ? 'tablist' : undefined}>
           {ROOM_ORDER.map((room, index) => (
             <a
               key={room}
