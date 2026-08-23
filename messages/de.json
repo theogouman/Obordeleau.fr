@@ -90,23 +90,44 @@
     "counter": "Foto {current} von {total}",
     "missing": "Foto folgt",
     "viewAll": "Alle Fotos ansehen",
+    "rooms": {
+      "living": "Der Wohnbereich",
+      "kitchen": "Küche und Bar",
+      "bed": "Der Schlafbereich",
+      "bath": "Bad",
+      "overview": "Das ganze Studio"
+    },
+    "roomSub": {
+      "living": "Der Wohnraum, offen zum Garten",
+      "kitchen": "Die Küchenzeile und die Barecke",
+      "bed": "Die Nische und das Bett im Hauptraum",
+      "bath": "Dusche und Waschbecken",
+      "overview": "Das Studio auf einen Blick"
+    },
+    "lightbox": {
+      "roomCounter": "{room}, {current}/{total}"
+    },
     "alt": {
-      "01": "Der Eingang des Studios mit heller Holzlattenwand und Wandleuchte aus Tau",
-      "02": "Das Duschbad mit Waschbecken, großem Spiegel und Dusche",
-      "03": "Die Waschbeckenecke des Duschbads mit ihren Holzablagen",
-      "04": "Der Schlafbereich mit Doppelbett unter den Regalen am Kopfende",
-      "05": "Die Küchenecke mit Mikrowelle, Wasserkocher und Kaffeemaschine, offen zum Tisch",
-      "06": "Der Wohnbereich und die offene Küche mit dem großen Fenster zum Garten",
-      "07": "Das Sofa im Wohnbereich und die Sitzbank unter dem Fenster",
-      "08": "Die ausgestattete Küche: Kühlschrank, Kochfeld, Waschmaschine und Mikrowelle",
-      "09": "Die Arbeitsplatte der Küche, die Spüle und die Waschmaschine",
-      "10": "Die Küche und die Bartheke mit ihren zwei Barhockern",
-      "11": "Kochfeld, Dunstabzugshaube und Spüle der Küche",
-      "12": "Das Studio der Länge nach, von der Bartheke bis zum Wohnbereich am Garten",
-      "13": "Der Wohnbereich mit Couchtisch und der Sitzbank vor dem Fenster",
-      "14": "Das Studio in seiner Länge, vom Wohnbereich zur Küche und zur Bartheke",
-      "15": "Der Wohnbereich bei Tageslicht, das Fenster offen zum Grün des Gartens",
-      "16": "Das Schlafsofa, der große Spiegel und dahinter die Bartheke"
+      "01": "Der Wohnbereich vom Tresen aus, das Sofa, die Bank unter der Fensterfront und das Fernsehmöbel",
+      "02": "Die Küchenzeile: Kühlschrank, Kochfeld, Spüle und Waschmaschine",
+      "03": "Das Doppelbett des Schlafbereichs, in seiner Nische, unter den Regalen am Kopfende",
+      "04": "Das Doppelbett des Schlafbereichs, unter der dekorierten Wand und ihren Regalen",
+      "05": "Der Wohnbereich zum Tresen hin, mit zwei Barhockern und dem Zugang zum Schlafbereich",
+      "06": "Der Hauptraum, das ausgezogene Bett, die Kommode und der Tresen im Hintergrund",
+      "07": "Der Wohnbereich mit seinem Sofa und seinem großen Spiegel, vor der Fensterfront zum Garten",
+      "08": "Die ganze Länge des Studios, vom Tresen mit seinem Tisch bis zum Bett vor der Fensterfront",
+      "09": "Die Sitzecke mit ihrem Couchtisch und dem Fernseher, vor dem Grün des Gartens",
+      "10": "Das Studio von einem Ende zum anderen: das Fernsehmöbel, der Tresen und der Zugang zum Schlafbereich",
+      "11": "Das ausgezogene Bett im Hauptraum, der große Spiegel und die Kommode",
+      "12": "Das Schlafsofa des Wohnbereichs, der große Spiegel und hinten der Tresen mit seinen Hockern",
+      "13": "Die Küche mit ihrer Spüle und ihrer Waschmaschine, offen zum Schlafbereich im Hintergrund",
+      "14": "Das Studio der Länge nach, vom Tresen über den Wohnbereich zur Fensterfront, rechts die Küche",
+      "15": "Die geflieste Dusche im Bad, das Waschbecken und der große Spiegel",
+      "16": "Der Tresen mit seinen Barhockern, die Mikrowelle, der Wasserkocher und das Glasregal",
+      "17": "Die Fernsehecke mit ihrem langen Sideboard und der Bank unter der Fensterfront",
+      "18": "Das Bad: die Dusche, das Waschbecken, sein Spiegel und die Holzregale",
+      "19": "Das zum Doppelbett ausgezogene Schlafsofa, vor der Fensterfront und der Bank",
+      "20": "Die Barecke: die Mikrowelle, der Wasserkocher, die Kaffeemaschine und darüber die Gläser"
     }
   },
   "amenities": {

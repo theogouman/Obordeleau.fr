@@ -90,23 +90,44 @@
     "counter": "Photo {current} of {total}",
     "missing": "Photo coming soon",
     "viewAll": "See all photos",
+    "rooms": {
+      "living": "The living room",
+      "kitchen": "Kitchen and bar",
+      "bed": "The sleeping area",
+      "bath": "Bathroom",
+      "overview": "The whole studio"
+    },
+    "roomSub": {
+      "living": "The living space, open to the garden",
+      "kitchen": "The fitted kitchen and the bar corner",
+      "bed": "The alcove and the bed in the main room",
+      "bath": "The shower and the basin",
+      "overview": "The studio at a glance"
+    },
+    "lightbox": {
+      "roomCounter": "{room}, {current}/{total}"
+    },
     "alt": {
-      "01": "The studio entrance, its pale wooden slatted panel and rope wall light",
-      "02": "The shower room, its basin, large mirror and shower",
-      "03": "The basin corner of the shower room and its wooden shelves",
-      "04": "The sleeping corner and its double bed, under the headboard shelves",
-      "05": "The kitchen corner with microwave, kettle and coffee machine, opening onto the table",
-      "06": "The living area and open kitchen, with the wide window onto the garden",
-      "07": "The sofa and the bench seat fitted under the window",
-      "08": "The equipped kitchen: fridge, hob, washing machine and microwave",
-      "09": "The kitchen worktop, the sink and the washing machine",
-      "10": "The kitchen and the breakfast bar with its two high stools",
-      "11": "The hob, the extractor hood and the kitchen sink",
-      "12": "The studio seen lengthwise, from the bar through to the living area and the garden",
-      "13": "The living area, its coffee table and the bench in front of the window",
-      "14": "The studio along its length, from the living area towards the kitchen and the bar",
-      "15": "The living area in daylight, the window open onto the greenery of the garden",
-      "16": "The sofa bed, the large mirror and the breakfast bar behind"
+      "01": "The living room seen from the bar, the sofa, the bench under the picture window and the TV unit",
+      "02": "The fitted kitchen: fridge, hob, sink and washing machine",
+      "03": "The double bed of the sleeping area, in its alcove, under the headboard shelves",
+      "04": "The double bed of the sleeping area, under the decorated wall and its shelves",
+      "05": "The living room opening onto the bar, its two high stools and the way into the sleeping area",
+      "06": "The main room, the bed made up, the chest of drawers and the bar at the back",
+      "07": "The living room, its sofa and its large mirror, facing the picture window onto the garden",
+      "08": "The full length of the studio, from the bar and its table to the bed facing the picture window",
+      "09": "The sitting area, its coffee table and the television, facing the greenery of the garden",
+      "10": "The studio end to end: the TV unit, the bar and the way into the sleeping area",
+      "11": "The bed made up in the main room, the large mirror and the chest of drawers",
+      "12": "The sofa bed of the living room, the large mirror and, at the back, the bar and its stools",
+      "13": "The kitchen, its sink and its washing machine, opening onto the sleeping area at the back",
+      "14": "The studio lengthways, from the bar to the living room and the picture window, kitchen on the right",
+      "15": "The tiled shower of the bathroom, the basin and its large mirror",
+      "16": "The bar and its high stools, the microwave, the kettle and the glass shelf",
+      "17": "The television corner, its long low unit and the bench under the picture window",
+      "18": "The bathroom: the shower, the basin, its mirror and the wooden shelves",
+      "19": "The sofa bed opened out into a double, facing the picture window and the bench",
+      "20": "The bar corner: the microwave, the kettle, the coffee machine and the glasses above"
     }
   },
   "amenities": {

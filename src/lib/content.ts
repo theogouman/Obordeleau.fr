@@ -1,6 +1,10 @@
 import hostData from '@content/host.json';
 import legalData from '@content/legal.json';
 import propertyData from '@content/property.json';
+import { ROOM_ORDER, type RoomId } from '@/lib/rooms';
+
+export { ROOM_ORDER };
+export type { RoomId };
 
 /**
  * Constitution II: every fact comes from content/*.json. Components read this
@@ -37,8 +41,10 @@ export type AroundItem = {
 
 export type GalleryItem = {
   file: string;
+  room: RoomId;
   altKey: string;
-  featured: boolean;
+  width: number;
+  height: number;
 };
 
 export const property = propertyData;
@@ -67,7 +73,15 @@ export const aroundItems = (property.around as AroundItem[]).filter((item) => it
 
 export const gallery = property.gallery as GalleryItem[];
 
-export const featuredGallery = gallery.filter((item) => item.featured);
+export function galleryByRoom(room: RoomId) {
+  return gallery.filter((item) => item.room === room);
+}
+
+/**
+ * The whole studio as one flat run, room after room. The lightbox walks this,
+ * so the last photo of a room leads into the first of the next one.
+ */
+export const gallerySequence = ROOM_ORDER.flatMap(galleryByRoom);
 
 export const honestNotes = property.honestNotes as string[];
 

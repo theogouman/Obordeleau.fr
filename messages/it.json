@@ -90,23 +90,44 @@
     "counter": "Foto {current} di {total}",
     "missing": "Foto in arrivo",
     "viewAll": "Guarda tutte le foto",
+    "rooms": {
+      "living": "Il soggiorno",
+      "kitchen": "Cucina e bar",
+      "bed": "La zona notte",
+      "bath": "Bagno",
+      "overview": "Tutto il monolocale"
+    },
+    "roomSub": {
+      "living": "La zona giorno, aperta sul giardino",
+      "kitchen": "La cucina attrezzata e l'angolo bar",
+      "bed": "La nicchia e il letto nella stanza principale",
+      "bath": "La doccia e il lavabo",
+      "overview": "Il monolocale in un solo sguardo"
+    },
+    "lightbox": {
+      "roomCounter": "{room}, {current}/{total}"
+    },
     "alt": {
-      "01": "L'ingresso del monolocale, con il pannello di listelli di legno chiaro e l'applique in corda",
-      "02": "Il bagno, con il lavabo, il grande specchio e la doccia",
-      "03": "L'angolo lavabo del bagno e le sue mensole in legno",
-      "04": "La zona notte con il letto matrimoniale, sotto le mensole della testiera",
-      "05": "L'angolo cucina con microonde, bollitore e macchina del caffè, aperto sul tavolo",
-      "06": "Il soggiorno e la cucina a vista, con la grande vetrata sul giardino",
-      "07": "Il divano del soggiorno e la panca sistemata sotto la vetrata",
-      "08": "La cucina attrezzata: frigorifero, piano cottura, lavatrice e microonde",
-      "09": "Il piano di lavoro della cucina, il lavello e la lavatrice",
-      "10": "La cucina e il bancone con i suoi due sgabelli alti",
-      "11": "Il piano cottura, la cappa e il lavello della cucina",
-      "12": "Il monolocale visto in lunghezza, dal bancone fino al soggiorno aperto sul giardino",
-      "13": "Il soggiorno, il suo tavolino basso e la panca davanti alla vetrata",
-      "14": "Il monolocale per tutta la sua lunghezza, dal soggiorno verso l'angolo cucina e il bancone",
-      "15": "Il soggiorno in pieno giorno, la vetrata aperta sul verde del giardino",
-      "16": "Il divano letto del soggiorno, il grande specchio e il bancone sullo sfondo"
+      "01": "Il soggiorno visto dal bancone, il divano, la panca sotto la vetrata e il mobile TV",
+      "02": "La cucina attrezzata: frigorifero, piano cottura, lavello e lavatrice",
+      "03": "Il letto matrimoniale della zona notte, nella sua nicchia, sotto le mensole della testata",
+      "04": "Il letto matrimoniale della zona notte, sotto la parete decorata e le sue mensole",
+      "05": "Il soggiorno aperto sul bancone, i due sgabelli alti e l'ingresso della zona notte",
+      "06": "La stanza principale, il letto aperto, il cassettone e il bancone in fondo",
+      "07": "Il soggiorno, il divano e il grande specchio, davanti alla vetrata sul giardino",
+      "08": "Tutta la lunghezza del monolocale, dal bancone con il tavolo al letto davanti alla vetrata",
+      "09": "L'angolo salotto, il tavolino e la televisione, davanti al verde del giardino",
+      "10": "Il monolocale da un capo all'altro: il mobile TV, il bancone e l'ingresso della zona notte",
+      "11": "Il letto aperto nella stanza principale, il grande specchio e il cassettone",
+      "12": "Il divano letto del soggiorno, il grande specchio e, in fondo, il bancone con gli sgabelli",
+      "13": "La cucina, il lavello e la lavatrice, aperta sulla zona notte in fondo",
+      "14": "Il monolocale per il lungo, dal bancone al soggiorno e alla vetrata, la cucina a destra",
+      "15": "La doccia piastrellata del bagno, il lavabo e il grande specchio",
+      "16": "Il bancone con gli sgabelli alti, il microonde, il bollitore e la mensola dei bicchieri",
+      "17": "L'angolo televisione, il lungo mobile basso e la panca sotto la vetrata",
+      "18": "Il bagno: la doccia, il lavabo, lo specchio e le mensole in legno",
+      "19": "Il divano letto aperto in matrimoniale, davanti alla vetrata e alla panca",
+      "20": "L'angolo bar: il microonde, il bollitore, la macchina del caffè e i bicchieri sopra"
     }
   },
   "amenities": {
