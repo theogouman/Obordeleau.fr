@@ -17,7 +17,7 @@ export function Hero() {
       <div className="container-page grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
         <div>
           {/* The place comes first, in a small framed tag rather than a bare line. */}
-          <p className="inline-flex items-center gap-2 rounded-[var(--radius-pill)] border border-[rgba(58,42,38,0.14)] bg-shell px-3 py-1.5 text-xs uppercase tracking-[0.18em] text-ink-soft shadow-[var(--shadow-card)]">
+          <p className="inline-flex items-center gap-2 rounded-[var(--radius-pill)] border border-[rgba(58,42,38,0.14)] bg-shell px-3 py-1.5 text-sm text-ink-soft shadow-[var(--shadow-card)]">
             <Icon name="location" className="h-3 w-auto shrink-0 text-raspberry" />
             {t('eyebrow')}
           </p>

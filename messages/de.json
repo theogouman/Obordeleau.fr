@@ -60,16 +60,17 @@
   "quickFacts": {
     "title": "Auf einen Blick",
     "beach": {
-      "label": "zum Strand",
-      "detail": "zu Fuß"
+      "label": "Entfernung zum Strand",
+      "detail": "zum Strand, zu Fuß"
     },
     "size": {
       "label": "Wohnfläche",
-      "detail": "klimatisiert"
+      "detail": "Wohnfläche, klimatisiert"
     },
     "guests": {
-      "label": "1 bis 4 Gäste",
-      "detail": ""
+      "label": "Belegung",
+      "lead": "1 bis 4",
+      "detail": "Gäste"
     },
     "unit": {
       "m": "m",
@@ -77,7 +78,8 @@
       "min": "Min."
     },
     "equipped": {
-      "label": "Voll ausgestattet",
+      "label": "Ausstattung",
+      "lead": "Voll ausgestattet",
       "detail": ""
     }
   },
@@ -157,6 +159,10 @@
       "secured-residence": {
         "label": "Gesicherte Wohnanlage",
         "note": "Zugang mit Badge und Kameraüberwachung."
+      },
+      "reduced-mobility-access": {
+        "label": "Barrierefreier Zugang",
+        "note": "Das Studio ist für Gäste mit eingeschränkter Mobilität erreichbar."
       },
       "free-parking": {
         "label": "Kostenloser Parkplatz",

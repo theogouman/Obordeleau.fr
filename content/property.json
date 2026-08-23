@@ -95,6 +95,11 @@
       "confirmed": true
     },
     {
+      "id": "reduced-mobility-access",
+      "group": "practical",
+      "confirmed": true
+    },
+    {
       "id": "free-parking",
       "group": "practical",
       "confirmed": true
