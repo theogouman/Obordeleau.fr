@@ -113,14 +113,15 @@ Conséquence assumée : sous le point de bascule, les onglets ne remplissent plu
 le cadre. C'est le choix demandé, et il préserve les libellés entiers plutôt que
 de tomber sur des icônes muettes.
 
-## 4. Décisions à trancher
+## 4. Décisions, arbitrées
 
-1. **Tokens** : arbitré, ceux du site. Le cadre `#f1e9e0` et le panneau
-   `#ffffff` du brief existent déjà comme `--color-sand` (`#f1eae0`, un chiffre
-   hexadécimal d'écart) et `--color-shell`. Aucun littéral nouveau.
-2. **Défilement mobile** : arbitré, section 3.
-3. **Reclassement des cinq photos** : à confirmer, section 2.
-4. **`11` et `19`, et la photo `04`** : à confirmer, section 2.
+1. **Tokens** : ceux du site. Le cadre `#f1e9e0` et le panneau `#ffffff` du
+   brief existent déjà comme `--color-sand` (`#f1eae0`, un chiffre hexadécimal
+   d'écart) et `--color-shell`. Aucun littéral nouveau.
+2. **Onglets sur mobile** : le rail défile, avec un fondu sur les bords. Voir
+   section 3.
+3. **Reclassement des cinq photos** : appliqué, section 2.
+4. **Les vingt photos sont gardées**, `04` et la paire `11` / `19` comprises.
 
 ## 5. Plan de fichiers
 
