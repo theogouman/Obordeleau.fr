@@ -29,6 +29,23 @@
     "privacy": {
       "title": "Politique de confidentialité | Obordeleau",
       "description": "Comment le site Obordeleau traite vos données : mesure d'audience sans cookie, carte affichée seulement après votre accord, demandes de réservation."
+    },
+    "guides": {
+      "what-to-do": {
+        "title": "Que faire aux Sablettes ? Plage, parc et bateau | Obordeleau",
+        "description": "La plage à 70 m, le parc du bord de mer au pied de l'immeuble, le bateau pour Toulon en face. Ce qu'il y a à faire aux Sablettes, à pied.",
+        "breadcrumb": "Que faire aux Sablettes"
+      },
+      "boat-to-toulon": {
+        "title": "Le bateau pour Toulon depuis Les Sablettes | Obordeleau",
+        "description": "L'embarcadère du bateau-bus est en face de la résidence, à 2 min à pied. Toulon par la mer, les îles, et ce qu'il faut vérifier avant de partir.",
+        "breadcrumb": "Le bateau pour Toulon"
+      },
+      "car-free": {
+        "title": "Des vacances sans voiture aux Sablettes | Obordeleau",
+        "description": "Plage à 70 m par le parc, bateau en face, commerces à quelques pas, parking gratuit. Passer la semaine aux Sablettes sans reprendre le volant.",
+        "breadcrumb": "Vacances sans voiture"
+      }
     }
   },
   "nav": {
@@ -513,7 +530,11 @@
     "email": "Email",
     "emailSubject": "Demande d'informations⎜Studio aux Sablettes",
     "classificationAlt": "Meublé de tourisme classé 3 étoiles",
-    "bookDirect": "En direct"
+    "bookDirect": "En direct",
+    "guidesTitle": "Le quartier",
+    "guideWhatToDo": "Que faire aux Sablettes",
+    "guideBoat": "Le bateau pour Toulon",
+    "guideCarFree": "Vacances sans voiture"
   },
   "legalPage": {
     "titleLead": "Mentions",
@@ -690,6 +711,152 @@
     "unavailable": {
       "title": "Ce lien n'est plus actif",
       "body": "Soit le solde a déjà été réglé, soit ce lien a expiré. Répondez à l'email de confirmation de votre réservation et Corine vous répond."
+    }
+  },
+  "guides": {
+    "what-to-do": {
+      "eyebrow": "Les Sablettes, La Seyne-sur-Mer",
+      "titleLead": "Que faire aux",
+      "titleAccent": "Sablettes",
+      "titleTail": "",
+      "answer": "Aux Sablettes, l'essentiel tient dans un rayon de quelques minutes à pied. La plage de sable fin est à 70 mètres du studio, une minute par le parc du bord de mer, et on y accède sans traverser de route. Le parc lui-même longe la mer sur toute la baie : les enfants y observent les tortues et les oiseaux, les familles y marchent le soir. En face de la résidence, l'embarcadère du bateau-bus emmène vers Toulon et vers les îles. Les commerces, la boulangerie et les restaurants du front de mer sont à quelques pas. C'est ce qui explique que la plupart des voyageurs laissent leur voiture au parking le premier jour et ne la reprennent qu'au départ.",
+      "sections": {
+        "beach": {
+          "title": "La plage, à une minute par le parc",
+          "body": "Une des plus belles plages de sable fin du Var, et l'accès le plus court depuis le studio passe par le parc plutôt que par la route. C'est un détail qui compte avec des enfants ou les bras chargés : il n'y a aucune chaussée à traverser entre la résidence et le sable."
+        },
+        "park": {
+          "title": "Le parc du bord de mer",
+          "body": "Il commence au pied de l'immeuble et suit la mer. On y croise des tortues sur leur rocher, des oiseaux, des palmiers et la Maison Pouillon. C'est le chemin de la plage, et c'est aussi une promenade en soi, à l'ombre, quand le sable est trop chaud."
+        },
+        "water": {
+          "title": "La mer, au-delà de la plage",
+          "body": "La baie se prête aux sports nautiques, et l'embarcadère en face de la résidence ouvre sur le reste de la rade : Toulon d'un côté, les îles de l'autre. Une journée en mer commence donc à deux minutes de la porte, sans avoir à rouler ni à se garer ailleurs."
+        },
+        "table": {
+          "title": "Où manger",
+          "body": "Boulangerie, commerces et restaurants sont à quelques pas, sur le front de mer et autour. Les terrasses regardent la plage, et plusieurs voyageurs racontent y être allés à pied le soir, puis rentrés à pied, ce qui reste la meilleure définition d'un séjour sans voiture."
+        }
+      },
+      "factsTitle": "Les distances, en clair",
+      "voicesTitle": "Ce qu'en disent les voyageurs",
+      "allReviews": "Lire les 168 avis",
+      "backHome": "Voir le studio",
+      "closing": "Studio 3 étoiles, 33 m2, jusqu'à 4 personnes.",
+      "facts": {
+        "beach": {
+          "label": "Plage des Sablettes",
+          "value": "70 m, 1 min à pied"
+        },
+        "boat": {
+          "label": "Bateau-bus pour Toulon",
+          "value": "En face, 2 min à pied"
+        },
+        "shops": {
+          "label": "Commerces et restaurants",
+          "value": "À quelques pas"
+        },
+        "parking": {
+          "label": "Stationnement",
+          "value": "Gratuit sur place"
+        }
+      }
+    },
+    "boat-to-toulon": {
+      "eyebrow": "Depuis Les Sablettes",
+      "titleLead": "Rejoindre Toulon et les îles",
+      "titleAccent": "en bateau",
+      "titleTail": "",
+      "answer": "L'embarcadère du bateau-bus se trouve en face de la résidence, à deux minutes à pied : on traverse la rue et on est au quai. De là partent les navettes de la rade vers Toulon, et les liaisons vers les îles, Porquerolles comprise. C'est la raison pour laquelle une voiture n'est pas nécessaire pour visiter la région depuis Les Sablettes : le centre de Toulon, son port et ses marchés se rejoignent par la mer, sans circulation ni stationnement à chercher à l'arrivée. Les horaires et les tarifs changent selon la saison et selon la ligne, et se vérifient auprès du réseau de transport de la métropole avant de partir.",
+      "sections": {
+        "jetty": {
+          "title": "Le quai est en face",
+          "body": "C'est la première chose que remarquent les voyageurs : le quai pour Toulon est de l'autre côté de la rue. Deux minutes à pied depuis la porte du studio, sans détour et sans voiture à déplacer."
+        },
+        "toulon": {
+          "title": "Toulon par la mer",
+          "body": "La traversée de la rade est un trajet de transport en commun ordinaire, et c'est aussi la plus belle façon d'arriver à Toulon. On débarque au port, au pied du centre-ville et de ses marchés. Plusieurs voyageurs y sont allés pour la journée, dont l'un pour le marché de Noël en décembre."
+        },
+        "islands": {
+          "title": "Les îles",
+          "body": "Depuis la même baie partent les liaisons vers les îles, Porquerolles comprise. Vérifiez la ligne, la saison et l'horaire de retour avant de partir : l'offre n'est pas la même en août et en janvier."
+        },
+        "practical": {
+          "title": "Ce qu'il faut vérifier avant de partir",
+          "body": "Les horaires, les tarifs et les lignes en service dépendent de la saison et relèvent du réseau de transport de la métropole, pas du logement. Ce site ne les recopie pas, pour ne pas afficher une information périmée : ils se vérifient le matin même, et Corine répond volontiers à la question pendant le séjour."
+        }
+      },
+      "factsTitle": "Les distances, en clair",
+      "voicesTitle": "Ce qu'en disent les voyageurs",
+      "allReviews": "Lire les 168 avis",
+      "backHome": "Voir le studio",
+      "closing": "Le studio est à deux minutes de l'embarcadère.",
+      "facts": {
+        "beach": {
+          "label": "Plage des Sablettes",
+          "value": "70 m, 1 min à pied"
+        },
+        "boat": {
+          "label": "Bateau-bus pour Toulon",
+          "value": "En face, 2 min à pied"
+        },
+        "shops": {
+          "label": "Commerces et restaurants",
+          "value": "À quelques pas"
+        },
+        "parking": {
+          "label": "Stationnement",
+          "value": "Gratuit sur place"
+        }
+      }
+    },
+    "car-free": {
+      "eyebrow": "Les Sablettes, La Seyne-sur-Mer",
+      "titleLead": "Des vacances",
+      "titleAccent": "sans voiture",
+      "titleTail": "aux Sablettes",
+      "answer": "Tout se fait à pied depuis le studio. La plage est à 70 mètres, une minute par le parc et sans route à traverser. L'embarcadère pour Toulon et les îles est en face de la résidence, à deux minutes. La boulangerie, les commerces et les restaurants sont à quelques pas, et un arrêt de bus se trouve devant l'immeuble. Le stationnement est gratuit sur place, ce qui permet d'arriver en voiture, de la garer le premier jour et de ne plus y toucher jusqu'au départ. C'est ce que décrivent la plupart des voyageurs : ils sont venus en voiture, puis ne s'en sont plus servis.",
+      "sections": {
+        "arrive": {
+          "title": "Arriver, puis oublier la voiture",
+          "body": "Le stationnement est gratuit à la résidence. La voiture sert donc à venir, et ensuite elle attend. C'est la différence entre un logement bien situé et un logement d'où l'on repart en voiture chaque matin."
+        },
+        "daily": {
+          "title": "Le quotidien à pied",
+          "body": "La plage par le parc, la boulangerie et les commerces à quelques pas, les restaurants du front de mer le soir. Aucune de ces courses ne demande de rouler ni de se garer une deuxième fois."
+        },
+        "further": {
+          "title": "Aller plus loin sans rouler",
+          "body": "Le bateau-bus en face de la résidence ouvre la rade : Toulon, et les îles. Un arrêt de bus se trouve devant l'immeuble. De quoi passer une semaine entière sans reprendre le volant."
+        },
+        "car": {
+          "title": "Quand la voiture reste utile",
+          "body": "Pour l'arrière-pays et les villages du Var, elle rend service. Le studio n'est pas conçu pour s'en passer absolument : il est conçu pour qu'elle devienne facultative une fois arrivé."
+        }
+      },
+      "factsTitle": "Les distances, en clair",
+      "voicesTitle": "Ce qu'en disent les voyageurs",
+      "allReviews": "Lire les 168 avis",
+      "backHome": "Voir le studio",
+      "closing": "Stationnement gratuit à la résidence.",
+      "facts": {
+        "beach": {
+          "label": "Plage des Sablettes",
+          "value": "70 m, 1 min à pied"
+        },
+        "boat": {
+          "label": "Bateau-bus pour Toulon",
+          "value": "En face, 2 min à pied"
+        },
+        "shops": {
+          "label": "Commerces et restaurants",
+          "value": "À quelques pas"
+        },
+        "parking": {
+          "label": "Stationnement",
+          "value": "Gratuit sur place"
+        }
+      }
     }
   }
 }

@@ -29,6 +29,31 @@ export const routing = defineRouting({
       de: '/datenschutz',
       it: '/privacy',
     },
+    /*
+     * The three guides. They answer what a visitor asks before they have
+     * chosen a flat, which is the moment the booking platforms do not cover:
+     * what is there to do, how do I reach Toulon and the islands, can I do
+     * this without a car. Each segment is written in the language of the
+     * person searching, because that is the string they type.
+     */
+    '/what-to-do': {
+      fr: '/que-faire-aux-sablettes',
+      en: '/what-to-do-les-sablettes',
+      de: '/ausfluege-les-sablettes',
+      it: '/cosa-fare-les-sablettes',
+    },
+    '/boat-to-toulon': {
+      fr: '/bateau-pour-toulon',
+      en: '/boat-to-toulon',
+      de: '/faehre-nach-toulon',
+      it: '/battello-per-tolone',
+    },
+    '/car-free': {
+      fr: '/vacances-sans-voiture',
+      en: '/car-free-holiday',
+      de: '/urlaub-ohne-auto',
+      it: '/vacanze-senza-auto',
+    },
     // Where a guest lands after paying a balance from the link in their email.
     // Transactional, so it carries noindex and stays out of the sitemap.
     '/balance': {

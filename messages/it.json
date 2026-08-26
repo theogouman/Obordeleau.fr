@@ -29,6 +29,23 @@
     "privacy": {
       "title": "Informativa sulla privacy | Obordeleau",
       "description": "Come il sito Obordeleau tratta i tuoi dati: statistiche di visita senza cookie, mappa mostrata solo dopo il tuo consenso, richieste di prenotazione."
+    },
+    "guides": {
+      "what-to-do": {
+        "title": "Cosa fare a Les Sablettes: spiaggia e battello | Obordeleau",
+        "description": "La spiaggia a 70 m, il parco sul mare sotto casa, il battello per Tolone di fronte. Cosa fare a Les Sablettes, tutto a piedi.",
+        "breadcrumb": "Cosa fare a Les Sablettes"
+      },
+      "boat-to-toulon": {
+        "title": "Il battello per Tolone da Les Sablettes | Obordeleau",
+        "description": "L'imbarcadero è di fronte alla residenza, a 2 min a piedi. Tolone via mare, le isole, e cosa verificare prima di partire.",
+        "breadcrumb": "Il battello per Tolone"
+      },
+      "car-free": {
+        "title": "Vacanze senza auto a Les Sablettes | Obordeleau",
+        "description": "Spiaggia a 70 m dal parco, battello di fronte, negozi a pochi passi, parcheggio gratuito. Una settimana a Les Sablettes senza guidare.",
+        "breadcrumb": "Vacanze senza auto"
+      }
     }
   },
   "nav": {
@@ -513,7 +530,11 @@
     "email": "Email",
     "emailSubject": "Richiesta di informazioni⎜Monolocale a Les Sablettes",
     "classificationAlt": "Alloggio turistico classificato 3 stelle",
-    "bookDirect": "Diretto"
+    "bookDirect": "Diretto",
+    "guidesTitle": "Il quartiere",
+    "guideWhatToDo": "Cosa fare a Les Sablettes",
+    "guideBoat": "Il battello per Tolone",
+    "guideCarFree": "Vacanze senza auto"
   },
   "legalPage": {
     "titleLead": "Note",
@@ -690,6 +711,152 @@
     "unavailable": {
       "title": "Questo link non è più attivo",
       "body": "O il saldo è già stato pagato, oppure questo link è scaduto. Rispondi all'email di conferma della tua prenotazione e Corine ti risponde."
+    }
+  },
+  "guides": {
+    "what-to-do": {
+      "eyebrow": "Les Sablettes, La Seyne-sur-Mer",
+      "titleLead": "Cosa fare a",
+      "titleAccent": "Les Sablettes",
+      "titleTail": "",
+      "answer": "A Les Sablettes quasi tutto si trova a pochi minuti a piedi. La spiaggia di sabbia fine è a 70 metri dal monolocale, un minuto attraverso il parco sul mare, e ci si arriva senza attraversare strade. Il parco costeggia il mare lungo tutta la baia: i bambini vi osservano le tartarughe e gli uccelli, le famiglie ci passeggiano la sera. Di fronte alla residenza, l'imbarcadero del battello porta a Tolone e alle isole. Il panificio, i negozi e i ristoranti del lungomare sono a pochi passi. È per questo che la maggior parte dei viaggiatori parcheggia l'auto il primo giorno e non la tocca più fino alla partenza.",
+      "sections": {
+        "beach": {
+          "title": "La spiaggia, a un minuto attraverso il parco",
+          "body": "Una delle più belle spiagge di sabbia fine del Var, e il percorso più breve dal monolocale passa dal parco invece che dalla strada. Con i bambini o le braccia cariche il dettaglio conta: tra la residenza e la sabbia non c'è alcuna carreggiata da attraversare."
+        },
+        "park": {
+          "title": "Il parco sul mare",
+          "body": "Comincia ai piedi del palazzo e segue il mare. Ci sono le tartarughe sul loro scoglio, gli uccelli, le palme e la Maison Pouillon. È la strada per la spiaggia ed è anche una passeggiata a sé, all'ombra, quando la sabbia scotta."
+        },
+        "water": {
+          "title": "Il mare, oltre la spiaggia",
+          "body": "La baia si presta agli sport acquatici, e l'imbarcadero di fronte alla residenza apre sul resto della rada: Tolone da una parte, le isole dall'altra. Una giornata in mare comincia quindi a due minuti dalla porta, senza guidare e senza cercare un secondo parcheggio."
+        },
+        "table": {
+          "title": "Dove mangiare",
+          "body": "Panificio, negozi e ristoranti sono a pochi passi, sul lungomare e nei dintorni. Le terrazze guardano la spiaggia, e diversi viaggiatori raccontano di esserci andati a piedi la sera e di essere tornati a piedi: difficile definire meglio una vacanza senza auto."
+        }
+      },
+      "factsTitle": "Le distanze, in chiaro",
+      "voicesTitle": "Cosa dicono i viaggiatori",
+      "allReviews": "Leggere le 168 recensioni",
+      "backHome": "Vedere il monolocale",
+      "closing": "Monolocale 3 stelle, 33 m2, fino a 4 persone.",
+      "facts": {
+        "beach": {
+          "label": "Spiaggia di Les Sablettes",
+          "value": "70 m, 1 min a piedi"
+        },
+        "boat": {
+          "label": "Battello per Tolone",
+          "value": "Di fronte, 2 min a piedi"
+        },
+        "shops": {
+          "label": "Negozi e ristoranti",
+          "value": "A pochi passi"
+        },
+        "parking": {
+          "label": "Parcheggio",
+          "value": "Gratuito in loco"
+        }
+      }
+    },
+    "boat-to-toulon": {
+      "eyebrow": "Da Les Sablettes",
+      "titleLead": "Raggiungere Tolone e le isole",
+      "titleAccent": "in battello",
+      "titleTail": "",
+      "answer": "L'imbarcadero del battello si trova di fronte alla residenza, a due minuti a piedi: si attraversa la strada e si è alla banchina. Da lì partono le navette della rada per Tolone e i collegamenti per le isole, Porquerolles compresa. È il motivo per cui da Les Sablettes non serve l'auto per visitare la zona: il centro di Tolone, il suo porto e i suoi mercati si raggiungono via mare, senza traffico e senza parcheggio da cercare all'arrivo. Orari e tariffe cambiano secondo la stagione e la linea, e vanno verificati presso la rete di trasporto della metropoli prima di partire.",
+      "sections": {
+        "jetty": {
+          "title": "La banchina è di fronte",
+          "body": "È la prima cosa che notano i viaggiatori: la banchina per Tolone è dall'altra parte della strada. Due minuti a piedi dalla porta del monolocale, senza deviazioni e senza spostare l'auto."
+        },
+        "toulon": {
+          "title": "Tolone via mare",
+          "body": "La traversata della rada è un normale tragitto di trasporto pubblico ed è anche il modo più bello di arrivare a Tolone. Si sbarca al porto, ai piedi del centro e dei suoi mercati. Diversi viaggiatori ci sono andati in giornata, uno di loro per il mercatino di Natale a dicembre."
+        },
+        "islands": {
+          "title": "Le isole",
+          "body": "Dalla stessa baia partono i collegamenti per le isole, Porquerolles compresa. Verificate linea, stagione e orario di ritorno prima di partire: il servizio di agosto non è quello di gennaio."
+        },
+        "practical": {
+          "title": "Cosa verificare prima di partire",
+          "body": "Orari, tariffe e linee in servizio dipendono dalla stagione e competono alla rete di trasporto della metropoli, non all'alloggio. Questo sito non li ricopia, per non mostrare un'informazione scaduta: si verificano la mattina stessa, e Corine risponde volentieri alla domanda durante il soggiorno."
+        }
+      },
+      "factsTitle": "Le distanze, in chiaro",
+      "voicesTitle": "Cosa dicono i viaggiatori",
+      "allReviews": "Leggere le 168 recensioni",
+      "backHome": "Vedere il monolocale",
+      "closing": "Il monolocale è a due minuti dall'imbarcadero.",
+      "facts": {
+        "beach": {
+          "label": "Spiaggia di Les Sablettes",
+          "value": "70 m, 1 min a piedi"
+        },
+        "boat": {
+          "label": "Battello per Tolone",
+          "value": "Di fronte, 2 min a piedi"
+        },
+        "shops": {
+          "label": "Negozi e ristoranti",
+          "value": "A pochi passi"
+        },
+        "parking": {
+          "label": "Parcheggio",
+          "value": "Gratuito in loco"
+        }
+      }
+    },
+    "car-free": {
+      "eyebrow": "Les Sablettes, La Seyne-sur-Mer",
+      "titleLead": "Vacanze",
+      "titleAccent": "senza auto",
+      "titleTail": "a Les Sablettes",
+      "answer": "Dal monolocale si fa tutto a piedi. La spiaggia è a 70 metri, un minuto attraverso il parco e senza strade da attraversare. L'imbarcadero per Tolone e le isole è di fronte alla residenza, a due minuti. Panificio, negozi e ristoranti sono a pochi passi, e davanti al palazzo c'è una fermata dell'autobus. Il parcheggio in loco è gratuito: si può quindi arrivare in auto, posteggiarla il primo giorno e lasciarla lì fino alla partenza. È quello che raccontano la maggior parte dei viaggiatori: sono venuti in auto e poi non l'hanno più usata.",
+      "sections": {
+        "arrive": {
+          "title": "Arrivare, poi dimenticare l'auto",
+          "body": "Il parcheggio alla residenza è gratuito. L'auto serve dunque per venire, e poi aspetta. È la differenza tra un alloggio ben posizionato e uno da cui si riparte in auto ogni mattina."
+        },
+        "daily": {
+          "title": "La quotidianità a piedi",
+          "body": "La spiaggia attraverso il parco, il panificio e i negozi a pochi passi, la sera i ristoranti del lungomare. Nulla di tutto ciò richiede di guidare o di cercare un secondo parcheggio."
+        },
+        "further": {
+          "title": "Andare più lontano senza guidare",
+          "body": "Il battello di fronte alla residenza apre la rada: Tolone e le isole. Davanti al palazzo c'è una fermata dell'autobus. Abbastanza per passare un'intera settimana senza rimettersi al volante."
+        },
+        "car": {
+          "title": "Quando l'auto resta utile",
+          "body": "Per l'entroterra e i paesi del Var è comoda. Il monolocale non è pensato per farne a meno a tutti i costi: è pensato perché diventi facoltativa una volta arrivati."
+        }
+      },
+      "factsTitle": "Le distanze, in chiaro",
+      "voicesTitle": "Cosa dicono i viaggiatori",
+      "allReviews": "Leggere le 168 recensioni",
+      "backHome": "Vedere il monolocale",
+      "closing": "Parcheggio gratuito alla residenza.",
+      "facts": {
+        "beach": {
+          "label": "Spiaggia di Les Sablettes",
+          "value": "70 m, 1 min a piedi"
+        },
+        "boat": {
+          "label": "Battello per Tolone",
+          "value": "Di fronte, 2 min a piedi"
+        },
+        "shops": {
+          "label": "Negozi e ristoranti",
+          "value": "A pochi passi"
+        },
+        "parking": {
+          "label": "Parcheggio",
+          "value": "Gratuito in loco"
+        }
+      }
     }
   }
 }

@@ -20,6 +20,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const pages: Array<{ pathname: AppPathname; priority: number; changeFrequency: 'weekly' | 'monthly' | 'yearly' }> = [
     { pathname: '/', priority: 1, changeFrequency: 'weekly' },
     { pathname: '/reviews', priority: 0.7, changeFrequency: 'monthly' },
+    // The guides: they answer what a visitor searches for before they have
+    // chosen a flat, so they matter more here than the privacy page.
+    { pathname: '/what-to-do', priority: 0.6, changeFrequency: 'monthly' },
+    { pathname: '/boat-to-toulon', priority: 0.6, changeFrequency: 'monthly' },
+    { pathname: '/car-free', priority: 0.6, changeFrequency: 'monthly' },
     { pathname: '/privacy', priority: 0.2, changeFrequency: 'yearly' },
   ];
 

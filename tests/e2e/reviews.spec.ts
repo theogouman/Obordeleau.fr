@@ -2,9 +2,18 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { expect, test } from '@playwright/test';
 
-const reviews = JSON.parse(
-  readFileSync(join(process.cwd(), 'content', 'reviews.json'), 'utf8'),
-) as unknown[];
+/*
+ * content/reviews.json is an export envelope, not an array: the reviews sit
+ * under a `reviews` key next to the listing id and the extraction date. Read
+ * as an array it had no length, so the guard below never skipped and the count
+ * assertion compared against undefined. It failed on every run, whatever the
+ * page did.
+ */
+const reviews = (
+  JSON.parse(readFileSync(join(process.cwd(), 'content', 'reviews.json'), 'utf8')) as {
+    reviews?: unknown[];
+  }
+).reviews ?? [];
 
 /** User story 2: social proof through reviews. */
 test.describe('reviews', () => {

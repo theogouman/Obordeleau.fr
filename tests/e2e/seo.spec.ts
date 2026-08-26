@@ -30,6 +30,22 @@ const REVIEWS = [
   { locale: 'it', path: '/it/recensioni' },
 ] as const;
 
+/** The three guides, in the four languages, on their translated segments. */
+const GUIDES = [
+  { locale: 'fr', path: '/que-faire-aux-sablettes' },
+  { locale: 'fr', path: '/bateau-pour-toulon' },
+  { locale: 'fr', path: '/vacances-sans-voiture' },
+  { locale: 'en', path: '/en/what-to-do-les-sablettes' },
+  { locale: 'en', path: '/en/boat-to-toulon' },
+  { locale: 'en', path: '/en/car-free-holiday' },
+  { locale: 'de', path: '/de/ausfluege-les-sablettes' },
+  { locale: 'de', path: '/de/faehre-nach-toulon' },
+  { locale: 'de', path: '/de/urlaub-ohne-auto' },
+  { locale: 'it', path: '/it/cosa-fare-les-sablettes' },
+  { locale: 'it', path: '/it/battello-per-tolone' },
+  { locale: 'it', path: '/it/vacanze-senza-auto' },
+] as const;
+
 /** Roughly what Google renders before it truncates. */
 const TITLE_MAX = 60;
 const DESCRIPTION_MAX = 160;
@@ -106,6 +122,45 @@ test.describe('canonicals and alternates', () => {
     await page.goto('/de/bewertungen');
     const { canonical } = await head(page);
     expect(canonical).toContain('/de/bewertungen');
+  });
+});
+
+test.describe('guides', () => {
+  for (const { locale, path } of GUIDES) {
+    test(`${locale} ${path}: answers before it elaborates`, async ({ page }) => {
+      const response = await page.goto(path);
+      expect(response?.status()).toBe(200);
+
+      const { title, canonical, alternates, jsonLd } = await head(page);
+
+      expect(title.length).toBeLessThanOrEqual(TITLE_MAX);
+      expect(new URL(canonical as string).pathname).toBe(new URL(page.url()).pathname);
+      expect(alternates).toHaveLength(5);
+
+      // The opening answer stands on its own, which is what makes the page
+      // quotable by an assistant that lifts a passage rather than a page.
+      const lead = await page.locator('main p.lead').first().textContent();
+      const words = (lead ?? '').trim().split(/\s+/).length;
+      expect(words, 'the opening answer is too short to stand alone').toBeGreaterThan(60);
+
+      // Real headings, and real quotations from real guests.
+      await expect(page.locator('h1')).toHaveCount(1);
+      expect(await page.locator('main h2').count()).toBeGreaterThanOrEqual(4);
+      expect(await page.locator('blockquote').count()).toBeGreaterThan(0);
+
+      // Tied back to the flat rather than floating on the domain.
+      const article = jsonLd.find((node) => node['@type'] === 'Article');
+      expect(article).toBeDefined();
+      expect((article as Record<string, Record<string, string>>).about['@id']).toContain('#lodging');
+      expect(jsonLd.some((node) => node['@type'] === 'BreadcrumbList')).toBe(true);
+    });
+  }
+
+  test('every guide is reachable from any page, not only from the sitemap', async ({ page }) => {
+    await page.goto('/confidentialite');
+    for (const path of ['/que-faire-aux-sablettes', '/bateau-pour-toulon', '/vacances-sans-voiture']) {
+      await expect(page.locator(`footer a[href="${path}"]`)).toHaveCount(1);
+    }
   });
 });
 

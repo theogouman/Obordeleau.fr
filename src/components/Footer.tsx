@@ -148,6 +148,31 @@ export function Footer({ year }: { year: number }) {
             ) : null}
           </ul>
 
+          {/* The guides. They live in the footer rather than in the header
+              menu because they are read before a stay is booked, not during
+              the visit of the flat, and because this is the one block that
+              puts them one click from every page of the site. Without a link
+              in from somewhere, they would be reachable through the sitemap
+              alone, which is a page nobody reads. */}
+          <h2 className="mt-6 font-display text-lg">{t('guidesTitle')}</h2>
+          <ul className="mt-3 space-y-2 text-cream/80">
+            <li>
+              <Link href="/what-to-do" className="hover:text-sunset">
+                {t('guideWhatToDo')}
+              </Link>
+            </li>
+            <li>
+              <Link href="/boat-to-toulon" className="hover:text-sunset">
+                {t('guideBoat')}
+              </Link>
+            </li>
+            <li>
+              <Link href="/car-free" className="hover:text-sunset">
+                {t('guideCarFree')}
+              </Link>
+            </li>
+          </ul>
+
           <h2 className="mt-6 font-display text-lg">{t('aboutTitle')}</h2>
           <ul className="mt-3 space-y-2 text-cream/80">
             <li>

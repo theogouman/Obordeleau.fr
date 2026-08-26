@@ -29,6 +29,23 @@
     "privacy": {
       "title": "Datenschutzerklärung | Obordeleau",
       "description": "Wie die Website Obordeleau mit Ihren Daten umgeht: Reichweitenmessung ohne Cookies, Karte erst nach Ihrer Zustimmung, Buchungsanfragen."
+    },
+    "guides": {
+      "what-to-do": {
+        "title": "Les Sablettes: Strand, Park und Fähre | Obordeleau",
+        "description": "Strand 70 m entfernt, Park am Meer vor der Tür, Fähre nach Toulon gegenüber. Was man in Les Sablettes unternehmen kann, alles zu Fuß.",
+        "breadcrumb": "Was man unternehmen kann"
+      },
+      "boat-to-toulon": {
+        "title": "Mit der Fähre nach Toulon ab Les Sablettes | Obordeleau",
+        "description": "Der Anleger liegt gegenüber der Residenz, 2 Min zu Fuß. Toulon über das Wasser, die Inseln, und was Sie vor der Abfahrt prüfen sollten.",
+        "breadcrumb": "Fähre nach Toulon"
+      },
+      "car-free": {
+        "title": "Urlaub ohne Auto in Les Sablettes | Obordeleau",
+        "description": "Strand in 70 m durch den Park, Fähre gegenüber, Geschäfte wenige Schritte, kostenloses Parken. Eine Woche in Les Sablettes ohne Auto.",
+        "breadcrumb": "Urlaub ohne Auto"
+      }
     }
   },
   "nav": {
@@ -513,7 +530,11 @@
     "email": "E-Mail",
     "emailSubject": "Informationsanfrage⎜Studio in Les Sablettes",
     "classificationAlt": "Als 3-Sterne-Ferienwohnung klassifiziert",
-    "bookDirect": "Direkt"
+    "bookDirect": "Direkt",
+    "guidesTitle": "Die Gegend",
+    "guideWhatToDo": "Was man unternehmen kann",
+    "guideBoat": "Die Fähre nach Toulon",
+    "guideCarFree": "Urlaub ohne Auto"
   },
   "legalPage": {
     "titleLead": "",
@@ -690,6 +711,152 @@
     "unavailable": {
       "title": "Dieser Link ist nicht mehr aktiv",
       "body": "Entweder ist der Restbetrag bereits bezahlt, oder der Link ist abgelaufen. Antworten Sie auf Ihre Buchungsbestätigung, und Corine meldet sich."
+    }
+  },
+  "guides": {
+    "what-to-do": {
+      "eyebrow": "Les Sablettes, La Seyne-sur-Mer",
+      "titleLead": "Was man in",
+      "titleAccent": "Les Sablettes",
+      "titleTail": "unternehmen kann",
+      "answer": "In Les Sablettes liegt fast alles wenige Gehminuten entfernt. Der Sandstrand ist 70 Meter vom Studio entfernt, eine Minute durch den Park am Meer, und man erreicht ihn, ohne eine Straße zu überqueren. Der Park selbst zieht sich am Wasser durch die ganze Bucht: Kinder beobachten dort die Schildkröten und die Vögel, Familien spazieren abends. Gegenüber der Residenz legt die Fähre nach Toulon und zu den Inseln ab. Bäckerei, Geschäfte und die Restaurants an der Strandpromenade sind wenige Schritte entfernt. Deshalb stellen die meisten Gäste ihr Auto am ersten Tag ab und rühren es bis zur Abreise nicht mehr an.",
+      "sections": {
+        "beach": {
+          "title": "Der Strand, eine Minute durch den Park",
+          "body": "Einer der schönsten Sandstrände des Var, und der kürzeste Weg dorthin führt durch den Park statt an der Straße entlang. Mit Kindern oder vollen Händen zählt dieses Detail: zwischen Haus und Sand liegt keine Fahrbahn."
+        },
+        "park": {
+          "title": "Der Park am Meer",
+          "body": "Er beginnt am Fuß des Hauses und folgt dem Meer. Schildkröten auf ihrem Felsen, Vögel, Palmen und die Maison Pouillon. Er ist der Weg zum Strand und zugleich ein Spaziergang für sich, im Schatten, wenn der Sand zu heiß wird."
+        },
+        "water": {
+          "title": "Das Meer, über den Strand hinaus",
+          "body": "Die Bucht eignet sich für Wassersport, und der Anleger gegenüber der Residenz öffnet die übrige Reede: Toulon auf der einen Seite, die Inseln auf der anderen. Ein Tag auf dem Wasser beginnt also zwei Minuten vor der Tür, ohne Fahrt und ohne zweiten Parkplatz."
+        },
+        "table": {
+          "title": "Wo man isst",
+          "body": "Bäckerei, Geschäfte und Restaurants liegen wenige Schritte entfernt, an der Promenade und drumherum. Die Terrassen blicken auf den Strand, und mehrere Gäste erzählen, dass sie abends zu Fuß hingegangen und zu Fuß zurückgekommen sind. Eine bessere Definition von Urlaub ohne Auto gibt es kaum."
+        }
+      },
+      "factsTitle": "Die Entfernungen, im Klartext",
+      "voicesTitle": "Was Gäste sagen",
+      "allReviews": "Alle 168 Bewertungen lesen",
+      "backHome": "Das Studio ansehen",
+      "closing": "3-Sterne-Studio, 33 m2, bis zu 4 Personen.",
+      "facts": {
+        "beach": {
+          "label": "Strand von Les Sablettes",
+          "value": "70 m, 1 Min zu Fuß"
+        },
+        "boat": {
+          "label": "Fähre nach Toulon",
+          "value": "Gegenüber, 2 Min zu Fuß"
+        },
+        "shops": {
+          "label": "Geschäfte und Restaurants",
+          "value": "Wenige Schritte"
+        },
+        "parking": {
+          "label": "Parken",
+          "value": "Kostenlos vor Ort"
+        }
+      }
+    },
+    "boat-to-toulon": {
+      "eyebrow": "Ab Les Sablettes",
+      "titleLead": "Nach Toulon und zu den Inseln",
+      "titleAccent": "mit der Fähre",
+      "titleTail": "",
+      "answer": "Der Anleger der Fähre liegt gegenüber der Residenz, zwei Gehminuten entfernt: Straße überqueren, und man steht am Kai. Von dort fahren die Pendelboote der Reede nach Toulon sowie die Verbindungen zu den Inseln, Porquerolles eingeschlossen. Deshalb braucht man von Les Sablettes aus kein Auto, um die Gegend zu erkunden: Toulons Zentrum, sein Hafen und seine Märkte sind über das Wasser erreichbar, ohne Verkehr und ohne Parkplatzsuche bei der Ankunft. Fahrpläne und Preise ändern sich je nach Saison und Linie und sollten vorher beim Verkehrsverbund der Metropole geprüft werden.",
+      "sections": {
+        "jetty": {
+          "title": "Der Kai liegt gegenüber",
+          "body": "Das fällt Gästen als Erstes auf: der Kai nach Toulon liegt auf der anderen Straßenseite. Zwei Gehminuten von der Studiotür, ohne Umweg und ohne das Auto zu bewegen."
+        },
+        "toulon": {
+          "title": "Toulon über das Wasser",
+          "body": "Die Fahrt über die Reede ist eine gewöhnliche Fahrt mit öffentlichen Verkehrsmitteln und zugleich die schönste Art, in Toulon anzukommen. Man legt im Hafen an, direkt am Zentrum und seinen Märkten. Mehrere Gäste sind für einen Tag hingefahren, einer davon im Dezember zum Weihnachtsmarkt."
+        },
+        "islands": {
+          "title": "Die Inseln",
+          "body": "Aus derselben Bucht fahren die Verbindungen zu den Inseln, Porquerolles eingeschlossen. Prüfen Sie Linie, Saison und Rückfahrzeit vor der Abfahrt: das Angebot im August ist nicht das Angebot im Januar."
+        },
+        "practical": {
+          "title": "Was Sie vorher prüfen sollten",
+          "body": "Fahrpläne, Preise und die tatsächlich verkehrenden Linien hängen von der Saison ab und liegen beim Verkehrsverbund der Metropole, nicht bei der Wohnung. Diese Seite gibt sie nicht wieder, um nichts Veraltetes anzuzeigen: prüfen Sie sie am selben Morgen, und Corine beantwortet die Frage während des Aufenthalts gern."
+        }
+      },
+      "factsTitle": "Die Entfernungen, im Klartext",
+      "voicesTitle": "Was Gäste sagen",
+      "allReviews": "Alle 168 Bewertungen lesen",
+      "backHome": "Das Studio ansehen",
+      "closing": "Das Studio liegt zwei Minuten vom Anleger entfernt.",
+      "facts": {
+        "beach": {
+          "label": "Strand von Les Sablettes",
+          "value": "70 m, 1 Min zu Fuß"
+        },
+        "boat": {
+          "label": "Fähre nach Toulon",
+          "value": "Gegenüber, 2 Min zu Fuß"
+        },
+        "shops": {
+          "label": "Geschäfte und Restaurants",
+          "value": "Wenige Schritte"
+        },
+        "parking": {
+          "label": "Parken",
+          "value": "Kostenlos vor Ort"
+        }
+      }
+    },
+    "car-free": {
+      "eyebrow": "Les Sablettes, La Seyne-sur-Mer",
+      "titleLead": "Urlaub",
+      "titleAccent": "ohne Auto",
+      "titleTail": "in Les Sablettes",
+      "answer": "Vom Studio aus ist alles zu Fuß erreichbar. Der Strand liegt 70 Meter entfernt, eine Minute durch den Park und ohne Straßenüberquerung. Der Anleger nach Toulon und zu den Inseln liegt gegenüber der Residenz, zwei Minuten entfernt. Bäckerei, Geschäfte und Restaurants sind wenige Schritte entfernt, und vor dem Haus hält der Bus. Das Parken vor Ort ist kostenlos: man kann also mit dem Auto anreisen, es am ersten Tag abstellen und bis zur Abreise stehen lassen. Genau das beschreiben die meisten Gäste: Sie kamen mit dem Auto und haben es dann nicht mehr gebraucht.",
+      "sections": {
+        "arrive": {
+          "title": "Ankommen und das Auto vergessen",
+          "body": "Das Parken an der Residenz ist kostenlos. Das Auto bringt Sie also her, und danach wartet es. Das ist der Unterschied zwischen einer gut gelegenen Wohnung und einer, von der man jeden Morgen wegfährt."
+        },
+        "daily": {
+          "title": "Der Alltag zu Fuß",
+          "body": "Der Strand durch den Park, Bäckerei und Geschäfte wenige Schritte entfernt, abends die Restaurants an der Promenade. Nichts davon verlangt eine Fahrt oder einen zweiten Parkplatz."
+        },
+        "further": {
+          "title": "Weiter kommen, ohne zu fahren",
+          "body": "Die Fähre gegenüber der Residenz öffnet die Reede: Toulon und die Inseln. Vor dem Haus hält der Bus. Genug, um eine ganze Woche zu verbringen, ohne wieder ans Steuer zu müssen."
+        },
+        "car": {
+          "title": "Wann das Auto doch nützt",
+          "body": "Für das Hinterland und die Dörfer des Var leistet es gute Dienste. Das Studio ist nicht darauf ausgelegt, unbedingt ohne Auto auszukommen: es ist darauf ausgelegt, dass es nach der Ankunft entbehrlich wird."
+        }
+      },
+      "factsTitle": "Die Entfernungen, im Klartext",
+      "voicesTitle": "Was Gäste sagen",
+      "allReviews": "Alle 168 Bewertungen lesen",
+      "backHome": "Das Studio ansehen",
+      "closing": "Kostenloses Parken an der Residenz.",
+      "facts": {
+        "beach": {
+          "label": "Strand von Les Sablettes",
+          "value": "70 m, 1 Min zu Fuß"
+        },
+        "boat": {
+          "label": "Fähre nach Toulon",
+          "value": "Gegenüber, 2 Min zu Fuß"
+        },
+        "shops": {
+          "label": "Geschäfte und Restaurants",
+          "value": "Wenige Schritte"
+        },
+        "parking": {
+          "label": "Parken",
+          "value": "Kostenlos vor Ort"
+        }
+      }
     }
   }
 }

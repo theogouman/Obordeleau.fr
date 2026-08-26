@@ -156,6 +156,36 @@ export function websiteJsonLd(locale: Locale, siteName: string) {
   };
 }
 
+/**
+ * A guide page, tied back to the flat rather than floating on its own.
+ *
+ * `about` and `publisher` both point at the lodging entity, so the three
+ * guides read as what they are, pages written by this address about its own
+ * neighbourhood, and not as a travel blog that happens to sit on the domain.
+ * No datePublished is claimed: the repository does not record one, and an
+ * invented date is worse than a missing one.
+ */
+export function guideJsonLd(
+  locale: Locale,
+  guide: { pathname: AppPathname; headline: string; description: string; image: string },
+) {
+  const url = localizedUrl(guide.pathname, locale);
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    '@id': `${url}#article`,
+    headline: guide.headline,
+    description: guide.description,
+    image: `${siteUrl}/images/area/${guide.image}`,
+    inLanguage: localeTags[locale],
+    mainEntityOfPage: url,
+    about: { '@id': `${siteUrl}/#lodging` },
+    publisher: { '@id': `${siteUrl}/#lodging` },
+    author: { '@id': `${siteUrl}/#lodging` },
+  };
+}
+
 export function breadcrumbJsonLd(
   locale: Locale,
   trail: Array<{ name: string; pathname: AppPathname }>,

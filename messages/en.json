@@ -29,6 +29,23 @@
     "privacy": {
       "title": "Privacy policy | Obordeleau",
       "description": "How the Obordeleau website handles your data: cookieless analytics, a map that loads only once you agree, and booking inquiries."
+    },
+    "guides": {
+      "what-to-do": {
+        "title": "What to do at Les Sablettes: beach, park, boat | Obordeleau",
+        "description": "The beach 70 m away, the seaside park at the door, the boat to Toulon opposite. What there is to do at Les Sablettes, all on foot.",
+        "breadcrumb": "What to do at Les Sablettes"
+      },
+      "boat-to-toulon": {
+        "title": "The boat to Toulon from Les Sablettes | Obordeleau",
+        "description": "The shuttle boat jetty is opposite the residence, 2 min on foot. Toulon by sea, the islands, and what to check before you set off.",
+        "breadcrumb": "The boat to Toulon"
+      },
+      "car-free": {
+        "title": "A car-free holiday at Les Sablettes | Obordeleau",
+        "description": "Beach 70 m through the park, boat opposite, shops a few steps away, free parking. Spending the week at Les Sablettes without driving.",
+        "breadcrumb": "Car-free holiday"
+      }
     }
   },
   "nav": {
@@ -513,7 +530,11 @@
     "email": "Email",
     "emailSubject": "Information request⎜Studio at Les Sablettes",
     "classificationAlt": "Officially classified 3-star holiday rental",
-    "bookDirect": "Direct"
+    "bookDirect": "Direct",
+    "guidesTitle": "The area",
+    "guideWhatToDo": "What to do at Les Sablettes",
+    "guideBoat": "The boat to Toulon",
+    "guideCarFree": "A car-free holiday"
   },
   "legalPage": {
     "titleLead": "Legal",
@@ -690,6 +711,152 @@
     "unavailable": {
       "title": "This link is no longer live",
       "body": "Either the balance has already been paid, or this link has expired. Reply to your booking confirmation email and Corine will answer."
+    }
+  },
+  "guides": {
+    "what-to-do": {
+      "eyebrow": "Les Sablettes, La Seyne-sur-Mer",
+      "titleLead": "What to do at",
+      "titleAccent": "Les Sablettes",
+      "titleTail": "",
+      "answer": "At Les Sablettes almost everything sits within a few minutes on foot. The sandy beach is 70 metres from the studio, one minute through the seaside park, and you reach it without crossing a road. The park itself runs along the water across the whole bay: children watch the turtles and the birds, families walk there in the evening. Opposite the residence, the shuttle boat jetty leads to Toulon and to the islands. The bakery, the shops and the seafront restaurants are a few steps away. This is why most guests park the car on the first day and do not touch it again until they leave.",
+      "sections": {
+        "beach": {
+          "title": "The beach, one minute through the park",
+          "body": "One of the finest sandy beaches in the Var, and the shortest way there from the studio goes through the park rather than along the road. That detail matters with children or full arms: there is no roadway to cross between the building and the sand."
+        },
+        "park": {
+          "title": "The seaside park",
+          "body": "It starts at the foot of the building and follows the sea. There are turtles on their rock, birds, palm trees and the Maison Pouillon. It is the way to the beach, and a walk in its own right, in the shade, when the sand gets too hot."
+        },
+        "water": {
+          "title": "The sea, beyond the beach",
+          "body": "The bay lends itself to water sports, and the jetty opposite the residence opens onto the rest of the roadstead: Toulon on one side, the islands on the other. A day at sea therefore starts two minutes from the door, with no driving and no second car park."
+        },
+        "table": {
+          "title": "Where to eat",
+          "body": "Bakery, shops and restaurants are a few steps away, on the seafront and around it. The terraces look onto the beach, and several guests describe walking there in the evening and walking back, which is as good a definition of a car-free holiday as any."
+        }
+      },
+      "factsTitle": "The distances, plainly",
+      "voicesTitle": "What guests say",
+      "allReviews": "Read all 168 reviews",
+      "backHome": "See the studio",
+      "closing": "A 3-star studio, 33 m2, up to 4 guests.",
+      "facts": {
+        "beach": {
+          "label": "Les Sablettes beach",
+          "value": "70 m, 1 min on foot"
+        },
+        "boat": {
+          "label": "Shuttle boat to Toulon",
+          "value": "Opposite, 2 min on foot"
+        },
+        "shops": {
+          "label": "Shops and restaurants",
+          "value": "A few steps away"
+        },
+        "parking": {
+          "label": "Parking",
+          "value": "Free on site"
+        }
+      }
+    },
+    "boat-to-toulon": {
+      "eyebrow": "From Les Sablettes",
+      "titleLead": "Reaching Toulon and the islands",
+      "titleAccent": "by boat",
+      "titleTail": "",
+      "answer": "The shuttle boat jetty is opposite the residence, two minutes on foot: you cross the street and you are at the quay. From there the bay shuttles run to Toulon, along with the connections to the islands, Porquerolles included. This is why a car is not needed to visit the area from Les Sablettes: the centre of Toulon, its harbour and its markets are reached by sea, with no traffic and no parking to find on arrival. Timetables and fares change with the season and with the line, and are worth checking with the metropolitan transport network before setting off.",
+      "sections": {
+        "jetty": {
+          "title": "The quay is opposite",
+          "body": "It is the first thing guests notice: the quay for Toulon is on the other side of the street. Two minutes on foot from the studio door, with no detour and no car to move."
+        },
+        "toulon": {
+          "title": "Toulon by sea",
+          "body": "Crossing the roadstead is an ordinary public transport journey, and also the finest way to arrive in Toulon. You land at the harbour, at the foot of the town centre and its markets. Several guests have gone for the day, one of them for the Christmas market in December."
+        },
+        "islands": {
+          "title": "The islands",
+          "body": "Connections to the islands, Porquerolles included, leave from the same bay. Check the line, the season and the return time before you go: the service in August is not the service in January."
+        },
+        "practical": {
+          "title": "What to check before you go",
+          "body": "Timetables, fares and which lines are running depend on the season and belong to the metropolitan transport network, not to the flat. This site does not copy them, so as not to display something out of date: check them on the morning itself, and Corine is happy to answer the question during your stay."
+        }
+      },
+      "factsTitle": "The distances, plainly",
+      "voicesTitle": "What guests say",
+      "allReviews": "Read all 168 reviews",
+      "backHome": "See the studio",
+      "closing": "The studio is two minutes from the jetty.",
+      "facts": {
+        "beach": {
+          "label": "Les Sablettes beach",
+          "value": "70 m, 1 min on foot"
+        },
+        "boat": {
+          "label": "Shuttle boat to Toulon",
+          "value": "Opposite, 2 min on foot"
+        },
+        "shops": {
+          "label": "Shops and restaurants",
+          "value": "A few steps away"
+        },
+        "parking": {
+          "label": "Parking",
+          "value": "Free on site"
+        }
+      }
+    },
+    "car-free": {
+      "eyebrow": "Les Sablettes, La Seyne-sur-Mer",
+      "titleLead": "A car-free holiday",
+      "titleAccent": "on foot",
+      "titleTail": "at Les Sablettes",
+      "answer": "Everything is walkable from the studio. The beach is 70 metres away, one minute through the park and without crossing a road. The jetty for Toulon and the islands is opposite the residence, two minutes away. The bakery, the shops and the restaurants are a few steps away, and there is a bus stop in front of the building. Parking on site is free, which means you can arrive by car, park it on the first day and leave it there until you go. That is what most guests describe: they came by car, then stopped using it.",
+      "sections": {
+        "arrive": {
+          "title": "Arrive, then forget the car",
+          "body": "Parking at the residence is free. So the car is what brings you here, and then it waits. That is the difference between a well placed flat and a flat you drive away from every morning."
+        },
+        "daily": {
+          "title": "Daily life on foot",
+          "body": "The beach through the park, the bakery and the shops a few steps away, the seafront restaurants in the evening. None of it asks you to drive or to park a second time."
+        },
+        "further": {
+          "title": "Going further without driving",
+          "body": "The shuttle boat opposite the residence opens up the bay: Toulon, and the islands. There is a bus stop in front of the building. Enough to spend a whole week without taking the wheel again."
+        },
+        "car": {
+          "title": "When the car still helps",
+          "body": "For the hinterland and the villages of the Var, it earns its place. The studio is not built to do without one at all costs: it is built so that it becomes optional once you have arrived."
+        }
+      },
+      "factsTitle": "The distances, plainly",
+      "voicesTitle": "What guests say",
+      "allReviews": "Read all 168 reviews",
+      "backHome": "See the studio",
+      "closing": "Free parking at the residence.",
+      "facts": {
+        "beach": {
+          "label": "Les Sablettes beach",
+          "value": "70 m, 1 min on foot"
+        },
+        "boat": {
+          "label": "Shuttle boat to Toulon",
+          "value": "Opposite, 2 min on foot"
+        },
+        "shops": {
+          "label": "Shops and restaurants",
+          "value": "A few steps away"
+        },
+        "parking": {
+          "label": "Parking",
+          "value": "Free on site"
+        }
+      }
     }
   }
 }
