@@ -77,6 +77,25 @@
     display: contents;
   }
 
+  /*
+   * The reviews page carries every review at once, and that is deliberate:
+   * they are what the page is for, and loading them in batches would take the
+   * bulk of them out of the first response, where a search engine reads them.
+   * The cost is a long document, 168 cards of it, all laid out on load even
+   * though three or four are on screen.
+   *
+   * content-visibility settles both sides. Every card stays in the markup, in
+   * the accessibility tree and findable by the browser's own search; the
+   * layout and paint of the ones below the fold is deferred until they are
+   * scrolled near. The intrinsic size keeps the scrollbar honest in the
+   * meantime, and the `auto` keyword lets each card remember the height it
+   * actually had once it has been rendered a first time.
+   */
+  .reviews-columns__item {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 18rem;
+  }
+
   @media (min-width: 1024px) {
     .reviews-columns {
       flex-direction: row;

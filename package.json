@@ -13,6 +13,7 @@
     "lint": "next lint",
     "lint:copy": "node scripts/no-emdash.mjs",
     "check:reviews": "node scripts/check-reviews.mjs",
+    "seo:indexnow": "node scripts/indexnow.mjs",
     "check": "npm run lint:copy && npm run check:reviews && npm run lint",
     "test:e2e": "playwright test",
     "test:sql": "npm run test:sql:pricing && npm run test:sql:admin && npm run test:sql:stay && npm run test:sql:payments && npm run test:sql:balance && npm run test:sql:login && npm run test:sql:abuse",
