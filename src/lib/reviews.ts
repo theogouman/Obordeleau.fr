@@ -174,7 +174,17 @@ export const averageRatingExact =
     ? 0
     : allReviews.reduce((sum, review) => sum + review.rating, 0) / reviewCount;
 
-export const averageRating = Math.round(averageRatingExact * 10) / 10;
+/**
+ * Rounded down, not to the nearest tenth.
+ *
+ * The exact mean is 4.958, which `Math.round` turned into a flat 5, published
+ * as such in the structured data. It was defensible arithmetic and a bad
+ * claim: a perfect 5 out of 168 reviews is the shape review-fraud detection
+ * looks for, GuestFavourite prints the true 4.96 a few pixels away, and the
+ * reviews page shows the three star review that makes 5 impossible. Rounding
+ * down is never flattering by accident, and 4.9 is not a weaker number.
+ */
+export const averageRating = Math.floor(averageRatingExact * 10) / 10;
 
 export const hasReviews = reviewCount > 0;
 

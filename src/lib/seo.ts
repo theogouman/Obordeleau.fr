@@ -9,10 +9,18 @@ import {
 } from '@/i18n/routing';
 import { siteUrl } from '@/lib/content';
 
-/** Absolute, canonical URL for one page in one language. */
+/**
+ * Absolute, canonical URL for one page in one language.
+ *
+ * The root is emitted without a trailing slash, because that is the form Next
+ * normalizes `alternates.canonical` to. Writing it with a slash here made the
+ * sitemap advertise `https://www.obordeleau.fr/` while the page itself declared
+ * `https://www.obordeleau.fr` as canonical: two strings for one page, which a
+ * strict crawler is entitled to read as two URLs.
+ */
 export function localizedUrl(pathname: AppPathname, locale: Locale): string {
   const path = getPathname({ href: pathname, locale });
-  return `${siteUrl}${path === '/' ? '/' : path}`;
+  return `${siteUrl}${path === '/' ? '' : path}`;
 }
 
 /** hreflang map, including x-default pointing at the French version (FR-006). */
@@ -48,7 +56,17 @@ export function buildMetadata({
 
   return {
     metadataBase: new URL(siteUrl),
-    title,
+    /*
+     * Absolute, so the layout's `%s | siteName` template does not apply.
+     *
+     * Every title in messages/ already carries the site name where it belongs,
+     * and the template was appending a second one: pages came out as
+     * "Mentions legales | Obordeleau | Obordeleau". The home page escaped it,
+     * because a template does not apply to the page of its own segment, which
+     * is why it went unnoticed. Owning the whole string here removes the
+     * question of which page is a child of what.
+     */
+    title: { absolute: title },
     description,
     alternates: {
       canonical: url,

@@ -1,8 +1,21 @@
 import type { AppPathname, Locale } from '@/i18n/routing';
-import { localeTags } from '@/i18n/routing';
-import { amenities, property, siteUrl } from '@/lib/content';
+import { localeTags, routing } from '@/i18n/routing';
+import {
+  amenities,
+  externalMapUrl,
+  gallerySequence,
+  legal,
+  property,
+  siteUrl,
+} from '@/lib/content';
 import { averageRating, curatedReviews, hasReviews, reviewCount } from '@/lib/reviews';
 import { localizedUrl } from '@/lib/seo';
+
+/** E.164, which is the form schema.org asks for and not the one humans read. */
+const phoneE164 = legal.owner.phone.replace(/[^\d+]/g, '');
+
+/** The first photographs of the gallery, in the order the site shows them. */
+const IMAGE_COUNT = 6;
 
 /**
  * FR-022: LodgingBusiness / VacationRental structured data carrying the 3-star
@@ -16,7 +29,13 @@ type Labels = {
 };
 
 export function lodgingJsonLd(locale: Locale, labels: Labels) {
-  const url = localizedUrl('/', locale);
+  /*
+   * One entity, one URL. The `@id` never changed with the language, which is
+   * right (there is one flat), but `url` used to point at whichever
+   * translation was rendering, which said the opposite. The canonical French
+   * home is the address of the business; `inLanguage` carries the rest.
+   */
+  const url = localizedUrl('/', routing.defaultLocale);
 
   const node: Record<string, unknown> = {
     '@context': 'https://schema.org',
@@ -26,7 +45,21 @@ export function lodgingJsonLd(locale: Locale, labels: Labels) {
     url,
     inLanguage: localeTags[locale],
     description: labels.description,
-    image: [`${siteUrl}/images/gallery/${property.hero.image}`],
+    image: gallerySequence
+      .slice(0, IMAGE_COUNT)
+      .map((photo) => `${siteUrl}/images/gallery/${photo.file}`),
+    // The NAP a local listing is judged on. The number is the owner's, read
+    // from the same file the legal notice prints it from, so the site and the
+    // structured data can never drift apart.
+    telephone: phoneE164,
+    email: legal.owner.email,
+    hasMap: externalMapUrl,
+    logo: `${siteUrl}/brand/wordmark.svg`,
+    currenciesAccepted: 'EUR',
+    // Filled in content/property.json once the owner settles on a band. Left
+    // out of the payload entirely while it is null: an invented price range is
+    // worse than a missing one.
+    priceRange: property.pricing?.priceRange ?? undefined,
     address: {
       '@type': 'PostalAddress',
       streetAddress: property.address.street,
@@ -58,7 +91,6 @@ export function lodgingJsonLd(locale: Locale, labels: Labels) {
     },
     numberOfBathroomsTotal: property.capacity.bathrooms,
     numberOfBedrooms: property.capacity.bedrooms,
-    petsAllowed: undefined,
     amenityFeature: amenities.map((amenity) => ({
       '@type': 'LocationFeatureSpecification',
       name: labels.amenityLabel(amenity.id),

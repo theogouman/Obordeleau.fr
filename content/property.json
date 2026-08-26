@@ -30,6 +30,10 @@
     ],
     "travelCotOnRequest": true
   },
+  "pricing": {
+    "$comment": "priceRange est une fourchette indicative pour les donnees structurees, par exemple \"60-120 EUR\". Laisse a null tant que la proprietaire ne l'a pas validee: rien n'est publie tant que la valeur est nulle.",
+    "priceRange": null
+  },
   "channels": [
     {
       "id": "direct",

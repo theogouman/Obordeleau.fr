@@ -7,7 +7,7 @@ import type { Locale } from '@/i18n/routing';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Wordmark } from '@/components/Wordmark';
 import { assetExists } from '@/lib/assets';
-import { channel, host, property } from '@/lib/content';
+import { channel, host, legal, property } from '@/lib/content';
 
 export function Footer({ year }: { year: number }) {
   const t = useTranslations('footer');
@@ -28,6 +28,9 @@ export function Footer({ year }: { year: number }) {
     t('whatsappMessage'),
   )}`;
   const mailHref = `mailto:${host.contact.email}?subject=${encodeURIComponent(t('emailSubject'))}`;
+
+  /** Dialable form of the number the legal notice prints. */
+  const phoneE164 = legal.owner.phone.replace(/[^\d+]/g, '');
 
   // annexes, where the file is. It read `area` and so quietly never rendered.
   const logo = `/images/annexes/${host.classificationLogo}`;
@@ -68,6 +71,22 @@ export function Footer({ year }: { year: number }) {
         <div className="lg:justify-self-center">
           <h2 className="font-display text-lg">{t('contactTitle')}</h2>
           <ul className="mt-3 space-y-2 text-cream/80">
+            {/* The number in full, and dialable in one tap.
+                WhatsApp does not stand in for it: there the number is buried
+                in a wa.me URL, so a visitor cannot read it and a search engine
+                cannot match it against the same number on the Google listing,
+                on Airbnb or on Booking. Written out, it is both the shortest
+                path to a booking on a phone and the third of the name, address
+                and phone trio that local search is judged on. */}
+            <li>
+              <a
+                href={`tel:${phoneE164}`}
+                className="inline-flex items-center gap-2 hover:text-sunset"
+              >
+                <Icon name="phone" className="h-[18px] w-auto shrink-0" />
+                {legal.owner.phone}
+              </a>
+            </li>
             <li>
               <a
                 href={whatsappHref}

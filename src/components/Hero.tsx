@@ -80,7 +80,18 @@ export function Hero() {
                   {available ? (
                     <Image
                       src={photo}
-                      alt=""
+                      /*
+                       * The description rides on the first pane, the other two
+                       * stay silent. The triptych is one photograph, so the
+                       * aria-label above still says it once to a screen reader
+                       * and the fragments add nothing. But Google Images does
+                       * not read aria-label, and this is the most prominent
+                       * photograph on the site: with three empty alts it had
+                       * no text attached to it at all. One described fragment
+                       * fixes that without the picture being announced three
+                       * times over.
+                       */
+                      alt={pane === 0 ? t('imageAlt') : ''}
                       fill
                       priority={pane === 0}
                       sizes="(min-width: 1024px) 34rem, (min-width: 640px) 26rem, 100vw"
