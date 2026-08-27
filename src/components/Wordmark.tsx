@@ -35,7 +35,7 @@ export function Wordmark({ className = '', title = 'Obordeleau' }: Props) {
         />
       </svg>
       <span className="font-display text-xl tracking-tight">
-        Obordel<span className="accent-word">eau</span>
+        Oborde<span className="accent-word">leau</span>
       </span>
       <span className="visually-hidden">{title}</span>
     </span>
