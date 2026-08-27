@@ -67,8 +67,8 @@ export default async function OpengraphImage({
 
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={{ display: 'flex', fontSize: 96, letterSpacing: -2, lineHeight: 1 }}>
-              <span style={{ color: '#3A2A26' }}>Obordel</span>
-              <span style={{ color: '#CE4257' }}>eau</span>
+              <span style={{ color: '#3A2A26' }}>Oborde</span>
+              <span style={{ color: '#CE4257' }}>leau</span>
             </div>
 
             <div style={{ display: 'flex', marginTop: 26, fontSize: 40, color: '#6B5750' }}>
